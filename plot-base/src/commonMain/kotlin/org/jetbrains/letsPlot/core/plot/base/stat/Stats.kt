@@ -43,6 +43,10 @@ object Stats {
     val METHOD = DataFrame.Variable("..method..", STAT, "method")
     val AIC = DataFrame.Variable("..aic..", STAT, "aic")
     val BIC = DataFrame.Variable("..bic..", STAT, "bic")
+    val F = DataFrame.Variable("..f..", STAT, "f")
+    val DF1 = DataFrame.Variable("..df1..", STAT, "df1")
+    val DF2 = DataFrame.Variable("..df2..", STAT, "df2")
+    val P = DataFrame.Variable("..p..", STAT, "p")
 
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
@@ -85,6 +89,10 @@ object Stats {
             METHOD,
             AIC,
             BIC,
+            F,
+            DF1,
+            DF2,
+            P,
         )
 
         val result = HashMap<String, DataFrame.Variable>()

@@ -109,6 +109,7 @@ class SmoothStatSummary(
             )
         } ?: return DataFrame.Builder.emptyFrame()
 
+
         val dfb = DataFrame.Builder()
             .put(Stats.X, listOf(0.0))
             .put(Stats.Y, listOf(0.0))
@@ -118,6 +119,10 @@ class SmoothStatSummary(
             .put(Stats.METHOD, listOf(smoothingMethodLabel(smoothingMethod)))
             .put(Stats.AIC, listOf(regression.aic))
             .put(Stats.BIC, listOf(regression.bic))
+            .put(Stats.F, listOf(regression.fTest.fValue))
+            .put(Stats.DF1, listOf(regression.fTest.df1))
+            .put(Stats.DF2, listOf(regression.fTest.df2))
+            .put(Stats.P, listOf(regression.fTest.pValue))
 
         val vars = myVariables ?: initVariables(regression.eq.size)
         regression.eq.forEachIndexed { index, coef ->

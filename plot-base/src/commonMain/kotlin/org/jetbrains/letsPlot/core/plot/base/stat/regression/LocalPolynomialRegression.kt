@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.LoessInterpolator
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.PolynomialSplineFunction
+import org.jetbrains.letsPlot.core.plot.base.stat.regression.RegressionEvaluator.Companion.FTestResult
 
 class LocalPolynomialRegression private constructor (
     n: Int,
@@ -16,7 +17,9 @@ class LocalPolynomialRegression private constructor (
     standardErrorOfEstimate: Double,
     tCritical: Double,
     r2: Double,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, emptyList(), r2, Double.NaN, Double.NaN) {
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, emptyList(), r2, Double.NaN, Double.NaN,
+    FTestResult(Double.NaN, Double.NaN, Double.NaN, Double.NaN)
+) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, bandwidth: Double): LocalPolynomialRegression? {
             check(xs, ys, confidenceLevel)

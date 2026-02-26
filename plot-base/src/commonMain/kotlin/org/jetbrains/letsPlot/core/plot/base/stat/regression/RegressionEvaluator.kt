@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
+import org.jetbrains.letsPlot.core.plot.base.stat.regression.FDistribution
 import org.jetbrains.letsPlot.core.stat.tQuantile
 import kotlin.math.PI
 import kotlin.math.pow
@@ -20,7 +21,8 @@ abstract class RegressionEvaluator protected constructor(
     val eq: List<Double>,
     val r2: Double,
     val aic: Double,
-    val bic: Double
+    val bic: Double,
+    val fTest: FTestResult
 ) {
     val adjR2: Double
         get() {
@@ -142,5 +144,73 @@ abstract class RegressionEvaluator protected constructor(
                     n * (1.0 + kotlin.math.ln(2.0 * PI)) +
                     k * kotlin.math.ln(n.toDouble())
         }
+
+        data class FTestResult(
+            val fValue: Double,
+            val pValue: Double,
+            val df1: Double,
+            val df2: Double
+        )
+
+        internal fun calcOverallModelFTest(
+            nRaw: Int,
+            eqSizeRaw: Int,   // includes intercept
+            r2Raw: Double
+        ): FTestResult {
+            val n = nRaw.toDouble()
+            val p = (eqSizeRaw - 1).toDouble()   // predictors without intercept
+
+            val df1 = p
+            val df2 = n - p - 1.0
+
+            // Invalid setup
+            if (!r2Raw.isFinite() || n <= 0.0 || eqSizeRaw <= 0 || df1 <= 0.0 || df2 <= 0.0) {
+                return FTestResult(Double.NaN, Double.NaN, df1, df2)
+            }
+
+            // Clamp possible floating-point overshoots
+            val r2 = r2Raw.coerceIn(0.0, 1.0)
+
+            // Edge cases
+            if (r2 == 0.0) {
+                return FTestResult(0.0, 1.0, df1, df2)
+            }
+            if (r2 == 1.0) {
+                return FTestResult(Double.POSITIVE_INFINITY, 0.0, df1, df2)
+            }
+
+            val numerator = r2 / df1
+            val denominator = (1.0 - r2) / df2
+
+            if (!numerator.isFinite() || !denominator.isFinite() || denominator <= 0.0) {
+                return FTestResult(Double.NaN, Double.NaN, df1, df2)
+            }
+
+            val fValue = numerator / denominator
+
+            if (!fValue.isFinite()) {
+                return if (fValue == Double.POSITIVE_INFINITY) {
+                    FTestResult(Double.POSITIVE_INFINITY, 0.0, df1, df2)
+                } else {
+                    FTestResult(Double.NaN, Double.NaN, df1, df2)
+                }
+            }
+
+            val pValue = fTestPValueUpperTail(fValue, df1, df2)
+            return FTestResult(fValue, pValue, df1, df2)
+        }
+
+        internal fun fTestPValueUpperTail(fValue: Double, df1: Double, df2: Double): Double {
+            if (!fValue.isFinite() || df1 <= 0.0 || df2 <= 0.0) return Double.NaN
+
+            if (fValue < 0.0) return Double.NaN
+            if (fValue == Double.POSITIVE_INFINITY) return 0.0
+
+            val cdf = FDistribution(df1, df2).cumulativeProbability(fValue)
+
+            // Guard against tiny numerical drift outside [0, 1]
+            return (1.0 - cdf).coerceIn(0.0, 1.0)
+        }
+
     }
 }

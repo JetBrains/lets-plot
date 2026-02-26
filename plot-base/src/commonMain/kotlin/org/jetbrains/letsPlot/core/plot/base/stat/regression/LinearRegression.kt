@@ -15,8 +15,9 @@ class LinearRegression private constructor (
     eq: List<Double>,
     r2: Double,
     aic: Double,
-    bic: Double
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic) {
+    bic: Double,
+    fTest: RegressionEvaluator.Companion.FTestResult
+) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic, fTest) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
             check(xs, ys, confidenceLevel)
@@ -42,8 +43,9 @@ class LinearRegression private constructor (
             val intercept = meanY - slope * meanX
             val model: (Double) -> Double = { x -> slope * x + intercept }
 
-            val k = 2 // number of predictors (slope, intercept, sigma^2)
+            val k = 3 // number of predictors (slope, intercept, sigma^2)
             val rss = calcRss(xVals, yVals, model)
+            val r2 = calcRSquared(xVals, yVals, model)
 
             return LinearRegression(
                 n,
@@ -53,9 +55,10 @@ class LinearRegression private constructor (
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
                 listOf(intercept, slope),
-                calcRSquared(xVals, yVals, model),
+                r2,
                 calcAic(n, rss, k),
-                calcBic(n, rss, k)
+                calcBic(n, rss, k),
+                calcOverallModelFTest(n, 2, r2)
             )
         }
     }
