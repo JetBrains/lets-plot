@@ -10,8 +10,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.BINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.COLOR
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.EXPLODE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FAMILY
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
@@ -20,7 +18,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
@@ -248,11 +248,11 @@ abstract class AesVisitor<T> {
         if (aes == EXPLODE) {
             return explode()
         }
-        if (aes == DODGE_START) {
-            return dodgeStart()
+        if (aes == ISTART) {
+            return istart()
         }
-        if (aes == DODGE_END) {
-            return dodgeEnd()
+        if (aes == IEND) {
+            return iend()
         }
         if (aes == SIZE_START) {
             return sizeStart()
@@ -395,9 +395,9 @@ abstract class AesVisitor<T> {
 
     protected abstract fun explode(): T
 
-    protected abstract fun dodgeStart(): T
+    protected abstract fun istart(): T
 
-    protected abstract fun dodgeEnd(): T
+    protected abstract fun iend(): T
 
     protected abstract fun sizeStart(): T
 

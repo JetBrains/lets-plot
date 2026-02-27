@@ -13,8 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ALPHA
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ANGLE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.COLOR
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.DODGE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.EXPLODE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FAMILY
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FILL
@@ -23,6 +21,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
@@ -220,12 +220,12 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(EXPLODE, v)
     }
 
-    fun dodgeStart(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(DODGE_START, v)
+    fun istart(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(ISTART, v)
     }
 
-    fun dodgeEnd(v: (Int) -> Double?): AestheticsBuilder {
-        return aes(DODGE_END, v)
+    fun iend(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(IEND, v)
     }
 
     fun sizeStart(v: (Int) -> Double?): AestheticsBuilder {

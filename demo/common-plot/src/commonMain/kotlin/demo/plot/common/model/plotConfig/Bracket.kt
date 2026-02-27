@@ -130,8 +130,8 @@ class Bracket {
                   'mapping': {
                     'x': 'number of cylinders',
                     'y': 'y',
-                    'dodge_start': 'start',
-                    'dodge_end': 'end',
+                    'istart': 'start',
+                    'iend': 'end',
                     'label': 'p'
                   },
                   'data': {

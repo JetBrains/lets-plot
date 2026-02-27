@@ -63,8 +63,8 @@ object TransformVar {
     val RADIUS = DataFrame.Variable("transform.RADIUS", TRANSFORM)
     val SLICE = DataFrame.Variable("transform.SLICE", TRANSFORM)
     val EXPLODE = DataFrame.Variable("transform.EXPLODE", TRANSFORM)
-    val GSTART = DataFrame.Variable("transform.GSTART", TRANSFORM)
-    val GEND = DataFrame.Variable("transform.GEND", TRANSFORM)
+    val ISTART = DataFrame.Variable("transform.ISTART", TRANSFORM)
+    val IEND = DataFrame.Variable("transform.IEND", TRANSFORM)
     val SIZE_START = DataFrame.Variable("transform.SIZE_START", TRANSFORM)
     val SIZE_END = DataFrame.Variable("transform.SIZE_END", TRANSFORM)
     val STROKE_START = DataFrame.Variable("transform.STROKE_START", TRANSFORM)
@@ -319,12 +319,12 @@ object TransformVar {
             return EXPLODE
         }
 
-        override fun dodgeStart(): DataFrame.Variable {
-            return GSTART
+        override fun istart(): DataFrame.Variable {
+            return ISTART
         }
 
-        override fun dodgeEnd(): DataFrame.Variable {
-            return GEND
+        override fun iend(): DataFrame.Variable {
+            return IEND
         }
 
         override fun sizeStart(): DataFrame.Variable {

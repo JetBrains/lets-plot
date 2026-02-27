@@ -217,12 +217,12 @@ abstract class DataPointAesthetics {
         return get(Aes.EXPLODE)
     }
 
-    fun dodgeStart(): Double? {
-        return get(Aes.DODGE_START)
+    fun istart(): Double? {
+        return get(Aes.ISTART)
     }
 
-    fun dodgeEnd(): Double? {
-        return get(Aes.DODGE_END)
+    fun iend(): Double? {
+        return get(Aes.IEND)
     }
 
     fun sizeStart(): Double? {
