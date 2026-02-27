@@ -355,8 +355,6 @@ class smooth_labels(layer_labels):
         self._label_x = None
         self._label_y = None
 
-        self.inherit_color()
-
     def eq(self, lhs=None, rhs=None, format=None, threshold=None) -> "smooth_labels":
 
         """
