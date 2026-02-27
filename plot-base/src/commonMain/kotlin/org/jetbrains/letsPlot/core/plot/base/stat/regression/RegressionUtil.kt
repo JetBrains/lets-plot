@@ -5,9 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
-import org.jetbrains.letsPlot.core.plot.base.stat.math3.Percentile
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStat
+import org.jetbrains.letsPlot.core.plot.base.stat.math3.Percentile
 import kotlin.random.Random
 
 internal object RegressionUtil {
