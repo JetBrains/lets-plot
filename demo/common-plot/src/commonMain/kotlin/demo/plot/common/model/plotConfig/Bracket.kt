@@ -80,8 +80,8 @@ class Bracket {
                     'y': 'y',
                     'label': 'p'
                   },
-                  'tiplength_start': -0.5,
-                  'tiplength_end': -0.5,
+                  'lenstart': -0.5,
+                  'lenend': -0.5,
                   'tiplength_unit': 'res',
                   'vjust': 2,
                   'data': {

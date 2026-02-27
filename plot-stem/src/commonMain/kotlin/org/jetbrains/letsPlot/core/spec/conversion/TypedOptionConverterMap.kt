@@ -22,6 +22,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
@@ -50,8 +52,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIPLENGTH_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIPLENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -151,8 +151,8 @@ internal class TypedOptionConverterMap(colorConverter: ColorOptionConverter) {
         this.put(SIZE_END, DOUBLE_CVT)
         this.put(STROKE_START, DOUBLE_CVT)
         this.put(STROKE_END, DOUBLE_CVT)
-        this.put(TIPLENGTH_START, DOUBLE_CVT)
-        this.put(TIPLENGTH_END, DOUBLE_CVT)
+        this.put(LENSTART, DOUBLE_CVT)
+        this.put(LENEND, DOUBLE_CVT)
 
         this.put(POINT_SIZE, DOUBLE_CVT)
         this.put(POINT_STROKE, DOUBLE_CVT)

@@ -52,8 +52,8 @@ open class BracketGeom : TextGeom() {
     private fun bracketBuilder(helper: LinesHelper, ctx: GeomContext): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
         val (xmin, xmax) = getLimits(p, ctx) ?: return@builder null
         val y = p.finiteOrNull(Aes.Y) ?: return@builder null
-        val tipLengthStart = p.finiteOrNull(Aes.TIPLENGTH_START) ?: return@builder null
-        val tipLengthEnd = p.finiteOrNull(Aes.TIPLENGTH_END) ?: return@builder null
+        val tipLengthStart = p.finiteOrNull(Aes.LENSTART) ?: return@builder null
+        val tipLengthEnd = p.finiteOrNull(Aes.LENEND) ?: return@builder null
         val x = (xmin + xmax) / 2.0
         val bracketLength = xmax - xmin
         val xStart = x - (1 - bracketShorten) * bracketLength / 2.0

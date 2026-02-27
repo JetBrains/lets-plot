@@ -23,6 +23,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
@@ -51,8 +53,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIPLENGTH_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIPLENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -184,8 +184,8 @@ object DefaultMapperProvider {
             this.put(SIZE_END, SizeMapperProvider.DEFAULT)
             this.put(STROKE_START, StrokeMapperProvider.DEFAULT)
             this.put(STROKE_END, StrokeMapperProvider.DEFAULT)
-            this.put(TIPLENGTH_START, NUMERIC_IDENTITY)
-            this.put(TIPLENGTH_END, NUMERIC_IDENTITY)
+            this.put(LENSTART, NUMERIC_IDENTITY)
+            this.put(LENEND, NUMERIC_IDENTITY)
 
             this.put(POINT_SIZE, SizeMapperProvider.DEFAULT)
             this.put(POINT_STROKE, StrokeMapperProvider.DEFAULT)
