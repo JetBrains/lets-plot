@@ -56,9 +56,9 @@
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
-- `geom_smooth()`: introduced `smooth_labels()` to provide automated labeling of goodness-of-fit metrics and the regression equation.
+- `geom_smooth()`: added `labels` parameter which accepts `smooth_labels()` to annotate plots with $R^2$, Adjusted $R^2$, and regression equations.
 
-    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_labels.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
 
 
 ### Changed
