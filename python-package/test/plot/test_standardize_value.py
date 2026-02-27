@@ -243,3 +243,29 @@ def test_standardize_value_jax():
     assert isinstance(standardized_jnp_array, list)
     assert all(isinstance(row, list) for row in standardized_jnp_array)
     assert standardized_jnp_array == [[1.0, 2.0], [3.0, 4.0]]
+
+
+def test_shapely_geometry():
+    from shapely.geometry import Point, Polygon
+
+    # Test with a Point geometry
+    point = Point(1, 2)
+    standardized_point = _standardize_value(point)
+    assert standardized_point == '{"type": "Point", "coordinates": [1.0, 2.0]}'
+
+    # Test with a Polygon geometry
+    polygon = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+    standardized_polygon = _standardize_value(polygon)
+    assert standardized_polygon == '{"type": "Polygon", "coordinates": [[[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0], [0.0, 0.0]]]}'
+
+
+def test_geodataframe_with_shapely_geometry():
+    import geopandas as gpd
+    from shapely.geometry import Point
+
+    # Create a GeoDataFrame with a Point geometry
+    gdf = gpd.GeoDataFrame({'geometry': [Point(1, 2)]})
+
+    standardized_gdf = _standardize_value(gdf)
+
+    assert standardized_gdf['geometry'][0] == '{"type": "Point", "coordinates": [1.0, 2.0]}'
