@@ -84,3 +84,4 @@
 - Nice to be able to get a list of colors from a color scale object [[#1444](https://github.com/JetBrains/lets-plot/issues/1444)].
 - Allow tooltips param to accept list [[#1455](https://github.com/JetBrains/lets-plot/issues/1455)].
 - Allow grouped tooltips for plots with multiple univariate geoms [[#1460](https://github.com/JetBrains/lets-plot/issues/1460)].
+- Eager import of jax.numpy in _type_utils.py causes unnecessary JAX initialization [[#1469](https://github.com/JetBrains/lets-plot/issues/1469)].
