@@ -60,10 +60,10 @@ open class BracketGeom : TextGeom() {
         val xEnd = x + (1 - bracketShorten) * bracketLength / 2.0
         val tipLengthUnitResolution = helper.getUnitResolution(tipLengthUnit, Aes.Y)
         listOf(
-            DoubleVector(xStart, y - tipLengthStart * tipLengthUnitResolution),
-            DoubleVector(xStart, y),
-            DoubleVector(xEnd, y),
-            DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnitResolution),
+            DoubleVector(xStart, y - tipLengthStart * tipLengthUnitResolution),  // Left tip end
+            DoubleVector(xStart, y),                                                 // Bracket left end
+            DoubleVector(xEnd, y),                                                   // Bracket right end
+            DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnitResolution),      // Right tip end
         )
     }
 

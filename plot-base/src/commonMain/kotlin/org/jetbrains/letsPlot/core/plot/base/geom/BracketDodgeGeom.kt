@@ -24,9 +24,14 @@ class BracketDodgeGeom : BracketGeom() {
         ctx: GeomContext
     ) {
         if (groupCount == null) {
-            groupCount = aesthetics.dataPoints().mapNotNull { p ->
-                p.finiteOrNull(Aes.ISTART, Aes.IEND)?.let { (startIndex, endIndex) -> max(startIndex, endIndex) }
-            }.maxOrNull()?.roundToInt()?.let { it + 1 }
+            val maxIndex = aesthetics.dataPoints().mapNotNull { p ->
+                p.finiteOrNull(Aes.ISTART, Aes.IEND)
+            }.maxOfOrNull { (startIndex, endIndex) ->
+                max(startIndex, endIndex)
+            }
+            if (maxIndex != null) {
+                groupCount = maxIndex.roundToInt() + 1
+            }
         }
 
         super.buildIntern(root, aesthetics, pos, coord, ctx)

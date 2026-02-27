@@ -57,13 +57,9 @@ internal abstract class BaseDodgePos(
             return v
         }
 
-        return if (myIsHorizontalPos) {
-            val newX = position(v.x, p.group()!!, p[aes]!!, myGroupCount, size!!, dataResolution)
-            DoubleVector(newX, v.y)
-        } else {
-            val newY = position(v.y, p.group()!!, p[aes]!!, myGroupCount, size!!, dataResolution)
-            DoubleVector(v.x, newY)
-        }
+        val orientedVector = v.flipIf(!myIsHorizontalPos)
+        val newCoord = position(orientedVector.x, p.group()!!, p[aes]!!, myGroupCount, size!!, dataResolution)
+        return DoubleVector(newCoord, orientedVector.y).flipIf(!myIsHorizontalPos)
     }
 
     override fun handlesGroups(): Boolean {
