@@ -4,11 +4,14 @@
 #
 from typing import Any, Tuple, Sequence, Optional, Dict, List
 
-from lets_plot._type_utils import is_pandas_data_frame, is_polars_dataframe
+from lets_plot._type_utils import LazyModule
 from lets_plot.geo_data_internals.utils import find_geo_names
 from lets_plot.mapping import MappingMeta
 from lets_plot.plot.core import aes, FeatureSpec, PlotSpec
 from lets_plot.plot.series_meta import _infer_type, TYPE_UNKNOWN, TYPE_DATE_TIME, _detect_time_zone
+
+pandas = LazyModule('pandas')
+polars = LazyModule('polars')
 
 
 def as_boolean(val, *, default):
@@ -73,12 +76,9 @@ def as_annotated_data(data: Any, mapping_spec: FeatureSpec) -> Tuple:
         if var_name in time_zone_by_var_name:
             series_annotation['time_zone'] = time_zone_by_var_name[var_name]
 
-        if is_pandas_data_frame(data) and data[var_name].dtype.name == 'category' and data[var_name].dtype.ordered:
+        if pandas.lazy_is_instance(data, 'DataFrame') and data[var_name].dtype.name == 'category' and data[var_name].dtype.ordered:
             series_annotation['factor_levels'] = data[var_name].cat.categories.to_list()
-
-        elif is_polars_dataframe(data):
-            import polars
-
+        elif polars.lazy_is_instance(data, 'DataFrame'):
             col_dtype = data[var_name].dtype
             if isinstance(col_dtype, polars.datatypes.Enum):
                 series_annotation['factor_levels'] = list(col_dtype.categories)
@@ -249,7 +249,7 @@ def geo_data_frame_to_crs(gdf: 'GeoDataFrame', use_crs: Optional[str]):
 
 
 def key_int2str(data):
-    if is_pandas_data_frame(data):
+    if pandas.lazy_is_instance(data, 'DataFrame'):
         if data.columns.inferred_type == 'integer' or data.columns.inferred_type == 'mixed-integer':
             data.columns = data.columns.astype(str)
         return data

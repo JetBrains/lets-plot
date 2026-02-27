@@ -11,22 +11,11 @@ from .scale import scale_gradientn
 from .scale import scale_grey
 from .scale import scale_manual
 from .util import as_boolean
-from .._type_utils import is_ndarray
+from .._type_utils import is_ndarray, LazyModule
 
-try:
-    import png
-except ImportError:
-    png = None
-
-try:
-    import numpy
-except ImportError:
-    numpy = None
-
-try:
-    from palettable.matplotlib import matplotlib as palettable
-except ImportError:
-    palettable = None
+png = LazyModule('png')
+numpy = LazyModule('numpy')
+palettable = LazyModule('palettable')
 
 __all__ = ['geom_imshow']
 
@@ -276,7 +265,7 @@ def geom_imshow(image_data, cmap=None, *,
 
     """
 
-    if png is None:
+    if not png:
         raise ValueError("pypng is not installed")
 
     if not is_ndarray(image_data):
@@ -326,10 +315,10 @@ def geom_imshow(image_data, cmap=None, *,
 
                 # prepare palette
                 if not has_nan:
-                    cmap_256 = palettable.get_map(cmap + "_256")
+                    cmap_256 = palettable.matplotlib.get_map(cmap + "_256")
                     palette = [_parse_hex_color(c, alpha_ch_val) for c in cmap_256.hex_colors]
                 else:
-                    cmap_255 = palettable.get_map(cmap + "_255")
+                    cmap_255 = palettable.matplotlib.get_map(cmap + "_255")
                     # transparent color at index 0
                     palette = [numpy.array([0, 0, 0, 0], dtype=numpy.uint8)] \
                               + [_parse_hex_color(c, alpha_ch_val) for c in cmap_255.hex_colors]
@@ -445,10 +434,10 @@ def geom_imshow(image_data, cmap=None, *,
         # aes(color=[greyscale_data_min, greyscale_data_max])
         color_scale_mapping = aes(**{color_by: [greyscale_data_min, greyscale_data_max]})
         if cmap_palettable and normalize:
-            cmap_32 = palettable.get_map(cmap + "_32")
+            cmap_32 = palettable.matplotlib.get_map(cmap + "_32")
             color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_32.hex_colors, name="", guide=cguide)
         elif cmap_palettable and not normalize:
-            cmap_256 = palettable.get_map(cmap + "_256")
+            cmap_256 = palettable.matplotlib.get_map(cmap + "_256")
             start = max(0, round(greyscale_data_min))
             end = min(255, round(greyscale_data_max))
             cmap_hex_colors = cmap_256.hex_colors[start:end]

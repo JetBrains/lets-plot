@@ -9,8 +9,10 @@ from typing import Union, List
 
 __all__ = ['aes', 'layer']
 
+from lets_plot._type_utils import LazyModule
 from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
 
+geopandas = LazyModule('geopandas')
 
 def aes(x=None, y=None, **kwargs):
     """
@@ -399,9 +401,8 @@ class PlotSpec(FeatureSpec):
                 if other.props()['geom'] == 'livemap':
                     plot.__is_livemap = True
 
-                from lets_plot.plot.util import is_geo_data_frame  # local import to break circular reference
-                if is_geo_data_frame(other.props().get('data')) \
-                        or is_geo_data_frame(other.props().get('map')):
+                if geopandas.lazy_is_instance(other.props().get('data'), 'GeoDataFrame') \
+                        or geopandas.lazy_is_instance(other.props().get('map'), 'GeoDataFrame'):
                     if plot.__crs_initialized:
                         if plot.__crs != other.props().get('use_crs'):
                             raise ValueError(
@@ -798,7 +799,7 @@ class LayerSpec(FeatureSpec):
         super().__init__('layer', name=None, **kwargs)
 
     def before_append(self, is_livemap):
-        from .util import normalize_map_join, is_geo_data_frame, auto_join_geo_names, geo_data_frame_to_crs, \
+        from .util import normalize_map_join, auto_join_geo_names, geo_data_frame_to_crs, \
             get_geo_data_frame_meta
         from lets_plot.geo_data_internals.utils import is_geocoder
 
@@ -828,7 +829,7 @@ class LayerSpec(FeatureSpec):
                 else:
                     raise ValueError("Geocoding doesn't provide geometries for geom_{}".format(name))
 
-        if is_geo_data_frame(map):
+        if geopandas.lazy_is_instance(map, 'GeoDataFrame'):
             # map = geo_data_frame_to_crs(map, self.props().get('use_crs'))
             use_crs = self.props().get('use_crs')
             if use_crs != "provided":

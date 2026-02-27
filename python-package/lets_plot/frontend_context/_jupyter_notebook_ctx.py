@@ -4,13 +4,8 @@
 #
 from typing import Dict
 
-try:
-    from IPython.display import display_html
-except ImportError:
-    display_html = None
-
-from ._frontend_ctx import FrontendContext
 from ._dynamic_configure_html import generate_dynamic_configure_html
+from ._frontend_ctx import FrontendContext
 from .. import _kbridge as kbr
 
 
@@ -38,6 +33,7 @@ class JupyterNotebookContext(FrontendContext):
         self.height100pct = height100pct
 
     def configure(self, verbose: bool):
+        from IPython.display import display_html
         html = generate_dynamic_configure_html(offline=not self.connected, verbose=verbose)
         # noinspection PyTypeChecker
         display_html(html, raw=True)
