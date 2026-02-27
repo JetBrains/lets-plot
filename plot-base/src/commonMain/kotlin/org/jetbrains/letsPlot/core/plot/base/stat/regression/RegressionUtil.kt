@@ -115,13 +115,3 @@ fun averageByX(xs: List<Double?>, ys: List<Double?>): Pair<DoubleArray, DoubleAr
     val res = averageByX(tp)
     return Pair(res.first.toDoubleArray(), res.second.toDoubleArray())
 }
-
-fun smoothingMethodLabel(method: SmoothStat.Method): String {
-    return when (method) {
-        SmoothStat.Method.LM -> "lm"
-        SmoothStat.Method.LOESS -> "loess"
-        SmoothStat.Method.GLM -> "glm"
-        SmoothStat.Method.GAM -> "gam"
-        SmoothStat.Method.RLM -> "rlm"
-    }
-}
