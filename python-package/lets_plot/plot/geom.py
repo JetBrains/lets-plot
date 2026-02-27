@@ -9071,7 +9071,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
         Symmetrically shorten the bracket by shifting both ends toward the center.
         Expect values between 0 and 1, where 0 corresponds to no shortening and 1 to a fully collapsed bracket.
     tiplength_unit : {'res', 'identity', 'size', 'px'}, default='size'
-        Unit for ``tiplength_start`` and ``tiplength_end`` aesthetics.
+        Unit for ``lenstart`` and ``lenend`` aesthetics.
         Possible values:
 
         - 'res': the unit equals the smallest distance between data points along the corresponding axis;
@@ -9121,8 +9121,8 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
     - segment_color : color of the bracket line (the segments forming the bracket).
     - segment_size : width of the bracket line (the segments forming the bracket).
     - segment_alpha : transparency level of the bracket line. Accept values between 0 and 1.
-    - tiplength_start : length of the tip at the bracket start (at ``xmin`` for horizontal brackets, or ``ymin`` for vertical).
-    - tiplength_end : length of the tip at the bracket end (at ``xmax`` for horizontal brackets, or ``ymax`` for vertical).
+    - lenstart : length of the tip at the bracket start (at ``xmin`` for horizontal brackets, or ``ymin`` for vertical).
+    - lenend : length of the tip at the bracket end (at ``xmax`` for horizontal brackets, or ``ymax`` for vertical).
 
     Examples
     --------
@@ -9179,7 +9179,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
             geom_violin(aes(fill='y'), alpha=.25) + \\
             geom_sina(seed=42) + \\
             geom_bracket(aes(x='x', ymin='ymin', ymax='ymax', label='label'), data=bracket_data,
-                         tiplength_start=-.1, tiplength_end=-.1, tiplength_unit='identity', vjust=2.2,
+                         lenstart=-.1, lenend=-.1, tiplength_unit='identity', vjust=2.2,
                          color='maroon', size=9, segment_size=1.25)
 
     """
@@ -9269,7 +9269,7 @@ def geom_bracket_dodge(mapping=None, *, data=None, position=None, show_legend=No
         Symmetrically shorten the bracket by shifting both ends toward the center.
         Expect values between 0 and 1, where 0 corresponds to no shortening and 1 to a fully collapsed bracket.
     tiplength_unit : {'res', 'identity', 'size', 'px'}, default='size'
-        Unit for ``tiplength_start`` and ``tiplength_end`` aesthetics.
+        Unit for ``lenstart`` and ``lenend`` aesthetics.
         Possible values:
 
         - 'res': the unit equals the smallest distance between data points along the corresponding axis;
@@ -9281,7 +9281,7 @@ def geom_bracket_dodge(mapping=None, *, data=None, position=None, show_legend=No
         Width used to compute bracket positions.
         Expected to match the dodge width used by other layers for proper alignment.
     ngroup : int
-        Total number of dodged groups per category; used to interpret ``dodge_start``/``dodge_end`` indices.
+        Total number of dodged groups per category; used to interpret ``istart``/``iend`` indices.
         By default, this value is inferred from the data when possible, but can be set explicitly if needed.
     nudge_unit : {'identity', 'size', 'px'}, default='identity'
         Units for x and y nudging.
@@ -9310,8 +9310,8 @@ def geom_bracket_dodge(mapping=None, *, data=None, position=None, show_legend=No
 
     - x or y : primary axis category for horizontal or vertical brackets, respectively.
     - y or x : bracket level (the height/position at which the bracket is drawn) for horizontal or vertical brackets, respectively.
-    - dodge_start : index of the dodged group at the bracket start. Accept integer values between 0 and ``ngroup - 1``.
-    - dodge_end : index of the dodged group at the bracket end. Accept integer values between 0 and ``ngroup - 1``.
+    - istart : index of the dodged group at the bracket start. Accept integer values between 0 and ``ngroup - 1``.
+    - iend : index of the dodged group at the bracket end. Accept integer values between 0 and ``ngroup - 1``.
     - alpha : transparency level of a layer. Accept values between 0 and 1.
     - color (colour) : color of the geometry. For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
     - size : font size.
@@ -9326,8 +9326,8 @@ def geom_bracket_dodge(mapping=None, *, data=None, position=None, show_legend=No
     - segment_color : color of the bracket line (the segments forming the bracket).
     - segment_size : width of the bracket line (the segments forming the bracket).
     - segment_alpha : transparency level of the bracket line. Accept values between 0 and 1.
-    - tiplength_start : length of the tip at the bracket start (at ``dodge_start``).
-    - tiplength_end : length of the tip at the bracket end (at ``dodge_end``).
+    - lenstart : length of the tip at the bracket start (at ``istart``).
+    - lenend : length of the tip at the bracket end (at ``iend``).
 
     Examples
     --------
@@ -9361,7 +9361,7 @@ def geom_bracket_dodge(mapping=None, *, data=None, position=None, show_legend=No
             geom_boxplot(aes(fill='g'), alpha=.25) + \\
             geom_point(position=position_jitterdodge(jitter_width=.2, jitter_height=0, seed=42),
                        shape=1, size=2, alpha=.25, show_legend=False) + \\
-            geom_bracket_dodge(aes(x='x', y='y', dodge_start='start', dodge_end='end', label='label'), data=bracket_data)
+            geom_bracket_dodge(aes(x='x', y='y', istart='start', iend='end', label='label'), data=bracket_data)
 
     """
     return _geom('bracket_dodge',
