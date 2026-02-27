@@ -8,22 +8,18 @@ package org.jetbrains.letsPlot.core.plot.base.stat.regression
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.ForsythePolynomialGenerator
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.PolynomialFunction
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.times
-import org.jetbrains.letsPlot.core.plot.base.stat.regression.RsquaredCI.ciRsquaredLikeConfintrFromR2
 
 class PolynomialRegression private constructor (
     n: Int,
     meanX: Double,
     sumXX: Double,
     model: (Double) -> Double,
+    xVals: DoubleArray,
+    yVals: DoubleArray,
     standardErrorOfEstimate: Double,
     tCritical: Double,
-    eq: List<Double>,
-    r2: Double,
-    aic: Double,
-    bic: Double,
-    fTest: RegressionEvaluator.Companion.FTestResult,
-    r2ConfInt: R2ConfIntResult,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic, fTest, r2ConfInt) {
+    eq: List<Double>
+) : RegressionEvaluator(n, meanX, sumXX, model, xVals, yVals, standardErrorOfEstimate, tCritical, eq) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int): PolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -47,22 +43,16 @@ class PolynomialRegression private constructor (
             val polynomial = calculatePolynomial(deg, xVals, yVals)
             val model: (Double) -> Double = { x -> polynomial.value(x) }
 
-            val r2 = calcRSquared(xVals, yVals, model)
-            val rss = calcRss(xVals, yVals, model)
-
             return PolynomialRegression(
                 n,
                 meanX,
                 sumXX,
                 model,
+                xVals,
+                yVals,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
-                polynomial.getCoefficients(),
-                r2,
-                calcAic(n, rss, deg + 2),
-                calcBic(n, rss, deg + 2),
-                calcOverallModelFTest(n, deg + 1, r2),
-                ciRsquaredLikeConfintrFromR2(n, deg + 1, r2, confidenceLevel)
+                polynomial.getCoefficients()
             )
         }
 

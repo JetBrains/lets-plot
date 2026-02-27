@@ -12,6 +12,13 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame.Variable.Source.STAT
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStat.Method
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStatSummaryUtil.calcAdjustedRSquared
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStatSummaryUtil.calcAic
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStatSummaryUtil.calcBic
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStatSummaryUtil.calcOverallModelFTest
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStatSummaryUtil.calcRSquared
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStatSummaryUtil.calcRss
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStatSummaryUtil.calcR2ConfInt
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.LinearRegression
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.LocalPolynomialRegression
 import org.jetbrains.letsPlot.core.plot.base.stat.regression.PolynomialRegression
@@ -109,23 +116,27 @@ class SmoothStatSummary(
             )
         } ?: return DataFrame.Builder.emptyFrame()
 
+        val r2 = calcRSquared(regression.xVals, regression.yVals, regression.model)
+        val rss = calcRss(regression.xVals, regression.yVals, regression.model)
+        val fTest = calcOverallModelFTest(regression.n, regression.eq.size, r2)
+        val r2ConfInt = calcR2ConfInt(regression.n, regression.eq.size, r2, confidenceLevel)
 
         val dfb = DataFrame.Builder()
             .put(Stats.X, listOf(0.0))
             .put(Stats.Y, listOf(0.0))
-            .put(Stats.R2, listOf(regression.r2))
-            .put(Stats.R2_ADJ, listOf(regression.adjR2))
+            .put(Stats.R2, listOf(r2))
+            .put(Stats.R2_ADJ, listOf(calcAdjustedRSquared(regression.n, regression.eq.size, r2)))
             .put(Stats.N, listOf(regression.n))
             .put(Stats.METHOD, listOf(smoothingMethodLabel(smoothingMethod)))
-            .put(Stats.AIC, listOf(regression.aic))
-            .put(Stats.BIC, listOf(regression.bic))
-            .put(Stats.F, listOf(regression.fTest.fValue))
-            .put(Stats.DF1, listOf(regression.fTest.df1))
-            .put(Stats.DF2, listOf(regression.fTest.df2))
-            .put(Stats.P, listOf(regression.fTest.pValue))
-            .put(Stats.CI_LEVEL, listOf(regression.r2ConfInt.level))
-            .put(Stats.CI_LOW, listOf(regression.r2ConfInt.low))
-            .put(Stats.CI_HIGH, listOf(regression.r2ConfInt.high))
+            .put(Stats.AIC, listOf(calcAic(regression.n, rss, regression.eq.size)))
+            .put(Stats.BIC, listOf(calcBic(regression.n, rss, regression.eq.size)))
+            .put(Stats.F, listOf(fTest.fValue))
+            .put(Stats.DF1, listOf(fTest.df1))
+            .put(Stats.DF2, listOf(fTest.df2))
+            .put(Stats.P, listOf(fTest.pValue))
+            .put(Stats.CI_LEVEL, listOf(r2ConfInt.level))
+            .put(Stats.CI_LOW, listOf(r2ConfInt.low))
+            .put(Stats.CI_HIGH, listOf(r2ConfInt.high))
 
         val vars = myVariables ?: initVariables(regression.eq.size)
         regression.eq.forEachIndexed { index, coef ->

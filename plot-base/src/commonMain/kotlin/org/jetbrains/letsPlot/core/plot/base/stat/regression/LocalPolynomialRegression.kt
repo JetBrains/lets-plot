@@ -7,20 +7,17 @@ package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.LoessInterpolator
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.PolynomialSplineFunction
-import org.jetbrains.letsPlot.core.plot.base.stat.regression.RegressionEvaluator.Companion.FTestResult
 
 class LocalPolynomialRegression private constructor (
     n: Int,
     meanX: Double,
     sumXX: Double,
     model: (Double) -> Double,
+    xVals: DoubleArray,
+    yVals: DoubleArray,
     standardErrorOfEstimate: Double,
-    tCritical: Double,
-    r2: Double,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, emptyList(), r2, Double.NaN, Double.NaN,
-    FTestResult(Double.NaN, Double.NaN, Double.NaN, Double.NaN),
-    R2ConfIntResult(Double.NaN, Double.NaN, Double.NaN)
-) {
+    tCritical: Double
+) : RegressionEvaluator(n, meanX, sumXX, model, xVals, yVals, standardErrorOfEstimate, tCritical, emptyList()) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, bandwidth: Double): LocalPolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -48,9 +45,10 @@ class LocalPolynomialRegression private constructor (
                 meanX,
                 sumXX,
                 model,
+                xVals,
+                yVals,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
-                calcTCritical(degreesOfFreedom, confidenceLevel),
-                calcRSquared(xVals, yVals, model),
+                calcTCritical(degreesOfFreedom, confidenceLevel)
             )
         }
 

@@ -5,23 +5,17 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
-import org.jetbrains.letsPlot.core.plot.base.stat.regression.RsquaredCI.ciRsquaredLikeConfintrFromR2
-
 class LinearRegression private constructor (
     n: Int,
     meanX: Double,
     sumXX: Double,
     model: (Double) -> Double,
+    xVals: DoubleArray,
+    yVals: DoubleArray,
     standardErrorOfEstimate: Double,
     tCritical: Double,
     eq: List<Double>,
-    r2: Double,
-    aic: Double,
-    bic: Double,
-    fTest: RegressionEvaluator.Companion.FTestResult,
-    r2ConfInt: R2ConfIntResult
-
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2, aic, bic, fTest, r2ConfInt) {
+) : RegressionEvaluator(n, meanX, sumXX, model, xVals, yVals, standardErrorOfEstimate, tCritical, eq) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
             check(xs, ys, confidenceLevel)
@@ -47,23 +41,16 @@ class LinearRegression private constructor (
             val intercept = meanY - slope * meanX
             val model: (Double) -> Double = { x -> slope * x + intercept }
 
-            val k = 3 // number of predictors (slope, intercept, sigma^2)
-            val rss = calcRss(xVals, yVals, model)
-            val r2 = calcRSquared(xVals, yVals, model)
-
             return LinearRegression(
                 n,
                 meanX,
                 sumXX,
                 model,
+                xVals,
+                yVals,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
-                listOf(intercept, slope),
-                r2,
-                calcAic(n, rss, k),
-                calcBic(n, rss, k),
-                calcOverallModelFTest(n, 2, r2),
-                ciRsquaredLikeConfintrFromR2(n, 2, r2, confidenceLevel)
+                listOf(intercept, slope)
             )
         }
     }
