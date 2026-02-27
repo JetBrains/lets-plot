@@ -24,11 +24,9 @@ class BracketDodgeGeom : BracketGeom() {
         ctx: GeomContext
     ) {
         if (groupCount == null) {
-            val maxIndex = aesthetics.dataPoints().mapNotNull { p ->
-                p.finiteOrNull(Aes.ISTART, Aes.IEND)
-            }.maxOfOrNull { (startIndex, endIndex) ->
-                max(startIndex, endIndex)
-            }
+            val maxIndex = aesthetics.dataPoints()
+                .mapNotNull { p -> p.finiteOrNull(Aes.ISTART, Aes.IEND) }
+                .maxOfOrNull { (startIndex, endIndex) -> max(startIndex, endIndex) }
             if (maxIndex != null) {
                 groupCount = maxIndex.roundToInt() + 1
             }
@@ -41,8 +39,22 @@ class BracketDodgeGeom : BracketGeom() {
         val (x, startIndex, endIndex) = p.finiteOrNull(Aes.X, Aes.ISTART, Aes.IEND) ?: return null
         val resolution = ctx.getResolution(Aes.X)
         if (groupCount == null || !SeriesUtil.isFinite(dodgeWidth)) return null
-        val xmin = BaseDodgePos.position(x, startIndex.roundToInt(), x, groupCount!!, dodgeWidth, resolution)
-        val xmax = BaseDodgePos.position(x, endIndex.roundToInt(), x, groupCount!!, dodgeWidth, resolution)
+        val xmin = BaseDodgePos.position(
+            coord = x,
+            slotIndex = startIndex.roundToInt(),
+            center = x,
+            groupCount = groupCount!!,
+            size = dodgeWidth,
+            dataResolution = resolution
+        )
+        val xmax = BaseDodgePos.position(
+            coord = x,
+            slotIndex = endIndex.roundToInt(),
+            center = x,
+            groupCount!!,
+            size = dodgeWidth,
+            dataResolution = resolution
+        )
         return Pair(xmin, xmax)
     }
 
