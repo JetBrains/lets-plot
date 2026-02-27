@@ -49,12 +49,12 @@ def _standardize_value(v):
         # python types
         if v is None:
             return v
+        if isinstance(v, bool):
+            return bool(v)
         if isinstance(v, int):
             return float(v)
         if isinstance(v, float):
             return float(v) if math.isfinite(v) else None  # nan/inf to None (Gson does not handle them well)
-        if isinstance(v, bool):
-            return bool(v)
         if isinstance(v, str):
             return str(v)
         if isinstance(v, datetime):
@@ -71,9 +71,9 @@ def _standardize_value(v):
         if isinstance(v, list):
             return [_standardize_value(elem) for elem in v]
         if isinstance(v, tuple):
-            return tuple(_standardize_value(elem) for elem in v)
+            return [_standardize_value(elem) for elem in v]
         if isinstance(v, set):
-            return {_standardize_value(elem) for elem in v}
+            return [_standardize_value(elem) for elem in v]
         if isinstance(v, dict):
             return standardize_dict(v)
 

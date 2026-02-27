@@ -9,6 +9,23 @@ import numpy as np
 from lets_plot._type_utils import _standardize_value
 
 
+def test_standardize_common_value_types():
+    # Test that common types are standardized correctly
+    assert _standardize_value(None) is None
+    assert _standardize_value(42) == 42.0
+    assert _standardize_value(3.14) == 3.14
+    assert _standardize_value(True) is True
+    assert _standardize_value(False) is False
+    assert _standardize_value("hello") == "hello"
+
+
+def test_standardize_common_containers():
+    # Test that common containers are standardized correctly
+    assert _standardize_value([1, 2, 3]) == [1.0, 2.0, 3.0]
+    assert _standardize_value((4, 5)) == [4.0, 5.0]
+    assert _standardize_value({6, 7}) == [6.0, 7.0]
+    assert _standardize_value({'a': 8, 'b': 9}) == {'a': 8.0, 'b': 9.0}
+
 def test_standardize_value_returns_float_for_numeric_and_temporal():
     # Python numeric types
     assert isinstance(_standardize_value(42), float)
