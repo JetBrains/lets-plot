@@ -22,8 +22,12 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
@@ -52,8 +56,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -136,13 +138,15 @@ object AesInitValue {
         VALUE_MAP[RADIUS] = 0.0
         VALUE_MAP[SLICE] = 0.0
         VALUE_MAP[EXPLODE] = 0.0
+        VALUE_MAP[ISTART] = 0.0
+        VALUE_MAP[IEND] = 0.0
         VALUE_MAP[SIZE_START] = 0.0
         VALUE_MAP[SIZE_END] = 0.0
         VALUE_MAP[STROKE_START] = 0.0
         VALUE_MAP[STROKE_END] = 0.0
         VALUE_MAP[POINT_SIZE] = 0.5
-        VALUE_MAP[TIP_LENGTH_START] = 5.0
-        VALUE_MAP[TIP_LENGTH_END] = 5.0
+        VALUE_MAP[LENSTART] = 5.0
+        VALUE_MAP[LENEND] = 5.0
         VALUE_MAP[POINT_STROKE] = 0.5
         VALUE_MAP[SEGMENT_COLOR] = DEFAULT_SEGMENT_COLOR
         VALUE_MAP[SEGMENT_SIZE] = 0.5

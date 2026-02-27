@@ -22,8 +22,12 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
@@ -52,8 +56,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -133,12 +135,14 @@ object DefaultNaValue {
         VALUE_MAP.put(RADIUS, 0.0)
         VALUE_MAP.put(SLICE, 0.0)
         VALUE_MAP.put(EXPLODE, 0.0)
+        VALUE_MAP.put(ISTART, 0.0)
+        VALUE_MAP.put(IEND, 0.0)
         VALUE_MAP.put(SIZE_START, 0.0)
         VALUE_MAP.put(SIZE_END, 0.0)
         VALUE_MAP.put(STROKE_START, 0.0)
         VALUE_MAP.put(STROKE_END, 0.0)
-        VALUE_MAP.put(TIP_LENGTH_START, 5.0)
-        VALUE_MAP.put(TIP_LENGTH_END, 5.0)
+        VALUE_MAP.put(LENSTART, 5.0)
+        VALUE_MAP.put(LENEND, 5.0)
         VALUE_MAP.put(POINT_SIZE, AesScaling.sizeFromCircleDiameter(1.0))
         VALUE_MAP.put(POINT_STROKE, 0.0)
         VALUE_MAP.put(SEGMENT_COLOR, Color.GRAY)

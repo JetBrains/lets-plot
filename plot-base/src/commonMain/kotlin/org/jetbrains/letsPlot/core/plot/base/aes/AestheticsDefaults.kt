@@ -204,6 +204,7 @@ class AestheticsDefaults private constructor(
                 GeomKind.RASTER,
                 GeomKind.IMAGE,
                 GeomKind.BRACKET,
+                GeomKind.BRACKET_DODGE,
                 GeomKind.LIVE_MAP -> base(geomTheme)
             }
         }

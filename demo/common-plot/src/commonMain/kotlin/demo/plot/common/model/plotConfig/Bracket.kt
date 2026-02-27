@@ -12,8 +12,8 @@ class Bracket {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
             basic(),
-            grouped(),
             negativeTips(),
+            bracketDodge(),
         )
     }
 
@@ -26,7 +26,7 @@ class Bracket {
                 'y': 'miles per gallon'
               },
               'ggtitle': {
-                'text': 'Basic demo'
+                'text': 'Bracket basic'
               },
               'layers': [
                 {
@@ -45,58 +45,6 @@ class Bracket {
                     'max': ['Asia', 'Europe'],
                     'y': [48, 51],
                     'p': [0.01, 0.02]
-                  }
-                }
-              ]
-            }
-        """.trimIndent()
-
-        val plotSpec = HashMap(parsePlotSpec(spec))
-        plotSpec["data"] = AutoMpg.df
-        return plotSpec
-
-    }
-
-    private fun grouped(): MutableMap<String, Any> {
-        val spec = """
-            {
-              'kind': 'plot',
-              'mapping': {
-                'x': 'number of cylinders',
-                'y': 'miles per gallon',
-                'fill': 'origin of car'
-              },
-              'data_meta': {
-                'mapping_annotations': [
-                  {
-                    'aes': 'x',
-                    'annotation': 'as_discrete'
-                  }
-                ]
-              },
-              'ggtitle': {
-                'text': 'Grouping demo'
-              },
-              'layers': [
-                {
-                  'geom': 'boxplot'
-                },
-                {
-                  'geom': 'bracket',
-                  'mapping': {
-                    'xmin': 'min',
-                    'xmax': 'max',
-                    'y': 'y',
-                    'label': 'p',
-                    'color': 'g'
-                  },
-                  'position': {'name': 'dodgev'},
-                  'data': {
-                    'min': [6, 6, 6, 6, 6, 6],
-                    'max': [4, 3, 4, 3, 4, 3],
-                    'y': [53, 61, 53, 61, 53, 61],
-                    'p': [0.01, 0.04, 0.02, 0.05, 0.03, 0.06],
-                    'g': ['US', 'US', 'Asia', 'Asia', 'Europe', 'Europe']
                   }
                 }
               ]
@@ -132,14 +80,66 @@ class Bracket {
                     'y': 'y',
                     'label': 'p'
                   },
-                  'tip_length_start': -5,
-                  'tip_length_end': -5,
+                  'lenstart': -0.5,
+                  'lenend': -0.5,
+                  'tiplength_unit': 'res',
                   'vjust': 2,
                   'data': {
                     'min': ['US', 'US'],
                     'max': ['Asia', 'Europe'],
                     'y': [5, 2],
                     'p': [0.01, 0.02]
+                  }
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = AutoMpg.df
+        return plotSpec
+
+    }
+
+    private fun bracketDodge(): MutableMap<String, Any> {
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'number of cylinders',
+                'y': 'miles per gallon',
+                'fill': 'origin of car'
+              },
+              'data_meta': {
+                'mapping_annotations': [
+                  {
+                    'aes': 'x',
+                    'annotation': 'as_discrete'
+                  }
+                ]
+              },
+              'ggtitle': {
+                'text': 'Bracket dodge basic'
+              },
+              'layers': [
+                {
+                  'geom': 'boxplot'
+                },
+                {
+                  'geom': 'bracket_dodge',
+                  'mapping': {
+                    'x': 'number of cylinders',
+                    'y': 'y',
+                    'istart': 'start',
+                    'iend': 'end',
+                    'label': 'p'
+                  },
+                  'data': {
+                    'number of cylinders': [6, 6, 6, 4, 4, 4],
+                    'start': [0, 0, 1, 0, 0, 1],
+                    'end': [1, 2, 2, 1, 2, 2],
+                    'y': [48, 52, 56, 48, 52, 56],
+                    'p': [0.01, 0.02, 0.03, 0.04, 0.05, 0.06]
                   }
                 }
               ]
