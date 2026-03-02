@@ -13,12 +13,10 @@ class PolynomialRegression private constructor (
     xVals: DoubleArray,
     yVals: DoubleArray,
     model: (Double) -> Double,
-    meanX: Double,
-    sumXX: Double,
     standardErrorOfEstimate: Double,
     tCritical: Double,
     eq: List<Double>
-) : RegressionEvaluator(xVals, yVals, model, meanX, sumXX, standardErrorOfEstimate, tCritical, eq) {
+) : RegressionEvaluator(xVals, yVals, model, standardErrorOfEstimate, tCritical, eq) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int): PolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -34,10 +32,6 @@ class PolynomialRegression private constructor (
                 return null
             }
 
-            // Calculate standard stats
-            val meanX = xVals.average()
-            val sumXX = sumOfSquaredDeviations(xVals, meanX)
-
             // Prepare model
             val polynomial = calculatePolynomial(deg, xVals, yVals)
             val model: (Double) -> Double = { x -> polynomial.value(x) }
@@ -46,8 +40,6 @@ class PolynomialRegression private constructor (
                 xVals,
                 yVals,
                 model,
-                meanX,
-                sumXX,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
                 polynomial.getCoefficients()
@@ -73,10 +65,10 @@ class PolynomialRegression private constructor (
             for (i in xVals.indices) {
                 val x = xVals[i]
                 val y = yVals[i]
-                val pval = p.value(x)
+                val pVal = p.value(x)
 
-                ww += pval * pval
-                w += y * pval
+                ww += pVal * pVal
+                w += y * pVal
             }
 
             return w / ww

@@ -12,11 +12,9 @@ class LocalPolynomialRegression private constructor (
     xVals: DoubleArray,
     yVals: DoubleArray,
     model: (Double) -> Double,
-    meanX: Double,
-    sumXX: Double,
     standardErrorOfEstimate: Double,
     tCritical: Double
-) : RegressionEvaluator(xVals, yVals, model, meanX, sumXX, standardErrorOfEstimate, tCritical, emptyList()) {
+) : RegressionEvaluator(xVals, yVals, model, standardErrorOfEstimate, tCritical, emptyList()) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, bandwidth: Double): LocalPolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -31,10 +29,6 @@ class LocalPolynomialRegression private constructor (
                 return null
             }
 
-            // Calculate standard stats
-            val meanX = xVals.average()
-            val sumXX = sumOfSquaredDeviations(xVals, meanX)
-
             // Prepare model
             val polynomial = getPolynomial(xVals, yVals, bandwidth)
             val model: (Double) -> Double = { x -> polynomial.value(x)!! }
@@ -43,8 +37,6 @@ class LocalPolynomialRegression private constructor (
                 xVals,
                 yVals,
                 model,
-                meanX,
-                sumXX,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel)
             )

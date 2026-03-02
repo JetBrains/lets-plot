@@ -9,12 +9,10 @@ class LinearRegression private constructor (
     xVals: DoubleArray,
     yVals: DoubleArray,
     model: (Double) -> Double,
-    meanX: Double,
-    sumXX: Double,
     standardErrorOfEstimate: Double,
     tCritical: Double,
     eq: List<Double>,
-) : RegressionEvaluator(xVals, yVals, model, meanX, sumXX, standardErrorOfEstimate, tCritical, eq) {
+) : RegressionEvaluator(xVals, yVals, model, standardErrorOfEstimate, tCritical, eq) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
             check(xs, ys, confidenceLevel)
@@ -44,8 +42,6 @@ class LinearRegression private constructor (
                 xVals,
                 yVals,
                 model,
-                meanX,
-                sumXX,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
                 listOf(intercept, slope)

@@ -13,8 +13,6 @@ abstract class RegressionEvaluator protected constructor(
     private val xVals: DoubleArray,
     private val yVals: DoubleArray,
     private val model: (Double) -> Double,
-    private val meanX: Double,
-    private val sumXX: Double,
     private val standardErrorOfEstimate: Double,
     private val tCritical: Double,
     val eq: List<Double>
@@ -44,6 +42,10 @@ abstract class RegressionEvaluator protected constructor(
         // https://www2.stat.duke.edu/~tjl13/s101/slides/unit6lec3H.pdf
         // Stat symbols:
         // https://brownmath.com/swt/symbol.htm
+
+        // Calculate standard stats
+        val meanX = xVals.average()
+        val sumXX = sumOfSquaredDeviations(xVals, meanX)
 
         // standard error of predicted means
         val se = run {
