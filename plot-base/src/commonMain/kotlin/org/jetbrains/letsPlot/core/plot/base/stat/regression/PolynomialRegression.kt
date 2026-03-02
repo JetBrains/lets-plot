@@ -10,16 +10,15 @@ import org.jetbrains.letsPlot.core.plot.base.stat.math3.PolynomialFunction
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.times
 
 class PolynomialRegression private constructor (
-    n: Int,
-    meanX: Double,
-    sumXX: Double,
-    model: (Double) -> Double,
     xVals: DoubleArray,
     yVals: DoubleArray,
+    model: (Double) -> Double,
+    meanX: Double,
+    sumXX: Double,
     standardErrorOfEstimate: Double,
     tCritical: Double,
     eq: List<Double>
-) : RegressionEvaluator(n, meanX, sumXX, model, xVals, yVals, standardErrorOfEstimate, tCritical, eq) {
+) : RegressionEvaluator(xVals, yVals, model, meanX, sumXX, standardErrorOfEstimate, tCritical, eq) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int): PolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -44,12 +43,11 @@ class PolynomialRegression private constructor (
             val model: (Double) -> Double = { x -> polynomial.value(x) }
 
             return PolynomialRegression(
-                n,
-                meanX,
-                sumXX,
-                model,
                 xVals,
                 yVals,
+                model,
+                meanX,
+                sumXX,
                 calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
                 calcTCritical(degreesOfFreedom, confidenceLevel),
                 polynomial.getCoefficients()
