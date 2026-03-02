@@ -13,7 +13,7 @@ abstract class RegressionEvaluator protected constructor(
     private val xVals: DoubleArray,
     private val yVals: DoubleArray,
     private val model: (Double) -> Double,
-    private val degreesOfFreedom: Double,
+    degreesOfFreedom: Double,
     private val confidenceLevel: Double,
     val eq: List<Double>
 ) {
@@ -25,6 +25,12 @@ abstract class RegressionEvaluator protected constructor(
     internal val bic by lazy { calcBic(xVals.size, rss, eq.size) }
     internal val fTest by lazy { calcOverallModelFTest(xVals.size, eq.size, r2) }
     internal val r2ConfInt by lazy { calcR2ConfInt(xVals.size, eq.size, r2, confidenceLevel) }
+
+    // Calculate standard stats
+    private val meanX = xVals.average()
+    private val sumXX = sumOfSquaredDeviations(xVals, meanX)
+    private val standardErrorOfEstimate = calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom)
+    private val tCritical = calcTCritical(degreesOfFreedom, confidenceLevel)
 
     fun value(x: Double): Double {
         return model(x)
@@ -39,16 +45,10 @@ abstract class RegressionEvaluator protected constructor(
         // Stat symbols:
         // https://brownmath.com/swt/symbol.htm
 
-        // Calculate standard stats
-        val meanX = xVals.average()
-        val sumXX = sumOfSquaredDeviations(xVals, meanX)
-        val standardErrorOfEstimate = calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom)
-        val tCritical = calcTCritical(degreesOfFreedom, confidenceLevel)
-
         // standard error of predicted means
         val se = run {
             val dxSquare = (x - meanX).pow(2)
-            standardErrorOfEstimate * sqrt(1.0 / xVals.size + dxSquare / sumXX)
+            standardErrorOfEstimate * sqrt(1.0 / n + dxSquare / sumXX)
         }
 
         // half-width of confidence interval for estimated mean y
