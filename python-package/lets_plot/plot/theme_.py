@@ -335,14 +335,17 @@ def theme(*,
         Position of the tag within the area defined by plot_tag_location. It can be one of the predefined anchor names,
         or a numeric pair [x, y], where each value is between 0 and 1. [0, 0] is bottom-left and [1, 1] is top-right.
 
-        When plot_tag_location='margin', only predefined position names are supported. Use hjust/vjust in element_text to fine-tune
+        When ``plot_tag_location='margin'``, only predefined position names are supported. Use ``hjust``/``vjust``
+        in `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to fine-tune
         the tag position within the margin.
     plot_tag_location : {'plot', 'panel', 'margin'}, default='plot'
         Area used for positioning the tag.
+
         - 'plot'   - the tag is positioned relative to the entire plot area without affecting layout.
         - 'panel'  - the tag is positioned relative to the panel (data) area without affecting layout.
         - 'margin' - the tag is placed in the plot margin area. Space for the tag is reserved by the layout,
-        so other plot elements are shifted to avoid overlap.
+          so other plot elements are shifted to avoid overlap.
+
     plot_tag_prefix : str, default=''
         Text added before the plot tag.
     plot_tag_suffix : str, default=''

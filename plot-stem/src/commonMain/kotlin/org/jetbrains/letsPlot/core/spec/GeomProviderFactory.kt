@@ -457,8 +457,26 @@ internal object GeomProviderFactory {
                 if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
                     geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
                 }
-                if (layerConfig.hasOwn(Option.Geom.Bracket.TIP_LENGTH_UNIT)) {
-                    geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIP_LENGTH_UNIT) ?: BracketGeom.DEF_TIP_LENGTH_UNIT
+                if (layerConfig.hasOwn(Option.Geom.Bracket.TIPLENGTH_UNIT)) {
+                    geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIPLENGTH_UNIT) ?: BracketGeom.DEF_TIPLENGTH_UNIT
+                }
+                geom
+            }
+
+            GeomKind.BRACKET_DODGE -> GeomProvider.bracketDodge {
+                val geom = BracketDodgeGeom()
+                applyTextOptions(layerConfig, geom, expFormat, tz)
+                if (layerConfig.hasOwn(Option.Geom.BracketDodge.DODGE_WIDTH)) {
+                    geom.dodgeWidth = layerConfig.getDouble(Option.Geom.BracketDodge.DODGE_WIDTH)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.BracketDodge.NGROUP)) {
+                    geom.groupCount = layerConfig.getInteger(Option.Geom.BracketDodge.NGROUP)
+                }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
+                    geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.TIPLENGTH_UNIT)) {
+                    geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIPLENGTH_UNIT) ?: BracketGeom.DEF_TIPLENGTH_UNIT
                 }
                 geom
             }

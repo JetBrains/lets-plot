@@ -12,9 +12,9 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
-class BracketGeom : TextGeom() {
-    var bracketShorten: Double = 1.0
-    var tipLengthUnit: DimensionUnit = DEF_TIP_LENGTH_UNIT
+open class BracketGeom : TextGeom() {
+    var bracketShorten: Double = 0.0
+    var tipLengthUnit: DimensionUnit = DEF_TIPLENGTH_UNIT
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineLegendKeyElementFactory(TextUtil::toSegmentAes)
@@ -30,7 +30,7 @@ class BracketGeom : TextGeom() {
         val linesHelper = LinesHelper(pos, coord, ctx)
         val pathData = createPaths(
             aesthetics.dataPoints().map(TextUtil::toSegmentAes),
-            bracketBuilder(linesHelper, bracketShorten, tipLengthUnit)
+            bracketBuilder(linesHelper, ctx)
         )
         val clientPathData = linesHelper.toClientPaths(pathData)
         val svgPath = linesHelper.renderPaths(clientPathData, filled = false)
@@ -41,33 +41,43 @@ class BracketGeom : TextGeom() {
             .setFormatter(formatter)
             .setNaValue(naValue)
             .setSizeUnit(sizeUnit)
-            .toLocation(::toLocation)
+            .toLocation(toLocation(ctx))
         textHelper.createSvgComponents(flipAngle = true, labelNudge = ::labelNudge).forEach(root::add)
+    }
+
+    protected open fun getLimits(p: DataPointAesthetics, ctx: GeomContext): Pair<Double, Double>? {
+        return p.finiteOrNull(Aes.XMIN, Aes.XMAX)
+    }
+
+    private fun bracketBuilder(helper: LinesHelper, ctx: GeomContext): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
+        val (xmin, xmax) = getLimits(p, ctx) ?: return@builder null
+        val y = p.finiteOrNull(Aes.Y) ?: return@builder null
+        val tipLengthStart = p.finiteOrNull(Aes.LENSTART) ?: return@builder null
+        val tipLengthEnd = p.finiteOrNull(Aes.LENEND) ?: return@builder null
+        val x = (xmin + xmax) / 2.0
+        val bracketLength = xmax - xmin
+        val xStart = x - (1 - bracketShorten) * bracketLength / 2.0
+        val xEnd = x + (1 - bracketShorten) * bracketLength / 2.0
+        val tipLengthUnitResolution = helper.getUnitResolution(tipLengthUnit, Aes.Y)
+        listOf(
+            DoubleVector(xStart, y - tipLengthStart * tipLengthUnitResolution),  // Left tip end
+            DoubleVector(xStart, y),                                                 // Bracket left end
+            DoubleVector(xEnd, y),                                                   // Bracket right end
+            DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnitResolution),      // Right tip end
+        )
+    }
+
+    private fun toLocation(ctx: GeomContext): (DataPointAesthetics) -> DoubleVector? = location@{ p ->
+        val y = p.finiteOrNull(Aes.Y) ?: return@location null
+        val (xmin, xmax) = getLimits(p, ctx) ?: return@location null
+        DoubleVector((xmin + xmax) / 2.0, y)
     }
 
     companion object {
         const val HANDLES_GROUPS = false
 
-        val DEF_TIP_LENGTH_UNIT = DimensionUnit.SIZE
-
-        private fun bracketBuilder(helper: LinesHelper, bracketShorten: Double, tipLengthUnit: DimensionUnit): (DataPointAesthetics) -> List<DoubleVector>? = builder@{ p ->
-            val xMin = p.finiteOrNull(Aes.XMIN) ?: return@builder null
-            val xMax = p.finiteOrNull(Aes.XMAX) ?: return@builder null
-            val y = p.finiteOrNull(Aes.Y) ?: return@builder null
-            val tipLengthStart = p.finiteOrNull(Aes.TIP_LENGTH_START) ?: return@builder null
-            val tipLengthEnd = p.finiteOrNull(Aes.TIP_LENGTH_END) ?: return@builder null
-            val x = (xMin + xMax) / 2.0
-            val bracketLength = xMax - xMin
-            val xStart = x - bracketShorten * bracketLength / 2.0
-            val xEnd = x + bracketShorten * bracketLength / 2.0
-            val tipLengthUnitResolution = helper.getUnitResolution(tipLengthUnit, Aes.Y)
-            listOf(
-                DoubleVector(xStart, y - tipLengthStart * tipLengthUnitResolution),
-                DoubleVector(xStart, y),
-                DoubleVector(xEnd, y),
-                DoubleVector(xEnd, y - tipLengthEnd * tipLengthUnitResolution),
-            )
-        }
+        const val DEF_DODGE_WIDTH = 0.95
+        val DEF_TIPLENGTH_UNIT = DimensionUnit.SIZE
 
         private fun createPaths(
             dataPoints: Iterable<DataPointAesthetics>,
@@ -78,11 +88,6 @@ class BracketGeom : TextGeom() {
                     map { coord -> PathPoint(p, coord) }?.
                     let { pathPoints -> PathData.create(pathPoints) }
             }
-        }
-
-        private fun toLocation(p: DataPointAesthetics): DoubleVector? {
-            val (xmin, xmax, y) = p.finiteOrNull(Aes.XMIN, Aes.XMAX, Aes.Y) ?: return null
-            return DoubleVector((xmin + xmax) / 2.0, y)
         }
 
         private fun labelNudge(location: DoubleVector, textSize: DoubleVector): DoubleVector =

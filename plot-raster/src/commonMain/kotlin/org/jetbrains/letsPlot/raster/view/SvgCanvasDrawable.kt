@@ -75,6 +75,9 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
         mapSvgSvgElement()
         return object : Registration() {
             override fun doRemove() {
+                nodeContainer?.root()?.set(SvgSvgElement())
+                nodeContainer = null
+
                 rootMapper.detachRoot()
 
                 svgCanvasPeer?.dispose()

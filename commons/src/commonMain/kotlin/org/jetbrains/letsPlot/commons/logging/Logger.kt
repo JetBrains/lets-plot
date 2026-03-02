@@ -9,3 +9,5 @@ interface Logger {
     fun error(e: Throwable, message: () -> String)
     fun info(message: () -> String)
 }
+
+val Any.identityString: String get() = "${this::class.simpleName}@${hashCode().toUInt().toString(16)}"

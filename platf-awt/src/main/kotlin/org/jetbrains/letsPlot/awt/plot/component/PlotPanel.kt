@@ -65,7 +65,7 @@ open class PlotPanel constructor(
             // Must be initialized before the first call to 'rebuildProvidedComponent()'.
             plotComponentContainer = JPanel(BorderLayout(0, 0))
                 .apply { isOpaque = false; border = null }
-                .also {
+                .apply {
                     // Extra cleanup on 'dispose'.
                     addContainerListener(object : ContainerAdapter() {
                         override fun componentRemoved(e: ContainerEvent) {

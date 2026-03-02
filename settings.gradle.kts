@@ -38,6 +38,7 @@ include("python-package-build")
 include("js-package")
 include("jvm-package:jvm-publish-common")
 include("jvm-package:jvm-publish-batik")
+include("jvm-package:jvm-publish-swing")
 include("jvm-package:jvm-publish-gis")
 include("jvm-package:jvm-publish-idea-plugin")
 

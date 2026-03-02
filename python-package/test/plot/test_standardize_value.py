@@ -9,6 +9,23 @@ import numpy as np
 from lets_plot._type_utils import _standardize_value
 
 
+def test_standardize_common_value_types():
+    # Test that common types are standardized correctly
+    assert _standardize_value(None) is None
+    assert _standardize_value(42) == 42.0
+    assert _standardize_value(3.14) == 3.14
+    assert _standardize_value(True) is True
+    assert _standardize_value(False) is False
+    assert _standardize_value("hello") == "hello"
+
+
+def test_standardize_common_containers():
+    # Test that common containers are standardized correctly
+    assert _standardize_value([1, 2, 3]) == [1.0, 2.0, 3.0]
+    assert _standardize_value((4, 5)) == [4.0, 5.0]
+    assert _standardize_value({6, 7}) == [6.0, 7.0]
+    assert _standardize_value({'a': 8, 'b': 9}) == {'a': 8.0, 'b': 9.0}
+
 def test_standardize_value_returns_float_for_numeric_and_temporal():
     # Python numeric types
     assert isinstance(_standardize_value(42), float)
@@ -219,3 +236,53 @@ def test_standardize_value_pandas_array():
 
     assert [True, None] == _standardize_value(pd.array([True, None], dtype=pd.BooleanDtype()))
 
+def test_standardize_value_jax():
+    # Test that JAX numeric types are standardized to Python floats
+    assert isinstance(_standardize_value(jnp.int8(8)), float)
+    assert isinstance(_standardize_value(jnp.int16(16)), float)
+    assert isinstance(_standardize_value(jnp.int32(32)), float)
+    assert isinstance(_standardize_value(jnp.float16(1.6)), float)
+    assert isinstance(_standardize_value(jnp.float32(3.2)), float)
+
+    # jnp.integer array
+    jnp_int_array = jnp.array([1, 2, 3], dtype=jnp.int32)
+    standardized_array = _standardize_value(jnp_int_array)
+    assert all(isinstance(v, float) for v in standardized_array)
+
+    # jnp.floating array
+    jnp_float_array = jnp.array([1.5, 2.5, 3.5], dtype=jnp.float32)
+    standardized_float_array = _standardize_value(jnp_float_array)
+    assert all(isinstance(v, float) for v in standardized_float_array)
+
+    # jnp.ndarray
+    jnp_array = jnp.array([[1, 2], [3, 4]], dtype=jnp.int32)
+    standardized_jnp_array = _standardize_value(jnp_array)
+    assert isinstance(standardized_jnp_array, list)
+    assert all(isinstance(row, list) for row in standardized_jnp_array)
+    assert standardized_jnp_array == [[1.0, 2.0], [3.0, 4.0]]
+
+
+def test_shapely_geometry():
+    from shapely.geometry import Point, Polygon
+
+    # Test with a Point geometry
+    point = Point(1, 2)
+    standardized_point = _standardize_value(point)
+    assert standardized_point == '{"type": "Point", "coordinates": [1.0, 2.0]}'
+
+    # Test with a Polygon geometry
+    polygon = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+    standardized_polygon = _standardize_value(polygon)
+    assert standardized_polygon == '{"type": "Polygon", "coordinates": [[[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0], [0.0, 0.0]]]}'
+
+
+def test_geodataframe_with_shapely_geometry():
+    import geopandas as gpd
+    from shapely.geometry import Point
+
+    # Create a GeoDataFrame with a Point geometry
+    gdf = gpd.GeoDataFrame({'geometry': [Point(1, 2)]})
+
+    standardized_gdf = _standardize_value(gdf)
+
+    assert standardized_gdf['geometry'][0] == '{"type": "Point", "coordinates": [1.0, 2.0]}'

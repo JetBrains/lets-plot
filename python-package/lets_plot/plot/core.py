@@ -531,7 +531,7 @@ class PlotSpec(FeatureSpec):
         self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object, default=None
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
@@ -578,7 +578,7 @@ class PlotSpec(FeatureSpec):
         self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object, default=None
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
@@ -623,23 +623,19 @@ class PlotSpec(FeatureSpec):
         self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
         w : float, default=None
             Width of the output image in units.
-            Only applicable when exporting to PNG or PDF.
         h : float, default=None
             Height of the output image in units.
-            Only applicable when exporting to PNG or PDF.
         unit : {'in', 'cm', 'mm', 'px'}, default='in'
             Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
-            Only applicable when exporting to PNG or PDF.
         dpi : int, default=300
             Resolution in dots per inch.
-            Only applicable when exporting to PNG or PDF.
             The default value depends on the unit:
 
             - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
@@ -707,23 +703,19 @@ class PlotSpec(FeatureSpec):
         self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
         w : float, default=None
             Width of the output image in units.
-            Only applicable when exporting to PNG or PDF.
         h : float, default=None
             Height of the output image in units.
-            Only applicable when exporting to PNG or PDF.
         unit : {'in', 'cm', 'mm', 'px'}, default='in'
             Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
-            Only applicable when exporting to PNG or PDF.
         dpi : int, default=300
             Resolution in dots per inch.
-            Only applicable when exporting to PNG or PDF.
             The default value depends on the unit:
 
             - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)

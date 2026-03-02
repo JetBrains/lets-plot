@@ -8,6 +8,7 @@
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenLocalRepository \
+          publishLetsPlotJvmSwingPublicationToMavenLocalRepository \
           publishLetsPlotJvmBatikPublicationToMavenLocalRepository \
           publishLetsPlotGISPublicationToMavenLocalRepository \
           publishLetsPlotCoreModulesToMavenLocalRepository \
@@ -33,6 +34,7 @@ Make sure the `version` in the root `build.gradle.kts` file is a SNAPSHOT versio
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
+          publishLetsPlotJvmSwingPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
           publishLetsPlotCoreModulesToMavenRepository \

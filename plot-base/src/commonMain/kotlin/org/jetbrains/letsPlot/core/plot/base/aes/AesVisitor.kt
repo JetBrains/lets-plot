@@ -18,8 +18,12 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
@@ -48,8 +52,6 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_END
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.TIP_LENGTH_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VIOLINWIDTH
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.VJUST
@@ -246,6 +248,12 @@ abstract class AesVisitor<T> {
         if (aes == EXPLODE) {
             return explode()
         }
+        if (aes == ISTART) {
+            return istart()
+        }
+        if (aes == IEND) {
+            return iend()
+        }
         if (aes == SIZE_START) {
             return sizeStart()
         }
@@ -258,11 +266,11 @@ abstract class AesVisitor<T> {
         if (aes == STROKE_END) {
             return strokeEnd()
         }
-        if (aes == TIP_LENGTH_START) {
-            return tipLengthStart()
+        if (aes == LENSTART) {
+            return lenstart()
         }
-        if (aes == TIP_LENGTH_END) {
-            return tipLengthEnd()
+        if (aes == LENEND) {
+            return lenend()
         }
         if (aes == POINT_SIZE) {
             return pointSize()
@@ -387,6 +395,10 @@ abstract class AesVisitor<T> {
 
     protected abstract fun explode(): T
 
+    protected abstract fun istart(): T
+
+    protected abstract fun iend(): T
+
     protected abstract fun sizeStart(): T
 
     protected abstract fun sizeEnd(): T
@@ -395,9 +407,9 @@ abstract class AesVisitor<T> {
 
     protected abstract fun strokeEnd(): T
 
-    protected abstract fun tipLengthStart(): T
+    protected abstract fun lenstart(): T
 
-    protected abstract fun tipLengthEnd(): T
+    protected abstract fun lenend(): T
 
     protected abstract fun pointSize(): T
 

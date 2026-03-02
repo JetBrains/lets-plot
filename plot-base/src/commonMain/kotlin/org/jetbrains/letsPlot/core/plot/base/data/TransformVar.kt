@@ -63,12 +63,14 @@ object TransformVar {
     val RADIUS = DataFrame.Variable("transform.RADIUS", TRANSFORM)
     val SLICE = DataFrame.Variable("transform.SLICE", TRANSFORM)
     val EXPLODE = DataFrame.Variable("transform.EXPLODE", TRANSFORM)
+    val ISTART = DataFrame.Variable("transform.ISTART", TRANSFORM)
+    val IEND = DataFrame.Variable("transform.IEND", TRANSFORM)
     val SIZE_START = DataFrame.Variable("transform.SIZE_START", TRANSFORM)
     val SIZE_END = DataFrame.Variable("transform.SIZE_END", TRANSFORM)
     val STROKE_START = DataFrame.Variable("transform.STROKE_START", TRANSFORM)
     val STROKE_END = DataFrame.Variable("transform.STROKE_END", TRANSFORM)
-    val TIP_LENGTH_START = DataFrame.Variable("transform.TIP_LENGTH_START", TRANSFORM)
-    val TIP_LENGTH_END = DataFrame.Variable("transform.TIP_LENGTH_END", TRANSFORM)
+    val LENSTART = DataFrame.Variable("transform.LENSTART", TRANSFORM)
+    val LENEND = DataFrame.Variable("transform.LENEND", TRANSFORM)
     val POINT_SIZE = DataFrame.Variable("transform.POINT_SIZE", TRANSFORM)
     val POINT_STROKE = DataFrame.Variable("transform.POINT_STROKE", TRANSFORM)
     val SEGMENT_COLOR = DataFrame.Variable("transform.SEGMENT_COLOR", TRANSFORM)
@@ -317,6 +319,14 @@ object TransformVar {
             return EXPLODE
         }
 
+        override fun istart(): DataFrame.Variable {
+            return ISTART
+        }
+
+        override fun iend(): DataFrame.Variable {
+            return IEND
+        }
+
         override fun sizeStart(): DataFrame.Variable {
             return SIZE_START
         }
@@ -333,12 +343,12 @@ object TransformVar {
             return STROKE_END
         }
 
-        override fun tipLengthStart(): DataFrame.Variable {
-            return TIP_LENGTH_START
+        override fun lenstart(): DataFrame.Variable {
+            return LENSTART
         }
 
-        override fun tipLengthEnd(): DataFrame.Variable {
-            return TIP_LENGTH_END
+        override fun lenend(): DataFrame.Variable {
+            return LENEND
         }
 
         override fun pointSize(): DataFrame.Variable {

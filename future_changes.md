@@ -42,7 +42,7 @@
     - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
     - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
 
-- `geom_bracket()` [[#1114](https://github.com/JetBrains/lets-plot/issues/1114)].
+- `geom_bracket()`, `geom_bracket_dodge()` [[#1114](https://github.com/JetBrains/lets-plot/issues/1114)].
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
 
@@ -56,9 +56,9 @@
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
-- `geom_smooth()`: introduced `smooth_labels()` to provide automated labeling of goodness-of-fit metrics and the regression equation.
+- `geom_smooth()`: added `labels` parameter which accepts `smooth_labels()` to annotate plots with $R^2$, Adjusted $R^2$, and regression equations.
 
-    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_labels.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
 
 
 ### Changed
@@ -84,3 +84,4 @@
 - Nice to be able to get a list of colors from a color scale object [[#1444](https://github.com/JetBrains/lets-plot/issues/1444)].
 - Allow tooltips param to accept list [[#1455](https://github.com/JetBrains/lets-plot/issues/1455)].
 - Allow grouped tooltips for plots with multiple univariate geoms [[#1460](https://github.com/JetBrains/lets-plot/issues/1460)].
+- Eager import of jax.numpy in _type_utils.py causes unnecessary JAX initialization [[#1469](https://github.com/JetBrains/lets-plot/issues/1469)].

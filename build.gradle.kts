@@ -303,7 +303,8 @@ val multiPlatformCoreModulesForPublish = listOf(
     "plot-builder",
     "plot-raster",
     "plot-stem",
-    "plot-livemap"
+    "plot-livemap",
+    "visual-testing"
 )
 
 subprojects {

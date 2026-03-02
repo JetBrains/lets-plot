@@ -120,7 +120,7 @@ class CompositeFigureConfig constructor(
         layout = when (layoutKind) {
             Layout.SUBPLOTS_GRID -> createGridLayout(layoutOptions)
             Layout.SUBPLOTS_FREE -> createFreeLayout(layoutOptions, elementConfigs.size)
-            else -> throw IllegalArgumentException("Unsupported composit figure layout: $layoutKind")
+            else -> throw IllegalArgumentException("Unsupported composite figure layout: $layoutKind")
         }
 
         guidesSharing = if (layoutKind == Layout.SUBPLOTS_GRID) {

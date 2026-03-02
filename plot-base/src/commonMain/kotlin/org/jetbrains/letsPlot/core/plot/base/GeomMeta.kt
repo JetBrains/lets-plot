@@ -524,11 +524,31 @@ object GeomMeta {
             )
 
             GeomKind.BRACKET -> listOf(
-                Aes.XMIN,
-                Aes.XMAX,
+                Aes.XMIN, Aes.XMAX,
                 Aes.Y,
-                Aes.TIP_LENGTH_START,
-                Aes.TIP_LENGTH_END,
+                Aes.LENSTART,
+                Aes.LENEND,
+                Aes.LABEL,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
+                Aes.SEGMENT_COLOR,
+                Aes.SEGMENT_SIZE,
+                Aes.SEGMENT_ALPHA
+            )
+
+            GeomKind.BRACKET_DODGE -> listOf(
+                Aes.X, Aes.Y,
+                Aes.ISTART, Aes.IEND,
+                Aes.LENSTART,
+                Aes.LENEND,
                 Aes.LABEL,
                 Aes.SIZE,
                 Aes.LINETYPE,

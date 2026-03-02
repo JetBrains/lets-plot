@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
+import org.jetbrains.letsPlot.commons.logging.identityString
 import org.jetbrains.letsPlot.commons.registration.*
 import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import java.awt.Dimension
@@ -15,25 +16,30 @@ import java.awt.Graphics2D
 import javax.swing.JComponent
 import javax.swing.Timer
 
-@Deprecated("Migrate to CanvasComponent", ReplaceWith("CanvasComponent", "org.jetbrains.letsPlot.awt.canvas.CanvasComponent"))
+@Deprecated(
+    "Migrate to CanvasComponent",
+    ReplaceWith("CanvasComponent", "org.jetbrains.letsPlot.awt.canvas.CanvasComponent")
+)
 typealias CanvasPane2 = CanvasComponent
 
 class CanvasComponent(
-    content: CanvasDrawable? = null,
-    pixelDensity: Double = 1.0
+    content: CanvasDrawable? = null
 ) : DisposingHub, Disposable, JComponent() {
-    private var isFigureAttached = false
-    private val registrations = CompositeRegistration()
-    private var figureRegistration: Registration = Registration.EMPTY
-    internal var canvasPeer: AwtCanvasPeer = AwtCanvasPeer(fontManager = FontManager.DEFAULT, pixelDensity)
-        set(value) {
-            if (isFigureAttached) {
-                throw IllegalStateException("Can't change canvasPeer after figure is attached")
-            }
-            field = value
-        }
+    private val animationTimer = Timer(1000 / 60) { onTimer() }
     private val mouseEventSource: MouseEventSource = AwtMouseEventMapper(this)
     private val systemTime: SystemTime = SystemTime()
+
+    // For testing purposes, to check that canvasPeer is not changed after content is attached.
+    // Can only change from false to true, never back to false
+    private var isContentAttached = false
+    private var contentReg: Registration = Registration.EMPTY
+    private var disposables = CompositeRegistration()
+
+    internal var canvasPeer: AwtCanvasPeer = AwtCanvasPeer(fontManager = FontManager.DEFAULT)
+        set(value) {
+            check(!isContentAttached) { "Can't change canvasPeer after figure is attached" }
+            field = value
+        }
 
     var content: CanvasDrawable? = null
         set(content) {
@@ -41,29 +47,33 @@ class CanvasComponent(
                 return
             }
 
-            figureRegistration.remove()
-            if (content != null) {
-                isFigureAttached = true
-                content.resize(width, height)
+            contentReg.dispose()
 
-                val animationTimer = Timer(1000 / 60) {
-                    content.onFrame(systemTime.getTimeMs())
-                }
+            if (content == null) {
+                contentReg = Registration.EMPTY
+            } else {
+                isContentAttached = true
+
                 animationTimer.start()
+                content.resize(this.width, this.height)
 
-                figureRegistration = CompositeRegistration(
+                contentReg = CompositeRegistration(
                     content.mouseEventPeer.addEventSource(mouseEventSource),
                     content.mapToCanvas(canvasPeer),
                     content.onRepaintRequested(::repaint),
                     Registration.onRemove(animationTimer::stop),
+                    Registration.onRemove { log { "Content removed: ${content.identityString}" } }
                 )
             }
+
+            log { "Content set: ${content?.identityString ?: "null"}" }
             field = content
         }
 
     init {
         isOpaque = false
         this.content = content
+        log { "created" }
     }
 
     override fun getPreferredSize(): Dimension? {
@@ -84,24 +94,39 @@ class CanvasComponent(
     override fun paintComponent(g: Graphics?) {
         super.paintComponent(g)
 
+        val content = content ?: return
+
         if (width <= 0 || height <= 0) {
             return
         }
 
-        if (content != null) {
-            val g2d = g!!.create() as Graphics2D
-            val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
-            content!!.paint(ctx)
-            g2d.dispose()
-        }
+        val g2d = g!!.create() as Graphics2D
+        val ctx = AwtContext2d(g2d, contentScale = g2d.transform.scaleX, fontManager = canvasPeer.fontManager)
+        content.paint(ctx)
+        g2d.dispose()
     }
 
     override fun registerDisposable(disposable: Disposable) {
-        registrations.add(DisposableRegistration(disposable))
+        disposables.add(DisposableRegistration(disposable))
     }
 
     override fun dispose() {
-        registrations.dispose()
-        figureRegistration.dispose()
+        contentReg.dispose()
+        disposables.dispose()
+        log { "disposed" }
+    }
+
+    private fun onTimer() {
+        content?.onFrame(systemTime.getTimeMs())
+    }
+
+    private fun log(message: () -> String) {
+        if (LOG_ENABLED) {
+            println("[${this.identityString}] ${message()}")
+        }
+    }
+
+    companion object {
+        private const val LOG_ENABLED = false
     }
 }
