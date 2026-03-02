@@ -311,20 +311,27 @@ class smooth_labels(layer_labels):
     Notes
     -----
     - Supported smooth-stat variables and markers that can be used in
-      :meth:`line()` templates:
+      ``line()`` templates:
 
       - ``..r2..`` — :math:`R^2`.
       - ``..adjr2..`` — adjusted :math:`R^2`.
+      - ``..aic..`` — Akaike Information Criterion (AIC) of the fitted model.
+      - ``..bic..`` — Bayesian Information Criterion (BIC) of the fitted model.
+      - ``..f..`` — F-statistic for the overall model significance test.
+      - ``..df1..`` — numerator degrees of freedom for the F-test.
+      - ``..df2..`` — denominator degrees of freedom for the F-test.
+      - ``..p..`` — p-value for the overall model F-test.
+      - ``..method..`` — smoothing method label (for example, `lm` or `loess`).
+      - ``..n..`` — number of observations used in model fitting.
+      - ``..cilevel..`` — confidence level used for the :math:`R^2` confidence interval.
+      - ``..cilow..`` — lower bound of the confidence interval for :math:`R^2`.
+      - ``..cihigh..`` — upper bound of the confidence interval for :math:`R^2`.
       - ``~eq`` — equation block marker. When a line equals ``'~eq'``,
         an equation for the fitted model is rendered (can be configured
-        with :meth:`eq()`).
-    - `smooth_labels` **inherits** all features of :class:`layer_labels`.
-      Methods such as :meth:`format()`, :meth:`line()`, and :meth:`size()`
+        with ``eq()``).
+    - ``smooth_labels`` **inherits** all features of ``layer_labels``.
+      Methods such as ``format()``, ``line()``, ``size()``, and ``inherit_color()``
       work exactly the same.
-    - The only difference is :meth:`inherit_color()`: it is applied
-      **automatically** during initialization, so annotation text inherits
-      the layer's color by default. Calling :meth:`inherit_color()` manually
-      is not required.
 
 
     Examples
