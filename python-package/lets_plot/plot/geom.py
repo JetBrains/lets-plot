@@ -9009,7 +9009,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  **other_args)
 
 
-def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
+def geom_bracket(mapping=None, *, data=None, stat=None, position=None, show_legend=None,
                  manual_key=None,
                  sampling=None,
                  orientation=None,
@@ -9031,6 +9031,14 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
     data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate),
+        'sum' (counts the number of points at each location - might help to work around overplotting).
     position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
@@ -9186,7 +9194,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
     return _geom('bracket',
                  mapping=mapping,
                  data=data,
-                 stat=None,
+                 stat=stat,
                  position=position,
                  show_legend=show_legend,
                  inherit_aes=None,
@@ -9206,7 +9214,7 @@ def geom_bracket(mapping=None, *, data=None, position=None, show_legend=None,
                  **other_args)
 
 
-def geom_bracket_dodge(mapping=None, *, data=None, position=None, show_legend=None,
+def geom_bracket_dodge(mapping=None, *, data=None, stat=None, position=None, show_legend=None,
                        manual_key=None,
                        sampling=None,
                        orientation=None,
@@ -9229,6 +9237,14 @@ def geom_bracket_dodge(mapping=None, *, data=None, position=None, show_legend=No
     data : dict or Pandas or Polars ``DataFrame``
         The data to be displayed in this layer. If None, the default, the data
         is inherited from the plot data as specified in the call to ggplot.
+    stat : str, default='identity'
+        The statistical transformation to use on the data for this layer, as a string.
+        Supported transformations: 'identity' (leaves the data unchanged),
+        'count' (counts number of points with the same x-axis coordinate),
+        'bin' (counts number of points with the x-axis coordinate in the same bin),
+        'smooth' (performs smoothing - linear default),
+        'density' (computes and draws kernel density estimate),
+        'sum' (counts the number of points at each location - might help to work around overplotting).
     position : str or ``FeatureSpec``, default='identity'
         Position adjustment.
         Either a position adjustment name: 'dodge', 'jitter', 'nudge', 'jitterdodge', 'fill',
@@ -9367,7 +9383,7 @@ def geom_bracket_dodge(mapping=None, *, data=None, position=None, show_legend=No
     return _geom('bracket_dodge',
                  mapping=mapping,
                  data=data,
-                 stat=None,
+                 stat=stat,
                  position=position,
                  show_legend=show_legend,
                  inherit_aes=None,
