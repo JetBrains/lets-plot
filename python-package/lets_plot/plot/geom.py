@@ -2,11 +2,14 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+from lets_plot._type_utils import LazyModule
 from lets_plot.geo_data_internals.utils import is_geocoder
 from .annotation import smooth_labels
 from .core import FeatureSpec, LayerSpec
 from .tooltip import layer_tooltips
-from .util import as_annotated_data, is_geo_data_frame, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
+from .util import as_annotated_data, geo_data_frame_to_crs, get_geo_data_frame_meta, key_int2str
+
+geopandas = LazyModule('geopandas')
 
 #
 # Geoms, short for geometric objects, describe the type of plot ggplot will produce.
@@ -746,27 +749,26 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
 
     """
     smooth_layer = _geom('smooth',
-                 mapping=mapping,
-                 data=data,
-                 stat=stat,
-                 position=position,
-                 show_legend=show_legend,
-                 inherit_aes=inherit_aes,
-                 manual_key=manual_key,
-                 sampling=sampling,
-                 tooltips=tooltips,
-                 orientation=orientation,
-                 method=method,
-                 n=n,
-                 se=se,
-                 level=level,
-                 span=span,
-                 deg=deg,
-                 seed=seed,
-                 max_n=max_n,
-                 color_by=color_by, fill_by=fill_by,
-                 **other_args)
-
+                         mapping=mapping,
+                         data=data,
+                         stat=stat,
+                         position=position,
+                         show_legend=show_legend,
+                         inherit_aes=inherit_aes,
+                         manual_key=manual_key,
+                         sampling=sampling,
+                         tooltips=tooltips,
+                         orientation=orientation,
+                         method=method,
+                         n=n,
+                         se=se,
+                         level=level,
+                         span=span,
+                         deg=deg,
+                         seed=seed,
+                         max_n=max_n,
+                         color_by=color_by, fill_by=fill_by,
+                         **other_args)
 
     if labels is not None and isinstance(labels, smooth_labels) and (stat is None or stat == "smooth"):
         smooth_layer += _geom('blank',
@@ -8009,27 +8011,28 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
+
 def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
-              manual_key=None, sampling=None,
-              tooltips=None,
-              map=None, map_join=None, use_crs=None,
-              label_format=None,
-              na_text=None,
-              nudge_x=None, nudge_y=None,
-              size_unit=None,
-              nudge_unit=None,
-              check_overlap=None,
-              color_by=None,
-              seed=None,
-              max_iter=None,
-              max_time=None,
-              direction=None,
-              point_padding=None,
-              box_padding=None,
-              max_overlaps=None,
-              min_segment_length=None,
-              arrow=None,
-              **other_args):
+                    manual_key=None, sampling=None,
+                    tooltips=None,
+                    map=None, map_join=None, use_crs=None,
+                    label_format=None,
+                    na_text=None,
+                    nudge_x=None, nudge_y=None,
+                    size_unit=None,
+                    nudge_unit=None,
+                    check_overlap=None,
+                    color_by=None,
+                    seed=None,
+                    max_iter=None,
+                    max_time=None,
+                    direction=None,
+                    point_padding=None,
+                    box_padding=None,
+                    max_overlaps=None,
+                    min_segment_length=None,
+                    arrow=None,
+                    **other_args):
     """
     Add repelling text labels that avoid overlapping with other labels and data points.
 
@@ -8215,37 +8218,37 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
                  max_time=max_time,
                  seed=seed,
                  direction=direction,
-                 point_padding = point_padding,
-                 box_padding = box_padding,
-                 max_overlaps = max_overlaps,
-                 min_segment_length = min_segment_length,
+                 point_padding=point_padding,
+                 box_padding=box_padding,
+                 max_overlaps=max_overlaps,
+                 min_segment_length=min_segment_length,
                  arrow=arrow,
                  **other_args)
 
-def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
-               manual_key=None, sampling=None,
-               tooltips=None,
-               map=None, map_join=None, use_crs=None,
-               label_format=None,
-               na_text=None,
-               nudge_x=None, nudge_y=None,
-               label_padding=None, label_r=None, label_size=None,
-               alpha_stroke=None,
-               size_unit=None,
-               nudge_unit=None,
-               check_overlap=None,
-               color_by=None, fill_by=None,
-               seed=None,
-               max_iter=None,
-               max_time=None,
-               direction=None,
-               point_padding=None,
-               box_padding=None,
-               max_overlaps=None,
-               min_segment_length=None,
-               arrow=None,
-               **other_args):
 
+def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
+                     manual_key=None, sampling=None,
+                     tooltips=None,
+                     map=None, map_join=None, use_crs=None,
+                     label_format=None,
+                     na_text=None,
+                     nudge_x=None, nudge_y=None,
+                     label_padding=None, label_r=None, label_size=None,
+                     alpha_stroke=None,
+                     size_unit=None,
+                     nudge_unit=None,
+                     check_overlap=None,
+                     color_by=None, fill_by=None,
+                     seed=None,
+                     max_iter=None,
+                     max_time=None,
+                     direction=None,
+                     point_padding=None,
+                     box_padding=None,
+                     max_overlaps=None,
+                     min_segment_length=None,
+                     arrow=None,
+                     **other_args):
     """
     Add repelling text labels with background boxes that avoid overlapping with other labels and data points.
 
@@ -8447,10 +8450,10 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                  max_time=max_time,
                  seed=seed,
                  direction=direction,
-                 point_padding = point_padding,
-                 box_padding = box_padding,
-                 max_overlaps = max_overlaps,
-                 min_segment_length = min_segment_length,
+                 point_padding=point_padding,
+                 box_padding=box_padding,
+                 max_overlaps=max_overlaps,
+                 min_segment_length=min_segment_length,
                  arrow=arrow,
                  **other_args)
 
@@ -9533,6 +9536,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
                  color_by=color_by, fill_by=fill_by,
                  **other_args)
 
+
 def _geom(name, *,
           mapping=None,
           data=None,
@@ -9556,10 +9560,9 @@ def _geom(name, *,
     data, mapping, data_meta = as_annotated_data(data, mapping)
 
     # GDF in a map parameter has higher priority for defining a geo_data_meta
-    if is_geo_data_frame(data) and not is_geo_data_frame(kwargs.get('map')):
+    if geopandas.lazy_is_instance(data, 'GeoDataFrame') and not geopandas.lazy_is_instance(kwargs.get('map'), 'GeoDataFrame'):
         data = geo_data_frame_to_crs(data, kwargs.get('use_crs'))
         data_meta['data_meta'].update(get_geo_data_frame_meta(data))
-
 
     if isinstance(tooltips, list) or isinstance(tooltips, tuple):
         tooltips = layer_tooltips(tooltips)

@@ -9,11 +9,6 @@ from typing import List
 from .scale import _is_color_scale
 from .scale import scale_gradientn
 
-try:
-    import matplotlib
-except ImportError:
-    matplotlib = None
-
 __all__ = ['scale_cmapmpl',
            'scale_fill_cmapmpl',
            'scale_color_cmapmpl'
@@ -32,7 +27,9 @@ def _cmapmpl_to_hex(cmap) -> List[str]:
     -------
     List of hex color strings.
     """
-    if matplotlib is None:
+    try:
+        import matplotlib
+    except ImportError:
         raise ImportError('matplotlib is not available. Please install it first.')
 
     if isinstance(cmap, str):

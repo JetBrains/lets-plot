@@ -6,7 +6,7 @@ from datetime import datetime, date, time, timezone, timedelta
 import jax.numpy as jnp
 import numpy as np
 
-from lets_plot._type_utils import _standardize_value
+from lets_plot._type_utils import _standardize_value, is_ndarray, LazyModule
 
 
 def test_standardize_common_value_types():
@@ -286,3 +286,21 @@ def test_geodataframe_with_shapely_geometry():
     standardized_gdf = _standardize_value(gdf)
 
     assert standardized_gdf['geometry'][0] == '{"type": "Point", "coordinates": [1.0, 2.0]}'
+
+
+def test_is_ndarray():
+    # Test with a numpy array
+    np_array = np.array([1, 2, 3])
+    assert is_ndarray(np_array) == True
+
+    # Test with a JAX array
+    jnp_array = jnp.array([4, 5, 6])
+    assert is_ndarray(jnp_array) == True
+
+
+def test_isintance():
+    lazy_numpy = LazyModule('numpy')
+    assert lazy_numpy.lazy_is_instance(np.array([1, 2, 3]), 'ndarray') == True
+
+    lazy_jax = LazyModule('jax')
+    assert lazy_jax.lazy_is_instance(jnp.array([1, 2, 3]), 'numpy.ndarray') == True

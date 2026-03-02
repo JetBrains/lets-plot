@@ -5,17 +5,17 @@
 from enum import Enum
 from typing import Union, Optional, List
 
-from lets_plot._global_settings import MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION, \
-    GEOCODING_PROVIDER_URL, GEOCODING_ROUTE, \
-    TILES_RASTER_ZXY, TILES_VECTOR_LETS_PLOT, MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM, TILES_SOLID, \
-    MAPTILES_SOLID_FILL_COLOR, TILES_CHESSBOARD
-from lets_plot._global_settings import has_global_value, get_global_val
+from lets_plot._global_settings import (
+    MAPTILES_KIND, MAPTILES_URL, MAPTILES_THEME, MAPTILES_ATTRIBUTION,
+    MAPTILES_MIN_ZOOM, MAPTILES_MAX_ZOOM, MAPTILES_SOLID_FILL_COLOR,
+    GEOCODING_PROVIDER_URL, GEOCODING_ROUTE,
+    TILES_RASTER_ZXY, TILES_VECTOR_LETS_PLOT, TILES_SOLID, TILES_CHESSBOARD,
+    has_global_value, get_global_val
+)
+from lets_plot._type_utils import LazyModule
 from .geom import _geom
 
-try:
-    import pandas
-except ImportError:
-    pandas = None
+pandas = LazyModule('pandas')
 
 # from ..geo_data.livemap_helper import _prepare_location
 # from ..geo_data.livemap_helper import _prepare_parent
@@ -331,7 +331,7 @@ def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:
             raise ValueError(LOCATION_LIST_ERROR_MESSAGE)
         kind = RegionKind.coordinates
 
-    elif pandas and isinstance(location, pandas.DataFrame):
+    elif pandas.lazy_is_instance(location, 'DataFrame'):
         if not LOCATION_COORDINATE_COLUMNS.issubset(location.columns) and not LOCATION_RECTANGLE_COLUMNS.issubset(
                 location.columns):
             raise ValueError(LOCATION_DATAFRAME_ERROR_MESSAGE)

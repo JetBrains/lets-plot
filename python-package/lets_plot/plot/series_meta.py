@@ -3,25 +3,11 @@
 from datetime import datetime, date, time
 from typing import Union, Dict, Iterable, Optional
 
-from lets_plot._type_utils import is_polars_dataframe
-from lets_plot.plot.util import is_pandas_data_frame
+from lets_plot._type_utils import LazyModule
 
-try:
-    import numpy
-except ImportError:
-    numpy = None
-
-try:
-    import pandas
-except ImportError:
-    pass
-
-try:
-    import polars as pl
-    from polars.datatypes.group import INTEGER_DTYPES as PL_INTEGER_DTYPES
-    from polars.datatypes.group import FLOAT_DTYPES as PL_FLOAT_DTYPES
-except ImportError:
-    pass
+numpy = LazyModule('numpy')
+pandas = LazyModule('pandas')
+polars = LazyModule('polars')
 
 TYPE_INTEGER = 'int'
 TYPE_FLOATING = 'float'
@@ -39,10 +25,10 @@ def _infer_type(data: Union[Dict, 'pandas.DataFrame', 'polars.DataFrame']) -> Di
     if isinstance(data, dict):
         for var_name, var_content in data.items():
             type_info[var_name] = _infer_type_dict(var_name, var_content)
-    elif is_pandas_data_frame(data):
+    elif pandas.lazy_is_instance(data, 'DataFrame'):
         for var_name, var_content in data.items():
             type_info[var_name] = _infer_type_pandas_dataframe(var_name, var_content)
-    elif is_polars_dataframe(data):
+    elif polars.lazy_is_instance(data, 'DataFrame'):
         for var_name, var_type in data.schema.items():
             type_info[var_name] = _infer_type_polars_dataframe(var_name, var_type)
 
@@ -102,26 +88,26 @@ def _infer_type_polars_dataframe(var_name: str, var_type) -> str:
     lp_dtype = TYPE_UNKNOWN
 
     # https://docs.pola.rs/api/python/stable/reference/datatypes.html
-    if isinstance(var_type, pl.datatypes.Enum):
+    if isinstance(var_type, polars.datatypes.Enum):
         # In the current version of Polars, Enum is always a string
         # https://docs.pola.rs/api/python/stable/reference/datatypes.html#string
         return TYPE_STRING
-    elif isinstance(var_type, pl.datatypes.Categorical):
+    elif isinstance(var_type, polars.datatypes.Categorical):
         return TYPE_STRING
-    elif var_type in PL_FLOAT_DTYPES:
+    elif var_type in polars.datatypes.group.FLOAT_DTYPES:
         lp_dtype = TYPE_FLOATING
-    elif var_type in PL_INTEGER_DTYPES:
+    elif var_type in polars.datatypes.group.INTEGER_DTYPES:
         lp_dtype = TYPE_INTEGER
-    elif var_type == pl.datatypes.String:
+    elif var_type == polars.datatypes.String:
         lp_dtype = TYPE_STRING
-    elif var_type == pl.datatypes.Boolean:
+    elif var_type == polars.datatypes.Boolean:
         lp_dtype = TYPE_BOOLEAN
 
-    elif var_type == pl.datatypes.Datetime:
+    elif var_type == polars.datatypes.Datetime:
         lp_dtype = TYPE_DATE_TIME
-    elif var_type == pl.datatypes.Date:
+    elif var_type == polars.datatypes.Date:
         lp_dtype = TYPE_DATE
-    elif var_type == pl.datatypes.Time:
+    elif var_type == polars.datatypes.Time:
         lp_dtype = TYPE_TIME
 
     else:
@@ -186,12 +172,12 @@ def _infer_type_dict(var_name: str, var_content) -> str:
 
 
 def _detect_time_zone(var_name: str, data: Union[Dict, 'pandas.DataFrame', 'polars.DataFrame']) -> Optional[str]:
-    if is_pandas_data_frame(data):
+    if pandas.lazy_is_instance(data, 'DataFrame'):
         if var_name in data:
             var_content = data[var_name]
             if hasattr(var_content, 'dt') and hasattr(var_content.dt, 'tz') and var_content.dt.tz is not None:
                 return str(var_content.dt.tz)
-    elif is_polars_dataframe(data):
+    elif polars.lazy_is_instance(data, 'DataFrame'):
         if var_name in data.columns:
             col_dtype = data[var_name].dtype
             if hasattr(col_dtype, 'time_zone'):

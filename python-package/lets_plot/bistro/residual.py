@@ -2,27 +2,17 @@
 #  Copyright (c) 2022. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-try:
-    import numpy as np
-except ImportError:
-    np = None
-
-try:
-    import pandas as pd
-except ImportError:
-    pd = None
-
-try:
-    import polars as pl
-except ImportError:
-    pl = None
-
+from lets_plot._type_utils import LazyModule
+from lets_plot.plot.core import DummySpec, aes
+from lets_plot.plot.geom import geom_hline
+from lets_plot.plot.label import ylab
+from lets_plot.plot.plot import ggplot
+from lets_plot.plot.theme_ import *
 from ._plot2d_common import _get_bin_params_2d, _get_geom2d_layer, _get_marginal_layers
-from ..plot.core import DummySpec, aes
-from ..plot.geom import geom_hline
-from ..plot.label import ylab
-from ..plot.plot import ggplot
-from ..plot.theme_ import *
+
+np = LazyModule('numpy')
+pd = LazyModule('pandas')
+pl = LazyModule('polars')
 
 __all__ = ['residual_plot']
 
@@ -299,9 +289,9 @@ def residual_plot(data=None, x=None, y=None, *,
 
     """
     # requirements
-    if np is None:
+    if not np:
         raise ValueError("Module 'numpy' is required for residual plot")
-    if pd is None:
+    if not pd:
         raise ValueError("Module 'pandas' is required for residual plot")
     # prepare data
     stat_data, xs, ys = _get_stat_data(data, x, y, color_by, method, deg, span, seed, max_n)
