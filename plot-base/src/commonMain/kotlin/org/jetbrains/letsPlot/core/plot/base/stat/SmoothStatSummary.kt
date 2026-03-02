@@ -109,7 +109,7 @@ class SmoothStatSummary(
         } ?: return DataFrame.Builder.emptyFrame()
 
         val fTest = regression.fTest
-        val r2ConfInt = regression.r2ConfInt(confidenceLevel)
+        val r2ConfInt = regression.r2ConfInt
 
         val dfb = DataFrame.Builder()
             .put(Stats.X, listOf(0.0))

@@ -13,22 +13,18 @@ abstract class RegressionEvaluator protected constructor(
     private val xVals: DoubleArray,
     private val yVals: DoubleArray,
     private val model: (Double) -> Double,
-    private val standardErrorOfEstimate: Double,
-    private val tCritical: Double,
+    private val degreesOfFreedom: Double,
+    private val confidenceLevel: Double,
     val eq: List<Double>
 ) {
-
-    internal val n = xVals.size
+    internal val n by lazy { xVals.size }
     internal val r2 by lazy { calcRSquared(xVals, yVals, model) }
-    internal val adjustedR2 = calcAdjustedRSquared(xVals.size, eq.size, r2)
-    internal val rss = calcRss(xVals, yVals, model)
-    internal val aic = calcAic(xVals.size, rss, eq.size)
-    internal val bic = calcBic(xVals.size, rss, eq.size)
-    internal val fTest = calcOverallModelFTest(xVals.size, eq.size, r2)
-
-    internal fun r2ConfInt(confidenceLevel: Double): R2ConfIntResult {
-        return calcR2ConfInt(xVals.size, eq.size, r2, confidenceLevel)
-    }
+    internal val adjustedR2 by lazy { calcAdjustedRSquared(xVals.size, eq.size, r2) }
+    internal val rss by lazy { calcRss(xVals, yVals, model) }
+    internal val aic by lazy { calcAic(xVals.size, rss, eq.size) }
+    internal val bic by lazy { calcBic(xVals.size, rss, eq.size) }
+    internal val fTest by lazy { calcOverallModelFTest(xVals.size, eq.size, r2) }
+    internal val r2ConfInt by lazy { calcR2ConfInt(xVals.size, eq.size, r2, confidenceLevel) }
 
     fun value(x: Double): Double {
         return model(x)
@@ -46,6 +42,8 @@ abstract class RegressionEvaluator protected constructor(
         // Calculate standard stats
         val meanX = xVals.average()
         val sumXX = sumOfSquaredDeviations(xVals, meanX)
+        val standardErrorOfEstimate = calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom)
+        val tCritical = calcTCritical(degreesOfFreedom, confidenceLevel)
 
         // standard error of predicted means
         val se = run {
@@ -71,7 +69,7 @@ abstract class RegressionEvaluator protected constructor(
             require(xs.size == ys.size) { "X/Y must have same size. X:" + xs.size + " Y:" + ys.size }
         }
 
-        fun calcStandardErrorOfEstimate(
+        private fun calcStandardErrorOfEstimate(
             xVals: DoubleArray,
             yVals: DoubleArray,
             model: (Double) -> Double,
@@ -82,7 +80,7 @@ abstract class RegressionEvaluator protected constructor(
             return sqrt(sse / degreesOfFreedom)
         }
 
-        fun calcTCritical(degreesOfFreedom: Double, confidenceLevel: Double): Double {
+        private fun calcTCritical(degreesOfFreedom: Double, confidenceLevel: Double): Double {
             return if (degreesOfFreedom > 0) {
                 val alpha = 1.0 - confidenceLevel
                 tQuantile(degreesOfFreedom)(1.0 - alpha / 2.0)
