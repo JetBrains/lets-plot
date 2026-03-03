@@ -13,7 +13,7 @@ abstract class RegressionEvaluator protected constructor(
     private val xVals: DoubleArray,
     private val yVals: DoubleArray,
     private val model: (Double) -> Double,
-    degreesOfFreedom: Double,
+    deg: Double,
     private val confidenceLevel: Double,
     val eq: List<Double>
 ) {
@@ -27,6 +27,7 @@ abstract class RegressionEvaluator protected constructor(
     internal val r2ConfInt by lazy { calcR2ConfInt(xVals.size, eq.size, r2, confidenceLevel) }
 
     // Calculate standard stats
+    private val degreesOfFreedom = n - deg - 1.0
     private val meanX = xVals.average()
     private val sumXX = sumOfSquaredDeviations(xVals, meanX)
     private val standardErrorOfEstimate = calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom)
@@ -351,7 +352,7 @@ abstract class RegressionEvaluator protected constructor(
                 if (!fm.isFinite()) return null
 
                 if (fm == 0.0) return m
-                if ((b - a) <= absTol * (1.0 + kotlin.math.abs(a) + kotlin.math.abs(b))) {
+                if ((b - a) <= absTol * (1.0 + abs(a) + abs(b))) {
                     return 0.5 * (a + b)
                 }
 
@@ -436,7 +437,7 @@ abstract class RegressionEvaluator protected constructor(
             val b = df2 / 2.0
             val mu = ncp / 2.0
 
-            val m = kotlin.math.floor(mu).toInt().coerceAtLeast(0)
+            val m = floor(mu).toInt().coerceAtLeast(0)
 
             var logFact = 0.0
             for (k in 2..m) logFact += ln(k.toDouble())

@@ -12,9 +12,8 @@ class LocalPolynomialRegression private constructor (
     xVals: DoubleArray,
     yVals: DoubleArray,
     model: (Double) -> Double,
-    degreesOfFreedom: Double,
     confidenceLevel: Double,
-) : RegressionEvaluator(xVals, yVals, model, degreesOfFreedom, confidenceLevel, emptyList()) {
+) : RegressionEvaluator(xVals, yVals, model, 1.0, confidenceLevel, emptyList()) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, bandwidth: Double): LocalPolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -22,10 +21,14 @@ class LocalPolynomialRegression private constructor (
             // Prepare data
             val (xVals, yVals) = averageByX(xs, ys)
             val n = xVals.size
-            val degreesOfFreedom = n - 2.0
 
             // Check computability
-            if (!canBeComputed(n, degreesOfFreedom, bandwidth)) {
+            // See: LoessInterpolator.kt:168
+            if (n < 3) {
+                return null
+            }
+
+            if (bandwidth * n < 2) {
                 return null
             }
 
@@ -37,16 +40,8 @@ class LocalPolynomialRegression private constructor (
                 xVals,
                 yVals,
                 model,
-                degreesOfFreedom,
                 confidenceLevel
             )
-        }
-
-        private fun canBeComputed(n: Int, degreesOfFreedom: Double, bandwidth: Double): Boolean {
-            // See: LoessInterpolator.kt:168
-            val bandwidthInPoints = (bandwidth * n).toInt()
-            val bandwidthInPointsOk = bandwidthInPoints >= 2
-            return n >= 3 && degreesOfFreedom > 0 && bandwidthInPointsOk
         }
 
         private fun getPolynomial(xVals: DoubleArray, yVals: DoubleArray, bandwidth: Double): PolynomialSplineFunction {

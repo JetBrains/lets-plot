@@ -13,10 +13,10 @@ class PolynomialRegression private constructor (
     xVals: DoubleArray,
     yVals: DoubleArray,
     model: (Double) -> Double,
-    degreesOfFreedom: Double,
+    deg: Double,
     confidenceLevel: Double,
     eq: List<Double>
-) : RegressionEvaluator(xVals, yVals, model, degreesOfFreedom, confidenceLevel, eq) {
+) : RegressionEvaluator(xVals, yVals, model, deg, confidenceLevel, eq) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int): PolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -25,7 +25,6 @@ class PolynomialRegression private constructor (
             // Prepare data
             val (xVals, yVals) = averageByX(xs, ys)
             val n = xVals.size
-            val degreesOfFreedom = n - deg - 1.0
 
             // Check computability
             if (n <= deg) {
@@ -40,7 +39,7 @@ class PolynomialRegression private constructor (
                 xVals,
                 yVals,
                 model,
-                degreesOfFreedom,
+                deg.toDouble(),
                 confidenceLevel,
                 polynomial.getCoefficients()
             )
