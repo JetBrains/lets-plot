@@ -47,16 +47,16 @@ class SmoothStatSummaryAnnotationConfig(
     }
 
     override fun createValueSource(fieldName: String, isAes: Boolean, format: String?): ValueSource {
-        val eqSpec = getMap(Option.LinesSpec.OPTIONS)
-            .let { options ->
-                val eq = options[EQ] ?: emptyMap<String, Any>()
-                require(eq is Map<*, *>) { "Not a Map: " + EQ + ": " + eq::class.simpleName }
-
-                @Suppress("UNCHECKED_CAST")
-                EqSpecConfig(eq as Map<String, Any>).create()
-            }
-        
         if (fieldName == EQ_PATTERN) {
+            val eqSpec = getMap(Option.LinesSpec.OPTIONS)
+                .let { options ->
+                    val eq = options[EQ] ?: emptyMap<String, Any>()
+                    require(eq is Map<*, *>) { "Not a Map: " + EQ + ": " + eq::class.simpleName }
+
+                    @Suppress("UNCHECKED_CAST")
+                    EqSpecConfig(eq as Map<String, Any>).create()
+                }
+
             return EqDataFrameField(fieldName, format, eqSpec)
         }
 
