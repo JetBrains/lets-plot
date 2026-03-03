@@ -408,8 +408,11 @@ def theme(*,
         Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify tooltip title parameters, inherited from ``tooltip_text``. Bold by default.
     label_text : dict
         Style settings for annotation text.
-        Annotations are currently supported for pie, bar chart and crossbar.
-        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify annotation text parameters: font family and face, text size, text color.
+        Applies to text labels used in annotations, including labels configured with
+        `layer_labels() <https://lets-plot.org/python/pages/api/lets_plot.layer_labels.html>`__ and
+        `smooth_labels() <https://lets-plot.org/python/pages/api/lets_plot.smooth_labels.html>`__.
+        For more info see `Annotating Charts <https://lets-plot.org/python/pages/annotations.html>`__.
+        Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify label text appearance.
     geom : dict
         Color settings for geometries.
         Set `element_geom() <https://lets-plot.org/python/pages/api/lets_plot.element_geom.html>`__ to specify new values for the named colors.
@@ -486,7 +489,7 @@ def _filter_none(original: dict) -> dict:
 
 def element_blank() -> dict:
     """
-    Theme element that draws nothing and allocates no space for non-data components of the plot.
+    Theme element that specifies that the corresponding non-data components of the plot are not drawn and do not allocate space.
 
     Returns
     -------
@@ -519,7 +522,7 @@ def element_rect(
         blank=False,
 ) -> dict:
     """
-    Theme element that draws rectangular non-data components of the plot: borders and backgrounds.
+    Theme element that specifies how rectangular non-data components of the plot, such as borders and backgrounds, are drawn.
 
     Parameters
     ----------
@@ -571,7 +574,7 @@ def element_line(
         blank=False,
 ) -> dict:
     """
-    Theme element that draws line-based non-data components of the plot.
+    Theme element that specifies how line-based non-data components of the plot are drawn.
 
     Parameters
     ----------
@@ -626,7 +629,7 @@ def element_text(
         blank=False,
 ) -> dict:
     """
-    Theme element that draws text for non-data components of the plot.
+    Theme element that specifies how text in non-data components of the plot is drawn.
 
     Parameters
     ----------
@@ -701,7 +704,7 @@ def element_markdown(
         blank=False,
 ) -> dict:
     """
-    Theme element that draws text with Markdown support for non-data components of the plot.
+    Theme element that specifies how text with Markdown support in non-data components of the plot is drawn.
 
     Supported features:
 
@@ -794,7 +797,7 @@ def element_geom(
         # ToDo: fatten
 ) -> dict:
     """
-    Theme element that defines named colors for geoms and plot elements.
+    Theme element that specifies custom values for named geom colors used by plot elements.
 
     It allows you to specify custom color values for special named geom colors ("pen", "brush", "paper")
     that can be referenced in geom parameters such as ``color``, ``fill``, etc.

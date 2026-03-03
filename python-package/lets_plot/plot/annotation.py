@@ -26,12 +26,12 @@ class layer_labels(FeatureSpec):
     contrast: white text appears on darker filled geometries, and black text
     appears on lighter filled geometries.
 
-    The text color can be manually specified using:
-    ``theme(label_text=element_text(color=...))``
+    Use ``theme(label_text=element_text(...))`` to customize the appearance of annotation text.
+    See also `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__.
 
-    Alternatively, the ``inherit_color()`` method can be used to override both
-    automatic and manual color settings, making the annotation text use the
-    geometry's ``color`` aesthetic instead.
+    Alternatively, the ``inherit_color()`` method can be used to make annotation text
+    use the geometry's ``color`` aesthetic, overriding both the automatically selected text color
+    and any color specified via ``theme(label_text=element_text(...))``.
 
     Examples
     --------
@@ -312,26 +312,36 @@ class smooth_labels(layer_labels):
     - Supported smooth-stat variables and markers that can be used in
       ``line()`` templates:
 
-      - ``..r2..`` — :math:`R^2`.
-      - ``..adjr2..`` — adjusted :math:`R^2`.
-      - ``..aic..`` — Akaike Information Criterion (AIC) of the fitted model.
-      - ``..bic..`` — Bayesian Information Criterion (BIC) of the fitted model.
-      - ``..f..`` — F-statistic for the overall model significance test.
-      - ``..df1..`` — numerator degrees of freedom for the F-test.
-      - ``..df2..`` — denominator degrees of freedom for the F-test.
-      - ``..p..`` — p-value for the overall model F-test.
-      - ``..method..`` — smoothing method label (for example, `lm` or `loess`).
-      - ``..n..`` — number of observations used in model fitting.
-      - ``..cilevel..`` — confidence level used for the :math:`R^2` confidence interval.
-      - ``..cilow..`` — lower bound of the confidence interval for :math:`R^2`.
-      - ``..cihigh..`` — upper bound of the confidence interval for :math:`R^2`.
-      - ``~eq`` — equation block marker. When a line equals ``'~eq'``,
+      - ``..r2..`` - :math:`R^2`.
+      - ``..adjr2..`` - adjusted :math:`R^2`.
+      - ``..aic..`` - Akaike Information Criterion (AIC) of the fitted model.
+      - ``..bic..`` - Bayesian Information Criterion (BIC) of the fitted model.
+      - ``..f..`` - F-statistic for the overall model significance test.
+      - ``..df1..`` - numerator degrees of freedom for the F-test.
+      - ``..df2..`` - denominator degrees of freedom for the F-test.
+      - ``..p..`` - p-value for the overall model F-test.
+      - ``..method..`` - smoothing method label (for example, `lm` or `loess`).
+      - ``..n..`` - number of observations used in model fitting.
+      - ``..cilevel..`` - confidence level used for the :math:`R^2` confidence interval.
+      - ``..cilow..`` - lower bound of the confidence interval for :math:`R^2`.
+      - ``..cihigh..`` - upper bound of the confidence interval for :math:`R^2`.
+      - ``~eq`` - equation block marker. When a line equals ``'~eq'``,
         an equation for the fitted model is rendered (can be configured
         with ``eq()``).
     - ``smooth_labels`` **inherits** all features of ``layer_labels``.
       Methods such as ``format()``, ``line()``, ``size()``, and ``inherit_color()``
       work exactly the same.
 
+    ----
+
+    By default, annotation text color is automatically selected for good readability.
+
+    Use ``theme(label_text=element_text(...))`` to customize the appearance of annotation text.
+    See also `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__.
+
+    Alternatively, the ``inherit_color()`` method can be used to make annotation text
+    use the geometry's ``color`` aesthetic, overriding both the automatically selected text color
+    and any color specified via ``theme(label_text=element_text(...))``.
 
     Examples
     --------
