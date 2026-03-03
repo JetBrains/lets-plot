@@ -708,7 +708,7 @@ def element_markdown(
 
     Supported features:
 
-    - Emphasis (\*, \*\*, \*\*\*, _, __, ___)
+    - Emphasis (\\*, \\*\\*, \\*\\*\\*, _, __, ___)
     - Coloring with inline style (<span style='color:red'>text</span>)
     - Links with anchor tags (<a href="https://lets-plot.org">Lets-Plot</a>). Supports target attribute (default is "_blank")
     - Multiple lines using double space and a newline delimiter (  ``\\n``)

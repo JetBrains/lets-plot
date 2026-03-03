@@ -301,11 +301,7 @@ class smooth_labels(layer_labels):
     It allows placing a multi-line annotation near the smooth curve and
     mixing custom text, computed variables (e.g. ``..r2..``), and a generated
     equation block.
-
-    Default behavior
-    ----------------
-    If created without any additional configuration the annotation displays
-    a single line with :math:`R^2`.
+    If created without any additional configuration the annotation displays a single line with :math:`R^2`.
 
     Notes
     -----
