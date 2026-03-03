@@ -108,11 +108,25 @@ class SmoothStatSummary(
             )
         } ?: return DataFrame.Builder.emptyFrame()
 
+        val fTest = regression.fTest
+        val r2ConfInt = regression.r2ConfInt
+
         val dfb = DataFrame.Builder()
             .put(Stats.X, listOf(0.0))
             .put(Stats.Y, listOf(0.0))
             .put(Stats.R2, listOf(regression.r2))
-            .put(Stats.R2_ADJ, listOf(regression.adjR2))
+            .put(Stats.R2_ADJ, listOf(regression.adjustedR2))
+            .put(Stats.N, listOf(regression.n))
+            .put(Stats.METHOD, listOf(smoothingMethodLabel(smoothingMethod)))
+            .put(Stats.AIC, listOf(regression.aic))
+            .put(Stats.BIC, listOf(regression.bic))
+            .put(Stats.F, listOf(fTest.fValue))
+            .put(Stats.DF1, listOf(fTest.df1))
+            .put(Stats.DF2, listOf(fTest.df2))
+            .put(Stats.P, listOf(fTest.pValue))
+            .put(Stats.CI_LEVEL, listOf(r2ConfInt.level))
+            .put(Stats.CI_LOW, listOf(r2ConfInt.low))
+            .put(Stats.CI_HIGH, listOf(r2ConfInt.high))
 
         val vars = myVariables ?: initVariables(regression.eq.size)
         regression.eq.forEachIndexed { index, coef ->
@@ -130,6 +144,16 @@ class SmoothStatSummary(
         }
 
         return myVariables!!
+    }
+
+    private fun smoothingMethodLabel(method: Method): String {
+        return when (method) {
+            Method.LM -> "lm"
+            Method.LOESS -> "loess"
+            Method.GLM -> "glm"
+            Method.GAM -> "gam"
+            Method.RLM -> "rlm"
+        }
     }
 }
 

@@ -9,14 +9,11 @@ import org.jetbrains.letsPlot.core.plot.base.stat.math3.LoessInterpolator
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.PolynomialSplineFunction
 
 class LocalPolynomialRegression private constructor (
-    n: Int,
-    meanX: Double,
-    sumXX: Double,
+    xVals: DoubleArray,
+    yVals: DoubleArray,
     model: (Double) -> Double,
-    standardErrorOfEstimate: Double,
-    tCritical: Double,
-    r2: Double,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, emptyList(), r2) {
+    confidenceLevel: Double,
+) : RegressionEvaluator(xVals, yVals, model, 1.0, confidenceLevel, emptyList()) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, bandwidth: Double): LocalPolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -24,37 +21,27 @@ class LocalPolynomialRegression private constructor (
             // Prepare data
             val (xVals, yVals) = averageByX(xs, ys)
             val n = xVals.size
-            val degreesOfFreedom = n - 2.0
 
             // Check computability
-            if (!canBeComputed(n, degreesOfFreedom, bandwidth)) {
+            // See: LoessInterpolator.kt:168
+            if (n < 3) {
                 return null
             }
 
-            // Calculate standard stats
-            val meanX = xVals.average()
-            val sumXX = sumOfSquaredDeviations(xVals, meanX)
+            if (bandwidth * n < 2) {
+                return null
+            }
 
             // Prepare model
             val polynomial = getPolynomial(xVals, yVals, bandwidth)
             val model: (Double) -> Double = { x -> polynomial.value(x)!! }
 
             return LocalPolynomialRegression(
-                n,
-                meanX,
-                sumXX,
+                xVals,
+                yVals,
                 model,
-                calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
-                calcTCritical(degreesOfFreedom, confidenceLevel),
-                calcRSquared(xVals, yVals, model),
+                confidenceLevel
             )
-        }
-
-        private fun canBeComputed(n: Int, degreesOfFreedom: Double, bandwidth: Double): Boolean {
-            // See: LoessInterpolator.kt:168
-            val bandwidthInPoints = (bandwidth * n).toInt()
-            val bandwidthInPointsOk = bandwidthInPoints >= 2
-            return n >= 3 && degreesOfFreedom > 0 && bandwidthInPointsOk
         }
 
         private fun getPolynomial(xVals: DoubleArray, yVals: DoubleArray, bandwidth: Double): PolynomialSplineFunction {

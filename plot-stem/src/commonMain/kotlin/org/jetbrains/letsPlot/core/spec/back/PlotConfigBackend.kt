@@ -300,6 +300,22 @@ open class PlotConfigBackend(
 
     companion object {
 
+        private val SMOOTH_STAT_VARS_TO_KEEP = listOf(
+            Stats.R2,
+            Stats.R2_ADJ,
+            Stats.N,
+            Stats.AIC,
+            Stats.BIC,
+            Stats.METHOD,
+            Stats.F,
+            Stats.DF1,
+            Stats.DF2,
+            Stats.P,
+            Stats.CI_LEVEL,
+            Stats.CI_LOW,
+            Stats.CI_HIGH
+        )
+
         private fun variablesToKeep(facets: PlotFacets, layerConfig: LayerConfig): Set<String> {
             val stat = layerConfig.stat
             // keep all original vars
@@ -334,7 +350,7 @@ open class PlotConfigBackend(
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
-            varsToKeep.addAll(listOf(Stats.R2, Stats.R2_ADJ))
+            varsToKeep.addAll(SMOOTH_STAT_VARS_TO_KEEP)
             varsToKeep.addAll(layerConfig.ownData.variables().filter { it.label.contains("smooth_eq_coef_") })
 
             return HashSet<String>() +

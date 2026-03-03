@@ -6,15 +6,12 @@
 package org.jetbrains.letsPlot.core.plot.base.stat.regression
 
 class LinearRegression private constructor (
-    n: Int,
-    meanX: Double,
-    sumXX: Double,
+    xVals: DoubleArray,
+    yVals: DoubleArray,
     model: (Double) -> Double,
-    standardErrorOfEstimate: Double,
-    tCritical: Double,
+    confidenceLevel: Double,
     eq: List<Double>,
-    r2: Double,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2) {
+) : RegressionEvaluator(xVals, yVals, model, 1.0, confidenceLevel, eq) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double): LinearRegression? {
             check(xs, ys, confidenceLevel)
@@ -22,7 +19,6 @@ class LinearRegression private constructor (
             // Prepare data
             val (xVals, yVals) = allFinite(xs, ys)
             val n = xVals.size
-            val degreesOfFreedom = n - 2.0
 
             // Check computability
             if (n <= 1) {
@@ -41,14 +37,11 @@ class LinearRegression private constructor (
             val model: (Double) -> Double = { x -> slope * x + intercept }
 
             return LinearRegression(
-                n,
-                meanX,
-                sumXX,
+                xVals,
+                yVals,
                 model,
-                calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
-                calcTCritical(degreesOfFreedom, confidenceLevel),
-                listOf(intercept, slope),
-                calcRSquared(xVals, yVals, model)
+                confidenceLevel,
+                listOf(intercept, slope)
             )
         }
     }

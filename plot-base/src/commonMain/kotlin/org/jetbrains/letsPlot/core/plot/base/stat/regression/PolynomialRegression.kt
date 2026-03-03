@@ -10,15 +10,13 @@ import org.jetbrains.letsPlot.core.plot.base.stat.math3.PolynomialFunction
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.times
 
 class PolynomialRegression private constructor (
-    n: Int,
-    meanX: Double,
-    sumXX: Double,
+    xVals: DoubleArray,
+    yVals: DoubleArray,
     model: (Double) -> Double,
-    standardErrorOfEstimate: Double,
-    tCritical: Double,
-    eq: List<Double>,
-    r2: Double,
-) : RegressionEvaluator(n, meanX, sumXX, model, standardErrorOfEstimate, tCritical, eq, r2) {
+    deg: Double,
+    confidenceLevel: Double,
+    eq: List<Double>
+) : RegressionEvaluator(xVals, yVals, model, deg, confidenceLevel, eq) {
     companion object {
         fun fit(xs: List<Double?>, ys: List<Double?>, confidenceLevel: Double, deg: Int): PolynomialRegression? {
             check(xs, ys, confidenceLevel)
@@ -27,30 +25,23 @@ class PolynomialRegression private constructor (
             // Prepare data
             val (xVals, yVals) = averageByX(xs, ys)
             val n = xVals.size
-            val degreesOfFreedom = n - deg - 1.0
 
             // Check computability
             if (n <= deg) {
                 return null
             }
 
-            // Calculate standard stats
-            val meanX = xVals.average()
-            val sumXX = sumOfSquaredDeviations(xVals, meanX)
-
             // Prepare model
             val polynomial = calculatePolynomial(deg, xVals, yVals)
             val model: (Double) -> Double = { x -> polynomial.value(x) }
 
             return PolynomialRegression(
-                n,
-                meanX,
-                sumXX,
+                xVals,
+                yVals,
                 model,
-                calcStandardErrorOfEstimate(xVals, yVals, model, degreesOfFreedom),
-                calcTCritical(degreesOfFreedom, confidenceLevel),
-                polynomial.getCoefficients(),
-                calcRSquared(xVals, yVals, model)
+                deg.toDouble(),
+                confidenceLevel,
+                polynomial.getCoefficients()
             )
         }
 
@@ -73,10 +64,10 @@ class PolynomialRegression private constructor (
             for (i in xVals.indices) {
                 val x = xVals[i]
                 val y = yVals[i]
-                val pval = p.value(x)
+                val pVal = p.value(x)
 
-                ww += pval * pval
-                w += y * pval
+                ww += pVal * pVal
+                w += y * pVal
             }
 
             return w / ww
