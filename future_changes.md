@@ -8,7 +8,7 @@
 
 - Plot tags. A tag can be specified via `labs(tag=...)` and styled using theme parameters [[#1407](https://github.com/JetBrains/lets-plot/issues/1407)]
   
-    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html) and [plot layout scheme](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_layout_scheme.html).
 
 - Plot Theme:
   - Tag customization parameters:
