@@ -1,10 +1,13 @@
 #  Copyright (c) 2025. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
+import decimal
+import math
 from datetime import datetime, date, time, timezone, timedelta
 
 import jax.numpy as jnp
 import numpy as np
+import pandas as pd
 
 from lets_plot._type_utils import _standardize_value, is_ndarray, LazyModule
 
@@ -30,6 +33,7 @@ def test_standardize_value_returns_float_for_numeric_and_temporal():
     # Python numeric types
     assert isinstance(_standardize_value(42), float)
     assert isinstance(_standardize_value(3.14), float)
+    assert isinstance(_standardize_value(decimal.Decimal('3.14')), float)
 
     # NumPy numeric types
     assert isinstance(_standardize_value(np.int8(8)), float)
@@ -304,3 +308,30 @@ def test_isintance():
 
     lazy_jax = LazyModule('jax')
     assert lazy_jax.lazy_is_instance(jnp.array([1, 2, 3]), 'numpy.ndarray') == True
+
+
+def test_standardize_value_returns_na_for_missing_values():
+    # Standard Python missing values
+    assert _standardize_value(None) is None
+    assert _standardize_value(float('nan')) is None
+    assert _standardize_value(math.nan) is None
+
+    # Pandas missing values
+    assert _standardize_value(pd.NaT) is None
+    assert _standardize_value(pd.NA) is None
+
+    # NumPy floating NaNs
+    assert _standardize_value(np.nan) is None
+    assert _standardize_value(np.float16('nan')) is None
+    assert _standardize_value(np.float32('nan')) is None
+    assert _standardize_value(np.float64('nan')) is None
+
+    # NumPy time/date NaNs
+    assert _standardize_value(np.datetime64('NaT')) is None
+    assert _standardize_value(np.timedelta64('NaT')) is None
+
+    # Python standard library NaNs
+    assert _standardize_value(decimal.Decimal('NaN')) is None
+    assert _standardize_value(decimal.Decimal('sNaN')) is None
+    assert _standardize_value(decimal.Decimal('Infinity')) is None
+    assert _standardize_value(decimal.Decimal('-Infinity')) is None

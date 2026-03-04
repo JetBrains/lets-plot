@@ -2,6 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
+import decimal
 import importlib
 import json
 import math
@@ -32,7 +33,7 @@ class LazyModule:
             self._tried = True
         return self._module
 
-    def defines(self, v: Any) -> bool:
+    def likely_defines(self, v: Any) -> bool:
         """
         Check whether object `v` appears to originate from this lazy module or its subpackages,
         without triggering an import of the underlying module.
@@ -154,7 +155,7 @@ class LazyModule:
             return isinstance(v, target_cls)
 
         # Lazy path: Only trigger import if the object's module string matches
-        if self.defines(v):
+        if self.likely_defines(v):
             # We use 'self' here to trigger the __getattr__ import logic
             target_cls = self._resolve_class(self, module_classinfo)
             return isinstance(v, target_cls)
@@ -197,6 +198,14 @@ class LazyModule:
         return self._inst is not None
 
 
+pandas = LazyModule('pandas')
+geopandas = LazyModule('geopandas')
+numpy = LazyModule('numpy')
+jax = LazyModule('jax')
+polars = LazyModule('polars')
+shapely = LazyModule('shapely')
+
+
 # Parameter 'value' can also be pandas.DataFrame
 def standardize_dict(value: Dict) -> Dict:
     result = {}
@@ -217,17 +226,89 @@ def is_ndarray(data) -> bool:
 
 
 def _standardize_value(v):
-    # check for common types first to avoid unnecessary imports of heavy libraries that cause delays
+    # Notes:
+    # - Check libs first, because they may have custom types derived from built-in types that require special handling,
+    #   e.g. pandas.NaT is a datetime subclass, but missing .timestamp() method and will fail in a regular conversion.
+    # - Handle dicts-like containers before list-like
+    # - Handle containers before is_nan() because nan checks may raise an error,
+    #   e.g. ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all())
+    # - Check for NaN/inf before other types - datetime64 and other may raise an error when converted to float,
+    #   e.g. ValueError: NaTType does not support timestamp
+
     try:
+        if pandas.likely_defines(v):
+            if isinstance(v, pandas.DataFrame):  # don't use is_dict_like - Series is dict-like, but should be list
+                return standardize_dict(v)
+            if pandas.api.types.is_list_like(v):
+                return [_standardize_value(element) for element in v]
+            if pandas.api.types.is_scalar(v) and pandas.isna(v):
+                return None
+
+        if numpy.likely_defines(v):
+            if isinstance(v, numpy.ndarray):
+                # Process each array element individually.
+                # Don't use '.tolist()' because this will implicitly
+                # convert 'datetime64' values to unpredictable 'datetime' objects.
+                return [_standardize_value(x) for x in v]
+            if numpy.isnan(v):
+                return None
+            if isinstance(v, numpy.floating):
+                return float(v) if math.isfinite(v) else None
+            if isinstance(v, numpy.integer):
+                return float(v)
+            if isinstance(v, numpy.bool_):
+                return bool(v)
+            if isinstance(v, numpy.str_):
+                return str(v)
+            if isinstance(v, numpy.datetime64):
+                # numpy.datetime64: to milliseconds since epoch (Unix time)
+                return float(v.astype('datetime64[ms]').astype(numpy.int64))
+
+        if polars.likely_defines(v):
+            if isinstance(v, polars.DataFrame):
+                return standardize_dict(v.to_dict(as_series=False))
+            if isinstance(v, polars.Series):
+                return _standardize_value(v.to_list())
+
+        if jax.likely_defines(v):
+            if isinstance(v, jax.numpy.ndarray):
+                return _standardize_value(v.tolist())
+            if isinstance(v, jax.numpy.floating):
+                return float(v) if math.isfinite(v) else None
+            if isinstance(v, jax.numpy.integer):
+                return float(v)
+
+        if geopandas.likely_defines(v):
+            if isinstance(v, geopandas.GeoDataFrame):
+                return standardize_dict(v)
+            if isinstance(v, geopandas.GeoSeries):
+                return [_standardize_value(element) for element in v]
+
+        if shapely.likely_defines(v):
+            if isinstance(v, shapely.geometry.base.BaseGeometry):
+                return json.dumps(shapely.geometry.mapping(v))
+
+        # python containers
+        if isinstance(v, dict):
+            return standardize_dict(v)
+        if isinstance(v, list):
+            return [_standardize_value(elem) for elem in v]
+        if isinstance(v, tuple):
+            return [_standardize_value(elem) for elem in v]
+        if isinstance(v, set):
+            return [_standardize_value(elem) for elem in v]
+
         # python types
         if v is None:
-            return v
+            return None
         if isinstance(v, bool):
             return bool(v)
         if isinstance(v, int):
             return float(v)
         if isinstance(v, float):
-            return float(v) if math.isfinite(v) else None  # nan/inf to None (Gson does not handle them well)
+            return float(v) if math.isfinite(v) else None  # nan/inf to None
+        if isinstance(v, decimal.Decimal):
+            return float(v) if v.is_finite() else None
         if isinstance(v, str):
             return str(v)
         if isinstance(v, datetime):
@@ -240,78 +321,6 @@ def _standardize_value(v):
             # Local time: to milliseconds since midnight
             return float(v.hour * 3600_000 + v.minute * 60_000 + v.second * 1000 + v.microsecond // 1000)
 
-        # python containers
-        if isinstance(v, list):
-            return [_standardize_value(elem) for elem in v]
-        if isinstance(v, tuple):
-            return [_standardize_value(elem) for elem in v]
-        if isinstance(v, set):
-            return [_standardize_value(elem) for elem in v]
-        if isinstance(v, dict):
-            return standardize_dict(v)
-
-        if pandas.defines(v):
-            # don't use is_dict_like - Series is also dict-like and we want to process it as list-like
-            if isinstance(v, pandas.DataFrame):
-                return standardize_dict(v)
-            if pandas.api.types.is_list_like(v):
-                return [_standardize_value(element) for element in v]
-            if pandas.api.types.is_scalar(v) and pandas.isna(v):
-                return None
-
-        if numpy.defines(v):
-            if isinstance(v, numpy.floating):
-                return float(v) if math.isfinite(v) else None
-            if isinstance(v, numpy.integer):
-                return float(v)
-            if isinstance(v, numpy.bool_):
-                return bool(v)
-            if isinstance(v, numpy.str_):
-                return str(v)
-            if isinstance(v, numpy.datetime64):
-                try:
-                    # numpy.datetime64: to milliseconds since epoch (Unix time)
-                    return float(v.astype('datetime64[ms]').astype(numpy.int64))
-                except:
-                    return None
-            if isinstance(v, numpy.ndarray):
-                # Process each array element individually.
-                # Don't use '.tolist()' because this will implicitly
-                # convert 'datetime64' values to unpredictable 'datetime' objects.
-                return [_standardize_value(x) for x in v]
-
-        if polars.defines(v):
-            if isinstance(v, polars.DataFrame):
-                return standardize_dict(v.to_dict(as_series=False))
-            if isinstance(v, polars.Series):
-                return _standardize_value(v.to_list())
-
-        if jax.defines(v):
-            if isinstance(v, jax.numpy.floating):
-                return float(v) if math.isfinite(v) else None
-            if isinstance(v, jax.numpy.integer):
-                return float(v)
-            if isinstance(v, jax.numpy.ndarray):
-                return _standardize_value(v.tolist())
-
-        if geopandas.defines(v):
-            if isinstance(v, geopandas.GeoDataFrame):
-                return standardize_dict(v)
-            if isinstance(v, geopandas.GeoSeries):
-                return [_standardize_value(element) for element in v]
-
-        if shapely.defines(v):
-            if isinstance(v, shapely.geometry.base.BaseGeometry):
-                return json.dumps(shapely.geometry.mapping(v))
-
         return repr(v)
     except Exception as e:
         raise Exception('Failed to standardize type {0} ({1})'.format(type(v), str(v)[:100])) from e
-
-
-pandas = LazyModule('pandas')
-geopandas = LazyModule('geopandas')
-numpy = LazyModule('numpy')
-jax = LazyModule('jax')
-polars = LazyModule('polars')
-shapely = LazyModule('shapely')
