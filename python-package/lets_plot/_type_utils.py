@@ -6,7 +6,7 @@ import decimal
 import importlib
 import json
 import math
-from datetime import datetime, date, time, timezone
+from datetime import datetime, date, time, timezone, timedelta
 from typing import Any, Union, Type, Dict
 
 
@@ -241,28 +241,39 @@ def _standardize_value(v):
                 return standardize_dict(v)
             if pandas.api.types.is_list_like(v):
                 return [_standardize_value(element) for element in v]
-            if pandas.api.types.is_scalar(v) and pandas.isna(v):
+            if pandas.isna(v):
                 return None
+            if isinstance(v, pandas.Timestamp):
+                # pandas.Timestamp: to milliseconds since epoch
+                return v.timestamp() * 1000
+            if isinstance(v, pandas.Timedelta):
+                # pandas.Timedelta: to milliseconds
+                return float(v.total_seconds() * 1000)
 
         if numpy.likely_defines(v):
             if isinstance(v, numpy.ndarray):
-                # Process each array element individually.
-                # Don't use '.tolist()' because this will implicitly
-                # convert 'datetime64' values to unpredictable 'datetime' objects.
-                return [_standardize_value(x) for x in v]
-            if numpy.isnan(v):
-                return None
+                if v.ndim == 0:
+                    # 0-dim array: process the single value. Don't use item() - it may break datetime64
+                    return _standardize_value(v[()])
+                return [_standardize_value(x) for x in v]  # don't use .tolist() - may break datetime64
+            if isinstance(v, numpy.timedelta64):
+                if numpy.isnat(v):
+                    return None
+                # numpy.timedelta64: to milliseconds
+                return float(v.astype('timedelta64[ms]').astype(numpy.int64))
+            if isinstance(v, numpy.datetime64):
+                if numpy.isnat(v):
+                    return None
+                # numpy.datetime64: to milliseconds since epoch (Unix time)
+                return float(v.astype('datetime64[ms]').astype(numpy.int64))
             if isinstance(v, numpy.floating):
                 return float(v) if math.isfinite(v) else None
-            if isinstance(v, numpy.integer):
-                return float(v)
             if isinstance(v, numpy.bool_):
                 return bool(v)
             if isinstance(v, numpy.str_):
                 return str(v)
-            if isinstance(v, numpy.datetime64):
-                # numpy.datetime64: to milliseconds since epoch (Unix time)
-                return float(v.astype('datetime64[ms]').astype(numpy.int64))
+            if isinstance(v, numpy.integer):
+                return float(v)
 
         if polars.likely_defines(v):
             if isinstance(v, polars.DataFrame):
@@ -272,7 +283,10 @@ def _standardize_value(v):
 
         if jax.likely_defines(v):
             if isinstance(v, jax.numpy.ndarray):
-                return _standardize_value(v.tolist())
+                if v.ndim == 0:
+                    # 0-dim array: process the single value
+                    return _standardize_value(v.item())
+                return [_standardize_value(e) for e in v]
             if isinstance(v, jax.numpy.floating):
                 return float(v) if math.isfinite(v) else None
             if isinstance(v, jax.numpy.integer):
@@ -320,6 +334,9 @@ def _standardize_value(v):
         if isinstance(v, time):
             # Local time: to milliseconds since midnight
             return float(v.hour * 3600_000 + v.minute * 60_000 + v.second * 1000 + v.microsecond // 1000)
+        if isinstance(v, timedelta):
+            # Standard Python timedelta: to milliseconds
+            return v / timedelta(milliseconds=1)
 
         return repr(v)
     except Exception as e:
