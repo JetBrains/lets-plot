@@ -77,14 +77,14 @@ open class TextRepelGeom: TextGeom() {
             val pointLocation = coord.toClient(point) ?: continue
             if (!bounds.contains(pointLocation)) continue
 
-            val text = textHelper.toString(dp.label())
-            if (text.isEmpty()) continue
-
             val pointDp = toPointAes(dp)
             val shape = pointDp.shape()!!
             val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, POINT_UNIT_SIZE)
             val pointRadius = (shape.size(pointDp, sizeUnitRatio) + shape.strokeWidth(pointDp)) / 2
             circles[dp.index()] = DoubleCircle(pointLocation, pointRadius + pointPadding(sizeUnitRatio))
+
+            val text = textHelper.toString(dp.label())
+            if (text.isEmpty()) continue
 
             val hjust = TextUtil.hAnchor(dp, loc, aesBoundsCenter).toDouble()
             val vjust = TextUtil.vAnchor(dp, loc, aesBoundsCenter)
