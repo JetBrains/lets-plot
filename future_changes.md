@@ -85,3 +85,6 @@
 - Allow tooltips param to accept list [[#1455](https://github.com/JetBrains/lets-plot/issues/1455)].
 - Allow grouped tooltips for plots with multiple univariate geoms [[#1460](https://github.com/JetBrains/lets-plot/issues/1460)].
 - Eager import of jax.numpy in _type_utils.py causes unnecessary JAX initialization [[#1469](https://github.com/JetBrains/lets-plot/issues/1469)].
+- Fixed a regression in geom_text_repel() / geom_label_repel(): points with empty labels were incorrectly skipped \
+  before building the repel obstacle set, so they were not included in collision avoidance and labels could overlap \
+  dense point clusters.
