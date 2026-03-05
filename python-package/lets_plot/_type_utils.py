@@ -236,26 +236,41 @@ def _standardize_value(v):
     #   e.g. ValueError: NaTType does not support timestamp
 
     try:
-        if pandas.likely_defines(v):
-            if isinstance(v, pandas.DataFrame):  # don't use is_dict_like - Series is dict-like, but should be list
-                return standardize_dict(v)
-            if pandas.api.types.is_list_like(v):
-                return [_standardize_value(element) for element in v]
-            if pandas.isna(v):
-                return None
-            if isinstance(v, pandas.Timestamp):
-                # pandas.Timestamp: to milliseconds since epoch
-                return v.timestamp() * 1000
-            if isinstance(v, pandas.Timedelta):
-                # pandas.Timedelta: to milliseconds
-                return float(v.total_seconds() * 1000)
-
         if numpy.likely_defines(v):
             if isinstance(v, numpy.ndarray):
                 if v.ndim == 0:
                     # 0-dim array: process the single value. Don't use item() - it may break datetime64
                     return _standardize_value(v[()])
-                return [_standardize_value(x) for x in v]  # don't use .tolist() - may break datetime64
+
+                # Optimization
+                kind = v.dtype.kind
+                if kind == 'f':  # Floats
+                    # Cast to object array so we can insert Python `None`
+                    v_obj = v.astype(object)
+                    v_obj[~numpy.isfinite(v)] = None
+                    return v_obj.tolist()
+
+                elif kind in 'iu':  # Integers
+                    return v.astype(float).tolist()
+
+                elif kind == 'b' or kind in 'SU':  # Booleans and Strings
+                    return v.tolist()
+
+                elif kind == 'M':  # Datetime64
+                    # Cast ms to int64, then to float64, then object (for None insertion)
+                    v_float = v.astype('datetime64[ms]').astype(numpy.int64).astype(numpy.float64)
+                    v_obj = v_float.astype(object)
+                    v_obj[numpy.isnat(v)] = None
+                    return v_obj.tolist()
+
+                elif kind == 'm':  # Timedelta64
+                    v_float = v.astype('timedelta64[ms]').astype(numpy.int64).astype(numpy.float64)
+                    v_obj = v_float.astype(object)
+                    v_obj[numpy.isnat(v)] = None
+                    return v_obj.tolist()
+
+                # Fallback only for object arrays (which can contain mixed/unpredictable types)
+                return [_standardize_value(x) for x in v]
             if isinstance(v, numpy.timedelta64):
                 if numpy.isnat(v):
                     return None
@@ -275,18 +290,29 @@ def _standardize_value(v):
             if isinstance(v, numpy.integer):
                 return float(v)
 
+        if pandas.likely_defines(v):
+            if isinstance(v, pandas.DataFrame):  # don't use is_dict_like - Series is dict-like, but should be list
+                return standardize_dict(v)
+            if pandas.api.types.is_list_like(v):
+                return _standardize_value(v.to_numpy())
+            if pandas.isna(v):
+                return None
+            if isinstance(v, pandas.Timestamp):
+                # pandas.Timestamp: to milliseconds since epoch
+                return v.timestamp() * 1000
+            if isinstance(v, pandas.Timedelta):
+                # pandas.Timedelta: to milliseconds
+                return float(v.total_seconds() * 1000)
+
         if polars.likely_defines(v):
             if isinstance(v, polars.DataFrame):
-                return standardize_dict(v.to_dict(as_series=False))
+                return standardize_dict(v.to_dict())
             if isinstance(v, polars.Series):
-                return _standardize_value(v.to_list())
+                return _standardize_value(v.to_numpy())
 
         if jax.likely_defines(v):
             if isinstance(v, jax.numpy.ndarray):
-                if v.ndim == 0:
-                    # 0-dim array: process the single value
-                    return _standardize_value(v.item())
-                return [_standardize_value(e) for e in v]
+                return _standardize_value(numpy.array(v))
             if isinstance(v, jax.numpy.floating):
                 return float(v) if math.isfinite(v) else None
             if isinstance(v, jax.numpy.integer):

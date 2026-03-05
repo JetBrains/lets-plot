@@ -8,6 +8,8 @@ from datetime import datetime, date, time, timezone, timedelta
 import jax.numpy as jnp
 import numpy as np
 import pandas as pd
+import polars as pl
+import pytest
 
 from lets_plot._type_utils import _standardize_value, is_ndarray, LazyModule
 
@@ -211,6 +213,148 @@ def test_empty_collections():
 
     # JAX array of empty collections
     assert _standardize_value(jnp.array([])) == []
+
+
+@pytest.mark.timeout(10)
+def test_perf_float_numpy_array():
+    huge_arr = np.full((3_000 * 3_000), 42.0, dtype=np.float32)
+
+    huge_arr[0] = np.nan
+    huge_arr[1] = np.inf
+    huge_arr[2] = -np.inf
+
+    result = _standardize_value(pd.DataFrame({'data': huge_arr}))['data']
+
+    assert len(result) == 9_000_000
+
+    assert result[0] is None      # NaN converted to None
+    assert result[1] is None      # +Inf converted to None
+    assert result[2] is None      # -Inf converted to None
+    assert result[3] == 42.0      # Normal constant untouched
+    assert result[-1] == 42.0    # Normal constant untouched
+
+
+@pytest.mark.timeout(10)
+def test_perf_float_pandas_array():
+    large_array = pd.array([42.0] * (3_000 * 3_000))
+    large_array[0] = np.nan
+    large_array[1] = np.inf
+    large_array[2] = -np.inf
+
+    standardized_large_array = _standardize_value(pd.DataFrame({'data': large_array}))['data']
+
+    assert len(standardized_large_array) == 9000000
+    assert standardized_large_array[0] is None      # NaN converted to None
+    assert standardized_large_array[1] is None      # +Inf converted to None
+    assert standardized_large_array[2] is None      # -Inf converted to None
+    assert standardized_large_array[3] == 42.0      # Normal constant untouched
+    assert standardized_large_array[-1] == 42.0     # Normal constant untouched
+
+
+@pytest.mark.timeout(10)
+def test_perf_float_pandas_series():
+    large_series = pd.Series([42.0] * (3_000 * 3_000))
+    large_series[0] = np.nan
+    large_series[1] = np.inf
+    large_series[2] = -np.inf
+
+    standardized_large_series = _standardize_value(pd.DataFrame({'data': large_series}))['data']
+
+    assert len(standardized_large_series) == 9000000
+    assert standardized_large_series[0] is None      # NaN converted to None
+    assert standardized_large_series[1] is None      # +Inf converted to None
+    assert standardized_large_series[2] is None      # -Inf converted to None
+    assert standardized_large_series[3] == 42.0      # Normal constant untouched
+    assert standardized_large_series[-1] == 42.0     # Normal constant untouched
+
+
+@pytest.mark.timeout(10)
+def test_perf_float_jax_array():
+    huge_arr = jnp.full((3_000 * 3_000), 42.0, dtype=jnp.float32)
+
+    huge_arr = huge_arr.at[0].set(jnp.nan)
+    huge_arr = huge_arr.at[1].set(jnp.inf)
+    huge_arr = huge_arr.at[2].set(-jnp.inf)
+
+    result = _standardize_value(pd.DataFrame({'data': huge_arr}))['data']
+
+    assert len(result) == 9_000_000
+
+    assert result[0] is None      # NaN converted to None
+    assert result[1] is None      # +Inf converted to None
+    assert result[2] is None      # -Inf converted to None
+    assert result[3] == 42.0      # Normal constant untouched
+    assert result[-1] == 42.0    # Normal constant untouched
+
+
+@pytest.mark.timeout(10)
+def test_perf_float_polars_series():
+    large_series = pl.Series([42.0] * (3_000 * 3_000))
+    large_series[0] = np.nan
+    large_series[1] = np.inf
+    large_series[2] = -np.inf
+
+    standardized_large_series = _standardize_value(pl.DataFrame({'data': large_series}))['data']
+
+    assert len(standardized_large_series) == 9000000
+    assert standardized_large_series[0] is None      # NaN converted to None
+    assert standardized_large_series[1] is None      # +Inf converted to None
+    assert standardized_large_series[2] is None      # -Inf converted to None
+    assert standardized_large_series[3] == 42.0      # Normal constant untouched
+    assert standardized_large_series[-1] == 42.0     # Normal constant untouched
+
+
+@pytest.mark.timeout(10)
+def test_perf_datetime_numpy_array():
+    huge_arr = np.array([np.datetime64('2023-01-01T12:30:45')] * (3_000 * 3_000))
+
+    huge_arr[0] = np.datetime64('NaT')
+    huge_arr[1] = np.datetime64('NaT')
+    huge_arr[2] = np.datetime64('NaT')
+
+    result = _standardize_value(pd.DataFrame({'data': huge_arr}))['data']
+
+    assert len(result) == 9_000_000
+
+    assert result[0] is None      # NaT converted to None
+    assert result[1] is None      # NaT converted to None
+    assert result[2] is None      # NaT converted to None
+    assert result[3] == 1672576245000.0      # Normal datetime converted to epoch millis
+    assert result[-1] == 1672576245000.0    # Normal datetime converted to epoch millis
+
+
+@pytest.mark.timeout(10)
+def test_perf_datetime_pandas_array():
+    large_array = pd.array([pd.Timestamp('2023-01-01T12:30:45')] * (3_000 * 3_000))
+    large_array[0] = pd.NaT
+    large_array[1] = pd.NaT
+    large_array[2] = pd.NaT
+
+    standardized_large_array = _standardize_value(pd.DataFrame({'data': large_array}))['data']
+
+    assert len(standardized_large_array) == 9000000
+    assert standardized_large_array[0] is None      # NaT converted to None
+    assert standardized_large_array[1] is None      # NaT converted to None
+    assert standardized_large_array[2] is None      # NaT converted to None
+    assert standardized_large_array[3] == 1672576245000.0      # Normal datetime converted to epoch millis
+    assert standardized_large_array[-1] == 1672576245000.0     # Normal datetime converted to epoch millis
+
+
+@pytest.mark.timeout(10)
+def test_perf_datetime_pandas_series():
+    large_series = pd.Series([pd.Timestamp('2023-01-01T12:30:45')] * (3_000 * 3_000))
+    large_series[0] = pd.NaT
+    large_series[1] = pd.NaT
+    large_series[2] = pd.NaT
+
+    standardized_large_series = _standardize_value(pd.DataFrame({'data': large_series}))['data']
+
+    assert len(standardized_large_series) == 9000000
+    assert standardized_large_series[0] is None      # NaT converted to None
+    assert standardized_large_series[1] is None      # NaT converted to None
+    assert standardized_large_series[2] is None      # NaT converted to None
+    assert standardized_large_series[3] == 1672576245000.0      # Normal datetime converted to epoch millis
+    assert standardized_large_series[-1] == 1672576245000.0     # Normal datetime converted to epoch millis
 
 
 def test_is_ndarray():
