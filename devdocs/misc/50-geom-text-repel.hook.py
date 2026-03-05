@@ -30,7 +30,7 @@ def _patch_one_function(module, func_name, *, seed=42, max_iter=200, max_time=-1
     def _wrapped(*args, **kwargs):
         kwargs.setdefault("seed", seed)
         kwargs.setdefault("max_iter", max_iter)
-        kwargs.setdefault("max_time", max_time)
+        kwargs["max_time"] = max_time
         return geom(*args, **kwargs)
 
     setattr(_wrapped, patch_flag, True)
