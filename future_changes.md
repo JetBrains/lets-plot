@@ -75,11 +75,12 @@
 - Upgraded the Kotlin version to 2.2.20 (was 1.9.25).
 - [**BREAKING**]: Removed JavaFX artifacts.
 - [**BREAKING**]: Removed `plot-image-export` module. Use `PlotImageExport` from `platf-awt` module instead.
-- Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
 - [**BREAKING**]: ColorBrewer palettes: changed default behavior when the requested number of colors exceeds the palette's maximum size. \
   Now defaults to `'interpolate'` for sequential/diverging palettes and `'generate'` for qualitative palettes. \
   Previously, depending on the palette type, this either resulted in duplicate colors or random additional colors. \
   Use the new `overflow` parameter to explicitly control this behavior.
+- Reduced import overhead by nearly two orders of magnitude (from ~1.2s down to ~0.02s) [[#1469](https://github.com/JetBrains/lets-plot/issues/1469)]. 
+- Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
 - Discrete color scales (Brewer, Manual) now produce a `colorbar` guide when used with continuous data. \
   Previously they produced a `legend` guide regardless of the data type.
 
@@ -93,7 +94,6 @@
 - Nice to be able to get a list of colors from a color scale object [[#1444](https://github.com/JetBrains/lets-plot/issues/1444)].
 - Allow tooltips param to accept list [[#1455](https://github.com/JetBrains/lets-plot/issues/1455)].
 - Allow grouped tooltips for plots with multiple univariate geoms [[#1460](https://github.com/JetBrains/lets-plot/issues/1460)].
-- Eager import of jax.numpy in _type_utils.py causes unnecessary JAX initialization [[#1469](https://github.com/JetBrains/lets-plot/issues/1469)].
 - Fixed a regression in geom_text_repel() / geom_label_repel(): points with empty labels were incorrectly skipped \
   before building the repel obstacle set, so they were not included in collision avoidance and labels could overlap \
   dense point clusters.
