@@ -6,12 +6,19 @@
 
 - Python 3.14 free-threading support [[#1454](https://github.com/JetBrains/lets-plot/issues/1454)]
 
-- Plot tags. A tag can be specified via `labs(tag=...)` and styled using theme parameters [[#1407](https://github.com/JetBrains/lets-plot/issues/1407)]
-  
-    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html) and [plot layout scheme](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_layout_scheme.html).
 
-- Plot Theme:
-  - Tag customization parameters:
+- Plot Annotations:
+    
+  - New `labels` parameter in `geom_smooth()` designed to display statistical summaries of the fitted model directly on the plot. \
+    This parameter accepts a `smooth_labels()` object, which provides access to model-specific variables like $R^2$, the regression equation and others.
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
+
+  - **Plot tags**. A tag can be specified via `labs(tag=...)` and styled using theme parameters [[#1407](https://github.com/JetBrains/lets-plot/issues/1407)]
+  
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html) and updated [plot layout scheme](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_layout_scheme.html).
+                                                                                                                     
+  - Plot tags customization parameters in `theme()`:
     - `plot_tag` - sets the tag style via `element_text()`
     - `plot_tag_location` - specifies the area used for positioning the tag  
     - `plot_tag_position` - specifies the position of the tag within the selected area
@@ -19,10 +26,19 @@
     - `plot_tag_suffix` - text added after the tag value
    
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
- 
-  - Support of axis minor ticks via `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()` [[#1379](https://github.com/JetBrains/lets-plot/issues/1379)].
 
-    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
+
+- Geometries:
+  - New`geom_bracket()`, `geom_bracket_dodge()` [[#1114](https://github.com/JetBrains/lets-plot/issues/1114)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
+
+  - `geom_imshow()`:
+    - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot/issues/780)].
+    - New `cguide` parameter: use to customize the colorbar for grayscale images.
+
+      See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
+
 
 - Color Scales:
   - New `palette()` method for color scales: generates a list of hex color codes that can be used with `scale_color_manual()` to maintain consistent colors across multiple plots [[#1444](https://github.com/JetBrains/lets-plot/issues/1444)].
@@ -33,6 +49,7 @@
     Options: `'interpolate'` (`'i'`), `'cycle'` (`'c'`), `'generate'` (`'g'`).
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_brewer_overflow.html).
+       
 
 - Positional Scales:
   - New `break_width` parameter that specifies a fixed distance between axis breaks.
@@ -42,28 +59,20 @@
     - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
     - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
 
-- `geom_bracket()`, `geom_bracket_dodge()` [[#1114](https://github.com/JetBrains/lets-plot/issues/1114)].
+  - Support of axis minor ticks via `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()` [[#1379](https://github.com/JetBrains/lets-plot/issues/1379)].
 
-    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
+
 
 - `gggrid()`: interactive pan/zoom now propagates across subplots with shared axes (`sharex`/`sharey`) [[#1413](https://github.com/JetBrains/lets-plot/issues/1413)].
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/gggrid_scale_share_zoom.html).
 
-- `geom_imshow()`:
-  - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot/issues/780)].
-  - New `cguide` parameter: use to customize the colorbar for grayscale images.
-
-    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
-
-- `geom_smooth()`: added `labels` parameter which accepts `smooth_labels()` to annotate plots with $R^2$, Adjusted $R^2$, and regression equations.
-
-    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
 
 
 ### Changed
 
-- Upgraded Kotlin version to 2.2.20 (was 1.9.25).
+- Upgraded the Kotlin version to 2.2.20 (was 1.9.25).
 - [**BREAKING**]: Removed JavaFX artifacts.
 - [**BREAKING**]: Removed `plot-image-export` module. Use `PlotImageExport` from `platf-awt` module instead.
 - Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
