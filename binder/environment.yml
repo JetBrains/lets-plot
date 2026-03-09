@@ -24,3 +24,4 @@ dependencies:
       - cartopy
       - rasterio
       - statsmodels                 # for 'residual plot'
+      - mizani                      # only for p-value formatting demo
