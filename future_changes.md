@@ -2,9 +2,9 @@
 
 ### Added
 
-- Python 3.14 support
+- Python 3.14 support.
 
-- Python 3.14 free-threading support [[#1454](https://github.com/JetBrains/lets-plot/issues/1454)]
+- Python 3.14 free-threading support [[#1454](https://github.com/JetBrains/lets-plot/issues/1454)].
 
 
 - Plot Annotations:
@@ -14,22 +14,22 @@
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
 
-  - **Plot tags**. A tag can be specified via `labs(tag=...)` and styled using theme parameters [[#1407](https://github.com/JetBrains/lets-plot/issues/1407)]
+  - **Plot tags**. A tag can be specified via `labs(tag=...)` and styled using theme parameters [[#1407](https://github.com/JetBrains/lets-plot/issues/1407)].
   
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html) and updated [plot layout scheme](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_layout_scheme.html).
                                                                                                                      
   - Plot tags customization parameters in `theme()`:
-    - `plot_tag` - sets the tag style via `element_text()`
-    - `plot_tag_location` - specifies the area used for positioning the tag  
-    - `plot_tag_position` - specifies the position of the tag within the selected area
-    - `plot_tag_prefix` - text added before the tag value
-    - `plot_tag_suffix` - text added after the tag value
+    - `plot_tag` - sets the tag style via `element_text()`.
+    - `plot_tag_location` - specifies the area used for positioning the tag.
+    - `plot_tag_position` - specifies the position of the tag within the selected area.
+    - `plot_tag_prefix` - text added before the tag value.
+    - `plot_tag_suffix` - text added after the tag value.
    
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
 
 
 - Geometries:
-  - New`geom_bracket()`, `geom_bracket_dodge()` [[#1114](https://github.com/JetBrains/lets-plot/issues/1114)].
+  - New `geom_bracket()`, `geom_bracket_dodge()` [[#1114](https://github.com/JetBrains/lets-plot/issues/1114)].
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
 
@@ -59,7 +59,7 @@
     - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
     - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
 
-  - Support of axis minor ticks via `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()` [[#1379](https://github.com/JetBrains/lets-plot/issues/1379)].
+  - Support for axis minor ticks via `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()` [[#1379](https://github.com/JetBrains/lets-plot/issues/1379)].
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
 
@@ -72,9 +72,6 @@
 
 ### Changed
 
-- Upgraded the Kotlin version to 2.2.20 (was 1.9.25).
-- [**BREAKING**]: Removed JavaFX artifacts.
-- [**BREAKING**]: Removed `plot-image-export` module. Use `PlotImageExport` from `platf-awt` module instead.
 - [**BREAKING**]: ColorBrewer palettes: changed default behavior when the requested number of colors exceeds the palette's maximum size. \
   Now defaults to `'interpolate'` for sequential/diverging palettes and `'generate'` for qualitative palettes. \
   Previously, depending on the palette type, this either resulted in duplicate colors or random additional colors. \
@@ -83,6 +80,22 @@
 - Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
 - Discrete color scales (Brewer, Manual) now produce a `colorbar` guide when used with continuous data. \
   Previously they produced a `legend` guide regardless of the data type.
+
+
+- Changes affecting users on the JVM platform:
+  - Upgraded the Kotlin version to 2.2.20 (was 1.9.25).
+  - New artifact for JVM Swing applications: `org.jetbrains.lets-plot:lets-plot-swing`. \
+    This artifact provides the `SwingPlotPanel` class, which can be used to display plots in Swing applications instead of the now-obsolete `DefaultPlotPanelBatik`. \
+    For details, see the [jvm-swing-app](https://github.com/alshan/lets-plot-mini-apps/tree/main/jvm-swing-app) example in the "lets-plot-mini-apps" repository.
+  - [**BREAKING**]: Removed JavaFX artifacts. \
+    The `org.jetbrains.lets-plot:lets-plot-jfx` artifact is no longer available. \
+    Replace it with new `org.jetbrains.lets-plot:lets-plot-swing` dependency and use `SwingPlotPanel` instead of `DefaultPlotPanelJfx`. \
+    For details, see the [jvm-javafx-app](https://github.com/alshan/lets-plot-mini-apps/tree/main/jvm-javafx-app) example in the "lets-plot-mini-apps" repository.
+  - [**BREAKING**]: Removed `plot-image-export` module. \
+    The `org.jetbrains.lets-plot:lets-plot-image-export` artifact is no longer available. \
+    The `PlotImageExport` utility has been moved to the `platf-awt` module. \
+    The required `org.jetbrains.lets-plot:platf-awt` dependency is likely already present in your project. 
+  
 
 ### Fixed
 
