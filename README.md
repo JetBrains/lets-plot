@@ -58,62 +58,68 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.8.0
+## What is new in 4.9.0
 
-- #### `geom_pointdensity()` Geometry
+- #### Statistical Summaries Directly on `geom_smooth()` Plot Layer
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/geom_pointdensity.png" alt="f-25e/images/geom_pointdensity.png" width="400" height="246">
+  The `geom_smooth()` layer now includes a `labels` parameter designed to display statistical summaries of the fitted model directly on the plot. \
+  This parameter accepts a `smooth_labels()` object, which provides access to model-specific variables like $R^2$ and the regression equation.
+  
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/smooth_summary.png" alt="f-26a/images/smooth_summary.png" width="400" height="265">
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/geom_pointdensity.html).
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
                          
-- #### Explicit `group` aesthetic now overrides default grouping behavior instead of combining with it
+- #### Plot Tags
+  Plot tags are short labels attached to a plot.
 
-> [!IMPORTANT]
-> **BREAKING CHANGE:**
-> 
-> Previously, setting `group='variable'` would group by both the explicit variable AND any discrete
-> aesthetics (color, shape, etc.). \
-> Now it groups ONLY by the explicit variable, matching `ggplot2` behavior. \
-> Use `group=[var1, var2, ...]` to group by multiple variables explicitly, \
-> and `group=[]` to disable any grouping.
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/plot_tags.png" alt="f-26a/images/plot_tags.png" width="600" height="185">
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/group_override_defaults.png" alt="f-25e/images/group_override_defaults.png" width="400" height="263">
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/group_override_defaults.html).
+- #### New `geom_bracket()` and `geom_bracket_dodge()` Geometries
+  New geometries designed primarily for significance bars (*p-values*) annotations in categorical plots.
 
-- #### `gggrid()`: support for shared legends (parameter `guides`)
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/geom_bracket.png" alt="f-26a/images/geom_bracket.png" width="400" height="261">
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/gggrid_legend_collect.png" alt="f-25e/images/group_override_defaults.png" width="500" height="172">
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/gggrid_legend_collect.html).
+- #### Custom Color Palettes in `geom_imshow()`
+  The `cmap` parameter now allows you to specify a list of hex color codes for visualizing grayscale images. \
+  Also, the new `cguide` parameter lets you customize the colorbar for grayscale images.
 
-- #### Better handling of missing values in `geom_line(), geom_path(), geom_ribbon()`, and `geom_area()`
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/image_custom_cmap.png" alt="f-26a/images/image_custom_cmap.png" width="400" height="248">
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25e/images/missing_values_ribbon.png" alt="f-25e/images/missing_values_ribbon.png" width="500" height="192">
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/missing_values_line_path_area_ribbon.html).
+- #### New `palette()` Method in Color Scales
+  Generates a list of hex color codes that can be used with `scale_color_manual()` to maintain consistent colors across multiple plots.
 
-- #### `geom_histogram()`: custom bin bounds (parameter `breaks`)
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_color_palette.html).
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/geom_histogram_param_breaks.html).
+- #### New `overflow` parameter in `scale_color_brewer()`, `scale_fill_brewer()`
+  Controls how colors are generated when more colors are needed than the palette provides. \
+  Options: `'interpolate'` (`'i'`), `'cycle'` (`'c'`), `'generate'` (`'g'`).
 
-- #### Legend automatically wraps to prevent overlap — up to 15 rows for vertical legends and 5 columns for horizontal ones
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_brewer_overflow.html).
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/legend_wrap.html).
+- #### New `break_width` Parameter in Positional Scales
+  Specifies a fixed distance between axis breaks.
 
-- #### `flavor_standard()` resets the theme's default color scheme
-  Use to override other flavors or make defaults explicit.
+  See examples:
+  - [datetime scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_datetime.html)
+  - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
+  - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/flavor_standard.html).
+- #### Axis Minor Ticks Customization
+  The `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()`.
 
-- #### `'left'`, `'right'`, `'top'`, and `'bottom'` legend justification
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/legend_justification.html).
+- #### Pan/Zoom in `gggrid()` with Shared Axes
+  Pan/Zoom now propagates across subplots with shared axes (`sharex`/`sharey`).
 
-- #### `ggtb()`: Added `size_zoomin` and `size_basis` parameters to control point size scaling behavior when zooming (works with `geom_point` and related layers).
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/gggrid_scale_share_zoom.html).
 
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/ggtb_size_zoomin.html).
-                                                                                                                  
 
 - #### And More
 
