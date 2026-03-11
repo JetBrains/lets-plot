@@ -45,7 +45,7 @@ kotlin {
 
                 implementation(project(":demo-common-jvm-utils"))
 
-                compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+                compileOnly("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
                 implementation("io.ktor:ktor-client-cio:${ktorVersion}")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinxHtmlVersion}")
                 implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console

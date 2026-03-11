@@ -45,7 +45,7 @@ val pomDependencies = listOf(
     // Libs
     // ToDo: coroutines ?
     listOf("org.jetbrains.kotlinx", "kotlinx-datetime-jvm", kotlinxDatetimeVersion),
-    listOf("io.github.microutils", "kotlin-logging", kotlinLoggingVersion)
+    listOf("io.github.oshai", "kotlin-logging", kotlinLoggingVersion)
 )
 
 publishing {

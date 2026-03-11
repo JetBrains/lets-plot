@@ -42,7 +42,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-jdk8"))
                 implementation(project(":demo-common-jvm-utils"))
-                compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+                compileOnly("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinxHtmlVersion}")
             }
         }

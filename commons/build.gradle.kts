@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -24,6 +28,9 @@ val arch = rootProject.project.extra["architecture"]
 kotlin {
     jvm()
     js {
+        browser()
+    }
+    wasmJs {
         browser()
     }
 
@@ -68,7 +75,7 @@ kotlin {
 
         jvmMain {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
@@ -88,12 +95,24 @@ kotlin {
             }
         }
 
-        named("jsMain") {
+        jsMain {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
 
                 // deflate for PNG
                 implementation(npm("pako", "2.1.0"))
+
+                // Add timezone support for js (in kotlinx-datetime)
+                implementation(npm("@js-joda/timezone", "2.3.0"))
+            }
+        }
+
+        wasmJsMain {
+            dependencies {
+                compileOnly("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
+
+                // deflate for PNG
+                implementation("org.jetbrains.kotlin-wrappers:kotlin-pako:2026.3.8-2.1.0")
 
                 // Add timezone support for js (in kotlinx-datetime)
                 implementation(npm("@js-joda/timezone", "2.3.0"))
@@ -104,8 +123,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-js"))
 
-                // Fix for 'Could not find "io.github.microutils:kotlin-logging"...' build error (Kotlin 1.9.xx versions):
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                // Fix for 'Could not find "io.github.oshai:kotlin-logging"...' build error (Kotlin 1.9.xx versions):
+                implementation("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

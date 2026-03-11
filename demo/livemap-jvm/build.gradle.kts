@@ -34,7 +34,7 @@ dependencies {
 
     implementation("org.apache.xmlgraphics:batik-codec:${batikVersion}")
     implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
-    compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+    compileOnly("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
 
     implementation(project(":demo-and-test-shared"))
     implementation(project(":demo-common-jvm-utils"))

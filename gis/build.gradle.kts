@@ -81,12 +81,12 @@ kotlin {
             }
         }
 
-        // Fix for 'Could not find "io.github.microutils:kotlin-logging"...' and
+        // Fix for 'Could not find "io.github.oshai:kotlin-logging"...' and
         // 'Could not find "io.ktor:ktor-client-js"...'build errors (Kotlin 1.9.xx versions):
         named("jsTest") {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

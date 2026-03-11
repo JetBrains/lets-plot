@@ -20,7 +20,7 @@ kotlin {
             dependencies {
                 compileOnly(project(":commons"))
 
-                compileOnly("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 

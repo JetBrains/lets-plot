@@ -33,13 +33,13 @@ kotlin {
 
         jvmMain {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
         named("jsMain") {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
 
@@ -65,13 +65,13 @@ kotlin {
 
 
 /*      Fix for build errors:
-         - 'Could not find "io.github.microutils:kotlin-logging"...'
+         - 'Could not find "io.github.oshai:kotlin-logging"...'
          - 'Could not find "io.ktor:ktor-client-js"...'
         (Kotlin 1.9.xx versions): */
         named("jsTest") {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

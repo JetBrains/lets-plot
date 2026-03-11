@@ -4,12 +4,15 @@
  */
 
 // okhttp3 added for publishing to the Sonatype Central Repository:
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -42,8 +45,8 @@ val letsPlotTaskGroup by extra { "lets-plot" }
 
 allprojects {
     group = "org.jetbrains.lets-plot"
-    version = "4.9.1-SNAPSHOT" // see also: python-package/lets_plot/_version.py
-//    version = "0.0.0-SNAPSHOT"  // for local publishing only
+//    version = "4.9.1-SNAPSHOT" // see also: python-package/lets_plot/_version.py
+    version = "0.0.0-SNAPSHOT"  // for local publishing only
 
     // Generate JVM 1.8 bytecode
     tasks.withType<KotlinJvmCompile>().configureEach {
@@ -313,6 +316,9 @@ subprojects {
         // For `jvmSourcesJar` task:
         configure<KotlinMultiplatformExtension> {
             jvm()
+            wasmJs() {
+                browser()
+            }
         }
     }
 }

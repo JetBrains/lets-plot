@@ -49,7 +49,7 @@ dependencies {
     // But apparently JSVG is not in the plugin classpath.
     implementation("com.github.weisj:jsvg:$jsvgVersion")
 
-    implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+    implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
 }
 
 // Disable the default JAR task since we're using shadow JAR

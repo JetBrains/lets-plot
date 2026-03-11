@@ -5,8 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.logging
 
-import mu.KotlinLogging
-import org.jetbrains.letsPlot.commons.logging.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.reflect.KClass
 
 actual object PortableLogging {

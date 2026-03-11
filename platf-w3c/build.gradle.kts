@@ -23,7 +23,7 @@ kotlin {
                 implementation(project(":datamodel"))
                 implementation(project(":canvas"))
 
-                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 

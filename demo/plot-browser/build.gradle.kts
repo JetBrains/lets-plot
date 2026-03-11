@@ -43,7 +43,7 @@ kotlin {
                 implementation(project(":plot-livemap"))
                 implementation(project(":gis"))
 
-                implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+                implementation("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
                 implementation("io.ktor:ktor-client-cio:${ktorVersion}")
                 implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
                 implementation(project(":platf-awt"))

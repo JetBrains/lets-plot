@@ -43,7 +43,7 @@ kotlin {
 
         jvmMain {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
@@ -58,7 +58,7 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

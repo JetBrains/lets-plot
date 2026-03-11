@@ -42,7 +42,7 @@ kotlin {
 
                 implementation("io.ktor:ktor-client-websockets-js:${ktorVersion}")
                 implementation("io.ktor:ktor-client-js:${ktorVersion}")
-                implementation("io.github.microutils:kotlin-logging-js:${kotlinLoggingVersion}")
+                implementation("io.github.oshai:kotlin-logging-js:${kotlinLoggingVersion}")
             }
         }
     }

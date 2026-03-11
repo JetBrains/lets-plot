@@ -24,7 +24,7 @@ kotlin {
                 compileOnly(project(":plot-base"))
                 compileOnly(project(":plot-stem"))
                 compileOnly(project(":plot-builder"))
-                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 
@@ -32,7 +32,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("org.assertj:assertj-core:$assertjVersion")
-                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
 
                 implementation(project(":canvas"))
                 implementation(project(":commons"))

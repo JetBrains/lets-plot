@@ -38,8 +38,8 @@ class ImageComparer(
                 log(it)
                 return
             }
-            log("Failed to read expected image.\n$it\n Actual image saved to file://${bitmapIO.getActualFileReportPath(actualFileName)}")
-            error("Failed to read expected image.\n$it\nActual image saved to 'file://${bitmapIO.getActualFileReportPath(actualFileName)}'")
+            log("Failed to read expected image.\n${it.message}\n Actual image saved to file://${bitmapIO.getActualFileReportPath(actualFileName)}")
+            error("Failed to read expected image.\n${it.message}\nActual image saved to 'file://${bitmapIO.getActualFileReportPath(actualFileName)}'")
         }
 
         val diffBitmap = createDiffImage(expectedBitmap, actualBitmap)
