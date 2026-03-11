@@ -950,6 +950,17 @@ class ColorScaleFeatureSpec(FeatureSpec):
         -----
         For ColorBrewer palettes, if the requested number of colors exceeds the palette's
         maximum size, colors will be interpolated to generate the required number of unique colors.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 3
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            scale_color_viridis().palette(5)
+
         """
 
         from .. import _kbridge
