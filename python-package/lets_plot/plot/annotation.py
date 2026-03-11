@@ -344,11 +344,12 @@ class smooth_labels(layer_labels):
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 8
+        :emphasize-lines: 9
 
         import numpy as np
         from lets_plot import *
         LetsPlot.setup_html()
+        np.random.seed(42)
         n = 100
         x = np.linspace(-2, 2, n)
         y = x**2 + np.random.normal(size=n)
@@ -401,11 +402,12 @@ class smooth_labels(layer_labels):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
             import numpy as np
             from lets_plot import *
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.linspace(-2, 2, 50)
             y = x**2 + np.random.normal(size=len(x))
             ggplot({'x': x, 'y': y}, aes('x', 'y')) + geom_point() + \\
@@ -544,3 +546,173 @@ class smooth_labels(layer_labels):
         d["options"] = _filter_none(opts)
 
         return _filter_none(d)
+
+    def format(self, field=None, format=None):
+        """
+        Define the format for displaying the value.
+        This format will be applied to the corresponding value specified in the 'line' template.
+
+        Parameters
+        ----------
+        field : str
+            Name of an aesthetic or variable that would be formatted.
+            The field name starts with a '^' prefix for aesthetics,
+            the variable name starts with a '@' prefix or without any prefix.
+        format : str
+            Formatting specification. The format contains a number format ('1.f'),
+            a string template ('{.1f}') or a date/time format ('%d.%m.%y').
+            The numeric format for non-numeric value will be ignored.
+            If you need to include a brace character in the literal text,
+            it can be escaped by doubling: ``{{`` and ``}}``.
+
+        Returns
+        -------
+        ``smooth_labels``
+            Annotations specification.
+
+        Notes
+        -----
+        For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 11
+
+            import numpy as np
+            from lets_plot import *
+            LetsPlot.setup_html()
+            np.random.seed(42)
+            x = np.linspace(-2, 2, 50)
+            y = x**2 + np.random.normal(size=len(x))
+            ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
+                geom_point() + \\
+                geom_smooth(deg=2, labels=smooth_labels()\\
+                                          .line(r'\(R\^2=\)@..r2..')\\
+                                          .format('..r2..', '.3f')\\
+                                          .label_x('center'))
+
+        """
+        # This method is overridden explicitly only to provide a custom docstring.
+        return super().format(field, format)
+
+    def line(self, value):
+        """
+        Add a line of text to the multiline label annotation.
+
+        This method configures one line of text that will be displayed in a
+        multiline label. Multiple calls to this method can be chained to build
+        up a complete multiline annotation.
+
+        Parameters
+        ----------
+        value : str
+            The text content for this line of the annotation. Can include
+            variable and aesthetic references.
+
+        Returns
+        -------
+        ``smooth_labels``
+            Annotations specification.
+
+        Notes
+        -----
+        Variables and aesthetics can be accessed via special syntax:
+
+        - ^color for aesthetics,
+        - @x for variable,
+        - @{x + 1} for variable with spaces in the name,
+        - @{x^2 + 1} for variable with spaces and '^' symbol in the name,
+        - @x^2 for variable with '^' symbol in its name.
+
+        Special characters can be escaped:
+
+        - 'x\\\\^2' -> "x^2" (escape ^ with backslash)
+        - '{{x}}' -> "{x}" (escape braces by doubling)
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 5-6
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \\
+                geom_smooth(deg=2, labels=smooth_labels()\\
+                                          .line(r'\(R\^2=\)@..r2..')\\
+                                          .line('~eq'))
+
+        """
+        # This method is overridden explicitly only to provide a custom docstring.
+        return super().line(value)
+
+    def size(self, value):
+        """
+        Set the text size for the annotation.
+
+        Parameters
+        ----------
+        value : float
+            The text size value for the annotation.
+
+        Returns
+        -------
+        ``smooth_labels``
+            Annotations specification.
+
+        Examples
+        --------
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 4
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \\
+                geom_smooth(deg=2, labels=smooth_labels().line('~eq').size(25))
+
+        """
+        # This method is overridden explicitly only to provide a custom docstring.
+        return super().size(value)
+
+    def inherit_color(self):
+        """
+        Use the layer's color for the annotation text.
+
+        When enabled, the annotation text will inherit the color from the
+        layer it's associated with, rather than using a default or
+        explicitly set color.
+
+        Returns
+        -------
+        ``smooth_labels``
+            Annotations specification.
+
+        Examples
+        --------
+
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 14
+
+            import numpy as np
+            from lets_plot import *
+            LetsPlot.setup_html()
+            np.random.seed(42)
+            x = np.linspace(-2, 2, 50)
+            y = x**2 + np.random.normal(size=len(x))
+            g = np.random.choice(['A', 'B'], size=len(x))
+            data = {'x': x, 'y': y, 'g': g}
+            ggplot(data, aes('x', 'y', color='g')) + \\
+                geom_point() + \\
+                geom_smooth(deg=2, labels=smooth_labels()
+                    .line('~eq')
+                    .eq(format='.2f')
+                    .inherit_color())
+
+        """
+        # This method is overridden explicitly only to provide a custom docstring.
+        return super().inherit_color()
