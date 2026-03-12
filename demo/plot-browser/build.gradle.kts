@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     kotlin("multiplatform")
 }
@@ -5,6 +9,11 @@ plugins {
 kotlin {
     jvm("demoRunner")
     js {
+        browser()
+        binaries.executable()
+    }
+
+    wasmJs {
         browser()
         binaries.executable()
     }
@@ -51,6 +60,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinxHtmlVersion}")
             }
         }
+
         jsMain {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
             dependencies {
@@ -61,5 +71,6 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
+
     }
 }
