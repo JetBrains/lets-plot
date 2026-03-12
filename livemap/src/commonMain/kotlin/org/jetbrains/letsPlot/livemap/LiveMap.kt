@@ -354,7 +354,10 @@ class LiveMap(
             myTextMeasurer
         )
 
-        layers.forEach(featureLayerBuilder::apply)
+        // layers.forEach(featureLayerBuilder::apply) DOES NOT WORK IN WASMJS - throws RuntimeError: illegal cast
+        layers.forEach {
+            featureLayerBuilder.apply(it)
+        }
 
         if (myBasemapTileSystemProvider.isVector) {
             componentManager
