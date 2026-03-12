@@ -1,11 +1,12 @@
 package org.jetbrains.letsPlot.commons.intern.concurrent
 
 actual class AtomicInteger actual constructor(initialValue: Int) {
+    private var value: Int = initialValue
     actual fun decrementAndGet(): Int {
-        TODO("Not yet implemented")
+        return --value
     }
 
     actual fun incrementAndGet(): Int {
-        TODO("Not yet implemented")
+        return ++value
     }
 }

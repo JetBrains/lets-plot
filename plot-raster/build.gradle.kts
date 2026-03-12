@@ -11,6 +11,7 @@ plugins {
 
 val kotlinLoggingVersion = extra["kotlinLogging.version"] as String
 val assertjVersion = extra["assertj.version"] as String
+val slf4jVersion = project.extra["slf4j.version"] as String
 
 kotlin {
     jvm()
@@ -33,6 +34,7 @@ kotlin {
                 implementation(kotlin("test"))
                 implementation("org.assertj:assertj-core:$assertjVersion")
                 implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
+                implementation("org.slf4j:slf4j-simple:${slf4jVersion}")
 
                 implementation(project(":canvas"))
                 implementation(project(":commons"))

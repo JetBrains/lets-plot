@@ -5,6 +5,7 @@
 
 val batikVersion = project.extra["batik.version"] as String
 val commonsIOVersion = project.extra["commons-io.version"] as String
+val slf4jVersion = project.extra["slf4j.version"] as String
 
 dependencies {
     compileOnly(project(":commons"))
@@ -29,6 +30,8 @@ dependencies {
     testImplementation(project(":demo-and-test-shared"))
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit"))
-    testImplementation("org.apache.xmlgraphics:batik-codec:$batikVersion")
     testImplementation(project(":platf-awt"))
+
+    testImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}")
+    testImplementation("org.slf4j:slf4j-simple:$slf4jVersion")
 }

@@ -5,10 +5,8 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import kotlin.test.Test
-import kotlin.test.assertSame
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class SvgTextElementTest {
@@ -24,24 +22,24 @@ class SvgTextElementTest {
     @Test
     fun initString() {
         val element = SvgTextElement(str)
-        assertSame(1, element.children().size)
-        assertSame((element.children()[0] as SvgTextNode).textContent().get(), str)
+        assertEquals(1, element.children().size)
+        assertEquals((element.children()[0] as SvgTextNode).textContent().get(), str)
     }
 
     @Test
     fun setText() {
         val element = SvgTextElement(str)
         element.setTextNode(altStr)
-        assertSame(1, element.children().size)
-        assertSame((element.children()[0] as SvgTextNode).textContent().get(), altStr)
+        assertEquals(1, element.children().size)
+        assertEquals((element.children()[0] as SvgTextNode).textContent().get(), altStr)
     }
 
     @Test
     fun addText() {
         val element = SvgTextElement(str)
         element.addTextNode(altStr)
-        assertSame(2, element.children().size)
-        assertSame((element.children()[0] as SvgTextNode).textContent().get(), str)
-        assertSame((element.children()[1] as SvgTextNode).textContent().get(), altStr)
+        assertEquals(2, element.children().size)
+        assertEquals((element.children()[0] as SvgTextNode).textContent().get(), str)
+        assertEquals((element.children()[1] as SvgTextNode).textContent().get(), altStr)
     }
 }

@@ -13,6 +13,7 @@ val mockitoVersion = project.extra["mockito.version"] as String
 val assertjVersion = project.extra["assertj.version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val slf4jVersion = project.extra["slf4j.version"] as String
 
 kotlin {
     jvm()
@@ -53,6 +54,7 @@ kotlin {
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
                 implementation("org.mockito:mockito-core:$mockitoVersion")
                 implementation("org.assertj:assertj-core:$assertjVersion")
+                implementation("org.slf4j:slf4j-simple:$slf4jVersion")
             }
         }
 

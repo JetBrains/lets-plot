@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.commons
 import kotlin.time.TimeSource
 
 open class SystemTime() {
-    fun getTimeMs(): Long {
+    open fun getTimeMs(): Long {
         return TimeSource.Monotonic.markNow().elapsedNow().inWholeMilliseconds
     }
 }

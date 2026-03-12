@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -12,10 +16,14 @@ val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val mockitoVersion = project.extra["mockito.version"] as String
 val assertjVersion = project.extra["assertj.version"] as String
+val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
 
 kotlin {
     jvm()
     js() {
+        browser {}
+    }
+    wasmJs() {
         browser {}
     }
 
@@ -72,6 +80,12 @@ kotlin {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
                 implementation("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
+            }
+        }
+
+        wasmJsMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
             }
         }
     }
