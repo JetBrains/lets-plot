@@ -78,7 +78,7 @@ open class ColorScales {
                     }
                     sb.append(']')
                 }
-                is String -> sb.append('"').append(v.toString()).append('"')
+                is String -> sb.append('"').append(v).append('"')
                 else -> sb.append(v.toString())
             }
             return sb.toString()

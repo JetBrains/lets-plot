@@ -42,7 +42,7 @@ class KeyStroke {
         if (other !is KeyStroke) return false
         val otherKeyStroke = other as KeyStroke?
 
-        return key === otherKeyStroke!!.key && modifiers == otherKeyStroke!!.modifiers
+        return key === otherKeyStroke!!.key && modifiers == otherKeyStroke.modifiers
     }
 
     override fun toString(): String {

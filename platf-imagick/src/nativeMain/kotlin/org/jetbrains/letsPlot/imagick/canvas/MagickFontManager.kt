@@ -214,7 +214,7 @@ class MagickFontManager private constructor(
 
                 val typeInfoList = mutableListOf<FontInfo>()
                 for (i in 0 until typesCount.value.toInt()) {
-                    val typeInfo = typeInfoPtr?.get(i)?.pointed ?: continue
+                    val typeInfo = typeInfoPtr[i]?.pointed ?: continue
                     if (typeInfo.family == null || typeInfo.name == null) {
                         log { "Skipping type info with null family or name: $typeInfo" }
                         continue

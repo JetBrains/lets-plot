@@ -55,7 +55,7 @@ object OrderOptionUtil {
                     "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
                 }
 
-                return OrderOption(variableName, orderBy, (order as? Number)?.toInt())
+                return OrderOption(variableName, orderBy, order?.toInt())
             }
 
             fun OrderOption.mergeWith(other: OrderOption): OrderOption {

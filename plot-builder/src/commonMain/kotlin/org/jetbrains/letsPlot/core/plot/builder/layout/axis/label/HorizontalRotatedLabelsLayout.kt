@@ -69,7 +69,6 @@ internal class HorizontalRotatedLabelsLayout(
         val isLabelDirectedFromTick = when (orientation) {
             Orientation.TOP -> sinA > 0
             Orientation.BOTTOM -> sinA < 0
-            else -> throw IllegalStateException("Unsupported orientation $orientation")
         }
 
         val vJust = if (theme.labelVJust().isNaN()) {

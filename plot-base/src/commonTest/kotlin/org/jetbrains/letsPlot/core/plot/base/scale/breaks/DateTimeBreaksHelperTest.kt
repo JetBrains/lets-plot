@@ -307,7 +307,7 @@ class DateTimeBreaksHelperTest {
                 date,
                 BASE_TIME
             )
-            val month = Month.entries[month2.toInt()]
+            val month = Month.entries[month2]
             val dateTime2 = DateTime(
                 Date(1, month, date.year + addYear),
                 BASE_TIME

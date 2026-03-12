@@ -94,7 +94,7 @@ class PlotAssembler constructor(
                 (legendPosition.isFixed || (legendPosition.isOverlay && detachedLegendsCollector.detachOverlayLegends))
 
         detachedLegends = if (shouldDetachLegends) {
-            detachedLegendsCollector!!.collect(legendBoxInfos)
+            detachedLegendsCollector.collect(legendBoxInfos)
             legendBoxInfos
         } else {
             emptyList()

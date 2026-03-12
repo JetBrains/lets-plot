@@ -45,7 +45,7 @@ class PolarHeatmap {
 
         val (gridR, gridTheta) = simpleMeshgrid(
             linspace(0.0, maxR.toDouble(), stepsR),
-            linspace(0.0, maxTheta.toDouble(), stepsTheta)
+            linspace(0.0, maxTheta, stepsTheta)
         )
 
         val dataMap = getData(gridTheta.flatten(), gridR.flatten(), dataFunction)

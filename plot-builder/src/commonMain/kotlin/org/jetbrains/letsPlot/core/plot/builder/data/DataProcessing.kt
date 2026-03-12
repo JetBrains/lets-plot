@@ -352,7 +352,7 @@ object DataProcessing {
                         // However, we can make them work by rounding stat values to integers,
                         // which allows the inverse transform to be applied.
                         serie.map { v ->
-                            v?.toDouble()?.let { if (v.isFinite()) v.roundToInt().toDouble() else v }
+                            v?.let { if (v.isFinite()) v.roundToInt().toDouble() else v }
                         }
                     } else {
                         serie

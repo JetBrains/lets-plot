@@ -68,7 +68,6 @@ open class ColorScalesViridis {
             return parsePlotSpec(spec)
         }
 
-        @Suppress("FunctionName")
         private fun scaleViridisDiscrete(
             cmapName: String,
             alpha: Double? = null,
@@ -118,7 +117,7 @@ open class ColorScalesViridis {
                     }
                     sb.append(']')
                 }
-                is String -> sb.append('"').append(v.toString()).append('"')
+                is String -> sb.append('"').append(v).append('"')
                 else -> sb.append(v.toString())
             }
             return sb.toString()

@@ -128,7 +128,7 @@ internal class Parser private constructor(
                 if (openerFound) {
                     val strong = opener!!.count >= 2 && closer.count >= 2
                     nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Strong else Em)
-                    nodes.add(nodes.indexOfFirst { it === closer!!.node }, if (strong) CloseStrong else CloseEm)
+                    nodes.add(nodes.indexOfFirst { it === closer.node }, if (strong) CloseStrong else CloseEm)
 
                     opener.shrink(strong)
                     closer.shrink(strong)
