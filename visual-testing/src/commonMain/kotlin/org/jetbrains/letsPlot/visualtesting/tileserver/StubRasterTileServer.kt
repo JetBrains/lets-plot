@@ -6,20 +6,19 @@ import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.commons.encoding.Base64
 
 class StubRasterTileServer {
     private var server: EmbeddedServer<CIOApplicationEngine, CIOApplicationEngine.Configuration>? = null
 
-    fun start(): Int {
+    suspend fun start(): Int {
         val serverInstance = embeddedServer(CIO, port = 0) {
             setupRouting()
         }
         serverInstance.start(wait = false)
 
         // Get the resolved random port
-        val port = runBlocking { serverInstance.engine.resolvedConnectors().first().port }
+        val port = serverInstance.engine.resolvedConnectors().first().port
         server = serverInstance
         return port
     }
@@ -74,15 +73,13 @@ class StubRasterTileServer {
     }
 }
 
-fun runStubRasterTileServer(ext: String, block: (url: String) -> Unit) {
+suspend fun runStubRasterTileServer(ext: String, block: (url: String) -> Unit) {
     val server = StubRasterTileServer()
     val port = server.start()
     val url = "http://localhost:$port/{z}/{y}/{x}/$ext"
 
     try {
-        runBlocking {
-            block(url)
-        }
+        block(url)
     } finally {
         server.stop()
     }

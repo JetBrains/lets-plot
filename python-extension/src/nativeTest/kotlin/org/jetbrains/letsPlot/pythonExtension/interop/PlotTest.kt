@@ -8,6 +8,7 @@
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import demoAndTestShared.parsePlotSpec
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil
@@ -1228,14 +1229,12 @@ class PlotTest {
             |}
         """.trimMargin())
 
-        val plotSpec = spec
-
-        assertPlot("geom_livemap_prod_minard.png", plotSpec)
+        assertPlot("geom_livemap_prod_minard.png", spec)
     }
 
     @Ignore
     @Test
-    fun `geom_livemap test png tiles`() {
+    fun `geom_livemap test png tiles`() = runBlocking {
         runStubRasterTileServer("png") { url ->
             val spec = parsePlotSpec("""
                 |{
@@ -1252,14 +1251,13 @@ class PlotTest {
             """.trimMargin()
             )
 
-            val plotSpec = spec
-            assertPlot("geom_livemap_test_png_tiles.png", plotSpec)
+            assertPlot("geom_livemap_test_png_tiles.png", spec)
         }
     }
 
     @Ignore
     @Test
-    fun `geom_livemap test jpg tiles`() {
+    fun `geom_livemap test jpg tiles`() = runBlocking {
         runStubRasterTileServer("jpg") { url ->
             val spec = parsePlotSpec("""
                 |{
@@ -1276,14 +1274,13 @@ class PlotTest {
             """.trimMargin()
             )
 
-            val plotSpec = spec
-            assertPlot("geom_livemap_test_jpg_tiles.png", plotSpec)
+            assertPlot("geom_livemap_test_jpg_tiles.png", spec)
         }
     }
 
     @Ignore
     @Test
-    fun `geom_livemap test vector tiles`() {
+    fun `geom_livemap test vector tiles`() = runBlocking {
         runStubVectorTileServer { url ->
             val spec = parsePlotSpec("""
                 |{
@@ -1300,8 +1297,7 @@ class PlotTest {
             """.trimMargin()
             )
 
-            val plotSpec = spec
-            assertPlot("geom_livemap_test_vector_tiles.png", plotSpec)
+            assertPlot("geom_livemap_test_vector_tiles.png", spec)
         }
     }
 

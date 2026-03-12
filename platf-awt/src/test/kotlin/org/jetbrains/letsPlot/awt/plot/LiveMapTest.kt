@@ -1,6 +1,7 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import kotlinx.coroutines.test.runTest
 import org.jetbrains.letsPlot.visualtesting.tileserver.runStubRasterTileServer
 import org.jetbrains.letsPlot.visualtesting.tileserver.runStubVectorTileServer
 import kotlin.test.Ignore
@@ -38,7 +39,8 @@ class LiveMapTest : VisualPlotTestBase() {
     @Test
     @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     fun `geom_livemap prod minard`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |    "data": {
             |        "long": [24.0, 24.5, 25.5, 26.0, 27.0, 28.0, 28.5, 29.0, 30.0, 30.3, 32.0, 33.2, 34.4, 35.5, 36.0, 37.6, 37.7, 37.5, 37.0, 36.8, 35.4, 34.3, 33.3, 32.0, 30.4, 29.2, 28.5, 28.3, 27.5, 26.8, 26.4, 25.0, 24.4, 24.2, 24.1, 24.0, 24.5, 25.5, 26.6, 27.4, 28.7, 28.7, 29.2, 28.5, 28.3, 24.0, 24.5, 24.6, 24.6, 24.2, 24.1 ], 
@@ -76,7 +78,8 @@ class LiveMapTest : VisualPlotTestBase() {
             |        }
             |    ]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         assertPlot("geom_livemap_prod_minard.png", spec)
     }
@@ -84,7 +87,8 @@ class LiveMapTest : VisualPlotTestBase() {
     @Test
     @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     fun `geom_livemap nasa tiles`() {
-        val spec = parsePlotSpec("""
+        val spec = parsePlotSpec(
+            """
             |{
             |  "kind": "plot",
             |  "layers": [
@@ -101,15 +105,17 @@ class LiveMapTest : VisualPlotTestBase() {
             |    }
             |  ]
             |}
-        """.trimMargin())
+        """.trimMargin()
+        )
 
         assertPlot("geom_livemap_nasa_tiles.png", spec)
     }
 
     @Test
-    fun `geom_livemap test png tiles`() {
+    fun `geom_livemap test png tiles`() = runTest {
         runStubRasterTileServer("png") { url ->
-            val spec = parsePlotSpec("""
+            val spec = parsePlotSpec(
+                """
                 |{
                 |  "kind": "plot",
                 |  "layers": [
@@ -129,9 +135,10 @@ class LiveMapTest : VisualPlotTestBase() {
     }
 
     @Test
-    fun `geom_livemap test jpg tiles`() {
+    fun `geom_livemap test jpg tiles`() = runTest {
         runStubRasterTileServer("jpg") { url ->
-            val spec = parsePlotSpec("""
+            val spec = parsePlotSpec(
+                """
                 |{
                 |  "kind": "plot",
                 |  "layers": [
@@ -148,12 +155,14 @@ class LiveMapTest : VisualPlotTestBase() {
 
             assertPlot("geom_livemap_test_jpg_tiles.png", spec)
         }
+
     }
 
     @Test
-    fun `geom_livemap test vector tiles`() {
+    fun `geom_livemap test vector tiles`()  = runTest {
         runStubVectorTileServer { url ->
-            val spec = parsePlotSpec("""
+            val spec = parsePlotSpec(
+                """
                 |{
                 |  "kind": "plot",
                 |  "layers": [

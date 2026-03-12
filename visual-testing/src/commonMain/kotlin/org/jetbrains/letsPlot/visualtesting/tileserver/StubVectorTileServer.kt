@@ -6,7 +6,6 @@ import io.ktor.server.engine.*
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.runBlocking
 import kotlinx.io.bytestring.buildByteString
 import org.jetbrains.letsPlot.commons.encoding.Base64
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
@@ -23,7 +22,7 @@ class StubVectorTileServer(
 ) {
     private var server: EmbeddedServer<*, *>? = null
 
-    fun start(port: Int = 0): Int {
+    suspend fun start(port: Int = 0): Int {
         val server = embeddedServer(CIO, port = port) {
             install(WebSockets) {
                 pingPeriod = 15.seconds
@@ -62,7 +61,7 @@ class StubVectorTileServer(
             }
         }.start(wait = false)
 
-        val port = runBlocking { server.engine.resolvedConnectors().first().port }
+        val port = server.engine.resolvedConnectors().first().port
         this.server = server
         return port
     }
@@ -83,7 +82,7 @@ class StubVectorTileServer(
 }
 
 
-fun runStubVectorTileServer(
+suspend fun runStubVectorTileServer(
     tiles: Map<Rect<LonLat>, ByteArray> = StubVectorTileServer.defaultTiles,
     block: (url: String) -> Unit
 ) {
@@ -98,9 +97,7 @@ fun runStubVectorTileServer(
     val url = "ws://127.0.0.1:$port/tiles"
 
     try {
-        runBlocking {
-            block(url)
-        }
+        block(url)
     } finally {
         server.stop()
     }
