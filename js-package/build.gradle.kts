@@ -15,6 +15,7 @@ val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinVersion = project.extra["kotlin.version"] as String
 val ktorVersion = project.extra["ktor.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val kotlinxBrowserVersion = project.extra["kotlinx.browser.version"] as String
 
 kotlin {
     js {
@@ -55,6 +56,30 @@ kotlin {
                 implementation("io.ktor:ktor-client-websockets-js:${ktorVersion}")
                 implementation("io.ktor:ktor-client-js:${ktorVersion}")
                 implementation("io.github.oshai:kotlin-logging-js:${kotlinLoggingVersion}")
+            }
+        }
+
+        wasmJsMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:$kotlinxBrowserVersion")
+
+                implementation(project(":commons"))
+                implementation(project(":datamodel"))
+                implementation(project(":canvas"))
+                implementation(project(":plot-base"))
+                implementation(project(":plot-builder"))
+                implementation(project(":plot-stem"))
+                implementation(project(":platf-w3c"))
+                implementation(project(":gis"))
+                implementation(project(":livemap"))
+                implementation(project(":plot-livemap"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
+
+                implementation("io.ktor:ktor-client-websockets:${ktorVersion}")
+                implementation("io.ktor:ktor-client-js:${ktorVersion}")
+                implementation("io.github.oshai:kotlin-logging:${kotlinLoggingVersion}")
+
             }
         }
     }

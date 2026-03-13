@@ -17,6 +17,7 @@ val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val mockitoVersion = project.extra["mockito.version"] as String
 val assertjVersion = project.extra["assertj.version"] as String
 val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
+val kotlinxBrowserVersion = project.extra["kotlinx.browser.version"] as String
 
 kotlin {
     jvm()
@@ -85,7 +86,7 @@ kotlin {
 
         wasmJsMain {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:$kotlinxBrowserVersion")
             }
         }
     }
