@@ -3,11 +3,14 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions
 
 import org.jetbrains.letsPlot.commons.intern.function.Consumer
 import org.jetbrains.letsPlot.commons.intern.function.Function
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.platf.w3c.createEventListener
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
@@ -23,13 +26,11 @@ fun <EventT : Event> EventTarget.on(event: DomEventType<EventT>, handler: Consum
 }
 
 fun <EventT : Event> EventTarget.on(event: DomEventType<EventT>, handler: Function<Event, Boolean>): Registration {
-    return onEvent(event, object : EventListener {
-        override fun handleEvent(event: Event) {
-            val result = handler.apply(event)
-            if (!result) {
-                event.preventDefault()
-                event.stopPropagation()
-            }
+    return onEvent(event, createEventListener { event ->
+        val result = handler.apply(event)
+        if (!result) {
+            event.preventDefault()
+            event.stopPropagation()
         }
     }, false)
 }

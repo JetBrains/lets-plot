@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package tools
 
 import FigureModelJs
@@ -16,7 +18,7 @@ import org.w3c.dom.HTMLElement
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("SandboxToolbar")
-@JsExport
+//@JsExport
 class SandboxToolbarJs() {
     private val element: HTMLElement = document.createElement("div") as HTMLElement
 
@@ -50,7 +52,7 @@ class SandboxToolbarJs() {
     fun bind(figure: FigureModelJs) {
         check(this.figure == null) { "Toolbar is already bound to another figure." }
         this.figure = figure
-        figure.onToolEvent { e: dynamic ->
+        figure.onToolEvent { e: JsAny? ->
             val event = dynamicObjectToMap(e)
             controller.handleToolFeedback(event)
         }

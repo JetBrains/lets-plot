@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
@@ -21,7 +23,7 @@ import org.w3c.dom.HTMLElement
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("FigureModel")
-@JsExport
+//@JsExport
 class FigureModelJs internal constructor(
     private val processedPlotSpec: Map<String, Any>,
     private val wrapperElement: HTMLElement,
@@ -31,10 +33,10 @@ class FigureModelJs internal constructor(
     private var toolEventDispatcher: ToolEventDispatcher,
     private var figureRegistration: Registration?,
 ) {
-    private var toolEventCallback: ((dynamic) -> Unit)? = null
+    private var toolEventCallback: ((JsAny?) -> Unit)? = null
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
 
-    fun onToolEvent(callback: (dynamic) -> Unit) {
+    fun onToolEvent(callback: (JsAny?) -> Unit) {
         toolEventCallback = callback
         toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
 
@@ -46,7 +48,7 @@ class FigureModelJs internal constructor(
         )
     }
 
-    fun updateView(specOverrideJs: dynamic = null, optionsJs: dynamic = null) {
+    fun updateView(specOverrideJs: JsAny? = null, optionsJs: JsAny? = null) {
 
         // view options update (just 'sizing' at the moment).
         val options: Map<String, Any>? = if (optionsJs != null) {
@@ -109,7 +111,7 @@ class FigureModelJs internal constructor(
         }
     }
 
-    fun activateInteractions(origin: String, interactionSpecListJs: dynamic) {
+    fun activateInteractions(origin: String, interactionSpecListJs: JsAny?) {
         val interactionSpecListRaw = dynamicToAnyQ(interactionSpecListJs)
         require(interactionSpecListRaw is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
 

@@ -6,31 +6,20 @@
 package org.jetbrains.letsPlot.platf.w3c.mapping.svg.domUtil
 
 import kotlinx.browser.document
-import kotlinx.browser.window
-import kotlinx.dom.addClass
-import kotlinx.dom.removeClass
-import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.intern.function.Supplier
-import org.jetbrains.letsPlot.commons.intern.function.Value
-import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
-import org.jetbrains.letsPlot.commons.intern.observable.event.ListenerCaller
-import org.jetbrains.letsPlot.commons.intern.observable.event.Listeners
-import org.jetbrains.letsPlot.commons.intern.observable.property.*
-import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.XmlNamespace.SVG_NAMESPACE_URI
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
-import org.jetbrains.letsPlot.platf.w3c.mapping.svg.css.CssDisplay
-import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.*
-import org.w3c.dom.*
+import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.childCount
+import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.getChild
+import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.insertAfter
+import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domExtensions.insertFirst
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.Text
 import org.w3c.dom.svg.SVGElement
 
 object DomUtil {
-    fun elementChildren(e: Element): MutableList<Node?> {
-        return nodeChildren(e)
-    }
-
     fun nodeChildren(n: Node): MutableList<Node?> {
         return object : AbstractMutableList<Node?>() {
 
@@ -67,162 +56,6 @@ object DomUtil {
                 n.removeChild(child)
                 return child
             }
-        }
-    }
-
-    fun <NodeT, ElementT : With<out NodeT>> withElementChildren(base: MutableList<NodeT?>): List<ElementT?> {
-        val items: MutableList<ElementT?> = mutableListOf()
-
-        return object : AbstractMutableList<ElementT?>() {
-            override val size: Int
-                get() = items.size
-
-            override fun get(index: Int): ElementT? = items[index]
-
-            override fun set(index: Int, element: ElementT?): ElementT {
-                val result: ElementT? = items.set(index, element)
-                base[index] = result!!.getElement()
-                return result
-            }
-
-            override fun add(index: Int, element: ElementT?) {
-                items.add(index, element)
-                base.add(index, element!!.getElement())
-            }
-
-            override fun removeAt(index: Int): ElementT? {
-                val result = items.removeAt(index)
-                base.removeAt(index)
-                return result
-            }
-        }
-    }
-
-    fun innerTextOf(e: Element): WritableProperty<String> {
-        return object : WritableProperty<String> {
-            override fun set(value: String) {
-                e.innerHTML = value
-            }
-        }
-    }
-
-    fun checkbox(element: HTMLInputElement): Property<Boolean> {
-        return object : Property<Boolean> {
-            private var myTimerRegistration: Registration? = null
-            private val myListeners: Listeners<EventHandler<PropertyChangeEvent<Boolean>>> = Listeners()
-
-            override val propExpr: String
-                get() = "checkbox($element)"
-
-            override fun get(): Boolean = element.checked
-
-            override fun set(value: Boolean) {
-                element.checked = value
-            }
-
-            override fun addHandler(handler: EventHandler<PropertyChangeEvent<out Boolean>>): Registration {
-                if (myListeners.isEmpty) {
-                    val value: Value<Boolean> = Value(element.checked)
-                    val timer = window.setInterval({
-                        val currentValue = element.checked
-                        if (currentValue != value.get()) {
-                            myListeners.fire(object : ListenerCaller<EventHandler<PropertyChangeEvent<Boolean>>> {
-                                override fun call(l: EventHandler<PropertyChangeEvent<Boolean>>) {
-                                    l.onEvent(PropertyChangeEvent(value.get(), currentValue))
-                                }
-                            })
-                            value.set(currentValue)
-                        }
-                    })
-
-                    myTimerRegistration = object : Registration() {
-                        override fun doRemove() {
-                            window.clearInterval(timer)
-                        }
-                    }
-                }
-
-                val reg = myListeners.add(handler)
-                return object : Registration() {
-                    override fun doRemove() {
-                        reg.remove()
-                        if (myListeners.isEmpty) {
-                            myTimerRegistration!!.remove()
-                            myTimerRegistration = null
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun hasClass(el: Element, cls: String): WritableProperty<Boolean> {
-        return object : WritableProperty<Boolean> {
-            private var myValue: Boolean? = null
-
-            override fun set(value: Boolean) {
-                if (myValue == value) return
-                if (value) {
-                    el.addClass(cls)
-                } else {
-                    el.removeClass(cls)
-                }
-                myValue = value
-            }
-        }
-    }
-
-    fun attribute(el: Element, attr: String): WritableProperty<String> {
-        return object : WritableProperty<String> {
-            override fun set(value: String) {
-                el.setAttribute(attr, value)
-            }
-        }
-    }
-
-    fun hasAttribute(el: Element, attr: String, attrValue: String): WritableProperty<Boolean> {
-        return object : WritableProperty<Boolean> {
-            override fun set(value: Boolean) {
-                if (value) {
-                    el.setAttribute(attr, attrValue)
-                } else {
-                    el.removeAttribute(attr)
-                }
-            }
-        }
-    }
-
-    fun visibilityOf(el: HTMLElement): WritableProperty<Boolean> {
-        return object : WritableProperty<Boolean> {
-            override fun set(value: Boolean) {
-                if (value) {
-                    el.style.clearDisplay()
-                } else {
-                    el.style.display = CssDisplay.NONE
-                }
-            }
-        }
-    }
-
-    fun dimension(el: Element): ReadableProperty<Vector?> {
-        return timerBasedProperty(object : Supplier<Vector> {
-            override fun get(): Vector = Vector(el.clientWidth, el.clientHeight)
-        }, 200)
-    }
-
-    fun <ValueT> timerBasedProperty(supplier: Supplier<ValueT>, period: Int): ReadableProperty<ValueT?> {
-        return object : UpdatableProperty<ValueT?>() {
-            private var myTimer: Int = -1
-
-            override fun doAddListeners() {
-                myTimer = window.setInterval({ update() }, period)
-            }
-
-            override fun doRemoveListeners() {
-                window.clearInterval(myTimer)
-            }
-
-            override fun doGet(): ValueT? = supplier.get()
         }
     }
 

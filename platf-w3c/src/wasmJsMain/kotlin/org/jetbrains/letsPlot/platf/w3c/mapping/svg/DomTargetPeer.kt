@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
+import org.jetbrains.letsPlot.platf.w3c.createEventListener
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
 import org.jetbrains.letsPlot.platf.w3c.mapping.svg.domUtil.DomUtil
 import org.w3c.dom.Element
@@ -82,18 +83,17 @@ internal class DomTargetPeer : TargetPeer<Node> {
         spec: SvgEventSpec,
         eventType: String
     ): Registration {
-        val listener: EventListener = object : EventListener {
-            override fun handleEvent(event: Event) {
-                event.stopPropagation()
-                val e = event as MouseEvent
-                val targetEvent = org.jetbrains.letsPlot.commons.event.MouseEvent(
-                    e.clientX,
-                    e.clientY,
-                    DomEventUtil.getButton(e),
-                    DomEventUtil.getModifiers(e)
-                )
-                source.dispatch(spec, targetEvent)
-            }
+        val listener: EventListener = createEventListener { event: Event ->
+            event.stopPropagation()
+            val e = event as MouseEvent
+            val targetEvent = org.jetbrains.letsPlot.commons.event.MouseEvent(
+                e.clientX,
+                e.clientY,
+                DomEventUtil.getButton(e),
+                DomEventUtil.getModifiers(e)
+            )
+            source.dispatch(spec, targetEvent)
+
         }
         target.addEventListener(eventType, listener, false)
         return object : Registration() {

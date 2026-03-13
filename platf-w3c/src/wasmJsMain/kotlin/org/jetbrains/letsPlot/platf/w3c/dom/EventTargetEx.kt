@@ -6,9 +6,10 @@
 package org.jetbrains.letsPlot.platf.w3c.dom
 
 import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventListener
 import org.jetbrains.letsPlot.platf.w3c.dom.events.DomEventType
+import org.jetbrains.letsPlot.platf.w3c.domEventListener
 import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventListener
 import org.w3c.dom.events.EventTarget
 
 //fun <EventT : Event> EventTarget.onEvent(
@@ -20,7 +21,7 @@ import org.w3c.dom.events.EventTarget
 
 fun <EventT : Event> EventTarget.onEvent(
     type: DomEventType<EventT>,
-    listener: DomEventListener<EventT>,
+    listener: EventListener,
     capture: Boolean
 ): Registration {
     addEventListener(type.name, listener, capture)
@@ -63,7 +64,7 @@ fun <EventT : Event> EventTarget.on(
     event: DomEventType<EventT>,
     handler: (EventT) -> Boolean
 ): Registration {
-    return onEvent(event, DomEventListener { evt: EventT ->
+    return onEvent(event, domEventListener { evt: EventT ->
         val result = handler(evt)
         if (!result) {
             evt.preventDefault()

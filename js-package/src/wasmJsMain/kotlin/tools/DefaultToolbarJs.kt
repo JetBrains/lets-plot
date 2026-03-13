@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package tools
 
 import FigureModelJs
@@ -21,7 +23,7 @@ import org.w3c.dom.svg.SVGSVGElement
 
 @OptIn(ExperimentalJsExport::class)
 @JsName("DefaultToolbar")
-@JsExport
+//@JsExport
 class DefaultToolbarJs() {
 
     //
@@ -77,7 +79,7 @@ class DefaultToolbarJs() {
     fun bind(figure: FigureModelJs) {
         check(this.figure == null) { "Toolbar is already bound to another figure." }
         this.figure = figure
-        figure.onToolEvent { e: dynamic ->
+        figure.onToolEvent { e: JsAny? ->
             val event = dynamicObjectToMap(e)
             controller.handleToolFeedback(event)
         }

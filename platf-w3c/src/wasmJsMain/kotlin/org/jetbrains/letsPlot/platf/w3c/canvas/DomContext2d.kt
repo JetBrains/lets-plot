@@ -3,6 +3,8 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package org.jetbrains.letsPlot.platf.w3c.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
@@ -14,6 +16,7 @@ import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineCap
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssLineJoin
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssTextAlign
 import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssTextBaseLine
+import org.jetbrains.letsPlot.platf.w3c.toJsArray
 import org.w3c.dom.*
 import kotlin.math.PI
 
@@ -136,11 +139,11 @@ internal class DomContext2d(
     override fun save() = ctx.save()
     override fun restore() = ctx.restore()
     override fun setFillStyle(color: Color?) {
-        ctx.fillStyle = color?.toCssColor()
+        ctx.fillStyle = color?.toCssColor()?.toJsString()
     }
 
     override fun setStrokeStyle(color: Color?) {
-        ctx.strokeStyle = color?.toCssColor()
+        ctx.strokeStyle = color?.toCssColor()?.toJsString()
     }
 
     override fun setGlobalAlpha(alpha: Double) {
@@ -208,7 +211,7 @@ internal class DomContext2d(
         ctx.setTransform(m00, m10, m01, m11, m02, m12)
     }
 
-    override fun setLineDash(lineDash: DoubleArray) = ctx.setLineDash(lineDash.toTypedArray())
+    override fun setLineDash(lineDash: DoubleArray) = ctx.setLineDash(lineDash.toJsArray())
     override fun setLineDashOffset(lineDashOffset: Double) {
         ctx.lineDashOffset = lineDashOffset
     }

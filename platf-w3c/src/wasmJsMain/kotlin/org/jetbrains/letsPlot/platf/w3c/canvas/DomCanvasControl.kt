@@ -32,6 +32,9 @@ import org.w3c.dom.Image
 import org.w3c.dom.events.Event
 import org.w3c.dom.get
 
+private fun createPngObjectURL(bytes: JsAny): String =
+    js("URL.createObjectURL(new Blob([bytes], { type: 'image/png' }))")
+
 class DomCanvasControl(
     private val myRootElement: HTMLElement,
     override val size: Vector,
@@ -104,9 +107,6 @@ class DomCanvasControl(
         val url = createPngObjectURL(jsUint8Array)
         return decode(url)
     }
-
-    private fun createPngObjectURL(bytes: JsAny): String =
-        js("URL.createObjectURL(new Blob([bytes], { type: 'image/png' }))")
 
     private fun decode(dataUrl: String): Async<Canvas.Snapshot> {
         return SimpleAsync<Canvas.Snapshot>().apply {

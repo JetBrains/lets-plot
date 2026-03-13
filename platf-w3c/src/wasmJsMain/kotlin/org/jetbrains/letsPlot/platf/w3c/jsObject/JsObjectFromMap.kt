@@ -3,41 +3,56 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package org.jetbrains.letsPlot.platf.w3c.jsObject
 
+private fun createJsArray(): JsAny = js("[]")
+private fun pushToJsArray(array: JsAny, item: JsAny?): Unit = js("array.push(item)")
+
+// Note: "({})" forces JS to evaluate it as an object literal instead of an empty code block
+private fun createJsObject(): JsAny = js("({})")
+private fun setJsProperty(obj: JsAny, key: JsString, value: JsAny?): Unit = js("obj[key] = value")
+
+
 /**
- * Converts a Kotlin primitives, lists and maps to Kotlin JS dynamic.
- * Simple values (String, Boolean, Number, null) are copied as is.
+ * Converts Kotlin primitives, lists and maps to Kotlin/WasmJS JsAny.
+ * Simple values (String, Boolean, Number, null) are explicitly mapped to JS primitives.
  * Lists and arrays are converted to JavaScript arrays.
- * Maps are converted to JavaScript ointeractionSpecListbjects.
+ * Maps are converted to JavaScript objects.
  */
-fun dynamicFromAnyQ(input: Any?): dynamic {
-    var handleAny: (v: Any?) -> dynamic = {}
+fun dynamicFromAnyQ(input: Any?): JsAny? {
+    fun handleAny(value: Any?): JsAny? {
+        return when (value) {
+            is String -> value.toJsString()
+            is Boolean -> value.toJsBoolean()
+            is Number -> value.toDouble().toJsNumber()
+            null -> null
 
-    fun handleList(list: List<*>): dynamic {
-        val jsArray = js("[]")
-        for (item in list) {
-            jsArray.push(handleAny(item))
-        }
-        return jsArray
-    }
-
-    fun handleMap(map: Map<String, Any>): dynamic {
-        val jsObject = js("{}")
-        for ((key, value) in map) {
-            jsObject[key] = handleAny(value)
-        }
-        return jsObject
-    }
-
-    handleAny = { value: Any? ->
-        when (value) {
-            is String, is Boolean, is Number, null -> value
-            is List<*> -> handleList(value)
-//            is Array<*> -> handleList(value.asList())
+            is List<*> -> {
+                val jsArray = createJsArray()
+                for (item in value) {
+                    pushToJsArray(jsArray, handleAny(item))
+                }
+                jsArray
+            }
+            is Array<*> -> {
+                val jsArray = createJsArray()
+                for (item in value) {
+                    pushToJsArray(jsArray, handleAny(item))
+                }
+                jsArray
+            }
             is Map<*, *> -> {
-                @Suppress("UNCHECKED_CAST")
-                handleMap(value as Map<String, Any>)
+                val jsObject = createJsObject()
+                for ((key, v) in value) {
+                    setJsProperty(
+                        obj = jsObject,
+                        key = (key as String).toJsString(),
+                        value = handleAny(v)
+                    )
+                }
+                jsObject
             }
 
             else -> throw IllegalArgumentException("Unsupported type: ${value::class}")

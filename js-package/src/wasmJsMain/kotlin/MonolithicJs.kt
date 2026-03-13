@@ -5,6 +5,8 @@
 
 /* root package */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 import kotlinx.browser.document
 import messages.OverlayMessageHandler
 import messages.SimpleMessageHandler
@@ -74,10 +76,10 @@ private val LOG = PortableLogging.logger("MonolithicJs")
 @JsName("buildPlotFromRawSpecs")
 @JsExport
 fun buildPlotFromRawSpecs(
-    plotSpecJs: dynamic,
+    plotSpecJs: JsAny,
     parentElement: HTMLElement,
-    sizingJs: dynamic
-): FigureModelJs? {
+    sizingJs: JsAny
+): JsReference<FigureModelJs>? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         PlotConfig.assertFigSpecOrErrorMessage(plotSpec)
@@ -86,11 +88,13 @@ fun buildPlotFromRawSpecs(
         @Suppress("DuplicatedCode")
         val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
 
-        buildPlotFromProcessedSpecsPrivate(
+        val model = buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
             sizingOptions
         )
+
+        return model?.toJsReference()
     } catch (e: RuntimeException) {
         handleException(e, SimpleMessageHandler(parentElement))
         null
@@ -144,10 +148,10 @@ fun buildPlotFromRawSpecs(
 @JsName("buildPlotFromProcessedSpecs")
 @JsExport
 fun buildPlotFromProcessedSpecs(
-    plotSpecJs: dynamic,
+    plotSpecJs: JsAny,
     parentElement: HTMLElement,
-    sizingJs: dynamic
-): FigureModelJs? {
+    sizingJs: JsAny
+): JsReference<FigureModelJs>? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
         // Though the "plotSpec" might contain already "processed" specs,
@@ -156,11 +160,13 @@ fun buildPlotFromProcessedSpecs(
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = true)
         val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
 
-        buildPlotFromProcessedSpecsPrivate(
+        val model = buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
             sizingOptions
         )
+
+        return model?.toJsReference()
     } catch (e: RuntimeException) {
         handleException(e, SimpleMessageHandler(parentElement))
         null
@@ -178,16 +184,16 @@ private fun buildPlotFromProcessedSpecsPrivate(
         // Wrapper for toolbar and chart
         val outputDiv = document.createElement("div") as HTMLDivElement
         outputDiv.style.display = "inline-block"
-        containerDiv.appendChild(outputDiv);
+        containerDiv.appendChild(outputDiv)
 
         // Toolbar
-        val toolbar = DefaultToolbarJs();
-        outputDiv.appendChild(toolbar.getElement());
+        val toolbar = DefaultToolbarJs()
+        outputDiv.appendChild(toolbar.getElement())
 
         // Plot
-        val plotContainer = document.createElement("div") as HTMLElement;
+        val plotContainer = document.createElement("div") as HTMLElement
         plotContainer.style.position = "relative"
-        outputDiv.appendChild(plotContainer);
+        outputDiv.appendChild(plotContainer)
         Pair(plotContainer, toolbar)
     } else {
         // We may want to use absolute child positioning later (see OverlayMessageHandler).
@@ -242,7 +248,7 @@ private fun buildPlotFromProcessedSpecsPrivate(
     )
 
     if (toolbar != null && figureModelJs != null) {
-        toolbar.bind(figureModelJs);
+        toolbar.bind(figureModelJs)
     }
 
     return figureModelJs

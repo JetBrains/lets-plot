@@ -3,13 +3,20 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package org.jetbrains.letsPlot.platf.w3c.jsObject
 
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 
-private val LOG = PortableLogging.logger("JsObjectSupportJs")
+private val LOG = PortableLogging.logger("JsObjectSupportWasm")
 
-fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
+// --- WasmJS Interop Helpers ---
+private fun isJsArray(o: JsAny): Boolean = js("Array.isArray(o)")
+private fun getJsObjectKeys(o: JsAny): JsArray<JsString> = js("Object.keys(o)")
+private fun getJsProperty(o: JsAny, key: JsString): JsAny? = js("o[key]")
+
+fun dynamicObjectToMap(o: JsAny?): MutableMap<String, Any> {
     @Suppress("UNCHECKED_CAST")
     return dynamicToAnyQ(o) as MutableMap<String, Any>
 }
@@ -19,69 +26,81 @@ fun dynamicObjectToMap(o: dynamic): MutableMap<String, Any> {
  * arrays containing only simple values (str,number,boolean,null).
  * 'simple' arrays are wrapped in immutable lists (not copied).
  */
-@Suppress("UNUSED_ANONYMOUS_PARAMETER", "NAME_SHADOWING")
-fun dynamicToAnyQ(o: dynamic): Any? {
-
-    var handleAnyNotNull: (o: dynamic) -> Any = {}
-    var handleAnyNullable: (o: dynamic) -> Any? = {}
-
-    val handleObject: (o: dynamic) -> MutableMap<String, Any> = { o: dynamic ->
-        val map = LinkedHashMap<String, Any>()
-        val entries = js("Object.entries(o)")
-        for (entry in entries) {
-            val key = entry[0] as String
-            val value = entry[1] ?: continue            // drop nulls
-            try {
-                map[key] = handleAnyNotNull(value)
-            } catch (e: RuntimeException) {
-                LOG.error(e) { "Unexpected situation in 'dynamicObjectToMap.handleObject()'." }
-            }
-        }
-        map
-    }
-
-    val handleArray = { o: dynamic ->
-        if (isArrayOfPrimitives(o)) {  // do not copy data vectors
-//            listOf(*(o as Array<*>))
-            (o as Array<*>).asList()
-        } else {
-            val l = ArrayList<Any?>()
-            for (e in o) {
-                l.add(handleAnyNullable(e))
-            }
-            l
-        }
-    }
-
-    handleAnyNotNull = { o: dynamic ->
-        handleAnyNullable(o) ?: throw IllegalArgumentException("Null value is not expected")
-    }
-    handleAnyNullable = { o: dynamic ->
-        when (o) {
-            is String,
-            is Boolean,
-            null -> o
-
-            is Number -> o.toDouble()
-            is Array<*> -> handleArray(o)
-            else -> handleObject(o)
-        }
-    }
-
-    // expecting an `object`
-//    return handleObject(o)
+fun dynamicToAnyQ(o: JsAny?): Any? {
     return handleAnyNullable(o)
 }
 
-private fun isArrayOfPrimitives(o: dynamic) = (o as Array<*>).all { isPrimitiveOrNull(it) }
+private fun handleAnyNullable(obj: JsAny?): Any? {
+    if (obj == null) return null
 
-private fun isPrimitiveOrNull(o: dynamic): Boolean {
-    return when (o) {
-        is Number,
-        is String,
-        is Boolean,
-        null -> true
+    return when {
+        obj is JsString -> obj.toString()
+        obj is JsBoolean -> obj.toBoolean()
+        obj is JsNumber -> obj.toDouble()
+        isJsArray(obj) -> handleArray(obj.unsafeCast<JsArray<JsAny?>>())
+        else -> handleObject(obj)
+    }
+}
 
-        else -> false
+private fun handleAnyNotNull(obj: JsAny?): Any {
+    return handleAnyNullable(obj) ?: throw IllegalArgumentException("Null value is not expected")
+}
+
+private fun handleObject(obj: JsAny): MutableMap<String, Any> {
+    val map = LinkedHashMap<String, Any>()
+    val keys = getJsObjectKeys(obj)
+
+    for (i in 0 until keys.length) {
+        val keyJs = keys[i]!!
+        val key = keyJs.toString()
+        val value = getJsProperty(obj, keyJs) ?: continue // drop nulls
+        try {
+            map[key] = handleAnyNotNull(value)
+        } catch (e: RuntimeException) {
+            LOG.error(e) { "Unexpected situation in 'dynamicObjectToMap.handleObject()'." }
+        }
+    }
+    return map
+}
+
+private fun handleArray(arr: JsArray<JsAny?>): List<Any?> {
+    return if (isArrayOfPrimitives(arr)) {
+        // do not copy data vectors - wrap in a lightweight WasmJS bridge list
+        JsPrimitiveList(arr)
+    } else {
+        val l = ArrayList<Any?>(arr.length)
+        for (i in 0 until arr.length) {
+            l.add(handleAnyNullable(arr[i]))
+        }
+        l
+    }
+}
+
+private fun isArrayOfPrimitives(arr: JsArray<JsAny?>): Boolean {
+    for (i in 0 until arr.length) {
+        if (!isPrimitiveOrNull(arr[i])) return false
+    }
+    return true
+}
+
+private fun isPrimitiveOrNull(o: JsAny?): Boolean {
+    return o == null || o is JsNumber || o is JsString || o is JsBoolean
+}
+
+/**
+ * A wrapper to avoid copying large arrays of primitives across the Wasm/JS boundary
+ * during object conversion. Values are lazily converted when requested.
+ */
+private class JsPrimitiveList(private val jsArray: JsArray<JsAny?>) : AbstractList<Any?>() {
+    override val size: Int get() = jsArray.length
+
+    override fun get(index: Int): Any? {
+        return when (val item = jsArray[index]) {
+            null -> null
+            is JsString -> item.toString()
+            is JsNumber -> item.toDouble()
+            is JsBoolean -> item.toBoolean()
+            else -> throw IllegalStateException("Expected primitive in JsPrimitiveList")
+        }
     }
 }
