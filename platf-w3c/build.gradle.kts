@@ -10,6 +10,7 @@ plugins {
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val kotlinxBrowserVersion = project.extra["kotlinx.browser.version"] as String
 
 kotlin {
     js() {
@@ -43,6 +44,13 @@ kotlin {
         named("jsTest") {
             dependencies {
                 implementation(kotlin("test-js"))
+            }
+        }
+
+        wasmJsMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:${kotlinxBrowserVersion}")
+
             }
         }
     }
