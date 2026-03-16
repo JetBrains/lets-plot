@@ -36,6 +36,7 @@ include("python-extension")
 include("python-package-build")
 
 include("js-package")
+include("wasmjs-package")
 include("jvm-package:jvm-publish-common")
 include("jvm-package:jvm-publish-batik")
 include("jvm-package:jvm-publish-swing")

@@ -25,8 +25,8 @@ object WasmJsDemoUtil {
     private const val PROD_WASM_OUTPUT_DIR = "build/kotlin-webpack/wasmJs/productionExecutable"
     private const val DEV_WASM_OUTPUT_DIR = "build/kotlin-webpack/wasmJs/developmentExecutable"
 
-    private const val PROD_LETS_PLOT_PATH = "js-package/$PROD_WASM_OUTPUT_DIR/lets-plot.js"
-    private const val DEV_LETS_PLOT_PATH = "js-package/$DEV_WASM_OUTPUT_DIR/lets-plot.js"
+    private const val PROD_LETS_PLOT_PATH = "wasmjs-package/$PROD_WASM_OUTPUT_DIR/lets-plot.js"
+    private const val DEV_LETS_PLOT_PATH = "wasmjs-package/$DEV_WASM_OUTPUT_DIR/lets-plot.js"
 
     private var server: HttpServer? = null
     private var serverPort: Int = 0

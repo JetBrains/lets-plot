@@ -18,19 +18,20 @@ val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 val kotlinxBrowserVersion = project.extra["kotlinx.browser.version"] as String
 
 kotlin {
-    js {
+    wasmJs {
         browser {
-            webpackTask {
-                mainOutputFileName = "lets-plot.js"
+            commonWebpackConfig {
+                outputFileName = "lets-plot.js"
+                outputModuleName = "LetsPlot"
             }
         }
         binaries.executable()
     }
 
     sourceSets {
-        jsMain {
+        wasmJsMain {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-js:${kotlinVersion}")
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:$kotlinxBrowserVersion")
 
                 implementation(project(":commons"))
                 implementation(project(":datamodel"))
@@ -45,22 +46,23 @@ kotlin {
 
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
 
-                implementation("io.ktor:ktor-client-websockets-js:${ktorVersion}")
+                implementation("io.ktor:ktor-client-websockets:${ktorVersion}")
                 implementation("io.ktor:ktor-client-js:${ktorVersion}")
-                implementation("io.github.oshai:kotlin-logging-js:${kotlinLoggingVersion}")
+                implementation("io.github.oshai:kotlin-logging:${kotlinLoggingVersion}")
+
             }
         }
     }
 }
 
 
-val jsPackageBuildDir = project.layout.buildDirectory.get().asFile.path as String // 'project.buildDir' has been deprecated.
-val prodJsExecDistDir = "${jsPackageBuildDir}/dist/js/productionExecutable/"
+val buildDir = project.layout.buildDirectory.get().asFile.path as String // 'project.buildDir' has been deprecated.
+val prodDistDir = "${buildDir}/dist/wasmJs/productionExecutable/"
 val jsArtifactName = "lets-plot.js"
 
 tasks.register<Copy>("copyForPublish") {
-    dependsOn(tasks.named("jsBrowserProductionWebpack"))
-    from("${prodJsExecDistDir}${jsArtifactName}")
+    dependsOn(tasks.named("wasmJsBrowserProductionWebpack"))
+    from("${prodDistDir}${jsArtifactName}")
     rename(jsArtifactName, "lets-plot.min.js")
-    into("${rootDir}/js-package/distr/")
+    into("${rootDir}/wasmjs-package/distr/")
 }

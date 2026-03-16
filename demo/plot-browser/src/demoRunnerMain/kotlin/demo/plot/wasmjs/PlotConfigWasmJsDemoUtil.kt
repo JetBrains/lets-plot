@@ -88,14 +88,17 @@ object PlotConfigWasmJsDemoUtil {
                 }
             }
             body {
+                script {
+                    type = "text/javascript"
+                    src = getPlotLibUrl()
+                }
+
                 div("demo") { id = ROOT_ELEMENT_ID }
 
                 script {
-                    type = "module" // Wasm relies on ES Modules
+                    type = "text/javascript"
                     unsafe {
                         +"""
-                        |import { LetsPlot } from "${getPlotLibUrl()}";
-                        |
                         |var plotSpecList=$plotSpecListJs;
                         |plotSpecList.forEach(function (spec, index) {
                         |
