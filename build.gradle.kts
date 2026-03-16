@@ -367,6 +367,7 @@ subprojects {
             "platf-batik",
             "jvm",
             "js",
+            "wasmJs",
             "kotlinMultiplatform",
             "metadata"
         )

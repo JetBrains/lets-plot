@@ -28,8 +28,10 @@ kotlin {
     }
     wasmJs {
         browser {
-            webpackTask {
-                mainOutputFileName = "lets-plot.js"
+            commonWebpackConfig {
+                // Add this:
+                outputFileName = "lets-plot.js"
+                outputModuleName = "LetsPlot" // This tells Webpack to attach the export to window.LetsPlot
             }
         }
         binaries.executable()

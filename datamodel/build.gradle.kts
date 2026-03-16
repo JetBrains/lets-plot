@@ -17,9 +17,8 @@ val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 kotlin {
     jvm()
-    js {
-        browser()
-    }
+    js().browser()
+    wasmJs().browser()
 
     sourceSets {
         commonMain {

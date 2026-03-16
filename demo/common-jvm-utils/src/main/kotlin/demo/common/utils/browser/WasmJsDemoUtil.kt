@@ -22,11 +22,11 @@ object WasmJsDemoUtil {
     private const val ROOT_PROJECT = "lets-plot"
     private const val ROOT_ELEMENT_ID = "root"
 
-    private const val PROD_WASM_OUTPUT_DIR = "build/dist/wasmJs/productionExecutable"
+    private const val PROD_WASM_OUTPUT_DIR = "build/kotlin-webpack/wasmJs/productionExecutable"
     private const val DEV_WASM_OUTPUT_DIR = "build/kotlin-webpack/wasmJs/developmentExecutable"
 
-    private const val PROD_LETS_PLOT_PATH = "js-package/$PROD_WASM_OUTPUT_DIR/lets-plot.mjs"
-    private const val DEV_LETS_PLOT_PATH = "js-package/$DEV_WASM_OUTPUT_DIR/lets-plot.mjs"
+    private const val PROD_LETS_PLOT_PATH = "js-package/$PROD_WASM_OUTPUT_DIR/lets-plot.js"
+    private const val DEV_LETS_PLOT_PATH = "js-package/$DEV_WASM_OUTPUT_DIR/lets-plot.js"
 
     private var server: HttpServer? = null
     private var serverPort: Int = 0
@@ -171,7 +171,7 @@ object WasmJsDemoUtil {
     }
 
     private fun projectWasmUrl(projectPath: String, projectName: String, dev: Boolean? = null): String {
-        return "/$projectPath/${getWasmOutputDir(dev)}/$projectName.mjs"
+        return "/$projectPath/${getWasmOutputDir(dev)}/$projectName.js"
     }
 
     fun mapperDemoHtml(

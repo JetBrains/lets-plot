@@ -5,7 +5,6 @@
 
 package demo.plot.wasmjs
 
-import demo.common.utils.browser.BrowserDemoUtil
 import demo.common.utils.browser.WasmJsDemoUtil
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
@@ -25,7 +24,7 @@ object PlotConfigWasmJsDemoUtil {
         applyBackendTransform: Boolean = true,
         backgroundColor: String = "lightgrey"
     ) {
-        BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
+        WasmJsDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
                 title,
                 plotSpecList,

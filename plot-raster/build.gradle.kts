@@ -15,6 +15,12 @@ val slf4jVersion = project.extra["slf4j.version"] as String
 
 kotlin {
     jvm()
+    js {
+        browser()
+    }
+    wasmJs {
+        browser()
+    }
 
     sourceSets {
         commonMain {
