@@ -9,6 +9,6 @@ class Density2dfGeom : ContourfGeom() {
     companion object {
 //        val RENDERS: List<Aes<*>> = ContourfGeom.RENDERS
 
-        val HANDLES_GROUPS = ContourfGeom.HANDLES_GROUPS
+        const val HANDLES_GROUPS = ContourfGeom.HANDLES_GROUPS
     }
 }

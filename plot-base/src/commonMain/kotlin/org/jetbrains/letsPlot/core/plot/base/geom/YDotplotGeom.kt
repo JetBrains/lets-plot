@@ -12,10 +12,10 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
 import kotlin.math.abs
 
 class YDotplotGeom : DotplotGeom(), WithHeight {
@@ -121,7 +121,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
                 DoubleVector(height, width)
             )
         }
-        val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(GeomKind.Y_DOT_PLOT, ctx)
+        val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(ctx)
 
         ctx.targetCollector.addRectangle(
             p.index(),

@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.BogusContext
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.list
 import org.jetbrains.letsPlot.core.plot.base.coord.Coords
@@ -51,6 +52,7 @@ class AreaGeomTest {
 class EmptyGeomContext : GeomContext by BogusContext {
     override val flipped: Boolean = false
     override val targetCollector: GeomTargetCollector = NullGeomTargetCollector
+    override fun geomKind(): GeomKind = GeomKind.AREA
 }
 
 class DummyRoot : SvgRoot {

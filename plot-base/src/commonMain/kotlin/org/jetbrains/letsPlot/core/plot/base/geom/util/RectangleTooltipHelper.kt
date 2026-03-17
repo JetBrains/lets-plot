@@ -21,7 +21,7 @@ class RectangleTooltipHelper(
     private val hintAesList: List<Aes<Double>> = emptyList(),
     private val tooltipKind: TipLayoutHint.Kind = VERTICAL_TOOLTIP.takeIf { ctx.flipped } ?: HORIZONTAL_TOOLTIP,
     private val fillColorMapper: (DataPointAesthetics) -> Color? = { null },
-    private val colorMarkerMapper: (DataPointAesthetics) -> List<Color> = createColorMarkerMapper(null, ctx),
+    private val colorMarkerMapper: (DataPointAesthetics) -> List<Color> = createColorMarkerMapper(ctx),
 ) {
     private val helper = GeomHelper(pos, coord, ctx)
 

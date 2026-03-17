@@ -22,7 +22,7 @@ class StepGeom : LineGeom() {
         myDirection = Direction.toDirection(dir)
     }
     // commit name:
-    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
         // filter out points with NaN x-values but keep +/-Infinity (for 'padded' mode)
         val data = dataPoints.filter { p: DataPointAesthetics ->
             val x = p.x()
@@ -39,7 +39,10 @@ class StepGeom : LineGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
+        val source = aesthetics.dataPoints()
+        val dataPoints = filterDataPoints(source)
+        val filteredPointsCount = source.count() - dataPoints.count()
+
         val linesHelper = LinesHelper(pos, coord, ctx)
 
         val pathDataList = linesHelper.createPaths(dataPoints, toLocationFor(overallAesBounds(ctx)))
@@ -52,8 +55,9 @@ class StepGeom : LineGeom() {
 
         root.appendNodes(linePaths)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.STEP, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
         targetCollectorHelper.addPaths(pathDataList)
+        reportDroppedPoints(filteredPointsCount + linesHelper.getDroppedPointsCount(), ctx)
     }
 
     private fun toLocationFor(viewPort: DoubleRectangle): (DataPointAesthetics) -> DoubleVector? {

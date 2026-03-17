@@ -30,7 +30,7 @@ class SpokeGeom : GeomBase(), WithWidth, WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val tooltipHelper = TargetCollectorHelper(GeomKind.SPOKE, ctx)
+        val tooltipHelper = TargetCollectorHelper(ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgElementHelper = geomHelper.createSvgElementHelper()
             .setStrokeAlphaEnabled(true)

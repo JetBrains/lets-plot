@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL
 
 class RibbonGeom : GeomBase() {
 
-    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
         val data = GeomUtil.with_X(dataPoints)
         return GeomUtil.ordered_X(data)
     }
@@ -33,25 +33,29 @@ class RibbonGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
-        val helper = LinesHelper(pos, coord, ctx)
+        val source = aesthetics.dataPoints()
+        val dataPoints = filterDataPoints(source)
+        val filteredPointsCount = source.count() - dataPoints.count()
 
-        val paths = helper.createBands(dataPoints, TO_LOCATION_X_YMAX_WITH_FINITE_YMIN, TO_LOCATION_X_YMIN_WITH_FINITE_YMAX)
+        val linesHelper = LinesHelper(pos, coord, ctx)
+
+        val paths = linesHelper.createBands(dataPoints, TO_LOCATION_X_YMAX_WITH_FINITE_YMIN, TO_LOCATION_X_YMIN_WITH_FINITE_YMAX)
         root.appendNodes(paths)
 
         //if you want to retain the side edges of ribbon:
         //comment out the following codes, and switch decorate method in LinesHelper.createBands
-        helper.setAlphaEnabled(false)
+        linesHelper.setAlphaEnabled(false)
 
-        root.appendNodes(helper.createLines(dataPoints, TO_LOCATION_X_YMAX))
-        root.appendNodes(helper.createLines(dataPoints, TO_LOCATION_X_YMIN))
+        root.appendNodes(linesHelper.createLines(dataPoints, TO_LOCATION_X_YMAX))
+        root.appendNodes(linesHelper.createLines(dataPoints, TO_LOCATION_X_YMIN))
 
         buildHints(aesthetics, pos, coord, ctx)
+        reportDroppedPoints(filteredPointsCount + linesHelper.getDroppedPointsCount(), ctx)
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = GeomHelper(pos, coord, ctx)
-        val colorMapper = HintColorUtil.createColorMarkerMapper(GeomKind.RIBBON, ctx)
+        val colorMapper = HintColorUtil.createColorMarkerMapper(ctx)
         val hint = HintsCollection.HintConfigFactory()
             .defaultObjectRadius(0.0)
             .defaultKind(HORIZONTAL_TOOLTIP.takeUnless { ctx.flipped } ?: VERTICAL_TOOLTIP)

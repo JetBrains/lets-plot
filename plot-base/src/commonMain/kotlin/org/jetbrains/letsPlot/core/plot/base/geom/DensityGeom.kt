@@ -5,11 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-
 class DensityGeom : AreaGeom() {
-
-    override fun tooltipsGeomKind() = GeomKind.DENSITY
 
     companion object {
         const val DEF_QUANTILE_LINES = AreaGeom.DEF_QUANTILE_LINES

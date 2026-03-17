@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface ImmutableGeomContext : GeomContext {
-
-    fun with(): Builder
+//    not used
+//    fun with(): Builder
 
     interface Builder {
         fun flipped(flipped: Boolean): Builder
@@ -42,6 +42,8 @@ interface ImmutableGeomContext : GeomContext {
         fun contentBounds(contentBounds: DoubleRectangle): Builder
 
         fun scaleFactor(scaleFactor: Double): Builder
+
+        fun geomKind(geomKind: GeomKind): Builder
 
         fun messageConsumer(messageConsumer: (String) -> Unit): Builder
 

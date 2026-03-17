@@ -11,9 +11,13 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.splitRings
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.createMultiPolygon
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
+import org.jetbrains.letsPlot.core.plot.base.BogusContext
+import org.jetbrains.letsPlot.core.plot.base.BogusCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.list
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
+import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
+import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
@@ -163,7 +167,9 @@ class PolygonEdgeCasesTest {
             .y(list(polygon.map(DoubleVector::y)))
             .build()
 
-        val pathData = GeomUtil.createPaths(aes.dataPoints(), GeomUtil.TO_LOCATION_X_Y, sorted = true) {}
+        val linesHelper = LinesHelper(PositionAdjustments.identity(), BogusCoordinateSystem, BogusContext)
+
+        val pathData = linesHelper.createPaths(aes.dataPoints(), GeomUtil.TO_LOCATION_X_Y, sorted = true)
         val rings = splitRings(pathData[0].coordinates)
 
         assertEquals(3, rings.size)

@@ -68,7 +68,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val boundTransform = toLocationBound(ctx)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.AREA_RIDGES, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEach { points ->
             val paths = helper.createBands(

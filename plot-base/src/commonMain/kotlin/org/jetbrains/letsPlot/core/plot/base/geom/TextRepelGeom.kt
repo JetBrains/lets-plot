@@ -60,7 +60,7 @@ open class TextRepelGeom: TextGeom() {
             .setStrokeAlphaEnabled(true)
             .setArrowSpec(arrowSpec)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.TEXT, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
         val bounds = DoubleRectangle(DoubleVector.ZERO, ctx.getContentBounds().dimension)
 

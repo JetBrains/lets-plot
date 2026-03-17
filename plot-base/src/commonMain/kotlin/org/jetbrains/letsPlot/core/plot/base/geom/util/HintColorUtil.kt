@@ -6,8 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.GeomMeta
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
@@ -38,11 +41,10 @@ object HintColorUtil {
     }
 
     fun createColorMarkerMapper(
-        geomKind: GeomKind?,
         ctx: GeomContext,
     ): (DataPointAesthetics) -> List<Color> {
         return createColorMarkerMapper(
-            geomKind,
+            ctx.geomKind(),
             isMappedFill = { p: DataPointAesthetics -> ctx.isMappedAes(p.fillAes) },
             isMappedColor = { p: DataPointAesthetics -> ctx.isMappedAes(p.colorAes) }
         )

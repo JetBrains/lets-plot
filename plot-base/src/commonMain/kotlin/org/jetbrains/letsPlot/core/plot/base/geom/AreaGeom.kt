@@ -26,7 +26,7 @@ open class AreaGeom : GeomBase() {
 
     override fun rangeIncludesZero(aes: Aes<*>): Boolean = (aes == Aes.Y)
 
-    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
         val data = GeomUtil.with_X(dataPoints)
         return GeomUtil.ordered_X(data)
     }
@@ -38,21 +38,24 @@ open class AreaGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val helper = LinesHelper(pos, coord, ctx)
-        helper.setResamplingEnabled(!coord.isLinear && !flat)
+        val linesHelper = LinesHelper(pos, coord, ctx)
+        linesHelper.setResamplingEnabled(!coord.isLinear && !flat)
 
         // Alpha is disabled for strokes (but still applies to fill).
-        helper.setAlphaEnabled(false)
+        linesHelper.setAlphaEnabled(false)
 
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
-        val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
 
-        val dataPoints = dataPoints(aesthetics)
-        val closePath = helper.meetsRadarPlotReq()
+        val source = aesthetics.dataPoints()
+        val dataPoints = filterDataPoints(source)
+        val filteredPointsCount = source.count() - dataPoints.count()
+
+        val closePath = linesHelper.meetsRadarPlotReq()
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
             .forEach { (_, groupDataPoints) ->
                 quantilesHelper.splitByQuantiles(groupDataPoints, Aes.X).forEach { points ->
-                    val bands = helper.renderBands(
+                    val bands = linesHelper.renderBands(
                         points,
                         TO_LOCATION_X_Y,
                         TO_LOCATION_X_ZERO_WITH_FINITE_Y,
@@ -61,9 +64,9 @@ open class AreaGeom : GeomBase() {
                     )
                     root.appendNodes(bands)
 
-                    val upperPoints = helper.createPathData(points, TO_LOCATION_X_Y, closePath)
+                    val upperPoints = linesHelper.createPathData(points, TO_LOCATION_X_Y, closePath)
 
-                    val line = helper.renderPaths(upperPoints, filled = false)
+                    val line = linesHelper.renderPaths(upperPoints, filled = false)
                     root.appendNodes(line)
                     targetCollectorHelper.addVariadicPaths(upperPoints)
                 }
@@ -72,6 +75,7 @@ open class AreaGeom : GeomBase() {
                     createQuantileLines(groupDataPoints, quantilesHelper).forEach(root::add)
                 }
             }
+        reportDroppedPoints(filteredPointsCount + linesHelper.getDroppedPointsCount(), ctx)
     }
 
     private fun createQuantileLines(
@@ -82,8 +86,6 @@ open class AreaGeom : GeomBase() {
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p -> TO_LOCATION_X_ZERO(p)!! }
         return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
-
-    protected open fun tooltipsGeomKind() = GeomKind.AREA
 
     companion object {
         const val DEF_QUANTILE_LINES = false

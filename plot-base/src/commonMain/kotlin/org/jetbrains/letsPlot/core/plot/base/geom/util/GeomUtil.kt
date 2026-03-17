@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
-import org.jetbrains.letsPlot.commons.intern.splitByNull
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -175,17 +174,6 @@ object GeomUtil {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }
 
-    private fun createGroups(
-        dataPoints: Iterable<DataPointAesthetics>,
-        sorted: Boolean = false
-    ): Map<Int, List<DataPointAesthetics>> {
-        val map = dataPoints.groupBy { it.group()!! }
-        return when {
-            sorted -> map.toList().sortedBy { (g, _) -> g }.toMap()
-            else -> map
-        }
-    }
-
     fun createPathDataFromRectangle(
         dataPoints: Iterable<DataPointAesthetics>,
         pointTransform: ((DataPointAesthetics) -> List<DoubleVector>?)
@@ -203,50 +191,6 @@ object GeomUtil {
                     PathData.create(pathPoints)
                 }
             }
-    }
-
-    // Builds a list of PathData splitting by group and null points.
-    fun createPaths(
-        dataPoints: Iterable<DataPointAesthetics>,
-        pointTransform: ((DataPointAesthetics) -> DoubleVector?),
-        sorted: Boolean,
-        closePath: Boolean = false,
-        nullsCounter: (Int) -> Unit,
-    ): List<PathData> {
-        val groups = createGroups(dataPoints, sorted).let { groups ->
-            if (closePath) {
-                groups.mapValues { (_, group) -> group + group.first() }
-            } else {
-                groups
-            }
-        }
-
-        var nulls = 0
-        var singlePointPaths = 0
-        val result = groups.values
-            .map { aesthetics -> toPathPoints(aesthetics, pointTransform) }
-            .also { a ->
-                nulls += a.flatten().count { it == null }
-            }
-            .map { pathPoints -> pathPoints.splitByNull() }
-            .flatten()
-            .mapNotNull {
-                if (it.size == 1) singlePointPaths++
-                PathData.create(it)
-            }
-
-        nullsCounter(nulls + singlePointPaths)
-
-        return result
-    }
-
-    private fun toPathPoints(
-        dataPoints: Iterable<DataPointAesthetics>,
-        pointTransform: ((DataPointAesthetics) -> DoubleVector?)
-    ): List<PathPoint?> {
-        return dataPoints.map { aes ->
-            pointTransform(aes)?.let { p -> PathPoint(aes, p) }
-        }
     }
 
     fun rectToGeometry(minX: Double, minY: Double, maxX: Double, maxY: Double): List<DoubleVector> {

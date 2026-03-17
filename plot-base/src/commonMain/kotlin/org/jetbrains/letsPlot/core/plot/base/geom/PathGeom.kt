@@ -5,7 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
@@ -18,8 +21,6 @@ open class PathGeom : GeomBase() {
     var flat: Boolean = false
     var geodesic: Boolean = false
 
-    override val geomName: String = "path"
-
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
@@ -30,18 +31,22 @@ open class PathGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
-        val linesHelper = LinesHelper(pos, coord, ctx, ::addNulls)
+        val source = aesthetics.dataPoints()
+        val dataPoints = filterDataPoints(source)
+        val filteredPointsCount = source.count() - dataPoints.count()
+
+        val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(!coord.isLinear && !flat)
 
         val closePath = linesHelper.meetsRadarPlotReq()
         val pathData = linesHelper.createPathData(dataPoints, GeomUtil.TO_LOCATION_X_Y, closePath)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.PATH, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
         targetCollectorHelper.addVariadicPaths(pathData)
 
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
+        reportDroppedPoints(filteredPointsCount + linesHelper.getDroppedPointsCount(), ctx)
     }
 
     companion object {

@@ -9,17 +9,16 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 
 open class PointGeom : GeomBase() {
 
     var animation: Any? = null
     var sizeUnit: String? = null
-    override val geomName: String = "point"
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -33,7 +32,7 @@ open class PointGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)
@@ -66,7 +65,7 @@ open class PointGeom : GeomBase() {
             o.appendTo(slimGroup)
             goodPointsCount += 1
         }
-        addNulls(count - goodPointsCount)
+        reportDroppedPoints(count - goodPointsCount, ctx)
         root.add(wrap(slimGroup))
     }
 

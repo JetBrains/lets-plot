@@ -32,7 +32,7 @@ class SegmentGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val tooltipHelper = TargetCollectorHelper(GeomKind.SEGMENT, ctx)
+        val tooltipHelper = TargetCollectorHelper(ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgHelper = geomHelper
             .createSvgElementHelper()

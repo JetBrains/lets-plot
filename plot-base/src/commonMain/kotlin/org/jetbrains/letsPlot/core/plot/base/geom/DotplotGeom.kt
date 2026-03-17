@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.GeomKind.DOT_PLOT
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
@@ -132,7 +131,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
             DoubleRectangle(center.add(shiftToOrigin.flip()), dimension.flip())
         else
             DoubleRectangle(center.add(shiftToOrigin), dimension)
-        val colorMarkerMapper = createColorMarkerMapper(DOT_PLOT, ctx)
+        val colorMarkerMapper = createColorMarkerMapper(ctx)
 
         ctx.targetCollector.addRectangle(
             p.index(),
