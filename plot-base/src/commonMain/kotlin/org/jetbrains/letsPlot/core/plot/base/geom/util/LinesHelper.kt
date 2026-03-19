@@ -27,7 +27,7 @@ open class LinesHelper(
     ctx: GeomContext
 ) : GeomHelper(pos, coord, ctx) {
 
-    private var myDroppedPointsCount = 0
+    private val myDroppedPointsIds = mutableSetOf<Int>()
     private var myAlphaEnabled = true
     protected var myResamplingEnabled = false
     protected var myResamplingPrecision = PIXEL_PRECISION
@@ -106,7 +106,7 @@ open class LinesHelper(
     }
 
     fun getDroppedPointsCount(): Int {
-        return myDroppedPointsCount
+        return myDroppedPointsIds.size
     }
 
     private fun createPolygon(domainPathData: Collection<PathData>): List<Pair<SvgNode, PolygonData>> {
@@ -202,19 +202,13 @@ open class LinesHelper(
             }
         }
 
-        var nulls = 0
-        var singlePointPaths = 0
         val result = groups.values
             .map { aesthetics -> toPathPoints(aesthetics, pointTransform) }
-            .also { a -> nulls += a.flatten().count { it == null } }
-            .map { pathPoints -> pathPoints.splitByNull() }
-            .flatten()
+            .flatMap { pathPoints -> pathPoints.splitByNull() }
             .mapNotNull {
-                if (it.size == 1) singlePointPaths++
+                if (it.size == 1) myDroppedPointsIds.add(it[0].aes.index())
                 PathData.create(it)
             }
-
-        myDroppedPointsCount += nulls + singlePointPaths
 
         return result
     }
@@ -235,7 +229,13 @@ open class LinesHelper(
         pointTransform: ((DataPointAesthetics) -> DoubleVector?)
     ): List<PathPoint?> {
         return dataPoints.map { aes ->
-            pointTransform(aes)?.let { p -> PathPoint(aes, p) }
+            val p = pointTransform(aes)
+            if (p == null) {
+                myDroppedPointsIds.add(aes.index())
+                null
+            } else {
+                PathPoint(aes, p)
+            }
         }
     }
 
