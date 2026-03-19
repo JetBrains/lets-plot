@@ -60,7 +60,6 @@ open class DotplotGeom : GeomBase(), WithWidth {
         )
         if (!pointsWithBinWidth.any()) return
 
-//        val binWidthPx = pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.X)
         val binWidthPx = pointsWithBinWidth.first().let {
             val x = it.x()!!
             val y = it.y()!!

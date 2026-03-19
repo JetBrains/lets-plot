@@ -37,7 +37,6 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
         )
         if (!pointsWithBinWidth.any()) return
 
-//        val binWidthPx = pointsWithBinWidth.first().binwidth()!! * ctx.getUnitResolution(Aes.Y)
         val binWidthPx = pointsWithBinWidth.first().let {
             val x = it.x()!!
             val y = it.y()!!

@@ -115,15 +115,6 @@ class RasterGeom : GeomBase() {
     }
 
     companion object {
-//        val RENDERS = listOf(
-//                Aes.X,
-//                Aes.Y,
-//                Aes.WIDTH, // not rendered but required for correct x aes range computation
-//                Aes.HEIGHT, // -- the same --
-//                Aes.FILL,
-//                Aes.ALPHA
-//        )
-
         const val HANDLES_GROUPS = false
     }
 }// ToDo: hjust, vjust [0..1] def .5

@@ -7,8 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 class Density2dGeom : ContourGeom() {
     companion object {
-//        val RENDERS = ContourGeom.RENDERS
-
         const val HANDLES_GROUPS = ContourGeom.HANDLES_GROUPS
     }
 }

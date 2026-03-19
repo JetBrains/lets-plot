@@ -16,9 +16,6 @@ open class LineGeom : PathGeom() {
     }
 
     companion object {
-//        val RENDERS = PathGeom.RENDERS
-
-        const val HANDLES_GROUPS =
-            PathGeom.HANDLES_GROUPS
+        const val HANDLES_GROUPS = PathGeom.HANDLES_GROUPS
     }
 }

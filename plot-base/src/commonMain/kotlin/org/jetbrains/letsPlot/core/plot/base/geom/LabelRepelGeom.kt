@@ -12,8 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LabelOptions
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextHelper
 
-
-class LabelRepelGeom() : TextRepelGeom() {
+class LabelRepelGeom : TextRepelGeom() {
     val labelOptions = LabelOptions()
 
     override fun getTextHelper(
