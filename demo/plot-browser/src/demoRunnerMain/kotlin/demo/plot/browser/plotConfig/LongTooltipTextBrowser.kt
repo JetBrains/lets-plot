@@ -12,12 +12,11 @@ object LongTooltipTextBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(LongTooltipText()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Long text in tooltip",
                 plotSpecList(),
                 plotSize = DoubleVector(500.0, 1000.0)
-            ))
+            )
         }
     }
 }

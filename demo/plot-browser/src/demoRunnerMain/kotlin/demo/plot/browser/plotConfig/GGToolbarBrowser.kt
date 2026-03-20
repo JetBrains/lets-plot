@@ -11,12 +11,11 @@ object GGToolbarBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(GGToolbar()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Plot Toolbar",
                 plotSpecList(dark = false),
                 backgroundColor = "white"
-            ))
+            )
         }
     }
 }

@@ -19,17 +19,6 @@ object PlotConfigBrowserDemoUtil {
 
 
     // Entry point to explicitly show the JS Webpack build
-    fun show(
-        title: String,
-        plotSpecList: List<MutableMap<String, Any>>,
-        plotSize: DoubleVector = DoubleVector(400.0, 300.0),
-        applyBackendTransform: Boolean = true,
-        backgroundColor: String = "lightgrey"
-    ) {
-        show(title, plotSpecList, plotSize, applyBackendTransform, backgroundColor, BrowserDemoUtil.Target.JS)
-    }
-
-    // Entry point to explicitly show the JS Webpack build
     fun showJs(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
@@ -51,7 +40,7 @@ object PlotConfigBrowserDemoUtil {
         show(title, plotSpecList, plotSize, applyBackendTransform, backgroundColor, BrowserDemoUtil.Target.WASM)
     }
 
-    fun show(
+    private fun show(
         title: String,
         plotSpecList: List<MutableMap<String, Any>>,
         plotSize: DoubleVector,

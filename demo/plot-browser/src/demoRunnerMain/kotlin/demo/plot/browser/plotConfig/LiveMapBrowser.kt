@@ -7,14 +7,11 @@ package demo.plot.browser.plotConfig
 
 import demo.plot.common.model.plotConfig.LiveMap
 
-object LiveMapBrowser {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(LiveMap()) {
-            (PlotConfigBrowserDemoUtil.show(
-                "LiveMap plot",
-                plotSpecList(),
-            ))
-        }
+fun main() {
+    with(LiveMap()) {
+        PlotConfigBrowserDemoUtil.showWasm(
+            "LiveMap plot",
+            plotSpecList()
+        )
     }
 }

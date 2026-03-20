@@ -11,11 +11,10 @@ object GGGridBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(GGGrid()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Plot Grid",
-                plotSpecList(),
-            ))
+                plotSpecList()
+            )
         }
     }
 }
