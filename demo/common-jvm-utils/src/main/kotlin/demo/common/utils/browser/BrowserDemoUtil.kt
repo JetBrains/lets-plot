@@ -19,7 +19,7 @@ object BrowserDemoUtil {
     private const val ROOT_PROJECT = "lets-plot"
     private const val ROOT_ELEMENT_ID = "root"
 
-    private const val PROD_JS_OUTPUT_DIR = "build/dist/js/productionExecutable"
+    private const val PROD_JS_OUTPUT_DIR = "build/kotlin-webpack/js/productionExecutable"
     private const val DEV_JS_OUTPUT_DIR = "build/kotlin-webpack/js/developmentExecutable"
 
     private const val PROD_LETS_PLOT_PATH = "js-package/$PROD_JS_OUTPUT_DIR/lets-plot.js"
@@ -45,10 +45,11 @@ object BrowserDemoUtil {
         filenamePrefix: String,
         filenameExtension: String
     ): File {
-        val rootPath = getRootPath()
+        val rootPath = getRepoRootPath()
         println("Project root: $rootPath")
         println("demo relative path: $demoProjectRelativePath")
         val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
+        tmpDir.mkdirs()
         val file = File.createTempFile(filenamePrefix, ".$filenameExtension", tmpDir)
         println(file.canonicalFile)
         return file
@@ -56,7 +57,17 @@ object BrowserDemoUtil {
 
     fun isDev(dev: Boolean? = null): Boolean = dev ?: (System.getenv()["DEV"] != null)
 
-    fun getRootPath(): String {
+    fun getRepoRootPath(): String {
+        fun isRepoRootPath(path: Path): Boolean {
+            val fileList = path.toFile().listFiles()?.map { file -> file.canonicalFile.toPath() } ?: return false
+
+            // Check core demo dirs - "demo" and "js-package"
+            if (!fileList.any { it.endsWith("demo") }) return false
+            if (!fileList.any { it.endsWith("js-package") }) return false
+
+            return true
+        }
+
         println("=== Determining project root path ===")
 
         // First, try to get a PWD env variable - might be set by running configurations in IDEA
@@ -65,30 +76,27 @@ object BrowserDemoUtil {
         println("System.getenv()[\"PWD\"]: $pwdPath")
 
         val workingDir = if (pwdPath != null) {
-            pwdPath
+            Path(pwdPath)
         } else {
             val userDir = System.getProperty("user.dir")
             println("System.getProperty('user.dir'): $userDir")
-            userDir
+            Path(userDir)
         }
 
         // Validate the path contains the expected project
-        if (workingDir.contains(ROOT_PROJECT)) {
+        if (isRepoRootPath(workingDir)) {
             println("✓ Project root contains '$ROOT_PROJECT'")
-            return workingDir
+            return workingDir.toString()
         }
 
-        println("⚠ Project root doesn't contain '$ROOT_PROJECT', trying path traversal...")
-
         // Fallback to traversal logic
-        val userDir = Path(workingDir)
+        val userDir = workingDir
         var curDir: Path? = userDir
         while (curDir != null) {
             println("Checking directory: $curDir")
-            if (curDir.endsWith(ROOT_DEMO_DIR_NAME)) {
-                val foundRoot = curDir.parent.toString()
-                println("✓ Found project root via traversal: $foundRoot")
-                return foundRoot
+            if (isRepoRootPath(curDir)) {
+                println("✓ Found repo root via traversal: $curDir")
+                return curDir.toString()
             } else {
                 curDir = curDir.parent
             }
@@ -103,7 +111,7 @@ object BrowserDemoUtil {
             false -> PROD_LETS_PLOT_PATH
         }
 
-        val absPath = getRootPath() + "/" + letsPlotPath
+        val absPath = getRepoRootPath() + "/" + letsPlotPath
 
         require(File(absPath).exists()) {
             if (isDev(dev))
@@ -123,7 +131,7 @@ object BrowserDemoUtil {
     }
 
     private fun projectJs(projectPath: String, projectName: String, dev: Boolean? = null): String {
-        return "${getRootPath()}/$projectPath/${getJsOutputDir(dev)}/$projectName.js"
+        return "${getRepoRootPath()}/$projectPath/${getJsOutputDir(dev)}/$projectName.js"
     }
 
     fun mapperDemoHtml(

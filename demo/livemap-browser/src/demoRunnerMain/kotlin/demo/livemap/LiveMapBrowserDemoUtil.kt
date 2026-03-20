@@ -20,7 +20,7 @@ object LiveMapBrowserDemoUtil {
     fun openInBrowser(dev: Boolean? = null, html: () -> String) {
         val outputDir = "$DEMO_PROJECT_PATH/${BrowserDemoUtil.getJsOutputDir(dev)}"
 
-        val projectRoot = BrowserDemoUtil.getRootPath()
+        val projectRoot = BrowserDemoUtil.getRepoRootPath()
         println("Project root: $projectRoot")
         val tmpDir = File(projectRoot, outputDir)
 

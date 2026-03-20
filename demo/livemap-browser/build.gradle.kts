@@ -63,3 +63,18 @@ kotlin {
         }
     }
 }
+
+tasks.named("demoRunnerMainClasses") {
+    // Check if "dev" property is passed via -Pdev or if DEV env var is set
+    val isDev = project.hasProperty("dev") || System.getenv("DEV") != null
+
+    if (isDev) {
+        println("JVM Demo: Linking to JS/Wasm DEVELOPMENT bundles")
+        dependsOn(":js-package:jsBrowserDevelopmentWebpack")
+        dependsOn(":wasmjs-package:wasmJsBrowserDevelopmentWebpack")
+    } else {
+        println("JVM Demo: Linking to JS/Wasm PRODUCTION bundles")
+        dependsOn(":js-package:jsBrowserProductionWebpack")
+        dependsOn(":wasmjs-package:wasmJsBrowserProductionWebpack")
+    }
+}

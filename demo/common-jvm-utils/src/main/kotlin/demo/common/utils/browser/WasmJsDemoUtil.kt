@@ -14,12 +14,8 @@ import java.io.FileWriter
 import java.io.StringWriter
 import java.net.InetSocketAddress
 import java.net.URI
-import java.nio.file.Path
-import kotlin.io.path.Path
 
 object WasmJsDemoUtil {
-    private const val ROOT_DEMO_DIR_NAME = "demo"
-    private const val ROOT_PROJECT = "lets-plot"
     private const val ROOT_ELEMENT_ID = "root"
 
     private const val PROD_WASM_OUTPUT_DIR = "build/kotlin-webpack/wasmJs/productionExecutable"
@@ -32,7 +28,7 @@ object WasmJsDemoUtil {
     private var serverPort: Int = 0
 
     fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
-        val file = createDemoFile(
+        val file = BrowserDemoUtil.createDemoFile(
             demoProjectRelativePath,
             "index", "html"
         )
@@ -48,7 +44,7 @@ object WasmJsDemoUtil {
 
     private fun startServerAndBrowse(indexFile: File) {
         if (server == null) {
-            val rootPath = getRootPath()
+            val rootPath = BrowserDemoUtil.getRepoRootPath()
             server = HttpServer.create(InetSocketAddress("localhost", 0), 0).apply {
                 createContext("/") { exchange ->
                     try {
@@ -93,68 +89,15 @@ object WasmJsDemoUtil {
         desktop.browse(URI("http://localhost:$serverPort/index.html"))
     }
 
-    fun createDemoFile(
-        demoProjectRelativePath: String,
-        filenamePrefix: String,
-        filenameExtension: String
-    ): File {
-        val rootPath = getRootPath()
-        println("Project root: $rootPath")
-        println("demo relative path: $demoProjectRelativePath")
-        val tmpDir = File(rootPath, "$demoProjectRelativePath/build/tmp")
-        tmpDir.mkdirs() // Make sure directory exists
-        val file = File.createTempFile(filenamePrefix, ".$filenameExtension", tmpDir)
-        println(file.canonicalFile)
-        return file
-    }
-
-    fun isDev(dev: Boolean? = null): Boolean = dev ?: (System.getenv()["DEV"] != null)
-
-    fun getRootPath(): String {
-        println("=== Determining project root path ===")
-        val pwdPath = System.getenv()["PWD"]
-        println("System.getenv()[\"PWD\"]: $pwdPath")
-
-        val workingDir = if (pwdPath != null) {
-            pwdPath
-        } else {
-            val userDir = System.getProperty("user.dir")
-            println("System.getProperty('user.dir'): $userDir")
-            userDir
-        }
-
-        if (workingDir.contains(ROOT_PROJECT)) {
-            println("✓ Project root contains '$ROOT_PROJECT'")
-            return workingDir
-        }
-
-        println("⚠ Project root doesn't contain '$ROOT_PROJECT', trying path traversal...")
-
-        val userDir = Path(workingDir)
-        var curDir: Path? = userDir
-        while (curDir != null) {
-            println("Checking directory: $curDir")
-            if (curDir.endsWith(ROOT_DEMO_DIR_NAME)) {
-                val foundRoot = curDir.parent.toString()
-                println("✓ Found project root via traversal: $foundRoot")
-                return foundRoot
-            } else {
-                curDir = curDir.parent
-            }
-        }
-
-        throw IllegalStateException("Could not determine project root. PWD: $pwdPath, user.dir: ${System.getProperty("user.dir")}")
-    }
-
     fun getPlotLibUrl(dev: Boolean? = null): String {
-        val letsPlotPath = when (isDev(dev)) {
+        val letsPlotPath = when (BrowserDemoUtil.isDev(dev)) {
             true -> DEV_LETS_PLOT_PATH
             false -> PROD_LETS_PLOT_PATH
         }
 
-        val absPath = getRootPath() + "/" + letsPlotPath
+        val absPath = BrowserDemoUtil.getRepoRootPath() + "/" + letsPlotPath
         require(File(absPath).exists()) {
-            if (isDev(dev))
+            if (BrowserDemoUtil.isDev(dev))
                 "Did you forget to run 'wasmJsBrowserDevelopmentWebpack'? File not found: '$absPath'"
             else
                 "File not found: '$absPath'"
@@ -164,7 +107,7 @@ object WasmJsDemoUtil {
     }
 
     fun getWasmOutputDir(dev: Boolean? = null): String {
-        return when (isDev(dev)) {
+        return when (BrowserDemoUtil.isDev(dev)) {
             true -> DEV_WASM_OUTPUT_DIR
             false -> PROD_WASM_OUTPUT_DIR
         }
