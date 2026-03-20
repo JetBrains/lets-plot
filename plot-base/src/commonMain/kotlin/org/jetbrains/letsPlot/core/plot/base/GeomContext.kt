@@ -53,6 +53,8 @@ interface GeomContext {
 
     fun getScaleFactor(): Double
 
+    fun removeNaMessages(): Boolean
+
     fun consumeMessages(messages: List<String>)
 
     fun geomKind(): GeomKind

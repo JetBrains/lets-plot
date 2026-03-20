@@ -178,6 +178,7 @@ class GeomLayerBuilder(
         data: DataFrame,
         scaleMap: Map<Aes<*>, Scale>,
         scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
+        naRm: Boolean = false,
     ): GeomLayer {
         val transformByAes: Map<Aes<*>, Transform> = scaleMap.keys.associateWith {
             scaleMap.getValue(it).transform
@@ -252,6 +253,7 @@ class GeomLayerBuilder(
             fillByAes = fillByAes,
             annotationProvider = myAnnotationProvider,
             defaultFormatters = myDefaultFormatters,
+            naRm = naRm,
         )
     }
 
@@ -282,7 +284,8 @@ class GeomLayerBuilder(
         override val colorByAes: Aes<Color>,
         override val fillByAes: Aes<Color>,
         private val annotationProvider: ((MappedDataAccess, DataFrame) -> Annotation?)?,
-        override val defaultFormatters: Map<Any, (Any) -> String>
+        override val defaultFormatters: Map<Any, (Any) -> String>,
+        override val naRm: Boolean
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(

@@ -45,6 +45,8 @@ interface ImmutableGeomContext : GeomContext {
 
         fun geomKind(geomKind: GeomKind): Builder
 
+        fun naRm(naRm: Boolean): Builder
+
         fun messageConsumer(messageConsumer: (String) -> Unit): Builder
 
         fun build(): ImmutableGeomContext

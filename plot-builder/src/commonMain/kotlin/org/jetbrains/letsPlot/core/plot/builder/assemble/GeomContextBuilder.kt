@@ -32,6 +32,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var contentBounds: DoubleRectangle? = null
     private var scaleFactor: Double = 1.0
     private var geomKind: GeomKind? = null
+    private var naRm: Boolean = false
     private var messageConsumer: (String) -> Unit = {}
 
     constructor()
@@ -114,6 +115,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun naRm(naRm: Boolean): ImmutableGeomContext.Builder {
+        this.naRm = naRm
+        return this
+    }
+
     override fun messageConsumer(messageConsumer: (String) -> Unit): ImmutableGeomContext.Builder {
         this.messageConsumer = messageConsumer
         return this
@@ -137,6 +143,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val _coordinateSystem = b.coordinateSystem
         val _contentBounds = b.contentBounds
         val _scaleFactor = b.scaleFactor
+        val _naRm = b.naRm
         val _messageConsumer = b.messageConsumer
         val _geomKind = b.geomKind
 
@@ -208,6 +215,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
         override fun getScaleFactor(): Double {
             return _scaleFactor
+        }
+
+        override fun removeNaMessages(): Boolean {
+            return _naRm
         }
 
         override fun consumeMessages(messages: List<String>) {

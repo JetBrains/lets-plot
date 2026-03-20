@@ -54,6 +54,8 @@ class EmptyGeomContext : GeomContext {
         return 1.0
     }
 
+    override fun removeNaMessages() = true
+
     override fun consumeMessages(messages: List<String>) {
         throw IllegalStateException("Not available in an empty geom context")
     }

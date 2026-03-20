@@ -46,7 +46,7 @@ abstract class GeomBase : Geom {
     }
 
     fun reportDroppedPoints(count: Int, ctx: GeomContext) {
-        if (SHOW_NA_MESSAGES && count > 0) {
+        if (!ctx.removeNaMessages() && count > 0) {
             ctx.consumeMessages(listOf("${ctx.geomKind().name.lowercase()}: removed $count data point(s)"))
         }
     }

@@ -55,6 +55,8 @@ object BogusContext : GeomContext {
         return 1.0
     }
 
+    override fun removeNaMessages() = true
+
     override fun consumeMessages(messages: List<String>) {
         // do nothing
     }
