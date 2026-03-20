@@ -36,24 +36,20 @@ object BrowserDemoUtil {
         WASM("wasmjs-package", "wasmJs")
     }
 
-    fun openInBrowserJs(demoProjectRelativePath: String, html: () -> String) {
-        openInBrowser(demoProjectRelativePath, Target.JS, html)
+    fun openInBrowserJs(demoProjectRelativePath: String, dev: Boolean? = null, html: () -> String) {
+        openInBrowser(demoProjectRelativePath, dev, Target.JS, html)
     }
 
-    fun openInBrowserWasm(demoProjectRelativePath: String, html: () -> String) {
-        openInBrowser(demoProjectRelativePath, Target.WASM, html)
+    fun openInBrowserWasm(demoProjectRelativePath: String, dev: Boolean? = null, html: () -> String) {
+        openInBrowser(demoProjectRelativePath, dev, Target.WASM, html)
     }
 
-    fun openInBrowser(demoProjectRelativePath: String, html: () -> String) {
-        openInBrowserJs(demoProjectRelativePath, html)
+    fun openInBrowser(demoProjectRelativePath: String, dev: Boolean? = null, html: () -> String) {
+        openInBrowserJs(demoProjectRelativePath, dev, html)
     }
 
-    private fun openInBrowser(demoProjectRelativePath: String, target: Target, html: () -> String) {
-        val file = createDemoFile(
-            demoProjectRelativePath,
-            "index_${target.name.lowercase()}",
-            "html"
-        )
+    private fun openInBrowser(demoProjectRelativePath: String, dev: Boolean? = null, target: Target, html: () -> String) {
+        val file = createDemoFile(demoProjectRelativePath, "index_${target.name.lowercase()}", "html")
 
         val content = html()
         FileWriter(file).use {
@@ -90,7 +86,6 @@ object BrowserDemoUtil {
                     if (file.exists() && file.isFile) {
                         val bytes = file.readBytes()
 
-                        // CRITICAL: Ensure Wasm gets the correct MIME type
                         val mimeType = when (file.extension.lowercase()) {
                             "html" -> "text/html"
                             "js", "mjs" -> "application/javascript"

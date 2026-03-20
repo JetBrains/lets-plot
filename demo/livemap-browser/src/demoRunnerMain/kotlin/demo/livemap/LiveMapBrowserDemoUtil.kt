@@ -18,28 +18,7 @@ object LiveMapBrowserDemoUtil {
     private const val DEMO_PROJECT_PATH = "demo/livemap-browser"
 
     fun openInBrowser(dev: Boolean? = null, html: () -> String) {
-        val outputDir = "$DEMO_PROJECT_PATH/${BrowserDemoUtil.getJsOutputDir(dev)}"
-
-        val projectRoot = BrowserDemoUtil.getRepoRootPath()
-        println("Project root: $projectRoot")
-        val tmpDir = File(projectRoot, outputDir)
-
-        require(tmpDir.exists()) {
-            if (BrowserDemoUtil.isDev(dev)) {
-                "Did you forget to run 'jsBrowserDevelopmentWebpack'? File not found: '${tmpDir.canonicalFile}'"
-            } else {
-                "File not found: '${tmpDir.canonicalFile}'"
-            }
-        }
-        val file = File.createTempFile("index", ".html", tmpDir)
-        println(file.canonicalFile)
-
-        FileWriter(file).use {
-            it.write(html())
-        }
-
-        val desktop = Desktop.getDesktop()
-        desktop.browse(file.toURI())
+        BrowserDemoUtil.openInBrowserJs(DEMO_PROJECT_PATH, dev, html)
     }
 
     fun mapperDemoHtml(
@@ -48,37 +27,14 @@ object LiveMapBrowserDemoUtil {
         demoProject: String = "demo-livemap-browser",
         dev: Boolean? = null
     ): String {
-        val mainScript = "$demoProject.js"
-        val writer = StringWriter().appendHTML().html {
-            lang = "en"
-            head {
-                title(title)
-            }
-            body {
-                div { id = "root" }
-
-                script {
-                    type = "text/javascript"
-                    src = BrowserDemoUtil.getPlotLibPath(dev)
-                }
-
-                script {
-                    type = "text/javascript"
-                    src = mainScript
-                }
-
-                script {
-                    type = "text/javascript"
-                    unsafe {
-                        +"""
-                        |  
-                        |   window['$demoProject'].$callFun();
-                    """.trimMargin()
-
-                    }
-                }
-            }
-        }
-        return writer.toString()
+        return BrowserDemoUtil.mapperDemoHtml(
+            demoProjectPath = DEMO_PROJECT_PATH,
+            demoProject = demoProject,
+            callFun = callFun,
+            title = title,
+            dev = dev,
+            projectDeps = emptyList(),
+            target = BrowserDemoUtil.Target.JS
+        )
     }
 }
