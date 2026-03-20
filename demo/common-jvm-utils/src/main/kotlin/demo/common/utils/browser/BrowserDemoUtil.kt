@@ -11,12 +11,11 @@ import java.awt.Desktop
 import java.io.File
 import java.io.FileWriter
 import java.io.StringWriter
-import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 
 object BrowserDemoUtil {
-    private const val ROOT_DEMO_DIR_NAME = "demo"
-    private const val ROOT_PROJECT = "lets-plot"
     private const val ROOT_ELEMENT_ID = "root"
 
     private const val PROD_JS_OUTPUT_DIR = "build/kotlin-webpack/js/productionExecutable"
@@ -58,12 +57,12 @@ object BrowserDemoUtil {
     fun isDev(dev: Boolean? = null): Boolean = dev ?: (System.getenv()["DEV"] != null)
 
     fun getRepoRootPath(): String {
-        fun isRepoRootPath(path: Path): Boolean {
-            val fileList = path.toFile().listFiles()?.map { file -> file.canonicalFile.toPath() } ?: return false
+        fun isRepoRootPath(path: String): Boolean {
+            val fileList = Path(path).toFile().listFiles()?.map { file -> file.canonicalFile.toPath() } ?: return false
 
             // Check core demo dirs - "demo" and "js-package"
-            if (!fileList.any { it.endsWith("demo") }) return false
-            if (!fileList.any { it.endsWith("js-package") }) return false
+            if (!fileList.any { it.name == "demo" }) return false
+            if (!fileList.any { it.name == "js-package" }) return false
 
             return true
         }
@@ -71,34 +70,25 @@ object BrowserDemoUtil {
         println("=== Determining project root path ===")
 
         // First, try to get a PWD env variable - might be set by running configurations in IDEA
-        // [UPD]: on linux PWD points to the user home dir
+        // On linux PWD points to the user home dir
         val pwdPath = System.getenv()["PWD"]
         println("System.getenv()[\"PWD\"]: $pwdPath")
 
-        val workingDir = if (pwdPath != null) {
-            Path(pwdPath)
-        } else {
-            val userDir = System.getProperty("user.dir")
-            println("System.getProperty('user.dir'): $userDir")
-            Path(userDir)
-        }
-
-        // Validate the path contains the expected project
-        if (isRepoRootPath(workingDir)) {
-            println("✓ Project root contains '$ROOT_PROJECT'")
-            return workingDir.toString()
+        if (pwdPath != null && isRepoRootPath(pwdPath)) {
+            return pwdPath
         }
 
         // Fallback to traversal logic
-        val userDir = workingDir
-        var curDir: Path? = userDir
+        var curDir: String? = System.getProperty("user.dir")
+        println("System.getProperty('user.dir'): $curDir")
+
         while (curDir != null) {
             println("Checking directory: $curDir")
             if (isRepoRootPath(curDir)) {
                 println("✓ Found repo root via traversal: $curDir")
-                return curDir.toString()
+                return curDir
             } else {
-                curDir = curDir.parent
+                curDir = Path(curDir).parent.pathString
             }
         }
 
