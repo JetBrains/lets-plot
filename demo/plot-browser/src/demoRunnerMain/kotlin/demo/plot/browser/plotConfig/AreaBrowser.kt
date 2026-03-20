@@ -9,7 +9,7 @@ import demo.plot.common.model.plotConfig.Area
 
 fun main(args: Array<String>) {
     with(Area()) {
-        (PlotConfigBrowserDemoUtil.show(
+        (PlotConfigBrowserDemoUtil.showJs(
             "Area plot",
             plotSpecList(),
         ))

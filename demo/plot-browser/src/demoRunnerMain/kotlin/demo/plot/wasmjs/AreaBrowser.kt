@@ -5,11 +5,12 @@
 
 package demo.plot.wasmjs
 
+import demo.plot.browser.plotConfig.PlotConfigBrowserDemoUtil
 import demo.plot.common.model.plotConfig.Area
 
 fun main(args: Array<String>) {
     with(Area()) {
-        (PlotConfigWasmJsDemoUtil.show(
+        (PlotConfigBrowserDemoUtil.showWasm(
             "Area plot",
             plotSpecList(),
         ))
