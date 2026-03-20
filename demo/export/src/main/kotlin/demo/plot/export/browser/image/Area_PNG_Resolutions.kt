@@ -8,19 +8,15 @@ package demo.plot.export.browser.image
 import demo.plot.common.model.plotConfig.Area
 import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.PNG
 
-@Suppress("ClassName")
-object Area_PNG_Resolutions {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(Area()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotImageDemoUtil.show(
-                "Area plot",
-                plotSpecList().first(),
-                scalingFactors = listOf(1.0, 1.0, 1.0),
-                targetDPIs = listOf(72, 144, 288),
-                formats = MutableList(3) { PNG }
-            ))
-        }
+fun main(args: Array<String>) {
+    with(Area()) {
+        @Suppress("UNCHECKED_CAST")
+        (PlotImageDemoUtil.show(
+            "Area plot",
+            plotSpecList().first(),
+            scalingFactors = listOf(1.0, 1.0, 1.0),
+            targetDPIs = listOf(72, 144, 288),
+            formats = MutableList(3) { PNG }
+        ))
     }
 }

@@ -8,19 +8,15 @@ package demo.plot.export.browser.image
 import demo.plot.common.model.plotConfig.GGBunch
 import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.PNG
 
-@Suppress("ClassName")
-object GGBunch_PNG_Resolutions {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(GGBunch()) {
-            val plotSpecList = plotSpecList()
-            PlotImageDemoUtil.show(
-                "ggbunch()",
-                plotSpecList.first(),
-                scalingFactors = listOf(1.0, 2.0, 3.0),
-                targetDPIs = listOf(96, 96, 96),
-                formats = MutableList(3) { PNG }
-            )
-        }
+fun main(args: Array<String>) {
+    with(GGBunch()) {
+        val plotSpecList = plotSpecList()
+        PlotImageDemoUtil.show(
+            "ggbunch()",
+            plotSpecList.first(),
+            scalingFactors = listOf(1.0, 2.0, 3.0),
+            targetDPIs = listOf(96, 96, 96),
+            formats = MutableList(3) { PNG }
+        )
     }
 }

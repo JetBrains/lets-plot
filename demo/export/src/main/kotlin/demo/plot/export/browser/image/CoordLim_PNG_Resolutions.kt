@@ -8,19 +8,15 @@ package demo.plot.export.browser.image
 import demo.plot.common.model.plotConfig.CoordLim
 import org.jetbrains.letsPlot.awt.plot.PlotImageExport
 
-@Suppress("ClassName")
-object CoordLim_PNG_Resolutions {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(CoordLim()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotImageDemoUtil.show(
-                "coord x/y limits",
-                plotSpecList().first(),
-                scalingFactors = listOf(1.0, 1.0, 1.0),
-                targetDPIs = listOf(72, 144, 288),
-                formats = MutableList(3) { PlotImageExport.Format.PNG }
-            ))
-        }
+fun main(args: Array<String>) {
+    with(CoordLim()) {
+        @Suppress("UNCHECKED_CAST")
+        (PlotImageDemoUtil.show(
+            "coord x/y limits",
+            plotSpecList().first(),
+            scalingFactors = listOf(1.0, 1.0, 1.0),
+            targetDPIs = listOf(72, 144, 288),
+            formats = MutableList(3) { PlotImageExport.Format.PNG }
+        ))
     }
 }

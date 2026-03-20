@@ -120,7 +120,7 @@ object BrowserDemoUtil {
         println("Local dev server started on http://localhost:$serverPort")
     }
 
-    private fun createDemoFile(
+    fun createDemoFile(
         demoProjectRelativePath: String,
         filenamePrefix: String,
         filenameExtension: String
