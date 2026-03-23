@@ -6,7 +6,6 @@
 package demo.plot.browser.component
 
 import demo.common.utils.browser.BrowserDemoUtil
-import demo.common.utils.browser.BrowserDemoUtil.mapperDemoHtml
 
 private const val DEMO_PROJECT_PATH = "demo/plot-browser"
 private const val DEMO_PROJECT = "demo-plot-browser"
@@ -14,7 +13,7 @@ private const val CALL_FUN = "demo.plot.js.component.axisComponentDemo"
 
 fun main() {
     BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
-        mapperDemoHtml(
+        BrowserDemoUtil.mapperDemoHtml(
             demoProjectPath = DEMO_PROJECT_PATH,
             DEMO_PROJECT,
             CALL_FUN,
