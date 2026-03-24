@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -94,7 +94,7 @@ class PlotAssembler constructor(
                 (legendPosition.isFixed || (legendPosition.isOverlay && detachedLegendsCollector.detachOverlayLegends))
 
         detachedLegends = if (shouldDetachLegends) {
-            detachedLegendsCollector!!.collect(legendBoxInfos)
+            detachedLegendsCollector.collect(legendBoxInfos)
             legendBoxInfos
         } else {
             emptyList()

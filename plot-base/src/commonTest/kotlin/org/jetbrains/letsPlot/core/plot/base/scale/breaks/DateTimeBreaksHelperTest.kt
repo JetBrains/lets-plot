@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -307,7 +307,7 @@ class DateTimeBreaksHelperTest {
                 date,
                 BASE_TIME
             )
-            val month = Month.entries[month2.toInt()]
+            val month = Month.entries[month2]
             val dateTime2 = DateTime(
                 Date(1, month, date.year + addYear),
                 BASE_TIME

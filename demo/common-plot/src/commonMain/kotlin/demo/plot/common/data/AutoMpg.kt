@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,67 +9,40 @@ object AutoMpg {
     data class Column<T>(val name: String, val data: List<T>)
 
     private val sequence: List<List<String>>
-        get() = demo.plot.common.data.AutoMpg.data.map { it.split(',') }
+        get() = data.map { it.split(',') }
 
     private fun int(column: Int): List<Int> {
-        return demo.plot.common.data.AutoMpg.sequence.map { it.get(column).toInt() }
+        return sequence.map { it[column].toInt() }
     }
 
     private fun double(column: Int): List<Double> {
-        return demo.plot.common.data.AutoMpg.sequence.map { it.get(column).toDouble() }
+        return sequence.map { it[column].toDouble() }
     }
 
     private fun string(column: Int): List<String> {
-        return demo.plot.common.data.AutoMpg.sequence.map { it.get(column).toString() }
+        return sequence.map { it[column] }
     }
 
-    val mpg get() = demo.plot.common.data.AutoMpg.Column(
-        "miles per gallon",
-        demo.plot.common.data.AutoMpg.double(0)
-    )
-    val cylinders get() = demo.plot.common.data.AutoMpg.Column(
-        "number of cylinders",
-        demo.plot.common.data.AutoMpg.int(1)
-    )
-    val displacement get() = demo.plot.common.data.AutoMpg.Column(
-        "engine displacement (cu. inches)",
-        demo.plot.common.data.AutoMpg.double(2)
-    )
-    val horsepower get() = demo.plot.common.data.AutoMpg.Column(
-        "engine horsepower",
-        demo.plot.common.data.AutoMpg.int(3)
-    )
-    val weight get() = demo.plot.common.data.AutoMpg.Column(
-        "vehicle weight (lbs.)",
-        demo.plot.common.data.AutoMpg.double(4)
-    )
-    val acceleration get() = demo.plot.common.data.AutoMpg.Column(
-        "time to accelerate (sec.)",
-        demo.plot.common.data.AutoMpg.double(5)
-    )
-    val modelYear get() = demo.plot.common.data.AutoMpg.Column(
-        "model year",
-        demo.plot.common.data.AutoMpg.int(6)
-    )
-    val origin get() = demo.plot.common.data.AutoMpg.Column(
-        "origin of car",
-        demo.plot.common.data.AutoMpg.string(7)
-    )
-    val vehicleName get() = demo.plot.common.data.AutoMpg.Column(
-        "vehicle name",
-        demo.plot.common.data.AutoMpg.string(8)
-    )
+    val mpg get() = Column("miles per gallon", double(0))
+    val cylinders get() = Column("number of cylinders", int(1))
+    val displacement get() = Column("engine displacement (cu. inches)", double(2))
+    val horsepower get() = Column("engine horsepower", int(3))
+    val weight get() = Column("vehicle weight (lbs.)", double(4))
+    val acceleration get() = Column("time to accelerate (sec.)", double(5))
+    val modelYear get() = Column("model year", int(6))
+    val origin get() = Column("origin of car", string(7))
+    val vehicleName get() = Column("vehicle name", string(8))
     val df get() = run {
         mapOf(
-            demo.plot.common.data.AutoMpg.mpg.name to demo.plot.common.data.AutoMpg.mpg.data,
-            demo.plot.common.data.AutoMpg.cylinders.name to demo.plot.common.data.AutoMpg.cylinders.data,
-            demo.plot.common.data.AutoMpg.displacement.name to demo.plot.common.data.AutoMpg.displacement.data,
-            demo.plot.common.data.AutoMpg.horsepower.name to demo.plot.common.data.AutoMpg.horsepower.data,
-            demo.plot.common.data.AutoMpg.weight.name to demo.plot.common.data.AutoMpg.weight.data,
-            demo.plot.common.data.AutoMpg.acceleration.name to demo.plot.common.data.AutoMpg.acceleration.data,
-            demo.plot.common.data.AutoMpg.modelYear.name to demo.plot.common.data.AutoMpg.modelYear.data,
-            demo.plot.common.data.AutoMpg.origin.name to demo.plot.common.data.AutoMpg.origin.data,
-            demo.plot.common.data.AutoMpg.vehicleName.name to demo.plot.common.data.AutoMpg.vehicleName.data
+            AutoMpg.mpg.name to AutoMpg.mpg.data,
+            AutoMpg.cylinders.name to AutoMpg.cylinders.data,
+            AutoMpg.displacement.name to AutoMpg.displacement.data,
+            AutoMpg.horsepower.name to AutoMpg.horsepower.data,
+            AutoMpg.weight.name to AutoMpg.weight.data,
+            AutoMpg.acceleration.name to AutoMpg.acceleration.data,
+            AutoMpg.modelYear.name to AutoMpg.modelYear.data,
+            AutoMpg.origin.name to AutoMpg.origin.data,
+            AutoMpg.vehicleName.name to AutoMpg.vehicleName.data
         )
     }
 

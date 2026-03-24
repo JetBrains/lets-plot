@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,9 +8,9 @@ plugins {
 }
 
 val batikVersion = project.extra["batik.version"] as String
-//val commonsIOVersion = project.extra["commons-io.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val ktorVersion = project.extra["ktor.version"] as String
+//val ktorVersion = "3.1.3" // use to test compatibility with IntelliJ IDEA 2025.3.*
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 val jsvgVersion = project.extra["weisj.jsvg.version"] as String
 

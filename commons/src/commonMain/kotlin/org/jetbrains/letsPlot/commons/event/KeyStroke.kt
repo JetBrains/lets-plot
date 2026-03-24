@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -42,7 +42,7 @@ class KeyStroke {
         if (other !is KeyStroke) return false
         val otherKeyStroke = other as KeyStroke?
 
-        return key === otherKeyStroke!!.key && modifiers == otherKeyStroke!!.modifiers
+        return key === otherKeyStroke!!.key && modifiers == otherKeyStroke.modifiers
     }
 
     override fun toString(): String {

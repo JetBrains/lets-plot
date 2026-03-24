@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -352,7 +352,7 @@ object DataProcessing {
                         // However, we can make them work by rounding stat values to integers,
                         // which allows the inverse transform to be applied.
                         serie.map { v ->
-                            v?.toDouble()?.let { if (v.isFinite()) v.roundToInt().toDouble() else v }
+                            v?.let { if (v.isFinite()) v.roundToInt().toDouble() else v }
                         }
                     } else {
                         serie
