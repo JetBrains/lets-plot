@@ -49,7 +49,7 @@ open class AreaGeom : GeomBase() {
 
         val source = aesthetics.dataPoints()
         val dataPoints = filterDataPoints(source)
-        val filteredPointsCount = source.count() - dataPoints.count()
+        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
 
         val closePath = linesHelper.meetsRadarPlotReq()
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
@@ -75,7 +75,7 @@ open class AreaGeom : GeomBase() {
                     createQuantileLines(groupDataPoints, quantilesHelper).forEach(root::add)
                 }
             }
-        reportDroppedPoints(filteredPointsCount + linesHelper.getDroppedPointsCount(), ctx)
+        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
     }
 
     private fun createQuantileLines(

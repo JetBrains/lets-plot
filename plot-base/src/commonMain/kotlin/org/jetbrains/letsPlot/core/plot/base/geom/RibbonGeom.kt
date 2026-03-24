@@ -35,7 +35,7 @@ class RibbonGeom : GeomBase() {
     ) {
         val source = aesthetics.dataPoints()
         val dataPoints = filterDataPoints(source)
-        val filteredPointsCount = source.count() - dataPoints.count()
+        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
 
         val linesHelper = LinesHelper(pos, coord, ctx)
 
@@ -50,7 +50,7 @@ class RibbonGeom : GeomBase() {
         root.appendNodes(linesHelper.createLines(dataPoints, TO_LOCATION_X_YMIN))
 
         buildHints(aesthetics, pos, coord, ctx)
-        reportDroppedPoints(filteredPointsCount + linesHelper.getDroppedPointsCount(), ctx)
+        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {

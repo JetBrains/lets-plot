@@ -26,7 +26,7 @@ open class PolygonGeom : GeomBase() {
     ) {
         val source = aesthetics.dataPoints()
         val dataPoints = filterDataPoints(source)
-        val filteredPointsCount = source.count() - dataPoints.count()
+        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
 
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(coord.isPolar)
@@ -37,7 +37,7 @@ open class PolygonGeom : GeomBase() {
             targetCollectorHelper.addPolygons(polygonData)
             root.add(svg)
         }
-        reportDroppedPoints(filteredPointsCount + linesHelper.getDroppedPointsCount(), ctx)
+        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
     }
 
     companion object {

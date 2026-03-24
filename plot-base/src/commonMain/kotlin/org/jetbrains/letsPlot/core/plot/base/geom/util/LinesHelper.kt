@@ -105,8 +105,8 @@ open class LinesHelper(
         return createPolygon(domainPathData)
     }
 
-    fun getDroppedPointsCount(): Int {
-        return myDroppedPointsIds.size
+    fun getDroppedPointsIds(): Set<Int> {
+        return myDroppedPointsIds
     }
 
     private fun createPolygon(domainPathData: Collection<PathData>): List<Pair<SvgNode, PolygonData>> {

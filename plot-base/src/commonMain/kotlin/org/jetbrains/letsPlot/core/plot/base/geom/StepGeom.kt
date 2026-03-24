@@ -41,7 +41,7 @@ class StepGeom : LineGeom() {
     ) {
         val source = aesthetics.dataPoints()
         val dataPoints = filterDataPoints(source)
-        val filteredPointsCount = source.count() - dataPoints.count()
+        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
 
         val linesHelper = LinesHelper(pos, coord, ctx)
 
@@ -57,7 +57,7 @@ class StepGeom : LineGeom() {
 
         val targetCollectorHelper = TargetCollectorHelper(ctx)
         targetCollectorHelper.addPaths(pathDataList)
-        reportDroppedPoints(filteredPointsCount + linesHelper.getDroppedPointsCount(), ctx)
+        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
     }
 
     private fun toLocationFor(viewPort: DoubleRectangle): (DataPointAesthetics) -> DoubleVector? {

@@ -95,5 +95,9 @@ abstract class GeomBase : Geom {
                 add(path.rootGroup)
             }
         }
+
+        fun Iterable<DataPointAesthetics>.excludedIndicesComparedTo(other: Iterable<DataPointAesthetics>): Set<Int> {
+            return mapTo(HashSet()) { it.index() } - other.mapTo(HashSet()) { it.index() }
+        }
     }
 }
