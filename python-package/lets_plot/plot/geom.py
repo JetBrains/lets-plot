@@ -3955,7 +3955,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                                shape=outlier_param('shape', outlier_shape),
                                size=size,
                                stroke=outlier_param('stroke', outlier_stroke),
-                               color_by=color_by, fill_by=fill_by)
+                               color_by=color_by, fill_by=fill_by,
+                               na_rm=True)
     return boxplot_layer
 
 
