@@ -24,6 +24,7 @@ In the `local.properties` file:
 ```properties
 sonatype.username=<your Sonatype username>
 sonatype.password=<your Sonatype access token>
+sonatype.profileID=<your Sonatype profile ID>
 ```
 
 #### SNAPSHOT Version

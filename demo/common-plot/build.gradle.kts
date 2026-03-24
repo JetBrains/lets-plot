@@ -22,6 +22,8 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
 
+    val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+
     sourceSets {
         commonMain {
             dependencies {
@@ -33,6 +35,8 @@ kotlin {
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
                 implementation(project(":demo-and-test-shared"))
+
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
     }

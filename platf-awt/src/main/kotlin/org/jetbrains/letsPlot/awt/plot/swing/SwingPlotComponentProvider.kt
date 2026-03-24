@@ -36,6 +36,10 @@ open class SwingPlotComponentProvider(
             }
         }
 
+        // TODO: Consider removing 'private' modifirer in case somebody needs to use
+        // MonolithicAwt.buildPlotFromProcessedSpecs(),
+        // or
+        // MonolithicAwt.buildPlotFromRawSpecs() with this factory.
         private val SVG_COMPONENT_FACTORY = { svg: SvgSvgElement ->
             CanvasComponent().apply {
                 content = SvgCanvasDrawable(svg).apply {
