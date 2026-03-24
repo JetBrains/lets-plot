@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -44,6 +48,12 @@ kotlin {
         named("jsTest") {
             dependencies {
                 implementation(kotlin("test-js"))
+            }
+        }
+        webMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:${kotlinxBrowserVersion}")
+
             }
         }
 
