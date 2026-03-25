@@ -41,8 +41,6 @@ interface ImmutableGeomContext : GeomContext {
 
         fun scaleFactor(scaleFactor: Double): Builder
 
-        fun geomKind(geomKind: GeomKind): Builder
-
         fun naRm(naRm: Boolean): Builder
 
         fun messageConsumer(messageConsumer: (String) -> Unit): Builder
