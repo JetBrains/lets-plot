@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -41,13 +41,13 @@ internal object TypeUtils {
     }
 
     private fun pyObjectToKotlin(obj: TPyObjPtr?): Any? {
-        if (obj == null) return null;
+        if (obj == null) return null
 
         val objType = getPyObjectType(obj)
 
         return when (objType) {
             STR -> PyBytes_AsString(PyUnicode_AsUTF8String(obj))?.toKString()
-            INT -> PyLong_AsLongLong(obj).toLong()
+            INT -> PyLong_AsLongLong(obj)
             FLOAT -> PyFloat_AsDouble(obj)
             BOOL -> PyObject_IsTrue(obj) == 1
             DICT -> pyDictToMap(obj)

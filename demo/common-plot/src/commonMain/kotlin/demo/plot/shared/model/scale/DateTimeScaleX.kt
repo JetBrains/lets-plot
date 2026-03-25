@@ -6,35 +6,32 @@
 package demo.plot.shared.model.scale
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.commons.intern.datetime.Date
-import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
-import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 
 class DateTimeScaleX {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            plot("hours", HOUR),
-            plot("days", DAY)
+            plot("hours", 1.hours),
+            plot("days", 1.days)
         )
     }
 
     companion object {
-        private val TZ = TimeZone.UTC
+        private val startMillis = LocalDateTime(2003, 2, 1, 0, 0)
+            .toInstant(TimeZone.UTC)
+            .toEpochMilliseconds()
 
-        private const val SECOND = 1000.0
-        private const val MINUTE = 60.0 * SECOND
-        private const val HOUR = 60.0 * MINUTE
-        private const val DAY = 24.0 * HOUR
-
-        fun plot(title: String, timeScale: Double): MutableMap<String, Any> {
+        fun plot(title: String, period: Duration): MutableMap<String, Any> {
             val n = 30
 
-            val instant = DateTime(Date(1, Month.FEBRUARY, 2003)).toInstant(TZ)
-
             val rnd = Random(0)
-            val time = (0..n).map { instant.toEpochMilliseconds() + it * timeScale }.joinToString()
+            val time = (0..n).map { startMillis + it * period.inWholeMilliseconds }.joinToString()
             val values = (0..n).map { rnd.nextDouble(0.0, 20.0) }.joinToString()
             val data = "   {" +
                     "      'time': [$time]," +

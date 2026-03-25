@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -78,7 +78,7 @@ open class ColorScales {
                     }
                     sb.append(']')
                 }
-                is String -> sb.append('"').append(v.toString()).append('"')
+                is String -> sb.append('"').append(v).append('"')
                 else -> sb.append(v.toString())
             }
             return sb.toString()

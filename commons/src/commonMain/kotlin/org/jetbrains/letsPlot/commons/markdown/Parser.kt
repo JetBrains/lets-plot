@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -128,7 +128,7 @@ internal class Parser private constructor(
                 if (openerFound) {
                     val strong = opener!!.count >= 2 && closer.count >= 2
                     nodes.add(nodes.indexOfFirst { it === opener.node } + 1, if (strong) Strong else Em)
-                    nodes.add(nodes.indexOfFirst { it === closer!!.node }, if (strong) CloseStrong else CloseEm)
+                    nodes.add(nodes.indexOfFirst { it === closer.node }, if (strong) CloseStrong else CloseEm)
 
                     opener.shrink(strong)
                     closer.shrink(strong)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -12,38 +12,19 @@ object Iris {
         get() = data.map { it.split(',') }
 
     private fun double(column: Int): List<Double> {
-        return sequence.map { it.get(column).toDouble() }
+        return sequence.map { it[column].toDouble() }
     }
 
     private fun string(column: Int): List<String> {
-        return sequence.map { it.get(column).toString() }
+        return sequence.map { it[column] }
     }
 
-    val sepalLength get() = Column(
-        "sepal length (cm)",
-        double(0)
-    )
-    val sepalWidth get() = Column(
-        "sepal width (cm)",
-        double(1)
-    )
-    val petalLength get() = Column(
-        "petal length (cm)",
-        double(2)
-    )
-    val petalWidth get() = Column(
-        "petal width (cm)",
-        double(3)
-    )
-    val target get() = Column(
-        "target",
-        string(4)
-    )
-    val targetSet get() = listOf(
-        "Iris-setosa",
-        "Iris-versicolor",
-        "Iris-virginica"
-    )
+    val sepalLength get() = Column("sepal length (cm)", double(0))
+    val sepalWidth get() = Column("sepal width (cm)", double(1))
+    val petalLength get() = Column("petal length (cm)", double(2))
+    val petalWidth get() = Column("petal width (cm)", double(3))
+    val target get() = Column("target", string(4))
+    val targetSet get() = listOf("Iris-setosa", "Iris-versicolor", "Iris-virginica")
     val df get() = run {
         mapOf(
             sepalLength.name to sepalLength.data,

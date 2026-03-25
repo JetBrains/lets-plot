@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.raster
 
+import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.spatial.projectOrigin
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.livemap.config.TILE_PIXEL_SIZE
 import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
@@ -21,6 +23,7 @@ import org.jetbrains.letsPlot.livemap.core.multitasking.setMicroThread
 import org.jetbrains.letsPlot.livemap.mapengine.LiveMapContext
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.*
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
+import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -66,10 +69,11 @@ class RasterTileLoadingSystem(
             val microThreads = getTileLayerEntities(cellKey).toList()
                 .map { httpTileEntity ->
                     MicroTaskUtil.create {
-                        when (response.errorCode) {
+                        when (val errorCode = response.errorCode) {
                             null -> drawImageTile(imageData, context)
-                            else -> drawErrorTile(response.errorCode, context)
-                        }.onSuccess { tile ->
+                            else -> drawErrorTile(errorCode, context)
+                        }.onResult(
+                            successHandler = { tile ->
                             runLaterBySystem(httpTileEntity) { theEntity ->
                                 theEntity.remove<BusyStateComponent>()
                                 theEntity.get<BasemapTileComponent>().also {
@@ -78,7 +82,11 @@ class RasterTileLoadingSystem(
                                 }
                                 ParentLayerComponent.tagDirtyParentLayer(theEntity)
                             }
-                        }
+                        },
+                            failureHandler = { t ->
+                                println(t)
+                            }
+                        )
                     }
                 }
 
@@ -112,20 +120,32 @@ class RasterTileLoadingSystem(
     }
 
     private fun drawErrorTile(
-        errorCode: Throwable?,
+        errorCode: Throwable,
         context: LiveMapContext
     ): Async<Tile> {
-        val errorText = errorCode!!.message ?: "Unknown error"
+
         val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
         val tileCtx = tileCanvas.context2d
-        val textDim = tileCtx.measureTextWidth(errorText)
-        val x = if (textDim < TILE_PIXEL_SIZE) {
-            TILE_PIXEL_SIZE / 2 - textDim / 2
-        } else {
-            4.0
+        val font = Font(fontSize = 12.0, fontFamily = "sans-serif")
+        tileCtx.setFont(font)
+        tileCtx.setFillStyle(Color.RED)
+        tileCtx.setStrokeStyle(Color.BLACK)
+
+        val errorTitle = listOf((errorCode::class.simpleName ?: "Unknown class") + ":")
+        val errorText = errorCode.message ?: "Unknown error"
+        val textWidth = tileCtx.measureTextWidth(errorText)
+        val linesCount = ceil(textWidth / TILE_PIXEL_SIZE).toInt() + 1 // +1 line for errorCode::class.simpleName
+        val lineHeight = font.fontSize + 2.0
+
+        // 0.8 to shorten lines a bit and avoid overflow due to letters width inconsistency
+        val approxLineCharLength = (errorText.length / linesCount * 0.9).roundToInt()
+
+        val lines = errorTitle + wrap(errorText, approxLineCharLength).split('\n')
+        val y = (TILE_PIXEL_SIZE - lines.size * lineHeight) / 2.0
+        lines.forEachIndexed { index, line ->
+            tileCtx.fillText(line, 4.0, y + index * lineHeight)
         }
-        tileCtx.setFont(Font())
-        tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
+
         return Asyncs.constant(Tile.SnapshotTile(tileCanvas.takeSnapshot(), context.mapRenderContext.pixelDensity))
     }
 

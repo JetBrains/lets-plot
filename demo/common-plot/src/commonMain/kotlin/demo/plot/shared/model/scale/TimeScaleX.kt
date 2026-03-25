@@ -6,25 +6,25 @@
 package demo.plot.shared.model.scale
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.HOUR
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MINUTE
-import org.jetbrains.letsPlot.commons.intern.datetime.Duration.Companion.MS
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
 
 class TimeScaleX {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            plot("5 seconds", 0..5000 step 25, MS),
-            plot("24 hours", 0..24, HOUR),
-            plot("24 hours", 0..24, HOUR, timeAxis = "y"),
-            plot("5 days", 0..120, HOUR),
-            plot("30 days", 0..720, HOUR),
-            plot("-30..30, MINUTE", -30..30, MINUTE),
-            plot("Special: no zero (12 to 30 minutes)", 12..30, MINUTE),
-            plot("Special: assymetric range (-8 to 30 minutes)", -8..30, MINUTE),
-            plot("Special: negative (-30..-20, MINUTE)", -30..-20, MINUTE),
-            plot("Special: reversed negative (-20..-30, MINUTE)", -20 downTo -30, MINUTE),
+            plot("5 seconds", 0..5000 step 25, 1.milliseconds),
+            plot("24 hours", 0..24, 1.hours),
+            plot("24 hours", 0..24, 1.hours, timeAxis = "y"),
+            plot("5 days", 0..120, 1.hours),
+            plot("30 days", 0..720, 1.hours),
+            plot("-30..30, MINUTE", -30..30, 1.minutes),
+            plot("Special: no zero (12 to 30 minutes)", 12..30, 1.minutes),
+            plot("Special: assymetric range (-8 to 30 minutes)", -8..30, 1.minutes),
+            plot("Special: negative (-30..-20, MINUTE)", -30..-20, 1.minutes),
+            plot("Special: reversed negative (-20..-30, MINUTE)", -20 downTo -30, 1.minutes),
         )
     }
 
@@ -36,7 +36,7 @@ class TimeScaleX {
             timeAxis: String = "x"
         ): MutableMap<String, Any> {
             val rnd = Random(0)
-            val time = entries.map { it * period.totalMillis }
+            val time = entries.map { it * period.inWholeMilliseconds }
             val values = time.indices.map { rnd.nextDouble(0.0, 20.0) }
 
             val mapping = when (timeAxis) {

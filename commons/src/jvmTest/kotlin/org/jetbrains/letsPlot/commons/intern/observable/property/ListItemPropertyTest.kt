@@ -1,10 +1,13 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.commons.intern.observable.property
 
+import org.hamcrest.Matcher
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.*
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableArrayList
 import org.jetbrains.letsPlot.commons.intern.observable.collections.list.ObservableList
 import org.jetbrains.letsPlot.commons.intern.observable.property.EventMatchers.allEvents
@@ -14,9 +17,6 @@ import org.jetbrains.letsPlot.commons.intern.observable.property.EventMatchers.n
 import org.jetbrains.letsPlot.commons.intern.observable.property.EventMatchers.oldValueIs
 import org.jetbrains.letsPlot.commons.intern.observable.property.EventMatchers.setTestHandler
 import org.jetbrains.letsPlot.commons.intern.observable.property.EventMatchers.singleEvent
-import org.hamcrest.Matcher
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -72,10 +72,10 @@ class ListItemPropertyTest {
     fun getsTheRightItem() {
         val list = createList(5)
         val p2 = ListItemProperty(list, 2)
-        assertEquals(2, p2.get()!!.toInt())
+        assertEquals(2, p2.get()!!)
 
         val p4 = ListItemProperty(list, 4)
-        assertEquals(4, p4.get()!!.toInt())
+        assertEquals(4, p4.get()!!)
     }
 
     @Test
@@ -93,9 +93,9 @@ class ListItemPropertyTest {
     @Test
     fun tracksItemOnAdd() {
         list.add(2, 22)
-        assertEquals(1, p1.get()!!.toInt())
-        assertEquals(2, p2.get()!!.toInt())
-        assertEquals(3, p3.get()!!.toInt())
+        assertEquals(1, p1.get()!!)
+        assertEquals(2, p2.get()!!)
+        assertEquals(3, p3.get()!!)
 
         p1.set(11)
         p2.set(12)
@@ -106,8 +106,8 @@ class ListItemPropertyTest {
     @Test
     fun tracksItemOnRemove() {
         list.removeAt(2)
-        assertEquals(1, p1.get()!!.toInt())
-        assertEquals(3, p3.get()!!.toInt())
+        assertEquals(1, p1.get()!!)
+        assertEquals(3, p3.get()!!)
         assertFalse(p2.isValid)
 
         p1.set(11)

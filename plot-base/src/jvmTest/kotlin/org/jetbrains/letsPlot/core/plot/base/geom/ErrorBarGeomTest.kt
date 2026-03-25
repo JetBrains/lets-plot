@@ -91,7 +91,7 @@ class ErrorBarGeomTest {
                 override fun getResolution(aes: Aes<Double>): Double = 10.0
                 override fun isMappedAes(aes: Aes<*>) = aes == Aes.X || aes == Aes.YMIN || aes == Aes.YMAX
                 override fun consumeMessages(messages: List<String>) {}
-                override fun geomKind(): GeomKind = GeomKind.ERROR_BAR
+                override fun geomKind() = GeomKind.ERROR_BAR
             },
             pos = PositionAdjustments.identity(),
         )

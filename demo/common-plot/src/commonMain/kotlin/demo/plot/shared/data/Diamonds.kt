@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,71 +10,41 @@ object Diamonds {
 
     private val sequence: List<List<String>>
             by lazy {
-                demo.plot.shared.data.Diamonds.data.map { it.split(',') }
+                data.map { it.split(',') }
             }
 
     private fun int(column: Int): List<Int> {
-        return demo.plot.shared.data.Diamonds.sequence.map { it.get(column).toInt() }
+        return sequence.map { it[column].toInt() }
     }
 
     private fun double(column: Int): List<Double> {
-        return demo.plot.shared.data.Diamonds.sequence.map { it.get(column).toDouble() }
+        return sequence.map { it[column].toDouble() }
     }
 
     private fun string(column: Int): List<String> {
-        return demo.plot.shared.data.Diamonds.sequence.map { it.get(column).toString() }
+        return sequence.map { it[column] }
     }
 
     val carat
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "carat",
-            demo.plot.shared.data.Diamonds.double(0)
-        )
+        get() = Column("carat", double(0))
     val cut
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "cut quality",
-            demo.plot.shared.data.Diamonds.string(1)
-        )
+        get() = Column("cut quality", string(1))
     val color
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "diamond colour",     //from J (worst) to D (best)
-            demo.plot.shared.data.Diamonds.string(2)
-        )
+        get() = Column("diamond colour", string(2)) //from J (worst) to D (best)
     val clarity
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "a measurement of how clear the diamond",
-            demo.plot.shared.data.Diamonds.string(3)
-        )
+        get() = Column("a measurement of how clear the diamond", string(3))
     val depth
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "total depth percentage",
-            demo.plot.shared.data.Diamonds.double(4)
-        )
+        get() = Column("total depth percentage", double(4))
     val table
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "width of top of diamond relative to widest point",
-            demo.plot.shared.data.Diamonds.double(5)
-        )
+        get() = Column("width of top of diamond relative to widest point", double(5))
     val price
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "price",
-            demo.plot.shared.data.Diamonds.int(6)
-        )
+        get() = Column("price", int(6))
     val x
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "length (mm)",
-            demo.plot.shared.data.Diamonds.double(7)
-        )
+        get() = Column("length (mm)", double(7))
     val y
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "width (mm)",
-            demo.plot.shared.data.Diamonds.double(8)
-        )
+        get() = Column("width (mm)", double(8))
     val z
-        get() = demo.plot.shared.data.Diamonds.Column(
-            "depth (mm)",
-            demo.plot.shared.data.Diamonds.double(9)
-        )
+        get() = Column("depth (mm)", double(9))
     val cutSet
         get() = listOf(
             "\"Fair\"",
@@ -86,16 +56,16 @@ object Diamonds {
     val df
         get() = run {
             mapOf(
-                demo.plot.shared.data.Diamonds.carat.name to demo.plot.shared.data.Diamonds.carat.data,
-                demo.plot.shared.data.Diamonds.cut.name to demo.plot.shared.data.Diamonds.cut.data,
-                demo.plot.shared.data.Diamonds.color.name to demo.plot.shared.data.Diamonds.color.data,
-                demo.plot.shared.data.Diamonds.clarity.name to demo.plot.shared.data.Diamonds.clarity.data,
-                demo.plot.shared.data.Diamonds.depth.name to demo.plot.shared.data.Diamonds.depth.data,
-                demo.plot.shared.data.Diamonds.table.name to demo.plot.shared.data.Diamonds.table.data,
-                demo.plot.shared.data.Diamonds.price.name to demo.plot.shared.data.Diamonds.price.data,
-                demo.plot.shared.data.Diamonds.x.name to demo.plot.shared.data.Diamonds.x.data,
-                demo.plot.shared.data.Diamonds.y.name to demo.plot.shared.data.Diamonds.y.data,
-                demo.plot.shared.data.Diamonds.z.name to demo.plot.shared.data.Diamonds.z.data
+                Diamonds.carat.name to Diamonds.carat.data,
+                Diamonds.cut.name to Diamonds.cut.data,
+                Diamonds.color.name to Diamonds.color.data,
+                Diamonds.clarity.name to Diamonds.clarity.data,
+                Diamonds.depth.name to Diamonds.depth.data,
+                Diamonds.table.name to Diamonds.table.data,
+                Diamonds.price.name to Diamonds.price.data,
+                Diamonds.x.name to Diamonds.x.data,
+                Diamonds.y.name to Diamonds.y.data,
+                Diamonds.z.name to Diamonds.z.data
             )
         }
 

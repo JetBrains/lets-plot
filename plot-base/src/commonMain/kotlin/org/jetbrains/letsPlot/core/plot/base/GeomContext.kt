@@ -26,9 +26,6 @@ interface GeomContext {
      */
     fun getAesBounds(): DoubleRectangle
 
-//    not used
-//    fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext
-
     fun isMappedAes(aes: Aes<*>): Boolean
 
     fun estimateTextSize(

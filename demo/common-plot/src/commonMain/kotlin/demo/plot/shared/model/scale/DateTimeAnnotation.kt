@@ -6,13 +6,17 @@
 package demo.plot.shared.model.scale
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.commons.intern.datetime.*
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
 
 class DateTimeAnnotation {
     fun plotSpecList(): List<MutableMap<String, Any>> {
         return listOf(
-            plot(Duration.DAY),
+            plot(1.days),
             colorMapping(),
             yminAndYmaxMapping()
         )
@@ -21,14 +25,15 @@ class DateTimeAnnotation {
     companion object {
         private val TZ = TimeZone.UTC
 
-        fun plot(period: Duration): MutableMap<String, Any> {
-            val instant = DateTime(Date(1, Month.FEBRUARY, 2003))
-                .toEpochMilliseconds(TZ)
+        private val startInstantMillis = LocalDateTime(2003, 2, 1, 0, 0)
+            .toInstant(TZ)
+            .toEpochMilliseconds()
 
+        fun plot(period: Duration): MutableMap<String, Any> {
             val rnd = Random(0)
 
             val n = 30
-            val time = (0..n).map { instant + it * period.totalMillis }
+            val time = (0..n).map { startInstantMillis + it * period.inWholeMilliseconds }
             val values = (0..n).map { rnd.nextDouble(0.0, 20.0) }
 
             val spec = """
@@ -39,7 +44,7 @@ class DateTimeAnnotation {
                      'values': [ ${values.joinToString()} ]
                   },
                   'data_meta' : {
-                    'series_annotations': [ 
+                    'series_annotations': [
                       {
                         'column': 'time',
                         'type': 'datetime'
@@ -66,13 +71,13 @@ class DateTimeAnnotation {
                     "kind": "plot",
                      "ggtitle": { "text": "Color datetime mapping" },
                     "data": {
-                        "val": [1.0, 2.0, 3.0, 4.0, 5.0], 
+                        "val": [1.0, 2.0, 3.0, 4.0, 5.0],
                         "days": [1609459200000, 1614038400000, 1617408000000, 1620086400000, 1633392000000]
-                    }, 
+                    },
                     "layers": [
                         { "geom": "bar", "mapping": { "x": "days", "color": "days" } }
-                    ], 
-                    "data_meta": { 
+                    ],
+                    "data_meta": {
                         "series_annotations": [{"column": "days", "type": "datetime"}]
                     }
                 }
@@ -82,36 +87,34 @@ class DateTimeAnnotation {
         }
 
         fun yminAndYmaxMapping(): MutableMap<String, Any> {
-            val instant = DateTime(Date(1, Month.FEBRUARY, 2003))
-                .toEpochMilliseconds(TZ)
-            val errDuration = 7 * Duration.DAY.totalMillis.toDouble()
+            val errDuration = 7 * (1.days).inWholeMilliseconds.toDouble()
             val rnd = Random(0)
 
             val n = 7
-            val t1 = (0..n).map { instant + rnd.nextDouble(errDuration) }
-            val t2 = (0..n).map { instant - rnd.nextDouble(errDuration) }
+            val t1 = (0..n).map { startInstantMillis + rnd.nextDouble(errDuration) }
+            val t2 = (0..n).map { startInstantMillis - rnd.nextDouble(errDuration) }
             val v = (0..n).map { "\"${Char('a'.code + it)}\"" }.toList()
 
             val spec = """
             |{
-            |   "kind": "plot", 
+            |   "kind": "plot",
             |   "data": {
-            |       "val": [${v.joinToString(", ")}], 
-            |       "t1": [${t1.joinToString(", ")}], 
+            |       "val": [${v.joinToString(", ")}],
+            |       "t1": [${t1.joinToString(", ")}],
             |       "t2": [${t2.joinToString(", ")}]
-            |   }, 
+            |   },
             |   "layers": [
             |       {
-            |           "mapping": { "x": "val", "ymin": "t1", "ymax": "t2"}, 
-            |           "stat": "identity", 
-            |           "position": "identity", 
+            |           "mapping": { "x": "val", "ymin": "t1", "ymax": "t2"},
+            |           "stat": "identity",
+            |           "position": "identity",
             |           "geom": "linerange",
             |           "size": 2
             |       }
-            |   ], 
+            |   ],
             |   "data_meta": {
             |       "series_annotations": [
-            |           {"column": "t1", "type": "datetime"}, 
+            |           {"column": "t1", "type": "datetime"},
             |           {"column": "t2", "type": "datetime"}
             |       ]
             |   }

@@ -37,19 +37,6 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
 
     constructor()
 
-//    private constructor(ctx: MyGeomContext) {
-//        flipped = ctx.flipped
-//        aesthetics = ctx.aesthetics
-//        aestheticMappers = ctx.aestheticMappers
-//        aesBounds = ctx._aesBounds
-//        geomTargetCollector = ctx.targetCollector
-//        annotation = ctx.annotation
-//        defaultFormatters = ctx.defaultFormatters
-//        backgroundColor = ctx.backgroundColor
-//        plotContext = ctx.plotContext
-//        coordinateSystem = ctx._coordinateSystem
-//    }
-
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
         this.flipped = flipped
         return this
@@ -228,16 +215,5 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         override fun geomKind(): GeomKind {
             return _geomKind ?: error("GeomContext: geom kind is not defined.")
         }
-
-//        not used
-//        override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
-//            return with()
-//                .geomTargetCollector(targetCollector)
-//                .build()
-//        }
-//
-//        override fun with(): ImmutableGeomContext.Builder {
-//            return GeomContextBuilder(this)
-//        }
     }
 }
