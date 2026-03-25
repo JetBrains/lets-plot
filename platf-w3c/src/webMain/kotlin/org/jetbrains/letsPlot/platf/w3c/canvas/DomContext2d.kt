@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -128,14 +128,44 @@ internal class DomContext2d(
     }
 
     override fun drawCircle(x: Double, y: Double, radius: Double) {
-        TODO("Not yet implemented")
+        ctx.beginPath()
+        ctx.arc(x, y, radius, 0.0, 2 * PI, false)
+        ctx.fill(CanvasFillRule.NONZERO)
+        ctx.stroke()
     }
 
     override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
         ctx.ellipse(x, y, radiusX, radiusY, 0.0, 0.0, 2 * PI)
     }
     override fun measureText(str: String): org.jetbrains.letsPlot.core.canvas.TextMetrics {
-        TODO("measureText")
+        val metrics = ctx.measureText(str)
+        val ascent = when {
+            metrics.actualBoundingBoxAscent > 0.0 -> metrics.actualBoundingBoxAscent
+            metrics.fontBoundingBoxAscent > 0.0 -> metrics.fontBoundingBoxAscent
+            else -> metrics.emHeightAscent
+        }
+        val descent = when {
+            metrics.actualBoundingBoxDescent > 0.0 -> metrics.actualBoundingBoxDescent
+            metrics.fontBoundingBoxDescent > 0.0 -> metrics.fontBoundingBoxDescent
+            else -> metrics.emHeightDescent
+        }
+        val left = metrics.actualBoundingBoxLeft
+        val right = if (metrics.actualBoundingBoxRight > 0.0) {
+            metrics.actualBoundingBoxRight
+        } else {
+            (metrics.width - left).coerceAtLeast(0.0)
+        }
+
+        return org.jetbrains.letsPlot.core.canvas.TextMetrics(
+            ascent = ascent,
+            descent = descent,
+            bbox = DoubleRectangle.XYWH(
+                -left,
+                -ascent,
+                left + right,
+                ascent + descent
+            )
+        )
     }
 
     override fun save() = ctx.save()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -31,12 +31,7 @@ class DomMouseEventMapper(
 
     // The area where the events are handled.
     // The area is relative to the top-left corner of the event target.
-    private val eventArea: DoubleRectangle = DoubleRectangle.XYWH(
-        x = 0,
-        y = 0,
-        width = eventTarget.clientWidth.toDouble(),
-        height = eventTarget.clientHeight.toDouble()
-    )
+    private val eventArea: DoubleRectangle? = null
 ) : MouseEventSource, Disposable {
 
     private val regs = CompositeRegistration()
@@ -56,7 +51,7 @@ class DomMouseEventMapper(
 
     init {
         if (ENABLE_DEBUG_LOG) {
-            println("DomMouseEventMapper(${this.hashCode().toString(36)}): subarea=$eventArea")
+            println("DomMouseEventMapper(${this.hashCode().toString(36)}): subarea=${currentEventArea()}")
         }
 
         fun addHandler(eventSpec: DomEventType<out DomMouseEvent>) {
@@ -92,7 +87,7 @@ class DomMouseEventMapper(
         // Now dragging outside the iframe can be tested.
         //domMouseEvent.preventDefault() // Fix for Safari to prevent selection when user drags outside a canvas
 
-        val coord = toEventTargetOffsetCoord(domMouseEvent).subtract(eventArea.origin)
+        val coord = toEventTargetOffsetCoord(domMouseEvent).subtract(currentEventArea().origin)
         val x = coord.x.roundToInt()//domMouseEvent.regionX.roundToInt()
         val y = coord.y.roundToInt()//domMouseEvent.regionY.roundToInt()
         val button = DomEventUtil.getButton(domMouseEvent)
@@ -123,7 +118,16 @@ class DomMouseEventMapper(
     }
 
     private fun inEventArea(e: DomMouseEvent): Boolean {
-        return toEventTargetOffsetCoord(e) in eventArea
+        return toEventTargetOffsetCoord(e) in currentEventArea()
+    }
+
+    private fun currentEventArea(): DoubleRectangle {
+        return eventArea ?: DoubleRectangle.XYWH(
+            x = 0.0,
+            y = 0.0,
+            width = eventTarget.clientWidth.toDouble(),
+            height = eventTarget.clientHeight.toDouble()
+        )
     }
 
     // Convert event coordinates to the local coordinate system of the event target

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 import java.util.*
@@ -66,6 +66,12 @@ include("demo-plot-jvm")
 project(":demo-plot-jvm").projectDir = File("./demo/plot-jvm")
 include("demo-plot-browser")
 project(":demo-plot-browser").projectDir = File("./demo/plot-browser")
+
+include("demo-app-wasmjs")
+project(":demo-app-wasmjs").projectDir = File("./demo/app-wasmjs")
+
+include("demo-app-js")
+project(":demo-app-js").projectDir = File("./demo/app-js")
 
 include("demo-export")
 project(":demo-export").projectDir = File("./demo/export")
