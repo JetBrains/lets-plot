@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -62,10 +62,7 @@ internal class DomCanvas private constructor(
             return DomCanvas(nativeCanvas, size, pixelRatio)
         }
 
-        private fun createNativeCanvas(
-            size: Vector,
-            pixelRatio: Double,
-        ): HTMLCanvasElement {
+        fun createNativeCanvas(size: Vector, pixelRatio: Double,): HTMLCanvasElement {
             val canvasElement = document.createElement("canvas") as HTMLCanvasElement
             canvasElement.style.setWidth(size.x)
             canvasElement.style.setHeight(size.y)
