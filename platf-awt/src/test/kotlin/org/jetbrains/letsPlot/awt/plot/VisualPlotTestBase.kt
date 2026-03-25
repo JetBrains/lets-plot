@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
+import kotlinx.coroutines.runBlocking
 import org.jetbrains.letsPlot.awt.NotoFontManager
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.awt.canvas.FontManager
@@ -40,7 +41,8 @@ open class VisualPlotTestBase {
 
         val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
 
-        val imageData = PlotImageExport.buildImageFromRawSpecs(
+        val imageData = runBlocking {
+            PlotImageExport.buildImageFromRawSpecsInternal(
                 plotSpec = plotSpec,
                 format = PlotImageExport.Format.PNG,
                 scalingFactor = scale ?: 1.0,
@@ -49,7 +51,7 @@ open class VisualPlotTestBase {
                 unit = unit,
                 fontManager = fontManager
             )
-
+        }
         val image = ImageIO.read(imageData.bytes.inputStream())
         val bitmap = BitmapUtil.fromBufferedImage(image)
 

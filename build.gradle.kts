@@ -256,6 +256,8 @@ subprojects {
         "plot-builder",
         "plot-stem",
         "plot-raster",
+        "plot-livemap",
+        "livemap",
 
         "demo-and-test-shared",
         "demo-common-svg",

@@ -94,6 +94,8 @@ elif this_system == 'Windows':
             '-lexpat',
             '-lurlmon',
             '-lgdi32',
+            '-lws2_32',
+            '-liconv',
             '-lz'
         ]
 

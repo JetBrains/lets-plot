@@ -227,7 +227,7 @@ object DomUtil {
     }
 
     fun generateElement(source: SvgElement): SVGElement {
-        return when(source) {
+        val el = when (source) {
             is SvgEllipseElement -> createSVGElement("ellipse")
             is SvgCircleElement -> createSVGElement("circle")
             is SvgRectElement -> createSVGElement("rect")
@@ -242,8 +242,17 @@ object DomUtil {
             is SvgClipPathElement -> createSVGElement("clipPath")
             is SvgImageElement -> createSVGElement("image")
             is SvgAElement -> createSVGElement("a")
-            else -> throw IllegalStateException("Unsupported svg element ${source::class.simpleName}")
+            else -> null
         }
+        if (el != null) {
+            return el
+        }
+
+        if (source::class.simpleName == "SvgCanvasDrawableElement") {
+            return createSVGElement("canvas")
+        }
+
+        throw IllegalStateException("Unsupported svg element ${source::class.simpleName}")
     }
 
 

@@ -18,6 +18,7 @@ dependencies {
     compileOnly(project(":plot-stem"))
     compileOnly(project(":plot-raster"))
 
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
     compileOnly("com.github.weisj:jsvg:$jsvgVersion")
 
     testImplementation(project(":canvas"))
@@ -25,8 +26,14 @@ dependencies {
 
     testImplementation(project(":demo-and-test-shared"))
     testImplementation(project(":demo-common-svg"))
+    testImplementation(project(":plot-livemap"))
+    testImplementation(project(":livemap"))
+    testImplementation(project(":gis"))
     testImplementation(project(":visual-testing"))
 
+    testImplementation("io.ktor:ktor-client-cio:${ktorVersion}")
+
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
     testImplementation("org.assertj:assertj-core:${assertjVersion}")
     testImplementation(kotlin("test-junit"))
 

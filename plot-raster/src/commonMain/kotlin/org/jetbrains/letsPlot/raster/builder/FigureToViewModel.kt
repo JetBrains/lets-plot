@@ -6,15 +6,26 @@
 package org.jetbrains.letsPlot.raster.builder
 
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 
+import org.jetbrains.letsPlot.core.plot.livemap.CursorServiceConfig
+import org.jetbrains.letsPlot.core.plot.livemap.LiveMapProviderUtil
+
 internal object FigureToViewModel {
     fun eval(buildInfo: FigureBuildInfo): ViewModel {
         @Suppress("NAME_SHADOWING")
         val buildInfo = buildInfo.layoutedByOuterSize()
+
+        buildInfo.injectLiveMapProvider { tiles: List<List<GeomLayer>>, spec: Map<String, Any> ->
+            val cursorServiceConfig = CursorServiceConfig()
+            LiveMapProviderUtil.injectLiveMapProvider(tiles, spec, cursorServiceConfig)
+            cursorServiceConfig
+        }
+
         return when (val svgRoot = buildInfo.createSvgRoot()) {
             is PlotSvgRoot -> processPlotFigure(svgRoot)
             is CompositeFigureSvgRoot -> processCompositeFigure(svgRoot).also {
