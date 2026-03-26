@@ -3,8 +3,11 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
 package org.jetbrains.letsPlot.platf.w3c.canvas
 
+import kotlinx.browser.window
 import org.jetbrains.letsPlot.commons.SystemTime
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.geometry.Vector
@@ -16,6 +19,7 @@ import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import kotlin.js.ExperimentalWasmJsInterop
 
 class DomCanvasElement(
     content: CanvasDrawable? = null
@@ -47,6 +51,7 @@ class DomCanvasElement(
     private var isContentAttached = false
     private var contentReg: Registration = Registration.EMPTY
     private var disposables = CompositeRegistration()
+    private var repaintRequestHandle: Int? = null
 
     var width: Int = 1
         private set
@@ -70,7 +75,9 @@ class DomCanvasElement(
                 contentReg = CompositeRegistration(
                     value.mouseEventPeer.addEventSource(mouseEventSource),
                     value.mapToCanvas(canvasPeer),
-                    value.onRepaintRequested(::repaint),
+                    value.onRepaintRequested {
+                        requestRepaint()
+                    },
                     Registration.onRemove(animationTimer::stop),
                     Registration.onRemove { log { "Content removed: ${value.identityString}" } }
                 )
@@ -78,7 +85,7 @@ class DomCanvasElement(
 
             field = value
             log { "Content set: ${value?.identityString ?: "null"}" }
-            repaint()
+            requestRepaint()
         }
 
     init {
@@ -94,15 +101,27 @@ class DomCanvasElement(
 
         resizeNativeCanvas(width, height)
         content?.resize(width, height)
-        repaint()
+        requestRepaint()
     }
 
     fun repaint() {
+        repaintRequestHandle = null
+
         val content = content ?: return
         if (width <= 0 || height <= 0) return
 
         context2d.clearRect(0.0, 0.0, width.toDouble(), height.toDouble())
         content.paint(context2d)
+    }
+
+    fun requestRepaint() {
+        if (repaintRequestHandle != null) {
+            return
+        }
+
+        repaintRequestHandle = window.requestAnimationFrame {
+            repaint()
+        }
     }
 
     private fun resizeNativeCanvas(width: Int, height: Int) {
@@ -111,9 +130,12 @@ class DomCanvasElement(
         canvasElement.style.height = "${height}px"
         canvasElement.width = (width * pixelRatio).toInt()
         canvasElement.height = (height * pixelRatio).toInt()
+        context2d.onCanvasResized()
     }
 
     override fun dispose() {
+        repaintRequestHandle?.let(window::cancelAnimationFrame)
+        repaintRequestHandle = null
         contentReg.dispose()
         disposables.dispose()
     }

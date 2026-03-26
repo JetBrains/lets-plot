@@ -28,6 +28,15 @@ internal class DomContext2d(
 ) : Context2d {
 
     init {
+        applyContentScale()
+    }
+
+    fun onCanvasResized() {
+        applyContentScale()
+    }
+
+    private fun applyContentScale() {
+        ctx.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
         if (contentScale != 1.0) {
             ctx.scale(contentScale, contentScale)
         }

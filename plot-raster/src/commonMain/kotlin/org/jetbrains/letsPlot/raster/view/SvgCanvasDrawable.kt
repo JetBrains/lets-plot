@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -55,6 +55,7 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
     private var svgCanvasPeer: SvgCanvasPeer? = null
     private var repaintManager: RepaintManager? = null
     private var canvasNodes: MutableMap<CanvasNode, Registration> = mutableMapOf()
+    private var redrawPending: Boolean = false
 
     internal lateinit var rootMapper: SvgSvgElementMapper
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
@@ -141,6 +142,7 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
     }
 
     override fun paint(context2d: Context2d) {
+        redrawPending = false
         renderElement(rootMapper.target, context2d)
 
         if (renderingHints[RenderingHints.KEY_DEBUG_BBOXES] == RenderingHints.VALUE_DEBUG_BBOXES_ON) {
@@ -159,6 +161,11 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
     }
 
     private fun requestRedraw() {
+        if (redrawPending) {
+            return
+        }
+
+        redrawPending = true
         repaintRequestListeners.forEach { it() }
     }
 
