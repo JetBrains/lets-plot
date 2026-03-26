@@ -101,7 +101,7 @@ class DomCanvasElement(
 
         resizeNativeCanvas(width, height)
         content?.resize(width, height)
-        requestRepaint()
+        repaintNow()
     }
 
     fun repaint() {
@@ -122,6 +122,11 @@ class DomCanvasElement(
         repaintRequestHandle = window.requestAnimationFrame {
             repaint()
         }
+    }
+
+    private fun repaintNow() {
+        repaintRequestHandle?.let(window::cancelAnimationFrame)
+        repaint()
     }
 
     private fun resizeNativeCanvas(width: Int, height: Int) {
