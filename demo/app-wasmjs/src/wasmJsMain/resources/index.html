@@ -50,9 +50,22 @@
         .controls {
             display: flex;
             flex-wrap: wrap;
-            align-items: center;
+            align-items: flex-end;
             gap: 12px;
             margin-bottom: 16px;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .button {
@@ -84,9 +97,65 @@
             background: var(--panel);
         }
 
-        .pill select,
         .pill input {
             font: inherit;
+        }
+
+        .pill-top {
+            align-self: flex-end;
+        }
+
+        .option-panel {
+            display: inline-grid;
+            grid-template-columns: repeat(5, max-content);
+            justify-items: center;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid var(--border-strong);
+            border-radius: 18px;
+            background: var(--panel);
+        }
+
+        .option-panel-title {
+            grid-column: 1 / -1;
+            justify-self: center;
+            padding: 0 6px 4px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .option-chip {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .option-chip input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .option-chip span {
+            display: inline-flex;
+            align-items: center;
+            min-height: 36px;
+            padding: 0 14px;
+            border: 1px solid transparent;
+            border-radius: 999px;
+            color: var(--text);
+            transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+        }
+
+        .option-chip input:checked + span {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .option-chip input:focus-visible + span {
+            outline: 2px solid color-mix(in srgb, var(--accent) 55%, white);
+            outline-offset: 2px;
         }
 
         #plot-host {
@@ -109,21 +178,43 @@
     <p id="status" class="status"></p>
 
     <div class="controls">
-        <button id="toggle-button" class="button button-primary" type="button">Run</button>
-        <button id="reset-button" class="button button-secondary" type="button">Reset</button>
+        <div class="actions">
+            <div class="action-buttons">
+                <button id="toggle-button" class="button button-primary" type="button">Run</button>
+                <button id="reset-button" class="button button-secondary" type="button">Reset</button>
+            </div>
+        </div>
 
-        <label class="pill" for="distribution-select">
-            <span>Distribution</span>
-            <select id="distribution-select">
-                <option value="normal">Normal</option>
-                <option value="shifted">Shifted Gaussian</option>
-                <option value="bimodal">Bimodal</option>
-                <option value="uniform">Uniform</option>
-                <option value="laplace">Laplace</option>
-            </select>
-        </label>
+        <div class="option-panel" aria-label="Distribution">
+            <span class="option-panel-title">Distribution</span>
 
-        <label class="pill" for="limits-checkbox">
+            <label class="option-chip">
+                <input id="distribution-normal" type="radio" name="distribution" value="normal" checked>
+                <span>Normal</span>
+            </label>
+
+            <label class="option-chip">
+                <input id="distribution-shifted" type="radio" name="distribution" value="shifted">
+                <span>Shifted Gaussian</span>
+            </label>
+
+            <label class="option-chip">
+                <input id="distribution-bimodal" type="radio" name="distribution" value="bimodal">
+                <span>Bimodal</span>
+            </label>
+
+            <label class="option-chip">
+                <input id="distribution-uniform" type="radio" name="distribution" value="uniform">
+                <span>Uniform</span>
+            </label>
+
+            <label class="option-chip">
+                <input id="distribution-laplace" type="radio" name="distribution" value="laplace">
+                <span>Laplace</span>
+            </label>
+        </div>
+
+        <label class="pill pill-top" for="limits-checkbox">
             <input id="limits-checkbox" type="checkbox" checked>
             <span>Fixed axis limits</span>
         </label>
