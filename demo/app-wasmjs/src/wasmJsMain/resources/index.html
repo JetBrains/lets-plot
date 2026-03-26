@@ -10,24 +10,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>app-wasmjs</title>
     <style>
+        :root {
+            --bg: #eef2f5;
+            --panel: #ffffff;
+            --text: #17212b;
+            --muted: #4f5b66;
+            --border: #d8dee4;
+            --border-strong: #c7d0d9;
+            --accent: #0f766e;
+            --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
-            padding: 16px;
-            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 24px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, sans-serif;
+        }
+
+        .page {
+            min-height: calc(100vh - 48px);
+        }
+
+        .title {
+            margin: 0 0 8px;
+        }
+
+        .status {
+            margin: 0 0 16px;
+            color: var(--muted);
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .button {
+            padding: 10px 18px;
+            border-radius: 999px;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .button-primary {
+            border: none;
+            background: var(--accent);
+            color: white;
+        }
+
+        .button-secondary {
+            border: 1px solid var(--border-strong);
+            background: var(--panel);
+            color: var(--text);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border: 1px solid var(--border-strong);
+            border-radius: 999px;
+            background: var(--panel);
+        }
+
+        .pill select,
+        .pill input {
+            font: inherit;
         }
 
         #plot-host {
-            width: min(960px, calc(100vw - 32px));
+            display: block;
+            width: min(960px, calc(100vw - 48px));
             height: min(70vh, 640px);
             min-width: 320px;
             min-height: 240px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
             overflow: hidden;
             resize: both;
         }
     </style>
 </head>
 <body>
-<div id="plot-host"></div>
+<main class="page">
+    <h2 class="title">app-wasmjs</h2>
+    <p id="status" class="status"></p>
+
+    <div class="controls">
+        <button id="toggle-button" class="button button-primary" type="button">Run</button>
+        <button id="reset-button" class="button button-secondary" type="button">Reset</button>
+
+        <label class="pill" for="distribution-select">
+            <span>Distribution</span>
+            <select id="distribution-select">
+                <option value="normal">Normal</option>
+                <option value="shifted">Shifted Gaussian</option>
+                <option value="bimodal">Bimodal</option>
+                <option value="uniform">Uniform</option>
+                <option value="laplace">Laplace</option>
+            </select>
+        </label>
+
+        <label class="pill" for="limits-checkbox">
+            <input id="limits-checkbox" type="checkbox" checked>
+            <span>Fixed axis limits</span>
+        </label>
+    </div>
+
+    <div id="plot-host"></div>
+</main>
 <script src="demo-app-wasmjs.js"></script>
 </body>
 </html>
