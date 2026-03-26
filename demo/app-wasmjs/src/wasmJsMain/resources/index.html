@@ -9,8 +9,25 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>app-wasmjs</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 16px;
+            background: #f5f5f5;
+        }
+
+        #plot-host {
+            width: min(960px, calc(100vw - 32px));
+            height: min(70vh, 640px);
+            min-width: 320px;
+            min-height: 240px;
+            overflow: hidden;
+            resize: both;
+        }
+    </style>
 </head>
 <body>
+<div id="plot-host"></div>
 <script src="demo-app-wasmjs.js"></script>
 </body>
 </html>

@@ -9,7 +9,7 @@ import demo.plot.common.model.plotConfig.TooltipConfig
 import kotlinx.browser.document
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasElement
+import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasView
 import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLHeadingElement
@@ -96,11 +96,11 @@ private fun renderDemo() {
         }
     }
 
-    val canvas = DomCanvasElement(plotDrawable).apply {
+    val canvas = DomCanvasView(plotDrawable).apply {
         setSize(MIN_PLOT_WIDTH, MIN_PLOT_HEIGHT)
     }
-    canvas.canvasElement.style.display = "block"
-    canvasHost.appendChild(canvas.canvasElement)
+    canvas.domCanvasElement.style.display = "block"
+    canvasHost.appendChild(canvas.domCanvasElement)
 
     var lastWidth = 0
     var lastHeight = 0

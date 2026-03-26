@@ -19,28 +19,35 @@ import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.Node
 import kotlin.js.ExperimentalWasmJsInterop
 
-class DomCanvasElement(
+class DomCanvasView(
     content: CanvasDrawable? = null
 ) : Disposable {
 
-    val canvasElement: HTMLCanvasElement =
-        DomCanvas.createNativeCanvas(Vector(1, 1), DomCanvas.DEVICE_PIXEL_RATIO)
+    fun attachTo(parent: Node) {
+        parent.appendChild(domCanvasElement)
+    }
+
+    val domCanvasElement: HTMLCanvasElement =
+        DomCanvas.createNativeCanvas(Vector(1, 1), DomCanvas.DEVICE_PIXEL_RATIO).apply {
+            style.display = "block"
+        }
 
     private val context2d = DomContext2d(
-        canvasElement.getContext("2d") as CanvasRenderingContext2D,
+        domCanvasElement.getContext("2d") as CanvasRenderingContext2D,
         DomCanvas.DEVICE_PIXEL_RATIO
     )
 
     private val systemTime = SystemTime()
     private val animationTimer = object : DomAnimationTimer() {
         override fun handle(millisTime: Long) {
-            this@DomCanvasElement.content?.onFrame(systemTime.getTimeMs())
+            this@DomCanvasView.content?.onFrame(systemTime.getTimeMs())
         }
     }
 
-    private val mouseEventSource: MouseEventSource = DomMouseEventMapper(canvasElement)
+    private val mouseEventSource: MouseEventSource = DomMouseEventMapper(domCanvasElement)
 
     internal var canvasPeer: DomCanvasPeer = DomCanvasPeer()
         set(value) {
@@ -131,10 +138,10 @@ class DomCanvasElement(
 
     private fun resizeNativeCanvas(width: Int, height: Int) {
         val pixelRatio = DomCanvas.DEVICE_PIXEL_RATIO
-        canvasElement.style.width = "${width}px"
-        canvasElement.style.height = "${height}px"
-        canvasElement.width = (width * pixelRatio).toInt()
-        canvasElement.height = (height * pixelRatio).toInt()
+        domCanvasElement.style.width = "${width}px"
+        domCanvasElement.style.height = "${height}px"
+        domCanvasElement.width = (width * pixelRatio).toInt()
+        domCanvasElement.height = (height * pixelRatio).toInt()
         context2d.onCanvasResized()
     }
 

@@ -17,7 +17,7 @@ import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.ImageData
 import kotlin.js.ExperimentalWasmJsInterop
 
-object BitmapUtil {
+internal object BitmapUtil {
     fun fromHTMLCanvasElement(image: HTMLCanvasElement): Bitmap {
         val ctx = image.getContext("2d") as CanvasRenderingContext2D
         val imageData = ctx.getImageData(0.0, 0.0, image.width.toDouble(), image.height.toDouble())
