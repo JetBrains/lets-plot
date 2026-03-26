@@ -211,6 +211,7 @@ internal abstract class FrameOfReferenceBase(
                 .coordinateSystem(coord)
                 .contentBounds(bounds)
                 .scaleFactor(plotContext.getScaleFactor())
+                .geomKind(layer.geomKind)
                 .messageConsumer(plotContext.getMessageConsumer())
                 .build()
 

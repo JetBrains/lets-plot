@@ -31,22 +31,10 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var coordinateSystem: CoordinateSystem? = null
     private var contentBounds: DoubleRectangle? = null
     private var scaleFactor: Double = 1.0
+    private var geomKind: GeomKind? = null
     private var messageConsumer: (String) -> Unit = {}
 
     constructor()
-
-    private constructor(ctx: MyGeomContext) {
-        flipped = ctx.flipped
-        aesthetics = ctx.aesthetics
-        aestheticMappers = ctx.aestheticMappers
-        aesBounds = ctx._aesBounds
-        geomTargetCollector = ctx.targetCollector
-        annotation = ctx.annotation
-        defaultFormatters = ctx.defaultFormatters
-        backgroundColor = ctx.backgroundColor
-        plotContext = ctx.plotContext
-        coordinateSystem = ctx._coordinateSystem
-    }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
         this.flipped = flipped
@@ -118,6 +106,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun geomKind(geomKind: GeomKind): ImmutableGeomContext.Builder {
+        this.geomKind = geomKind
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -132,6 +125,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val _contentBounds = b.contentBounds
         val _scaleFactor = b.scaleFactor
         val _messageConsumer = b.messageConsumer
+        val _geomKind = b.geomKind
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
@@ -207,14 +201,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             messages.forEach { _messageConsumer(it) }
         }
 
-        override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
-            return with()
-                .geomTargetCollector(targetCollector)
-                .build()
-        }
-
-        override fun with(): ImmutableGeomContext.Builder {
-            return GeomContextBuilder(this)
+        override fun geomKind(): GeomKind {
+            return _geomKind ?: error("GeomContext: geom kind is not defined.")
         }
     }
 }

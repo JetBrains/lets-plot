@@ -52,7 +52,7 @@ class StepGeom : LineGeom() {
 
         root.appendNodes(linePaths)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.STEP, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
         targetCollectorHelper.addPaths(pathDataList)
     }
 

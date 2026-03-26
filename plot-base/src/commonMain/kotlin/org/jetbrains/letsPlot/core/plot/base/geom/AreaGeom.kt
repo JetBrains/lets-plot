@@ -45,7 +45,7 @@ open class AreaGeom : GeomBase() {
         helper.setAlphaEnabled(false)
 
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
-        val targetCollectorHelper = TargetCollectorHelper(tooltipsGeomKind(), ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
 
         val dataPoints = dataPoints(aesthetics)
         val closePath = helper.meetsRadarPlotReq()
@@ -82,8 +82,6 @@ open class AreaGeom : GeomBase() {
         val toLocationBoundEnd: (DataPointAesthetics) -> DoubleVector = { p -> TO_LOCATION_X_ZERO(p)!! }
         return quantilesHelper.getQuantileLineElements(dataPoints, Aes.X, toLocationBoundStart, toLocationBoundEnd)
     }
-
-    protected open fun tooltipsGeomKind() = GeomKind.AREA
 
     companion object {
         const val DEF_QUANTILE_LINES = false

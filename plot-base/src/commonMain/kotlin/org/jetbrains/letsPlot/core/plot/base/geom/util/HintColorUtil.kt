@@ -6,8 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.GeomMeta
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
@@ -38,11 +41,10 @@ object HintColorUtil {
     }
 
     fun createColorMarkerMapper(
-        geomKind: GeomKind?,
         ctx: GeomContext,
     ): (DataPointAesthetics) -> List<Color> {
         return createColorMarkerMapper(
-            geomKind,
+            ctx.geomKind(),
             isMappedFill = { p: DataPointAesthetics -> ctx.isMappedAes(p.fillAes) },
             isMappedColor = { p: DataPointAesthetics -> ctx.isMappedAes(p.colorAes) }
         )
@@ -78,7 +80,7 @@ object HintColorUtil {
         isMappedColor: (DataPointAesthetics) -> Boolean
     ): (DataPointAesthetics) -> List<Color> {
         val fillColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
-            POINT -> this::pointFillMapper
+            SINA, POINT -> this::pointFillMapper
             else -> this::fillWithAlpha
         }.let { fillSelector -> { p: DataPointAesthetics ->
             fillSelector(p).takeIf { it.alpha > 0 } }
@@ -86,7 +88,7 @@ object HintColorUtil {
 
         val strokeColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
             ERROR_BAR, H_LINE, V_LINE, LINE_RANGE, PATH, POINT_RANGE, TEXT, TEXT_REPEL, LABEL_REPEL, TILE -> HintColorUtil::colorWithAlpha
-            POINT -> this::pointStrokeMapper
+            SINA, POINT -> this::pointStrokeMapper
             else -> DataPointAesthetics::color // border always ignores alpha
         }.let { colorSelector -> { p: DataPointAesthetics ->
             colorSelector(p)?.takeIf { it.alpha > 0 && p.size() != 0.0 } }
@@ -112,7 +114,7 @@ object HintColorUtil {
                     )
                 }
 
-                POINT -> {
+                SINA, POINT -> {
                     // For solid points: Color is used as fill
                     val shape = p.shape()!!
                     val isMapped = if (shape is NamedShape && shape.isSolid) isMappedColor else isMappedFill

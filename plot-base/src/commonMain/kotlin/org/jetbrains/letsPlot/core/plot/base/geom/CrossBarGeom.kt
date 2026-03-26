@@ -10,13 +10,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleSegment
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.annotation.BarAnnotation
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.CrossBarAnnotation
-import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
@@ -119,15 +114,6 @@ class CrossBarGeom : GeomBase(), WithWidth {
 
         return ::factory
     }
-
-//    private fun clientRectByDataPoint(geomHelper: GeomHelper): (DataPointAesthetics) -> DoubleRectangle? {
-//        val factory = rectByDataPoint(geomHelper)
-//        return { p ->
-//            factory(p)?.let { rect ->
-//                geomHelper.toClient(rect, p)
-//            }
-//        }
-//    }
 
     companion object {
         const val HANDLES_GROUPS = false

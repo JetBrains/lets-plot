@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -134,13 +134,18 @@ class RasterTileLoadingSystem(
         val errorTitle = listOf((errorCode::class.simpleName ?: "Unknown class") + ":")
         val errorText = errorCode.message ?: "Unknown error"
         val textWidth = tileCtx.measureTextWidth(errorText)
-        val linesCount = ceil(textWidth / TILE_PIXEL_SIZE).toInt() + 1 // +1 line for errorCode::class.simpleName
         val lineHeight = font.fontSize + 2.0
 
-        // 0.8 to shorten lines a bit and avoid overflow due to letters width inconsistency
-        val approxLineCharLength = (errorText.length / linesCount * 0.9).roundToInt()
 
-        val lines = errorTitle + wrap(errorText, approxLineCharLength).split('\n')
+        val lines = if (textWidth < TILE_PIXEL_SIZE) {
+            errorTitle + errorText
+        } else {
+            val linesCount = ceil(textWidth / TILE_PIXEL_SIZE).toInt()
+            // Make line shorter by 10% to prevent overflow for non-monospace fonts
+            val approxLineCharLength = (errorText.length / linesCount * 0.9).roundToInt()
+            errorTitle + wrap(errorText, approxLineCharLength).split('\n')
+        }
+
         val y = (TILE_PIXEL_SIZE - lines.size * lineHeight) / 2.0
         lines.forEachIndexed { index, line ->
             tileCtx.fillText(line, 4.0, y + index * lineHeight)

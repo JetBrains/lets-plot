@@ -14,8 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface ImmutableGeomContext : GeomContext {
 
-    fun with(): Builder
-
     interface Builder {
         fun flipped(flipped: Boolean): Builder
 
@@ -44,6 +42,8 @@ interface ImmutableGeomContext : GeomContext {
         fun scaleFactor(scaleFactor: Double): Builder
 
         fun messageConsumer(messageConsumer: (String) -> Unit): Builder
+
+        fun geomKind(geomKind: GeomKind): Builder
 
         fun build(): ImmutableGeomContext
     }

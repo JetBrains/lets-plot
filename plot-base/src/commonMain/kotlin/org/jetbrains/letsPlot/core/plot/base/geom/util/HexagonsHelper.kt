@@ -69,7 +69,7 @@ class HexagonsHelper(
             hex,
             p.index(),
             GeomTargetCollector.TooltipParams(
-                markerColors = createColorMarkerMapper(null, ctx)(p)
+                markerColors = createColorMarkerMapper(ctx)(p)
             ),
             tooltipKind = CURSOR_TOOLTIP
         )

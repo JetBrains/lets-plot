@@ -5,7 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.Aesthetics
+import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TargetCollectorHelper
@@ -37,7 +40,7 @@ open class PathGeom : GeomBase() {
         val closePath = linesHelper.meetsRadarPlotReq()
         val pathData = linesHelper.createPathData(dataPoints, GeomUtil.TO_LOCATION_X_Y, closePath)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.PATH, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
         targetCollectorHelper.addVariadicPaths(pathData)
 
         val svgPath = linesHelper.renderPaths(pathData, filled = false)

@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 
 open class PointGeom : GeomBase() {
@@ -33,7 +33,7 @@ open class PointGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)

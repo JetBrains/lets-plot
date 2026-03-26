@@ -28,7 +28,7 @@ open class PolygonGeom : GeomBase() {
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(coord.isPolar)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.POLYGON, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
 
         linesHelper.createPolygon(dataPoints, GeomUtil.TO_LOCATION_X_Y).forEach { (svg, polygonData) ->
             targetCollectorHelper.addPolygons(polygonData)

@@ -56,7 +56,7 @@ class SmoothGeom : GeomBase() {
         val paths = linesHelper.createPaths(dataPoints, GeomUtil.TO_LOCATION_X_Y)
 
         val objectRadius = 0.0
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.SMOOTH, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
 
         paths.forEach { path ->
             path.aesthetics.windowed(size = 2) { (aes1, aes2) ->

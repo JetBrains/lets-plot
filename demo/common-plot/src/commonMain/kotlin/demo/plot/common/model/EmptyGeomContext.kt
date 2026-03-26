@@ -34,11 +34,6 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
-    override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
-        throw IllegalStateException("Not available in an empty geom context")
-    }
-
-
     override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
         throw IllegalStateException("Not available in an empty geom context")
     }
@@ -60,6 +55,10 @@ class EmptyGeomContext : GeomContext {
     }
 
     override fun consumeMessages(messages: List<String>) {
+        throw IllegalStateException("Not available in an empty geom context")
+    }
+
+    override fun geomKind(): GeomKind {
         throw IllegalStateException("Not available in an empty geom context")
     }
 

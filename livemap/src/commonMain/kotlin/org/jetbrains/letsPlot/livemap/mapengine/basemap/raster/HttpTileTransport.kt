@@ -10,23 +10,29 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.ThreadSafeAsync
 import org.jetbrains.letsPlot.gis.newHttpClient
 import org.jetbrains.letsPlot.gis.newNetworkCoroutineScope
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class HttpTileTransport {
     private val client = newHttpClient()
     private val coroutineScope = newNetworkCoroutineScope()
 
-    fun get(url: String): Async<ByteArray> {
+    fun get(url: String, timeout: Duration = 5.seconds): Async<ByteArray> {
         val async = ThreadSafeAsync<ByteArray>()
 
         coroutineScope.launch {
             try {
-                val response = client.request(url) {
-                    method = HttpMethod("GET")
-                }.readRawBytes()
+                val response = withTimeout(timeout) {
+                    client.request(url) {
+                        method = HttpMethod("GET")
+                        expectSuccess = true
+                    }.readRawBytes()
+                }
 
                 async.success(response)
             } catch (c: ResponseException) {

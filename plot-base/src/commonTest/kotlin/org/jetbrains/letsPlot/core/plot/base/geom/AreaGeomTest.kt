@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.BogusContext
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.list
 import org.jetbrains.letsPlot.core.plot.base.coord.Coords
@@ -38,7 +39,17 @@ class AreaGeomTest {
         )
         val svgRoot = DummyRoot()
 
-        AreaGeom().build(svgRoot, aes, PositionAdjustments.identity(), coord, EmptyGeomContext())
+        AreaGeom().build(
+            svgRoot,
+            aes,
+            PositionAdjustments.identity(),
+            coord,
+            object : GeomContext by BogusContext {
+                override val flipped: Boolean = false
+                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector
+                override fun geomKind(): GeomKind = GeomKind.AREA
+            }
+        )
 
         val svgPath = (svgRoot.content[0] as SvgGElement).children()[0] as SvgPathElement
         val svgPathStr = svgPath.d().get().toString().trim()
@@ -46,11 +57,6 @@ class AreaGeomTest {
         val svgPathExpectedStr = "M0 100 L0 100 L200 300 L400 0 L400 500 L200 500 L0 500 Z"
         assertEquals(svgPathExpectedStr, svgPathStr)
     }
-}
-
-class EmptyGeomContext : GeomContext by BogusContext {
-    override val flipped: Boolean = false
-    override val targetCollector: GeomTargetCollector = NullGeomTargetCollector
 }
 
 class DummyRoot : SvgRoot {
