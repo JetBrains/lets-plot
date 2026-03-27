@@ -36,23 +36,34 @@
 
         .page {
             min-height: calc(100vh - 48px);
+            max-width: 1080px;
+            margin: 0 auto;
         }
 
         .title {
-            margin: 0 0 8px;
+            margin: 0 0 6px;
+            font-size: 28px;
+            letter-spacing: -0.02em;
         }
 
         .status {
-            margin: 0 0 16px;
+            margin: 0 0 18px;
             color: var(--muted);
+            max-width: 72ch;
         }
 
         .controls {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-end;
-            gap: 12px;
-            margin-bottom: 16px;
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            align-items: start;
+            gap: 14px;
+            margin-bottom: 18px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
         }
 
         .actions {
@@ -66,6 +77,21 @@
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
+        }
+
+        .control-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-title {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
         }
 
         .button {
@@ -102,27 +128,29 @@
         }
 
         .pill-top {
-            align-self: flex-end;
+            align-self: start;
+            min-height: 42px;
+        }
+
+        .plot-toolbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 40px;
+            padding: 10px 12px 0;
         }
 
         .option-panel {
-            display: inline-grid;
-            grid-template-columns: repeat(5, max-content);
-            justify-items: center;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            border: 1px solid var(--border-strong);
-            border-radius: 18px;
-            background: var(--panel);
+            display: grid;
+            grid-template-columns: repeat(2, minmax(120px, 1fr));
+            gap: 8px 10px;
+            padding: 0;
         }
 
         .option-panel-title {
-            grid-column: 1 / -1;
-            justify-self: center;
-            padding: 0 6px 4px;
-            color: var(--muted);
-            font-size: 14px;
+            display: none;
         }
 
         .option-chip {
@@ -139,10 +167,13 @@
         .option-chip span {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             min-height: 36px;
             padding: 0 14px;
-            border: 1px solid transparent;
+            width: 100%;
+            border: 1px solid var(--border-strong);
             border-radius: 999px;
+            background: var(--panel);
             color: var(--text);
             transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
         }
@@ -158,17 +189,55 @@
             outline-offset: 2px;
         }
 
+        .plot-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
         #plot-host {
             display: block;
-            width: min(960px, calc(100vw - 48px));
+            width: 100%;
             height: min(70vh, 640px);
             min-width: 320px;
             min-height: 240px;
-            background: var(--panel);
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
+            background: linear-gradient(180deg, rgba(238, 242, 245, 0.6), rgba(255, 255, 255, 0.95));
             overflow: hidden;
             resize: both;
+        }
+
+        @media (max-width: 920px) {
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .pill-top {
+                justify-self: start;
+            }
+
+            .option-panel {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 560px) {
+            body {
+                padding: 16px;
+            }
+
+            .page {
+                min-height: calc(100vh - 32px);
+            }
+
+            .action-buttons {
+                width: 100%;
+            }
+
+            .action-buttons .button {
+                flex: 1 1 0;
+            }
         }
     </style>
 </head>
@@ -178,49 +247,57 @@
     <p id="status" class="status"></p>
 
     <div class="controls">
-        <div class="actions">
+        <div class="actions control-block">
+            <p class="control-title">Animation</p>
             <div class="action-buttons">
                 <button id="toggle-button" class="button button-primary" type="button">Run</button>
                 <button id="reset-button" class="button button-secondary" type="button">Reset</button>
             </div>
         </div>
 
-        <div class="option-panel" aria-label="Distribution">
-            <span class="option-panel-title">Distribution</span>
+        <div class="control-block">
+            <p class="control-title">Distribution</p>
+            <div class="option-panel" aria-label="Distribution">
+                <label class="option-chip">
+                    <input id="distribution-normal" type="radio" name="distribution" value="normal" checked>
+                    <span>Normal</span>
+                </label>
 
-            <label class="option-chip">
-                <input id="distribution-normal" type="radio" name="distribution" value="normal" checked>
-                <span>Normal</span>
-            </label>
+                <label class="option-chip">
+                    <input id="distribution-shifted" type="radio" name="distribution" value="shifted">
+                    <span>Shifted</span>
+                </label>
 
-            <label class="option-chip">
-                <input id="distribution-shifted" type="radio" name="distribution" value="shifted">
-                <span>Shifted Gaussian</span>
-            </label>
+                <label class="option-chip">
+                    <input id="distribution-bimodal" type="radio" name="distribution" value="bimodal">
+                    <span>Bimodal</span>
+                </label>
 
-            <label class="option-chip">
-                <input id="distribution-bimodal" type="radio" name="distribution" value="bimodal">
-                <span>Bimodal</span>
-            </label>
+                <label class="option-chip">
+                    <input id="distribution-uniform" type="radio" name="distribution" value="uniform">
+                    <span>Uniform</span>
+                </label>
 
-            <label class="option-chip">
-                <input id="distribution-uniform" type="radio" name="distribution" value="uniform">
-                <span>Uniform</span>
-            </label>
-
-            <label class="option-chip">
-                <input id="distribution-laplace" type="radio" name="distribution" value="laplace">
-                <span>Laplace</span>
-            </label>
+                <label class="option-chip">
+                    <input id="distribution-laplace" type="radio" name="distribution" value="laplace">
+                    <span>Laplace</span>
+                </label>
+            </div>
         </div>
 
-        <label class="pill pill-top" for="limits-checkbox">
-            <input id="limits-checkbox" type="checkbox" checked>
-            <span>Fixed axis limits</span>
-        </label>
+        <div class="control-block">
+            <p class="control-title">View</p>
+            <label class="pill pill-top" for="limits-checkbox">
+                <input id="limits-checkbox" type="checkbox" checked>
+                <span>Lock axes</span>
+            </label>
+        </div>
     </div>
 
-    <div id="plot-host"></div>
+    <section class="plot-card">
+        <div id="plot-toolbar" class="plot-toolbar"></div>
+        <div id="plot-host"></div>
+    </section>
 </main>
 <script src="demo-app-wasmjs.js"></script>
 </body>
