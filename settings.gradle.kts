@@ -70,9 +70,6 @@ project(":demo-plot-browser").projectDir = File("./demo/plot-browser")
 include("demo-app-wasmjs")
 project(":demo-app-wasmjs").projectDir = File("./demo/app-wasmjs")
 
-include("demo-app-js")
-project(":demo-app-js").projectDir = File("./demo/app-js")
-
 include("demo-export")
 project(":demo-export").projectDir = File("./demo/export")
 
