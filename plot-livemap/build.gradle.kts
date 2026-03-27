@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
+/*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
@@ -11,6 +20,9 @@ kotlin {
     jvm()
     js() {
         browser {}
+    }
+    wasmJs {
+        browser()
     }
 
     val ktorVersion = project.extra["ktor.version"] as String

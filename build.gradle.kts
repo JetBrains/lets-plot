@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -307,7 +307,9 @@ val multiPlatformCoreModulesForPublish = listOf(
     "plot-raster",
     "plot-stem",
     "plot-livemap",
-    "visual-testing"
+    "visual-testing",
+    "platf-w3c",
+    "wasmjs-package"
 )
 
 subprojects {
@@ -316,9 +318,6 @@ subprojects {
         // For `jvmSourcesJar` task:
         configure<KotlinMultiplatformExtension> {
             jvm()
-            wasmJs() {
-                browser()
-            }
         }
     }
 }
