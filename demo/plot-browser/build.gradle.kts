@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 @file:OptIn(ExperimentalWasmDsl::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -80,11 +85,9 @@ tasks.named("demoRunnerMainClasses") {
     val isDev = project.hasProperty("dev") || System.getenv("DEV") != null
 
     if (isDev) {
-        println("JVM Demo: Linking to JS/Wasm DEVELOPMENT bundles")
         dependsOn(":js-package:jsBrowserDevelopmentWebpack")
         dependsOn(":wasmjs-package:wasmJsBrowserDevelopmentWebpack")
     } else {
-        println("JVM Demo: Linking to JS/Wasm PRODUCTION bundles")
         dependsOn(":js-package:jsBrowserProductionWebpack")
         dependsOn(":wasmjs-package:wasmJsBrowserProductionWebpack")
     }
