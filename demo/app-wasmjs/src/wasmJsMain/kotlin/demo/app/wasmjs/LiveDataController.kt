@@ -18,7 +18,7 @@ internal class LiveDataController(
     private val densityPlotModel: DensityPlotModel,
     private val renderPlot: (MutableMap<String, Any>) -> Unit,
 ) {
-    private val status = document.getElementById("status") as HTMLParagraphElement
+    private val status = document.getElementById(STATUS_ID) as HTMLParagraphElement
     private val toggleButton = document.getElementById("toggle-button") as HTMLButtonElement
     private val resetButton = document.getElementById("reset-button") as HTMLButtonElement
     private val distributionInputs = document.querySelectorAll("input[name='distribution']")
@@ -55,6 +55,7 @@ internal class LiveDataController(
             input.onchange = {
                 if (input.checked) {
                     densityPlotModel.distribution = Distribution.fromId(input.value)
+                    renderCurrentPlot()
                     renderStatus()
                 }
             }
@@ -112,7 +113,7 @@ internal class LiveDataController(
         val mode = if (isPaused) "Paused" else "Running"
         val limits = if (densityPlotModel.useFixedLimits) "fixed limits" else "auto limits"
         status.textContent =
-            "Canvas embedded into the page. Live stream: $mode, ${densityPlotModel.samples.size} samples, ${densityPlotModel.distribution.label}, $limits."
+            "Live demo: $mode, ${densityPlotModel.samples.size} samples, ${densityPlotModel.distribution.label}, $limits."
         toggleButton.textContent = if (isPaused) "Run" else "Pause"
     }
 

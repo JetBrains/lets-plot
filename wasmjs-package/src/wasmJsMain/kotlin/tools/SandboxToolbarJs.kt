@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,10 +9,10 @@ package tools
 
 import FigureModelJs
 import kotlinx.browser.document
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleTool
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleToolModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToolSpecs
-import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 
@@ -22,13 +22,12 @@ import org.w3c.dom.HTMLElement
 class SandboxToolbarJs() {
     private val element: HTMLElement = document.createElement("div") as HTMLElement
 
-    private var figure: FigureModelJs? = null
+    private var figure: FigureModel? = null
     private val controller = FigureToolsControllerJs { figure }
 
     init {
         element.style.display = "flex"
         element.style.justifyContent = "center"
-//        element.style.alignItems = "center"
         element.style.padding = "10px"
         element.style.backgroundColor = "#f0f0f0"
 
@@ -48,12 +47,15 @@ class SandboxToolbarJs() {
         return element
     }
 
-    @Suppress("DuplicatedCode")
     fun bind(figure: FigureModelJs) {
+        bind(figure.asFigureModel())
+    }
+
+    @Suppress("DuplicatedCode")
+    fun bind(figure: FigureModel) {
         check(this.figure == null) { "Toolbar is already bound to another figure." }
         this.figure = figure
-        figure.onToolEvent { e: JsAny? ->
-            val event = dynamicObjectToMap(e)
+        figure.addToolEventCallback { event ->
             controller.handleToolFeedback(event)
         }
     }

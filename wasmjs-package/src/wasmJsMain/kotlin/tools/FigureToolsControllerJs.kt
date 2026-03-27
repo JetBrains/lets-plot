@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -7,23 +7,20 @@
 
 package tools
 
-import FigureModelJs
 import kotlinx.browser.window
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModel
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureToolsController
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.ToggleTool
-import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
 
 internal class FigureToolsControllerJs(
-    private val figure: () -> FigureModelJs?
+    private val figure: () -> FigureModel?
 ) : FigureToolsController() {
     override fun activateFigureTool(tool: ToggleTool) {
         if (!tool.active) {
             figure()?.activateInteractions(
                 origin = tool.name,
-                interactionSpecListJs = dynamicFromAnyQ(
-                    tool.interactionSpecList.map { it.toMap() }
-                )
+                interactionSpecList = tool.interactionSpecList
             ) ?: LOG.info { "The tools controller is unbound." }
         }
     }
@@ -36,7 +33,7 @@ internal class FigureToolsControllerJs(
     }
 
     override fun updateFigureView(specOverride: Map<String, Any>?) {
-        figure()?.updateView(dynamicFromAnyQ(specOverride))
+        figure()?.updateView(specOverride)
             ?: LOG.info { "The tools controller is unbound." }
     }
 

@@ -52,8 +52,47 @@
             max-width: 72ch;
         }
 
+        .demo-switcher {
+            display: inline-flex;
+            gap: 10px;
+            margin: 0 0 18px;
+            padding: 6px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.72);
+            box-shadow: var(--shadow);
+        }
+
+        .demo-link {
+            display: inline-flex;
+            align-items: center;
+            min-height: 38px;
+            padding: 0 14px;
+            border-radius: 999px;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .demo-link:hover {
+            background: rgba(15, 118, 110, 0.1);
+        }
+
+        .demo-link-active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .description {
+            margin: 0 0 18px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
         .controls {
-            display: grid;
+            display: none;
             grid-template-columns: auto minmax(0, 1fr) auto;
             align-items: start;
             gap: 14px;
@@ -132,25 +171,11 @@
             min-height: 42px;
         }
 
-        .plot-toolbar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            min-height: 40px;
-            padding: 10px 12px 0;
-        }
-
         .option-panel {
             display: grid;
             grid-template-columns: repeat(2, minmax(120px, 1fr));
             gap: 8px 10px;
             padding: 0;
-        }
-
-        .option-panel-title {
-            display: none;
         }
 
         .option-chip {
@@ -184,9 +209,14 @@
             color: white;
         }
 
-        .option-chip input:focus-visible + span {
-            outline: 2px solid color-mix(in srgb, var(--accent) 55%, white);
-            outline-offset: 2px;
+        .plot-toolbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 40px;
+            padding: 10px 12px 0;
         }
 
         .plot-card {
@@ -197,7 +227,11 @@
             overflow: hidden;
         }
 
-        #plot-host {
+        .plot-output {
+            width: 100%;
+        }
+
+        .plot-host {
             display: block;
             width: 100%;
             height: min(70vh, 640px);
@@ -212,14 +246,6 @@
             .controls {
                 grid-template-columns: 1fr;
             }
-
-            .pill-top {
-                justify-self: start;
-            }
-
-            .option-panel {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
         }
 
         @media (max-width: 560px) {
@@ -230,23 +256,20 @@
             .page {
                 min-height: calc(100vh - 32px);
             }
-
-            .action-buttons {
-                width: 100%;
-            }
-
-            .action-buttons .button {
-                flex: 1 1 0;
-            }
         }
     </style>
 </head>
 <body>
 <main class="page">
     <h2 class="title">Lets-Plot wasmJs</h2>
-    <p id="status" class="status"></p>
+    <nav class="demo-switcher" aria-label="Demo mode">
+        <a id="demo-simple-link" class="demo-link" href="?demo=simple">MonolithicWasmJs</a>
+        <a id="demo-live-link" class="demo-link" href="?demo=live">Live demo</a>
+    </nav>
+    <p class="status">Both demos are bundled into the same wasm/js application. No external Lets-Plot CDN script is used.</p>
+    <p id="status" class="description"></p>
 
-    <div class="controls">
+    <div id="controls" class="controls">
         <div class="actions control-block">
             <p class="control-title">Live data</p>
             <div class="action-buttons">
@@ -262,22 +285,18 @@
                     <input id="distribution-normal" type="radio" name="distribution" value="normal" checked>
                     <span>Normal</span>
                 </label>
-
                 <label class="option-chip">
                     <input id="distribution-shifted" type="radio" name="distribution" value="shifted">
                     <span>Shifted</span>
                 </label>
-
                 <label class="option-chip">
                     <input id="distribution-bimodal" type="radio" name="distribution" value="bimodal">
                     <span>Bimodal</span>
                 </label>
-
                 <label class="option-chip">
                     <input id="distribution-uniform" type="radio" name="distribution" value="uniform">
                     <span>Uniform</span>
                 </label>
-
                 <label class="option-chip">
                     <input id="distribution-laplace" type="radio" name="distribution" value="laplace">
                     <span>Laplace</span>
@@ -294,11 +313,17 @@
         </div>
     </div>
 
-    <section class="plot-card">
-        <div id="plot-toolbar" class="plot-toolbar"></div>
-        <div id="plot-host"></div>
-    </section>
+    <section id="demo-root" class="plot-card"></section>
 </main>
 <script src="demo-app-wasmjs.js"></script>
+<script>
+    const activeDemo = new URLSearchParams(window.location.search).get('demo') || 'simple';
+    const activeLink = document.getElementById(
+        activeDemo === 'simple' ? 'demo-simple-link' : 'demo-live-link'
+    );
+    if (activeLink) {
+        activeLink.classList.add('demo-link-active');
+    }
+</script>
 </body>
 </html>

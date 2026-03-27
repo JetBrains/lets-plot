@@ -32,6 +32,7 @@ kotlin {
                 implementation(project(":plot-stem"))
                 implementation(project(":plot-raster"))
                 implementation(project(":platf-w3c"))
+                implementation(project(":wasmjs-package"))
                 implementation(project(":demo-common-plot"))
                 implementation(project(":demo-and-test-shared"))
             }
