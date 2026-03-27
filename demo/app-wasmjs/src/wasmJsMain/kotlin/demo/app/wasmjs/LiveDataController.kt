@@ -14,19 +14,18 @@ import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.HTMLParagraphElement
 import kotlin.math.floor
 
-internal class AnimationController(
+internal class LiveDataController(
     private val densityPlotModel: DensityPlotModel,
     private val renderPlot: (MutableMap<String, Any>) -> Unit,
 ) {
     private val status = document.getElementById("status") as HTMLParagraphElement
     private val toggleButton = document.getElementById("toggle-button") as HTMLButtonElement
     private val resetButton = document.getElementById("reset-button") as HTMLButtonElement
-    private val distributionInputs =
-        document.querySelectorAll("input[name='distribution']")
+    private val distributionInputs = document.querySelectorAll("input[name='distribution']")
     private val limitsCheckbox = document.getElementById("limits-checkbox") as HTMLInputElement
 
     private var isPaused = true
-    private var animationFrameHandle: Int? = null
+    private var frameRequestHandle: Int? = null
     private var previousFrameTimeMs: Double? = null
     private var statusVersion = -1
 
@@ -73,11 +72,11 @@ internal class AnimationController(
     }
 
     private fun scheduleNextFrame() {
-        animationFrameHandle = window.requestAnimationFrame(::onAnimationFrame)
+        frameRequestHandle = window.requestAnimationFrame(::onFrame)
     }
 
-    private fun onAnimationFrame(frameTimeMs: Double) {
-        animationFrameHandle = null
+    private fun onFrame(frameTimeMs: Double) {
+        frameRequestHandle = null
 
         if (!isPaused) {
             val previousTime = previousFrameTimeMs
@@ -85,10 +84,10 @@ internal class AnimationController(
                 previousFrameTimeMs = frameTimeMs
             } else {
                 val elapsedMs = frameTimeMs - previousTime
-                val steps = floor(elapsedMs / UPDATE_PAUSE_MS).toInt()
+                val steps = floor(elapsedMs / FRAME_PAUSE_MS).toInt()
                 if (steps > 0) {
                     densityPlotModel.step(n = steps)
-                    previousFrameTimeMs = previousTime + steps * UPDATE_PAUSE_MS
+                    previousFrameTimeMs = previousTime + steps * FRAME_PAUSE_MS
                     renderCurrentPlot()
                     renderStatus()
                 }
@@ -113,7 +112,7 @@ internal class AnimationController(
         val mode = if (isPaused) "Paused" else "Running"
         val limits = if (densityPlotModel.useFixedLimits) "fixed limits" else "auto limits"
         status.textContent =
-            "Canvas embedded into the page. Animation: $mode, ${densityPlotModel.samples.size} samples, ${densityPlotModel.distribution.label}, $limits."
+            "Canvas embedded into the page. Live stream: $mode, ${densityPlotModel.samples.size} samples, ${densityPlotModel.distribution.label}, $limits."
         toggleButton.textContent = if (isPaused) "Run" else "Pause"
     }
 
@@ -126,4 +125,4 @@ internal class AnimationController(
     }
 }
 
-private const val UPDATE_PAUSE_MS = 16.0
+private const val FRAME_PAUSE_MS = 16.0

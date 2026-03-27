@@ -15,6 +15,18 @@ import org.jetbrains.letsPlot.raster.view.PlotCanvasFigureModel
 import org.w3c.dom.HTMLDivElement
 
 fun main() {
+    // HTML setup
+    val canvasHost = document.getElementById(PLOT_HOST_ID) as HTMLDivElement
+    val toolbarHost = document.getElementById(TOOLBAR_HOST_ID) as HTMLDivElement
+    val sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false)
+
+    // Canvas view setup
+    val domCanvasView = DomCanvasView().apply {
+        setSize(MIN_PLOT_WIDTH, MIN_PLOT_HEIGHT)
+    }
+    domCanvasView.attachTo(canvasHost)
+
+    // Data setup
     val densityPlotModel = DensityPlotModel()
     densityPlotModel.step(n = 600)
 
@@ -23,29 +35,19 @@ fun main() {
     }
     val initialProcessedSpec = MonolithicCommon.processRawSpecs(initialPlotSpec)
 
+    // Canvas view setup
     val plotDrawable = PlotCanvasDrawable()
     plotDrawable.update(
         processedSpec = initialProcessedSpec,
-        sizingPolicy = SizingPolicy.fitContainerSize(preserveAspectRatio = false)
+        sizingPolicy = sizingPolicy
     ) { }
+    domCanvasView.content = plotDrawable
 
-    val domCanvasView = DomCanvasView().apply {
-        content = plotDrawable
-        setSize(MIN_PLOT_WIDTH, MIN_PLOT_HEIGHT)
-    }
-
-    val canvasHost = document.getElementById(PLOT_HOST_ID) as HTMLDivElement
-    val toolbarHost = document.getElementById(TOOLBAR_HOST_ID) as HTMLDivElement
-    domCanvasView.attachTo(canvasHost)
-
+    // Plot state setup
     var lastWidth = 0
     var lastHeight = 0
     var figureModel: PlotCanvasFigureModel? = null
     var toolbar: DomFigureToolbar? = null
-
-    fun sizingPolicy(): SizingPolicy {
-        return SizingPolicy.fitContainerSize(preserveAspectRatio = false)
-    }
 
     fun updateToolbar(processedSpec: Map<String, Any>) {
         figureModel?.dispose()
@@ -61,7 +63,7 @@ fun main() {
         val nextFigureModel = PlotCanvasFigureModel(
             plotDrawable = plotDrawable,
             processedSpec = processedSpec,
-            sizingPolicyProvider = ::sizingPolicy
+            sizingPolicyProvider = { sizingPolicy }
         )
         val nextToolbar = DomFigureToolbar(toolbarHost).apply {
             render()
@@ -76,7 +78,7 @@ fun main() {
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
         plotDrawable.update(
             processedSpec = processedSpec,
-            sizingPolicy = sizingPolicy()
+            sizingPolicy = sizingPolicy
         ) { }
         updateToolbar(processedSpec)
     }
@@ -95,8 +97,9 @@ fun main() {
     ResizeObserver(::resizePlot).observe(canvasHost)
     updateToolbar(initialProcessedSpec)
 
-    val animationController = AnimationController(densityPlotModel, ::renderPlot)
-    animationController.initControls()
+    // Live data controller setup
+    val liveDataController = LiveDataController(densityPlotModel, ::renderPlot)
+    liveDataController.initControls()
 }
 
 private external class ResizeObserver(callback: () -> Unit) {
