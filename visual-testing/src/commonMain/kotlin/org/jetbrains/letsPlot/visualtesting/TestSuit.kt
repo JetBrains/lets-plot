@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.visualtesting
 
 import org.jetbrains.letsPlot.commons.values.Bitmap
@@ -17,7 +22,7 @@ internal abstract class TestSuit {
 
     internal fun runTests(): Int {
         var failedTestsCount = 0
-        println("'$name' - running ${tests.size} tests...")
+        println("'$name' - running ${tests.size} tests...\n")
         for (test in tests) {
             val res = runCatching {
                 val expectedFileName = test.name.replace(" ", "_").replace(".", "_")
@@ -25,10 +30,10 @@ internal abstract class TestSuit {
                 imageComparer.assertBitmapEquals(expectedFileName, actual)
             }
             if (res.isFailure) {
-                println("[FAILED]: '${test.name}' - ${res.exceptionOrNull()?.message}")
+                println("[FAILED]: '${test.name}' - ${res.exceptionOrNull()?.message}\n")
                 failedTestsCount++
             } else {
-                println("[PASSED]: '${test.name}'")
+                println("[PASSED]: '${test.name}'\n")
             }
         }
 

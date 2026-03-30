@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 config.output = config.output || {};
 config.output.library = "LetsPlot";
 config.output.libraryTarget = "window";

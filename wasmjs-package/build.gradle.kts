@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 @file:OptIn(ExperimentalWasmDsl::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -52,6 +57,11 @@ kotlin {
 
             }
         }
+        wasmJsTest {
+            dependencies {
+                implementation(project(":visual-testing"))
+            }
+        }
     }
 }
 
@@ -59,10 +69,50 @@ kotlin {
 val buildDir = project.layout.buildDirectory.get().asFile.path as String // 'project.buildDir' has been deprecated.
 val prodDistDir = "${buildDir}/dist/wasmJs/productionExecutable/"
 val jsArtifactName = "lets-plot.js"
+val wasmJsTestExpectedImagesDir = project.file("src/wasmJsTest/resources/expected-images")
+
+val updateWasmJsTestImageIndexes = tasks.register("updateWasmJsTestImageIndexes") {
+    inputs.dir(wasmJsTestExpectedImagesDir)
+    outputs.dir(wasmJsTestExpectedImagesDir)
+
+    doLast {
+        if (!wasmJsTestExpectedImagesDir.exists()) {
+            return@doLast
+        }
+
+        wasmJsTestExpectedImagesDir
+            .walkTopDown()
+            .filter { it.isDirectory }
+            .forEach { dir ->
+                val pngFileNames = dir.listFiles()
+                    ?.asSequence()
+                    ?.filter { it.isFile && it.extension == "png" }
+                    ?.map { it.name }
+                    ?.sorted()
+                    ?.toList()
+                    ?: emptyList()
+
+                val indexFile = dir.resolve("index.txt")
+                when {
+                    pngFileNames.isNotEmpty() -> {
+                        indexFile.writeText(pngFileNames.joinToString(separator = "\n", postfix = "\n"))
+                    }
+
+                    indexFile.exists() -> {
+                        indexFile.delete()
+                    }
+                }
+            }
+    }
+}
 
 tasks.register<Copy>("copyForPublish") {
     dependsOn(tasks.named("wasmJsBrowserProductionWebpack"))
     from("${prodDistDir}${jsArtifactName}")
     rename(jsArtifactName, "lets-plot.min.js")
     into("${rootDir}/wasmjs-package/distr/")
+}
+
+tasks.named("wasmJsTestProcessResources") {
+    dependsOn(updateWasmJsTestImageIndexes)
 }

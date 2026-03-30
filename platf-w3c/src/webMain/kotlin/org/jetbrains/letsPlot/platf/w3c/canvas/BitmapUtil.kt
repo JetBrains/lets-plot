@@ -11,11 +11,13 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.khronos.webgl.Uint8ClampedArray
 import org.khronos.webgl.get
-import org.khronos.webgl.set
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.ImageData
 import kotlin.js.ExperimentalWasmJsInterop
+
+@JsFun("(arr, index, value) => { arr[index] = value; }")
+private external fun setClampedArrayValue(arr: Uint8ClampedArray, index: Int, value: Int)
 
 internal object BitmapUtil {
     fun fromHTMLCanvasElement(image: HTMLCanvasElement): Bitmap {
@@ -46,10 +48,10 @@ internal object BitmapUtil {
             val g = (pixel ushr 8) and 0xFF
             val b = pixel and 0xFF
 
-            data[i++] = r.toByte()
-            data[i++] = g.toByte()
-            data[i++] = b.toByte()
-            data[i++] = a.toByte()
+            setClampedArrayValue(data, i++, r)
+            setClampedArrayValue(data, i++, g)
+            setClampedArrayValue(data, i++, b)
+            setClampedArrayValue(data, i++, a)
         }
 
         val imageData = ImageData(data, bitmap.width, bitmap.height)

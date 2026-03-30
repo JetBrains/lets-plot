@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.platf.w3c.dom.css.setWidth
 import org.w3c.dom.CanvasImageSource
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
+import org.w3c.dom.Image
 import kotlin.js.ExperimentalWasmJsInterop
 import kotlin.math.ceil
 
@@ -40,7 +41,15 @@ internal class DomCanvas private constructor(
 
         override val bitmap: Bitmap
             get() {
-                TODO("DomSnapshot.toBitmap() is not implemented yet")
+                return when (val imageSource = canvasElement) {
+                    is HTMLCanvasElement -> BitmapUtil.fromHTMLCanvasElement(imageSource)
+                    is Image -> {
+                        val canvas = createNativeCanvas(size, pixelRatio = 1.0)
+                        canvas.context2d.drawImage(imageSource, 0.0, 0.0)
+                        BitmapUtil.fromHTMLCanvasElement(canvas)
+                    }
+                    else -> error("Unsupported canvas image source: ${imageSource::class.simpleName}")
+                }
             }
 
         override fun copy(): Canvas.Snapshot {

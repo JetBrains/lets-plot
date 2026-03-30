@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -19,6 +19,10 @@ class ImageComparer(
     private val suffix: String = "",
     private val silent: Boolean = false
 ) {
+    private fun reportLocation(path: String): String {
+        return if ("://" in path) path else "file://$path"
+    }
+
     private fun log(message: Any) {
         if (!silent) {
             println(message)
@@ -38,8 +42,8 @@ class ImageComparer(
                 log(it)
                 return
             }
-            log("Failed to read expected image.\n${it.message}\n Actual image saved to file://${bitmapIO.getActualFileReportPath(actualFileName)}")
-            error("Failed to read expected image.\n${it.message}\nActual image saved to 'file://${bitmapIO.getActualFileReportPath(actualFileName)}'")
+            log("Failed to read expected image.\n${it.message}\n Actual image saved to ${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}")
+            error("Failed to read expected image.\n${it.message}\nActual image saved to '${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}'")
         }
 
         val diffBitmap = createDiffImage(expectedBitmap, actualBitmap)
@@ -52,9 +56,9 @@ class ImageComparer(
 
             error(
                 """Image mismatch.
-                |    Diff: file://${bitmapIO.getDiffFileReportPath(diffFilePath)}
-                |    Actual: file://${bitmapIO.getActualFileReportPath(actualFileName)}
-                |    Expected: file://${bitmapIO.getExpectedFileReportPath(expectedFileName)}""".trimMargin()
+                |    Diff: ${reportLocation(bitmapIO.getDiffFileReportPath(diffFilePath))}
+                |    Actual: ${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}
+                |    Expected: ${reportLocation(bitmapIO.getExpectedFileReportPath(expectedFileName))}""".trimMargin() + "\n"
             )
         } else {
             log("Image comparison passed: $expectedFileName")
