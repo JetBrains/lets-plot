@@ -47,7 +47,7 @@ abstract class GeomBase : Geom {
 
     fun reportDroppedPoints(count: Int, ctx: GeomContext) {
         if (!ctx.removeNaMessages() && count > 0) {
-            ctx.consumeMessages(listOf("${ctx.geomKind().name.lowercase()}: removed $count data point(s)"))
+            ctx.consumeMessages(listOf("${ctx.geomKind().name.lowercase()}: Removed $count data point(s) containing missing values or values outside the scale range."))
         }
     }
 
@@ -60,8 +60,6 @@ abstract class GeomBase : Geom {
     )
 
     companion object {
-        private const val SHOW_NA_MESSAGES = true
-
         fun wrap(slimGroup: SvgSlimGroup): SvgGElement {
             val g = SvgGElement()
             g.isPrebuiltSubtree = true
