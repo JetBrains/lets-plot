@@ -7,30 +7,38 @@ package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.GradientUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.ContinuousOnlyMapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults.Gradient2
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 import kotlin.math.max
 import kotlin.math.min
 
 class ColorGradient2MapperProvider(
-    low: Color?, mid: Color?, high: Color?, midpoint: Double?, naValue: Color
-) : ContinuousOnlyMapperProvider<Color>(naValue) {
+    low: Color?,
+    mid: Color?,
+    high: Color?,
+    midpoint: Double?,
+    naValue: Color
+) : ContinuousOnlyMapperProvider<Color>(naValue),
+    PaletteGenerator {
 
     private val myLow: Color
     private val myMid: Color
     private val myHigh: Color
-    private val myMidpoint: Double?
+    private val myMidpoint: Double
 
     init {
-        myLow = low ?: DEF_GRADIENT_LOW
-        myMid = mid ?: DEF_GRADIENT_MID
-        myHigh = high ?: DEF_GRADIENT_HIGH
+        myLow = low ?: Gradient2.DEF_LOW
+        myMid = mid ?: Gradient2.DEF_MID
+        myHigh = high ?: Gradient2.DEF_HIGH
         myMidpoint = midpoint ?: 0.0
     }
 
@@ -38,14 +46,22 @@ class ColorGradient2MapperProvider(
         domain: DoubleSpan,
         trans: ContinuousTransform
     ): GuideMapper<Color> {
+        return createContinuousMapper(domain, trans, myMidpoint)
+    }
+
+    private fun createContinuousMapper(
+        domain: DoubleSpan,
+        trans: ContinuousTransform,
+        midpoint: Double,
+    ): GuideMapper<Color> {
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
 
-        val lowDomain = DoubleSpan(domain.lowerEnd, max(myMidpoint!!, domain.lowerEnd))
-        val highDomain = DoubleSpan(min(myMidpoint, domain.upperEnd), domain.upperEnd)
+        val lowDomain = DoubleSpan(domain.lowerEnd, max(midpoint, domain.lowerEnd))
+        val highDomain = DoubleSpan(min(midpoint, domain.upperEnd), domain.upperEnd)
 
-        val lowMapper = ColorMapper.gradient(lowDomain, myLow, myMid, naValue)
-        val highMapper = ColorMapper.gradient(highDomain, myMid, myHigh, naValue)
+        val lowMapper = GradientUtil.gradient(lowDomain, myLow, myMid, naValue)
+        val highMapper = GradientUtil.gradient(highDomain, myMid, myHigh, naValue)
 
         val rangeMap = mapOf(
             lowDomain to lowMapper,
@@ -83,10 +99,14 @@ class ColorGradient2MapperProvider(
         return GuideMappers.asContinuous(scaleMapper)
     }
 
-    companion object {
-        // https://ggplot2.tidyverse.org/current/scale_gradient.html
-        private val DEF_GRADIENT_LOW = Color.parseHex("#964540") // muted("red")
-        private val DEF_GRADIENT_MID = Color.WHITE
-        private val DEF_GRADIENT_HIGH = Color.parseHex("#3B3D96") // muted("blue")
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
+
+        // When generating a palette, the user-defined midpoint must be in range -1..1
+        require(myMidpoint in -1.0..1.0) {
+            "Midpoint for palette generation must be in range [-1, 1]: $myMidpoint"
+        }
+        val midpoint = (myMidpoint + 1) / 2.0 * (colorCount - 1)
+        return createContinuousMapper(domain, Transforms.IDENTITY, midpoint)
     }
 }

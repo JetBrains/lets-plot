@@ -18,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.findVariableOrFail
 import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.MAP_JOIN
-import org.jetbrains.letsPlot.core.spec.Option.Mapping.toAes
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GEOMETRY
@@ -42,18 +41,21 @@ class GeoConfig(
     mappingOptions: Map<*, *>
 ) {
     val dataAndCoordinates: DataFrame
-    val mappings: Map<Aes<*>, Variable>
+    val mappings: Map<Aes<*>, Variable> // user mappings from layer + auto generated geo mappings
+    val geoMappings: Map<Aes<*>, Variable> // only geo mappings
 
     init {
         if (layerOptions.has(MAP_DATA_META, GDF) || layerOptions.has(DATA_META, GDF)) {
             GeoDataFrameProcessor(geomKind, dataFrame, layerOptions, mappingOptions).let {
                 dataAndCoordinates = it.dataAndCoordinates
                 mappings = it.mappings
+                geoMappings = it.geoMappings
             }
         } else if (layerOptions.has(MAP_DATA_META, GEOREFERENCE)) {
             GeoReferenceProcessor(dataFrame, layerOptions, mappingOptions).let {
                 dataAndCoordinates = it.processedDataFrame
                 mappings = it.processedMappings
+                geoMappings = it.geoMappings
             }
         } else {
             throw IllegalStateException()
@@ -62,6 +64,7 @@ class GeoConfig(
 
 
     companion object {
+        private val POINT_GEOMS = setOf(POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, PIE, POINT_DENSITY)
         const val GEO_ID = "__geo_id__"
         const val POINT_X = "lon"
         const val POINT_Y = "lat"
@@ -71,19 +74,35 @@ class GeoConfig(
         const val RECT_YMAX = "latmax"
         const val MAP_JOIN_REQUIRED_MESSAGE = "map_join is required when both data and map parameters used"
 
-        fun isApplicable(layerOptions: Map<*, *>, combinedMappings: Map<*, *>, isMapPlot: Boolean): Boolean {
-            if (!isMapPlot && combinedMappings.keys
-                    .mapNotNull { it as? String }
-                    .mapNotNull { runCatching { toAes(it) }.getOrNull() } // skip "group" or invalid names
-                    .any(Aes.Companion::isPositional)
-            ) {
+        fun isApplicable(geomKind: GeomKind, layerOptions: Map<*, *>, clientSide: Boolean): Boolean {
+            val dataGeometry = layerOptions.getString(DATA_META, GDF, GEOMETRY)
+
+            // Stats that heavily rebuild data (like bin) may drop the geometry column.
+            // In this case consider geo config as non-applicable.
+            if (dataGeometry != null && !layerOptions.has(DATA, dataGeometry)) {
                 return false
             }
 
-            return layerOptions.has(MAP_DATA_META, GDF, GEOMETRY) ||
+            val hasGeoData = layerOptions.has(MAP_DATA_META, GDF, GEOMETRY) ||
                     layerOptions.has(DATA_META, GDF, GEOMETRY) ||
                     layerOptions.has(MAP_DATA_META, GEOREFERENCE) ||
                     layerOptions.has(DATA_META, GEOREFERENCE)
+
+            if (!hasGeoData) {
+                return false
+            }
+
+            return if (clientSide) {
+                // front end
+                // Merge non-point geo data (path and polygon) on the front end - needed for drawing
+                // Point geometries already merged on the back end - don't allow merging again
+                geomKind !in POINT_GEOMS
+            } else {
+                // back end
+                // Merge point geo data on the back end - needed for grouping and stat calculations
+                // Pass effectively encoded path and polygon geo data to the front
+                geomKind in POINT_GEOMS
+            }
         }
 
         fun isGeoDataframe(layerOptions: Map<*, *>, gdfRole: String): Boolean {
@@ -107,6 +126,7 @@ class GeoReferenceProcessor(
     layerOptions: Map<*, *>,
     mappingOptions: Map<*, *>
 ) {
+    val geoMappings: Map<Aes<*>, Variable>
     val processedDataFrame: DataFrame
     val processedMappings: Map<Aes<*>, Variable>
 
@@ -174,8 +194,8 @@ class GeoReferenceProcessor(
             .put(idVar, mapids)
             .build()
 
-        processedMappings =
-            createAesMapping(processedDataFrame, mappingOptions + mapOf(Aes.MAP_ID.name to GeoReference.Columns.ID))
+        geoMappings = createAesMapping(processedDataFrame, mapOf(Aes.MAP_ID.name to GeoReference.Columns.ID))
+        processedMappings = createAesMapping(processedDataFrame, mappingOptions) + geoMappings
     }
 }
 
@@ -186,7 +206,8 @@ class GeoDataFrameProcessor(
     mappingOptions: Map<*, *>
 ) {
     val dataAndCoordinates: DataFrame
-    val mappings: Map<Aes<*>, Variable>
+    val mappings: Map<Aes<*>, Variable> // including geoMappings
+    val geoMappings: Map<Aes<*>, Variable>
 
     init {
 
@@ -250,14 +271,15 @@ class GeoDataFrameProcessor(
 
         val coordinatesCollector = when (geomKind) {
             MAP, POLYGON -> BoundaryCoordinatesCollector(dataFrame, geometries)
-            LIVE_MAP, POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, PIE -> PointCoordinatesCollector(dataFrame, geometries)
+            LIVE_MAP, POINT, TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, POINT_DENSITY, PIE -> PointCoordinatesCollector(dataFrame, geometries)
             RECT -> BboxCoordinatesCollector(dataFrame, geometries)
             PATH -> PathCoordinatesCollector(dataFrame, geometries)
             else -> error("Unsupported geom: $geomKind")
         }
 
         dataAndCoordinates = coordinatesCollector.buildDataFrame()
-        mappings = createAesMapping(dataAndCoordinates, mappingOptions + coordinatesCollector.mappings)
+        geoMappings = createAesMapping(dataAndCoordinates, coordinatesCollector.mappings)
+        mappings = createAesMapping(dataAndCoordinates, mappingOptions) + geoMappings
     }
 
 }

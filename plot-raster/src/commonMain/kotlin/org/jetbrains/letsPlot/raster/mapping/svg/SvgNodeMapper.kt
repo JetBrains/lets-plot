@@ -9,9 +9,9 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MappingContext
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.raster.shape.Element
+import org.jetbrains.letsPlot.raster.scene.Node
 
-internal open class SvgNodeMapper<SourceT : SvgNode, TargetT : Element>(
+internal open class SvgNodeMapper<SourceT : SvgNode, TargetT : Node>(
     source: SourceT,
     target: TargetT,
     protected val peer: SvgCanvasPeer

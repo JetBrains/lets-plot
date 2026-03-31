@@ -8,11 +8,11 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.colElements
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.colPlotElements
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToCol
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToRow
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.rowElements
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.rowPlotElements
 
 class CompositeFigureGridAlignmentLayout(
     ncols: Int,
@@ -47,7 +47,7 @@ class CompositeFigureGridAlignmentLayout(
         // Compute "inner" size for each row and colunm
         val vGeomSpanByRow = ArrayList<DoubleSpan?>()
         for (row in 0 until nrows) {
-            val rowElements = rowElements(row, elementsLayoutedByBounds, ncols, inclideComposite = false)
+            val rowElements = rowPlotElements(row, elementsLayoutedByBounds, ncols)
             val vSpan = rowElements
                 .filterNotNull()
                 .map {
@@ -60,7 +60,7 @@ class CompositeFigureGridAlignmentLayout(
 
         val hGeomSpanByCol = ArrayList<DoubleSpan?>()
         for (col in 0 until ncols) {
-            val colElements = colElements(col, elementsLayoutedByBounds, ncols, inclideComposite = false)
+            val colElements = colPlotElements(col, elementsLayoutedByBounds, ncols)
             val hSpan = colElements
                 .filterNotNull()
                 .map {
@@ -75,7 +75,7 @@ class CompositeFigureGridAlignmentLayout(
             if (buildInfo == null) {
                 null
             } else if (buildInfo.isComposite) {
-                // Do not layoute composite figure by "geom bounds".
+                // Do not lay out a composite figure by "geom bounds".
                 buildInfo
             } else {
                 val row = indexToRow(index, ncols)

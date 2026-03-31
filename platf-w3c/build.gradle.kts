@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -7,12 +11,17 @@ plugins {
     kotlin("multiplatform")
 }
 
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val kotlinxBrowserVersion = project.extra["kotlinx.browser.version"] as String
 
 kotlin {
     js() {
+        browser {}
+    }
+
+    wasmJs() {
         browser {}
     }
 
@@ -23,7 +32,7 @@ kotlin {
                 implementation(project(":datamodel"))
                 implementation(project(":canvas"))
 
-                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 
@@ -39,6 +48,19 @@ kotlin {
         named("jsTest") {
             dependencies {
                 implementation(kotlin("test-js"))
+            }
+        }
+        webMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:${kotlinxBrowserVersion}")
+
+            }
+        }
+
+        wasmJsMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:${kotlinxBrowserVersion}")
+
             }
         }
     }

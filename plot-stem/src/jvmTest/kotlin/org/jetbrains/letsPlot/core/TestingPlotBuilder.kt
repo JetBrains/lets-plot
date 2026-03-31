@@ -70,7 +70,12 @@ internal object TestingPlotBuilder {
             }
         }
 
-        val assembler = PlotConfigFrontendUtil.createPlotAssembler(config)
+        val assembler = PlotConfigFrontendUtil.createPlotAssembler(
+            config,
+            sharedContinuousDomainX = null,
+            sharedContinuousDomainY = null,
+            detachedLegendsCollector = null,
+        )
         val layoutInfo = assembler.layoutByOuterSize(Defaults.DEF_PLOT_SIZE)
         return assembler.createPlot(layoutInfo)
     }

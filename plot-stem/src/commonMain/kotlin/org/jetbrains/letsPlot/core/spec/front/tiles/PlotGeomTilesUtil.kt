@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.front.tiles
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
@@ -16,15 +15,16 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionUtil
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler.Companion.extractExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.spec.config.GeoConfig
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
-import org.jetbrains.letsPlot.core.spec.front.GeomInteractionUtil
 
 internal object PlotGeomTilesUtil {
 
@@ -92,24 +92,39 @@ internal object PlotGeomTilesUtil {
                 // marginal layer doesn't have interactions
                 null
             } else {
-                val otherLayerWithTooltips = layerConfigs
-                    .filterIndexed { index, _ -> index != layerIndex }
-                    .any { layer ->
-                        // Assume that a layer has tooltips
-                        // if it has mapping and tooltips are not hidden,
-                        // or if tooltips are explicitly specified
-                        (layer.varBindings.isNotEmpty() && !layer.tooltips.hideTooltips())
-                                || !layer.tooltips.tooltipLinePatterns.isNullOrEmpty()
-                    }
+                val otherLayers = layerConfigs.filterIndexed { index, _ -> index != layerIndex }
 
-                GeomInteractionUtil.configGeomTargets(
-                    layerConfig,
-                    scaleMapByLayer[layerIndex],
-                    otherLayerWithTooltips,
-                    isLiveMap,
-                    coordProvider.isPolar,
-                    theme
-                )
+                val otherLayerWithTooltips = when {
+                    // Same layers will have same lookup strategy and will be compatible - keep their lookup strategy
+                    otherLayers.all { layer -> layer.geomProto.geomKind == layerConfig.geomProto.geomKind } -> false
+
+                    // Assume that a layer has tooltips
+                    // if it has mapping and tooltips are not hidden,
+                    // or if tooltips are explicitly specified
+                    else -> otherLayers.any { layer ->
+                        (layer.varBindings.isNotEmpty() && !layer.tooltips.hideTooltips())
+                                || !layer.tooltips.tooltipLinePatterns.isNullOrEmpty() }
+                }
+
+                if (layerConfig.tooltips == TooltipSpecification.NONE) {
+                    null
+                } else {
+                    GeomInteractionUtil.createGeomInteractionBuilder(
+                        layerConfig.varBindings.associate { it.aes to it.variable },
+                        scaleMapByLayer[layerIndex],
+                        otherLayerWithTooltips,
+                        isLiveMap,
+                        coordProvider.isPolar,
+                        theme,
+                        layerConfig.geomProto.geomKind,
+                        layerConfig.statKind,
+                        layerConfig.tooltips,
+                        layerConfig.isYOrientation,
+                        layerConfig.constantsMap,
+                        layerConfig.renderedAes,
+                        layerConfig::getOriginalVariableName
+                    ).build()
+                }
             }
         }
     }
@@ -120,8 +135,9 @@ internal object PlotGeomTilesUtil {
         tz: TimeZone?
     ): Map<Any, (Any) -> String> {
         val expFormat = extractExponentFormat(exponentFormat)
-        val dataFormatters =
-            layerConfig.dtypesByVarName.mapValues { (_, dtype) -> FormatterUtil.byDataType(dtype, expFormat, tz) }
+        val dataFormatters = layerConfig.dtypeByVarName.mapValues { (_, dtype) ->
+            FormatterUtil.byDataType(dtype, expFormat, tz)
+        }
         val statFormatters = Stats.VARS.mapValues { FormatterUtil.byDataType(DataType.FLOATING, expFormat, tz) }
         val varFormatters = dataFormatters + statFormatters
 
@@ -135,7 +151,7 @@ internal object PlotGeomTilesUtil {
             }
 
         val labelFormat = layerConfig.labelFormat?.let {
-            val fmt: (Any) -> String = StringFormat.forOneArg(it, tz = tz)::format
+            val fmt: (Any) -> String = FormatterUtil.byPattern(it, tz = tz)::format
             mapOf(Aes.LABEL to fmt)
         }
 
@@ -179,8 +195,8 @@ internal object PlotGeomTilesUtil {
             layerBuilder.addConstantAes(aes as Aes<Any>, constantAesMap[aes]!!)
         }
 
-        if (layerConfig.hasExplicitGrouping()) {
-            layerBuilder.groupingVarName(layerConfig.explicitGroupingVarName!!)
+        if (layerConfig.explicitGroupingVarNames != null) {
+            layerBuilder.groupingVarNames(layerConfig.explicitGroupingVarNames)
         }
 
         // no map_join, data=gdf or map=gdf - group values and geometries by GEO_ID

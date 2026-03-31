@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -96,8 +96,8 @@ object DataProcessing {
 
                 val curGroupSizeAfterStat = statData.rowCount()
 
-                // update 'stat group' to avoid collisions as stat is applied independently to each original data group
                 if (statData.has(Stats.GROUP)) {
+                    // update 'stat group' to avoid collisions as stat is applied independently to each original data group
                     val range = statData.range(Stats.GROUP)
                     if (range != null) {
                         val start = lastStatGroupEnd + 1
@@ -112,12 +112,15 @@ object DataProcessing {
                         }
                     }
                 } else {
-                    // If stat has ..group.. then groupingVar won't be checked, so no need to update.
-                    val groupingVar = groupingContext.optionalGroupingVar
-                    if (groupingVar != null) {
-                        val size = statData[statData.variables().first()].size
-                        val v = d[groupingVar][0]
-                        statData = statData.builder().put(groupingVar, List(size) { v }).build()
+                    // Just recreate grouping vars.
+                    if (groupingContext.groupingVariables.isNotEmpty()) {
+                        val size = statData.rowCount()
+                        val builder = statData.builder()
+                        groupingContext.groupingVariables.forEach { groupingVar ->
+                            val v = d[groupingVar][0]
+                            builder.put(groupingVar, List(size) { v })
+                        }
+                        statData = builder.build()
                     }
                 }
 
@@ -233,7 +236,16 @@ object DataProcessing {
         }
 
         // generate new series for input variables
-        fun newSerieForVariable(variable: Variable): List<Any?> {
+        fun newSerieForVariable(variable: Variable, indices: List<Int?>?): List<Any?> {
+            if (indices != null) {
+                val series = data[variable]
+                return indices.map { i ->
+                    when (i) {
+                        null -> null
+                        else -> series[i]
+                    }
+                }
+            }
             val value = when (data.isNumeric(variable)) {
                 true -> SeriesUtil.mean(data.getNumeric(variable), defaultValue = null)
                 false -> SeriesUtil.firstNotNull(data[variable], defaultValue = null)
@@ -242,6 +254,12 @@ object DataProcessing {
         }
 
         val newInputSeries = HashMap<Variable, List<Any?>>()
+        val indices = if (statData.has(Stats.INDEX)) {
+            @Suppress("UNCHECKED_CAST")
+            statData[Stats.INDEX] as? List<Int?>
+        } else {
+            null
+        }
         for (binding in bindings) {
             val variable = binding.variable
             if (variable.isStat || facetVariables.contains(variable)) {
@@ -255,7 +273,7 @@ object DataProcessing {
             } else {
                 // Do not override series obtained via 'default stat var'
                 if (!newInputSeries.containsKey(variable)) {
-                    newInputSeries[variable] = newSerieForVariable(variable)
+                    newInputSeries[variable] = newSerieForVariable(variable, indices)
                 }
             }
         }
@@ -264,7 +282,7 @@ object DataProcessing {
         for (varName in varsWithoutBinding.filterNot(Stats::isStatVar)) {
             val variable = DataFrameUtil.findVariableOrFail(data, varName)
             if (!newInputSeries.containsKey(variable)) {
-                newInputSeries[variable] = newSerieForVariable(variable)
+                newInputSeries[variable] = newSerieForVariable(variable, indices)
             }
         }
 
@@ -334,7 +352,7 @@ object DataProcessing {
                         // However, we can make them work by rounding stat values to integers,
                         // which allows the inverse transform to be applied.
                         serie.map { v ->
-                            v?.toDouble()?.let { if (v.isFinite()) v.roundToInt().toDouble() else v }
+                            v?.let { if (v.isFinite()) v.roundToInt().toDouble() else v }
                         }
                     } else {
                         serie
@@ -454,6 +472,25 @@ object DataProcessing {
         // 'origin' discrete vars (but not positional)
         return variable.isOrigin && !Aes.isPositional(aes) && data.isDiscrete(
             variable
+        )
+    }
+
+    fun applyStatTest(
+        data: DataFrame,
+        stat: Stat,
+        bindings: List<VarBinding>,
+        transformByAes: Map<Aes<*>, Transform>,
+        statCtx: StatContext
+    ): DataFrame {
+        return applyStat(
+            data = data,
+            stat = stat,
+            bindings = bindings,
+            transformByAes = transformByAes,
+            facetVariables = emptyList(),
+            statCtx = statCtx,
+            varsWithoutBinding = emptyList(),
+            compMessageConsumer = { _ -> }
         )
     }
 

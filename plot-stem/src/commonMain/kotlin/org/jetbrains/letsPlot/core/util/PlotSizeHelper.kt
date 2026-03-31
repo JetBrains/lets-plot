@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LARGE_PLOT_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
+import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.TOOLBAR_HEIGHT
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
@@ -111,7 +112,7 @@ object PlotSizeHelper {
         return when (PlotConfig.figSpecKind(figureSpec)) {
             FigKind.PLOT_SPEC -> {
                 val config = PlotConfigFrontend.create(figureSpec, containerTheme = null) { /*ignore messages*/ }
-                PlotSizeHelper.singlePlotSizeDefault(
+                singlePlotSizeDefault(
                     figureSpec,
                     config.facets,
                     config.containsLiveMap
@@ -123,11 +124,57 @@ object PlotSizeHelper {
                     // ignore a message when computing a figure size.
                 }
 
-                PlotSizeHelper.compositeFigureSizeDefault(compositeFigureConfig)
+                compositeFigureSizeDefault(compositeFigureConfig)
             }
 
             FigKind.GG_BUNCH_SPEC -> throw IllegalStateException("Unsupported: GGBunch")
         }
     }
 
+    /**
+     *  Overall default figure size including toolbar height (if any).
+     */
+    fun figurePanelSizeDefault(
+        processedSpec: Map<String, Any>,
+    ): DoubleVector {
+        return figureSizeDefault(processedSpec).let { size ->
+            if (processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)) {
+                DoubleVector(size.x, size.y + TOOLBAR_HEIGHT)
+            } else {
+                size
+            }
+        }
+    }
+
+    /**
+     * Overall figure size given the container size and sizing policy.
+     */
+    fun figurePanelSizeInContainer(
+        figurePanelDefaultSize: DoubleVector,  // Overall default figure size including toolbar height (if any).
+        containerSize: DoubleVector,
+        sizingPolicy: SizingPolicy,
+        hasToolbar: Boolean,
+    ): DoubleVector {
+
+        if (sizingPolicy.isFixedSize()) {
+            return sizingPolicy.getFixedSize()
+        }
+        // Adjust container size if the toolbar is present - subtract toolbar height first
+        @Suppress("NAME_SHADOWING")
+        val containerSize = if (hasToolbar) {
+            DoubleVector(containerSize.x, containerSize.y - TOOLBAR_HEIGHT)
+        } else {
+            containerSize
+        }
+
+        val resized = sizingPolicy.resize(figurePanelDefaultSize, containerSize)
+        return resized.let { size ->
+            // Add back the toolbar height to get the total figure size
+            if (hasToolbar) {
+                DoubleVector(size.x, size.y + TOOLBAR_HEIGHT)
+            } else {
+                size
+            }
+        }
+    }
 }

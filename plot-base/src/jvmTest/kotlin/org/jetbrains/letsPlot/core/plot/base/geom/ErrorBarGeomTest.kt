@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.BogusContext
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.list
 import org.jetbrains.letsPlot.core.plot.base.coord.CoordinatesMapper
@@ -86,9 +87,11 @@ class ErrorBarGeomTest {
             ),
             ctx = object : GeomContext by BogusContext {
                 override val flipped: Boolean = false
-                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
+                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector
                 override fun getResolution(aes: Aes<Double>): Double = 10.0
                 override fun isMappedAes(aes: Aes<*>) = aes == Aes.X || aes == Aes.YMIN || aes == Aes.YMAX
+                override fun consumeMessages(messages: List<String>) {}
+                override fun geomKind() = GeomKind.ERROR_BAR
             },
             pos = PositionAdjustments.identity(),
         )
@@ -165,9 +168,10 @@ class ErrorBarGeomTest {
             ),
             ctx = object : GeomContext by BogusContext {
                 override val flipped: Boolean = false
-                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
+                override val targetCollector: GeomTargetCollector = NullGeomTargetCollector
                 override fun getResolution(aes: Aes<Double>): Double = 10.0
                 override fun isMappedAes(aes: Aes<*>) = aes == Aes.X || aes == Aes.YMIN || aes == Aes.YMAX
+                override fun geomKind() = GeomKind.ERROR_BAR
             },
             pos = PositionAdjustments.identity(),
         )

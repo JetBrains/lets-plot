@@ -65,10 +65,10 @@ class BasemapCellRenderer : Renderer {
         val dstRect = dstCell.projectRect(myCellRect)
         myCtx.drawImage(
             tile.snapshot,
-            srcRect.left,
-            srcRect.top,
-            srcRect.width,
-            srcRect.height,
+            srcRect.left * tile.scale,
+            srcRect.top * tile.scale,
+            srcRect.width * tile.scale,
+            srcRect.height * tile.scale,
             dstRect.left,
             dstRect.top,
             dstRect.width,// + 1.0, // fix lines between tiles, BUT TEXT WILL GET BLURED

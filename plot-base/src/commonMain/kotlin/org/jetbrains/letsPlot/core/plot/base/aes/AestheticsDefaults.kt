@@ -192,6 +192,7 @@ class AestheticsDefaults private constructor(
                 GeomKind.CONTOURF,
                 GeomKind.DENSITY2D,
                 GeomKind.DENSITY2DF,
+                GeomKind.POINT_DENSITY,
                 GeomKind.Q_Q_LINE,
                 GeomKind.Q_Q_2_LINE,
                 GeomKind.FREQPOLY,
@@ -202,6 +203,8 @@ class AestheticsDefaults private constructor(
                 GeomKind.STEP,
                 GeomKind.RASTER,
                 GeomKind.IMAGE,
+                GeomKind.BRACKET,
+                GeomKind.BRACKET_DODGE,
                 GeomKind.LIVE_MAP -> base(geomTheme)
             }
         }

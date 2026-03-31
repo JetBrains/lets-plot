@@ -9,11 +9,9 @@ import demo.plot.common.model.plotConfig.BarOverlaidPlot
 
 fun main() {
     with(BarOverlaidPlot()) {
-        @Suppress("UNCHECKED_CAST")
-        (PlotConfigBrowserDemoUtil.show(
+        PlotConfigBrowserDemoUtil.showJs(
             "Overlaid bars plot",
             plotSpecList(),
-//                demoComponentSize
-        ))
+        )
     }
 }

@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
@@ -30,37 +29,30 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        buildLines(root, aesthetics, pos, coord, ctx)
-    }
-
-    private fun buildLines(
-        root: SvgRoot,
-        aesthetics: Aesthetics,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
-        ctx: GeomContext
-    ) {
-        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.HEIGHT)
+        val definedDataPoints = GeomUtil.with_X_Y(aesthetics.dataPoints())
         if (!definedDataPoints.any()) return
         definedDataPoints
             .sortedByDescending(DataPointAesthetics::y)
             .groupBy(DataPointAesthetics::y)
             .map { (y, nonOrderedPoints) -> y to GeomUtil.ordered_X(nonOrderedPoints) }
             .forEach { (_, dataPoints) ->
-                splitDataPointsByMinHeight(dataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
+                splitDataPoints(dataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
             }
     }
 
-    private fun splitDataPointsByMinHeight(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
+    private fun splitDataPoints(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
         val result = mutableListOf<Iterable<DataPointAesthetics>>()
         var dataPointsBunch: MutableList<DataPointAesthetics> = mutableListOf()
-        for (p in dataPoints)
-            if (p.height()!! >= minHeight)
+        for (p in dataPoints) {
+            val height = p.height()
+
+            if (height != null && height >= minHeight)
                 dataPointsBunch.add(p)
             else {
                 if (dataPointsBunch.any()) result.add(dataPointsBunch)
                 dataPointsBunch = mutableListOf()
             }
+        }
         if (dataPointsBunch.any()) result.add(dataPointsBunch)
         return result
     }
@@ -76,7 +68,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
         val boundTransform = toLocationBound(ctx)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.AREA_RIDGES, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEach { points ->
             val paths = helper.createBands(
@@ -90,8 +82,8 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
             helper.setAlphaEnabled(false)
             root.appendNodes(helper.createLines(points, boundTransform))
 
-            val pathData = helper.createPathDataByGroup(points, boundTransform)
-            targetCollectorHelper.addPaths(pathData)
+            val pathDataList = helper.createPaths(points, boundTransform)
+            targetCollectorHelper.addPaths(pathDataList)
         }
 
         if (quantileLines) {

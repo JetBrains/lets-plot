@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.core.spec.back
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.intern.filterNotNullKeys
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
@@ -18,24 +17,23 @@ import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.DateTimeBreaksHelper
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.DataFrameField
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.data.DataFrameField
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GEOMETRY
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
+import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.back.data.BackendDataProcUtil
 import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
-import org.jetbrains.letsPlot.core.spec.config.DataMetaUtil
-import org.jetbrains.letsPlot.core.spec.config.LayerConfig
-import org.jetbrains.letsPlot.core.spec.config.PlotConfig
-import org.jetbrains.letsPlot.core.spec.config.PlotConfigTransforms
+import org.jetbrains.letsPlot.core.spec.config.*
 import org.jetbrains.letsPlot.core.spec.getString
 
 open class PlotConfigBackend(
@@ -120,9 +118,21 @@ open class PlotConfigBackend(
         // replace layer data with data after stat
         layerConfigs.withIndex().forEach { (layerIndex, layerConfig) ->
             // optimization: only replace layer's data if 'combined' data was changed (because of stat or sampling occurred)
-            if (layerConfig.stat !== Stats.IDENTITY || layerIndexWhereSamplingOccurred.contains(layerIndex)) {
+            if (
+                layerConfig.stat !== Stats.IDENTITY
+                || layerIndexWhereSamplingOccurred.contains(layerIndex)
+                || layerConfig.geoMappings.isNotEmpty() // geo mappings may add coordinates - need to update data
+            ) {
                 val layerStatData = dataByLayerAfterStat[layerIndex]
                 layerConfig.replaceOwnData(layerStatData)
+            }
+        }
+
+        // update geo mappings
+        layerConfigs.forEach { layerConfig ->
+            if (layerConfig.geoMappings.isNotEmpty()) {
+                val geoMappings = layerConfig.geoMappings.map { (aes, variable) -> toOption(aes) to variable.name }
+                layerConfig.update(MAPPING, layerConfig.getMap(MAPPING) + geoMappings)
             }
         }
 
@@ -167,8 +177,8 @@ open class PlotConfigBackend(
             for ((layerConfig, layerVarsToKeep) in variablesToKeepByLayerConfig) {
                 val layerData = layerConfig.ownData
                 if (DataFrameUtil.variables(layerData).containsKey(plotVar)) {
-                    // This variable not needed for this layer
-                    // because there is same variable in the plot's data.
+                    // This variable isn't needed for this layer
+                    // because there is the same variable in the plot's data.
                     continue
                 }
                 if (layerVarsToKeep.contains(plotVar)) {
@@ -188,7 +198,7 @@ open class PlotConfigBackend(
             replaceSharedData(plotDataCleaned)
         }
 
-        // Clean-up data in layers.
+        // Cleanup data in layers.
         for ((layerConfig, layerVarsToKeep) in variablesToKeepByLayerConfig) {
             val layerData = layerConfig.ownData
             val layerDataCleaned = DataFrameUtil.removeAllExcept(layerData, layerVarsToKeep)
@@ -270,7 +280,7 @@ open class PlotConfigBackend(
                 }
             } else {
                 // Have to skip to not fail on mergedSerieByVarName.getValue(statVar)
-                // Empty stat data contains all existing stat variables and mergedSerieByVarName doesn't
+                // Empty stat data contains all existing stat variables, and mergedSerieByVarName doesn't
                 if (tileDataAfterStat.rowCount() > 0) {
                     for (variable in variables) {
                         mergedSerieByVarName.getValue(variable.name).second.addAll(tileDataAfterStat[variable])
@@ -289,6 +299,22 @@ open class PlotConfigBackend(
     }
 
     companion object {
+
+        private val SMOOTH_STAT_VARS_TO_KEEP = listOf(
+            Stats.R2,
+            Stats.R2_ADJ,
+            Stats.N,
+            Stats.AIC,
+            Stats.BIC,
+            Stats.METHOD,
+            Stats.F,
+            Stats.DF1,
+            Stats.DF2,
+            Stats.P,
+            Stats.CI_LEVEL,
+            Stats.CI_LOW,
+            Stats.CI_HIGH
+        )
 
         private fun variablesToKeep(facets: PlotFacets, layerConfig: LayerConfig): Set<String> {
             val stat = layerConfig.stat
@@ -324,13 +350,17 @@ open class PlotConfigBackend(
             varsToKeep.removeAll(notRenderedVars)
             varsToKeep.addAll(renderedVars)
 
+            varsToKeep.addAll(SMOOTH_STAT_VARS_TO_KEEP)
+            varsToKeep.addAll(layerConfig.ownData.variables().filter { it.label.contains("smooth_eq_coef_") })
+
             return HashSet<String>() +
                     varsToKeep.map(Variable::name) +
                     Stats.GROUP.name +
                     listOfNotNull(layerConfig.getMap(DATA_META).getString(GDF, GEOMETRY)) +
                     (layerConfig.getMapJoin()?.first?.map { it as String } ?: emptyList()) +
+                    GeoConfig.GEO_ID +
                     facets.variables +
-                    listOfNotNull(layerConfig.explicitGroupingVarName) +
+                    (layerConfig.explicitGroupingVarNames ?: emptyList()) +
                     (layerConfig.tooltips.valueSources + layerConfig.annotations.valueSources)
                         .filterIsInstance<DataFrameField>()
                         .map(DataFrameField::getVariableName) +
@@ -421,8 +451,7 @@ open class PlotConfigBackend(
                 ?.let { doubleList -> DoubleSpan.encloseAllQ(doubleList) }
                 ?.let { range ->
                     DateTimeBreaksHelper(
-                        range.lowerEnd,
-                        range.upperEnd,
+                        range,
                         distinctValues.size,
                         providedFormatter = null,
                         minInterval = NiceTimeInterval.minIntervalOf(dataType),
@@ -458,11 +487,7 @@ open class PlotConfigBackend(
                 return breaksPattern ?: patterns.last()
             }
             (listOfNotNull(breaksPattern) + patterns).forEach { pattern ->
-                val formatter = StringFormat.forOneArg(
-                    pattern,
-                    type = StringFormat.FormatType.DATETIME_FORMAT,
-                    tz = tz
-                )
+                val formatter = FormatterUtil.byPattern(pattern, tz = tz)
                 val formattedValues = mutableSetOf<String>()
                 for (value in distinctValues) {
                     if (!formattedValues.add(formatter.format(value))) {

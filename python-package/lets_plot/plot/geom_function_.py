@@ -1,15 +1,6 @@
 #  Copyright (c) 2023. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-try:
-    import pandas as pd
-except ImportError:
-    pd = None
-
-try:
-    import polars as pl
-except ImportError:
-    pl = None
-
+from lets_plot._type_utils import LazyModule
 from .core import aes
 from .geom import _geom
 
@@ -17,6 +8,8 @@ __all__ = ['geom_function']
 
 _fun_x_name, _fun_y_name = 'x', 'y'
 
+pandas = LazyModule('pandas')
+polars = LazyModule('polars')
 
 def _linspace(start, stop, num):
     if num == 1:
@@ -59,10 +52,10 @@ def _get_fun_data(mapping, data, fun, xlim, n):
     else:
         if isinstance(data, dict):
             return {**data, **{_fun_y_name: ys}}
-        elif pd is not None and isinstance(data, pd.DataFrame):
+        elif pandas.lazy_is_instance(data, 'DataFrame'):
             return data.assign(**{_fun_y_name: ys})
-        elif pl is not None and isinstance(data, pl.DataFrame):
-            return data.with_columns(**{_fun_y_name: pl.Series(values=ys)})
+        elif polars.lazy_is_instance(data, 'DataFrame'):
+            return data.with_columns(**{_fun_y_name: polars.Series(values=ys)})
         else:
             raise Exception("Unsupported type of data: {0}".format(data))
 

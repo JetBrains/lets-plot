@@ -5,16 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout.figure
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
-open class FigureLayoutInfo(
-    val figureSize: DoubleVector,
-    /**
-     * Plot withot axis and facet labels.
-     * Relative to the entire figure origin
-     */
-    val geomAreaBounds: DoubleRectangle
-) {
-
-}
+abstract class FigureLayoutInfo(
+    val figureSize: DoubleVector
+)

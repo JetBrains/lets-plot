@@ -39,7 +39,7 @@ internal class JsonLexer(
             currentChar == 'n' -> Token.NULL.also { read("null") }
             currentChar == '"' -> Token.STRING.also { readString() }
             readNumber() -> Token.NUMBER
-            else -> error(formatErrorMessage())
+            else -> error(formatLexerError())
         }.also { currentToken = it }
     }
 
@@ -114,33 +114,51 @@ internal class JsonLexer(
         }
     }
 
-    private fun formatErrorMessage(): String {
-        val errLineStart = input.subSequence(0, i).lastIndexOf('\n').let { if (it == -1) 0 else it + 1 }
-        val errLineEnd = input.indexOf('\n', i).let { if (it == -1) input.length else it }
-        val errLineLength = errLineEnd - errLineStart
+    fun getHighlight(): Highlight {
+        val lineStart = input.subSequence(0, i).lastIndexOf('\n').let { if (it == -1) 0 else it + 1 }
+        val lineEnd = input.indexOf('\n', i).let { if (it == -1) input.length else it }
+        val lineLength = lineEnd - lineStart
 
-        val (errFragmentStart, errFragmentEnd) = when {
-            errLineLength <= 81 -> Pair(errLineStart, errLineEnd)
-            errLineLength > 81 -> Pair(
-                maxOf(errLineStart, i - 40),
-                minOf(errLineEnd, i + 41)
+        val (fragmentStart, fragmentEnd) = when {
+            lineLength <= 81 -> Pair(lineStart, lineEnd)
+            lineLength > 81 -> Pair(
+                maxOf(lineStart, i - 40),
+                minOf(lineEnd, i + 41)
             )
-            errLineLength < 0 -> error("Negative line length") // should never happen
-            else -> error("Unexpected line length: $errLineLength") // should never happen either
+            lineLength < 0 -> error("Negative line length") // should never happen
+            else -> error("Unexpected line length: $lineLength") // should never happen either
         }
 
-        // Note that "at $i" is a zero-based index, while "$errorLineNumber" and "$errorSymbolLinePos" are one-based.
-        val errorLineNumber = input.subSequence(0, i).count { it == '\n' }.let { if (it == 0) 1 else it + 1 }
-        val errorSymbolLinePos = i - errLineStart + 1
+        // Note that "at $i" is a zero-based index, while "$lineNumber" and "$symbolLinePos" are one-based.
+        val lineNumber = input.subSequence(0, i).count { it == '\n' }.let { if (it == 0) 1 else it + 1 }
+        val symbolLinePos = i - lineStart + 1
 
-        return "Unknown token >$currentChar< at $i ($errorLineNumber:$errorSymbolLinePos)\n" +
-                "${input.substring(errFragmentStart, errFragmentEnd)}\n" +
-                " ".repeat(i - errFragmentStart) + "^"
+        return Highlight(
+            lineNumber = lineNumber,
+            symbolLinePos = symbolLinePos,
+            fragment = input.substring(fragmentStart, fragmentEnd),
+            pointer = " ".repeat(i - fragmentStart) + "^"
+        )
+    }
+
+    private fun formatLexerError(): String {
+        val highlight = getHighlight()
+
+        return "Unknown token >${input[i]}< at $i (${highlight.lineNumber}:${highlight.symbolLinePos})\n" +
+                "${highlight.fragment}\n" +
+                highlight.pointer
     }
 
     companion object {
         private val digits: CharRange = '0'..'9'
         private fun Char?.isDigit() = this in digits
         private fun Char.isHex(): Boolean = isDigit() || this in 'a'..'f' || this in 'A'..'F'
+
+        class Highlight(
+            val lineNumber: Int,
+            val symbolLinePos: Int,
+            val fragment: String,
+            val pointer: String
+        )
     }
 }

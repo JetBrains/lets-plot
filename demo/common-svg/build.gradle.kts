@@ -17,6 +17,7 @@ kotlin {
         browser()
     }
 
+
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
     applyDefaultHierarchyTemplate()
 

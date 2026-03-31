@@ -151,7 +151,7 @@ class ScaleBreaks private constructor(
             val transformCore = transform.unwrap() // make sure 'original' transform is used (i.e. without user limits).
             val transformed = ScaleUtil.applyTransform(domainValues, transformCore)
 
-            // drop NULLs which can occure after transform.
+            // drop NULLs, which can occur after transform.
             val keepIndices: Set<Int> = transformed
                 .mapIndexed { i, v -> if (v == null) null else i }
                 .filterNotNull()

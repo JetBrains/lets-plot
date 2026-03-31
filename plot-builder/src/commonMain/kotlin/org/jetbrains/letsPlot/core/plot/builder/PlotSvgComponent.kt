@@ -12,27 +12,23 @@ import org.jetbrains.letsPlot.commons.intern.gcommon.base.Throwables
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.SomeFig
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
+import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
+import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.addTitle
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.captionElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.createTextRectangle
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawCaptionDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawSubtitleDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.drawTitleDebugInfo
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.subtitleElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.textBoundingBox
-import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.titleElementAndTextBounds
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxesLayout
@@ -42,8 +38,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot.PlotFigureLay
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
@@ -53,6 +47,7 @@ class PlotSvgComponent constructor(
     private val title: String?,
     private val subtitle: String?,
     private val caption: String?,
+    private val tag: String?,
     private val coreLayersByTile: List<List<GeomLayer>>,
     private val marginalLayersByTile: List<List<GeomLayer>>,
     private val figureLayoutInfo: PlotFigureLayoutInfo,
@@ -76,7 +71,7 @@ class PlotSvgComponent constructor(
             field = value
         }
 
-    internal var liveMapFigures: List<SomeFig> = emptyList()
+    internal var liveMapCanvasDrawables: List<CanvasDrawable> = emptyList()
         private set
 
     val containsLiveMap: Boolean = coreLayersByTile.flatten().any(GeomLayer::isLiveMap)
@@ -87,7 +82,7 @@ class PlotSvgComponent constructor(
 
     override fun clear() {
         // Effectivly disposes the plot component
-        // because "interactor" is likely got disposed too,
+        // because "interactor" have likely been disposed too,
         // and "interactor" can't be reused.
         isDisposed = true
         super.clear()
@@ -101,29 +96,27 @@ class PlotSvgComponent constructor(
             LOG.error(e) { "buildPlot" }
 
             val rootCause = Throwables.getRootCause(e)
-            val messages = arrayOf(
-                "Error building plot: " + rootCause::class.simpleName, if (rootCause.message != null)
-                    "'" + rootCause.message + "'"
-                else
-                    "<no message>"
-            )
+            val causeMessage = if (rootCause.message != null)
+                "'" + rootCause.message + "'"
+            else
+                "<no message>"
+            val message = "Error building plot: ${rootCause::class.simpleName}\n$causeMessage"
 
-            var y = figureSize.y / 2 - 8
-            for (s in messages) {
-                val errorLabel = TextLabel(s)
-                val textColor = when {
-                    theme.plot().showBackground() -> theme.plot().textColor()
-                    else -> Defaults.TEXT_COLOR
-                }
-                errorLabel.textColor().set(textColor)
-                errorLabel.setFontWeight("normal")
-                errorLabel.setFontStyle("normal")
-                errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
-                errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-                errorLabel.moveTo(figureSize.x / 2, y)
-                rootGroup.children().add(errorLabel.rootGroup)
-                y += 16.0
+            val y = figureSize.y / 2
+            val errorLabel = Label(message)
+            val textColor = when {
+                theme.plot().showBackground() -> theme.plot().textColor()
+                else -> Defaults.TEXT_COLOR
             }
+            errorLabel.textColor().set(textColor)
+            errorLabel.setFontSize(12.0)
+            errorLabel.setLineHeight(16.0)
+            errorLabel.setFontWeight("normal")
+            errorLabel.setFontStyle("normal")
+            errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
+            errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
+            errorLabel.moveTo(figureSize.x / 2, y)
+            rootGroup.children().add(errorLabel.rootGroup)
         }
     }
 
@@ -133,7 +126,7 @@ class PlotSvgComponent constructor(
         reg(object : Registration() {
             override fun doRemove() {
                 interactor?.dispose()
-                liveMapFigures = emptyList()
+                liveMapCanvasDrawables = emptyList()
             }
         })
     }
@@ -211,8 +204,8 @@ class PlotSvgComponent constructor(
 
             add(tile)
 
-            tile.liveMapFigure?.run {
-                liveMapFigures = liveMapFigures + listOf(this)
+            tile.liveMapCanvasDrawable?.run {
+                liveMapCanvasDrawables = liveMapCanvasDrawables + listOf(this)
             }
 
             val geomOuterBoundsAbsolute = tileLayoutInfo.geomOuterBounds.add(plotOriginAbsolute)
@@ -271,65 +264,38 @@ class PlotSvgComponent constructor(
         }
 
         val geomAreaBounds = figureLayoutInfo.geomAreaBounds
+
+        val textLayout = PlotSvgComponentHelper.figureTextLayout(
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
+            outerBounds = plotOuterBounds,
+            geomOrElementsAreaBounds = geomAreaBounds,
+            plotTheme = plotTheme
+        )
+
+        PlotSvgComponentHelper.renderFigureTextElements(
+            svg = this,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
+            textLayout = textLayout,
+            plotTheme = plotTheme
+        )
+
         if (DEBUG_DRAWING) {
             drawDebugRect(geomAreaBounds, Color.RED, "RED: geomAreaBounds")
-        }
 
-        // plot title, subtitle, caption rectangles:
-        //   xxxElementRect - rectangle for element, including margins
-        //   xxxTextRect - for text only
-
-        val (plotTitleElementRect, plotTitleTextRect) = titleElementAndTextBounds(
-            title,
-            plotOuterBounds,
-            geomAreaBounds,
-            plotTheme
-        )
-        if (DEBUG_DRAWING) {
-            drawTitleDebugInfo(this, caption, plotTitleElementRect, plotTitleTextRect, plotTheme)
-        }
-
-        val (subtitleElementRect, subtitleTextRect) = subtitleElementAndTextBounds(
-            subtitle,
-            plotOuterBounds,
-            geomAreaBounds,
-            plotTitleElementRect,
-            plotTheme
-        )
-        if (DEBUG_DRAWING) {
-            drawSubtitleDebugInfo(this, subtitle, subtitleElementRect, subtitleTextRect, plotTheme)
-        }
-
-        val (captionElementRect, captionTextRect) = captionElementAndTextBounds(
-            caption,
-            plotOuterBounds,
-            geomAreaBounds,
-            plotTheme
-        )
-        if (DEBUG_DRAWING) {
-            drawCaptionDebugInfo(this, caption, captionElementRect, captionTextRect, plotTheme)
-        }
-
-        // add plot title
-        plotTitleTextRect?.let {
-            addTitle(
-                svgComponent = this,
+            PlotSvgComponentHelper.drawFigureTextFrames(
+                this,
                 title,
-                labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
-                justification = plotTheme.titleJustification(),
-                boundRect = it,
-                className = Style.PLOT_TITLE
-            )
-        }
-        // add plot subtitle
-        subtitleTextRect?.let {
-            addTitle(
-                svgComponent = this,
                 subtitle,
-                labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
-                justification = plotTheme.subtitleJustification(),
-                boundRect = it,
-                className = Style.PLOT_SUBTITLE
+                caption,
+                tag,
+                textLayout,
+                plotTheme
             )
         }
 
@@ -373,32 +339,19 @@ class PlotSvgComponent constructor(
         }
 
         // add legends
-        val legendTheme = theme.legend()
-        val legendsBlockInfo = figureLayoutInfo.legendsBlockInfo
-        if (!legendTheme.position().isHidden) {
+        figureLayoutInfo.legendsBlockInfo?.let { blockInfo ->
+            val legendTheme = theme.legend()
             val legendsBlockInfoLayouted = LegendBoxesLayout(
                 outerBounds = plotOuterBoundsWithoutTitleAndCaption,
                 innerBounds = geomAreaBounds,
                 legendTheme
-            ).doLayout(legendsBlockInfo)
+            ).doLayout(blockInfo)
 
             for (boxWithLocation in legendsBlockInfoLayouted.boxWithLocationList) {
-                val legendBox = boxWithLocation.legendBox.createLegendBox()
+                val legendBox = boxWithLocation.legendBox.createSvgComponent()
                 legendBox.moveTo(boxWithLocation.location)
                 add(legendBox)
             }
-        }
-
-        // add caption
-        captionTextRect?.let {
-            addTitle(
-                svgComponent = this,
-                text = caption,
-                labelSpec = PlotLabelSpecFactory.plotCaption(plotTheme),
-                justification = plotTheme.captionJustification(),
-                boundRect = it,
-                className = Style.PLOT_CAPTION
-            )
         }
 
         add(backgroundBorder)

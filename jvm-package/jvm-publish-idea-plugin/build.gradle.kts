@@ -10,8 +10,9 @@ plugins {
     id("com.gradleup.shadow") version "8.3.6"
 }
 
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val jsvgVersion = project.extra["weisj.jsvg.version"] as String
 
 val artifactBaseName = "lets-plot-idea-plugin"
 val artifactGroupId = project.group as String
@@ -28,14 +29,27 @@ dependencies {
     implementation(project(":plot-stem"))
 
     implementation(project(":platf-awt"))
-    implementation(project(":platf-batik"))
+//    implementation(project(":platf-batik"))
+    implementation(project(":plot-raster"))
 
     implementation(project(":canvas"))
     implementation(project(":gis"))
     implementation(project(":livemap"))
     implementation(project(":plot-livemap"))
 
-    implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+
+    // Beware of the versions in the IDEA platform (a mismatch may affect LP in SciView PyCharm plugin)
+    // The list of 3rd party libraries used in the IDEA platform: https://www.jetbrains.com/legal/third-party-software/?product=IIU
+
+    // kotlinx-datetime is bundled with the IDEA platform.
+//    implementation("org.jetbrains.kotlinx:kotlinx-datetime:${kotlinxDatetimeVersion}")
+
+    // Java SVG Renderer (used for toolbar icons in Swing application).
+    // IDEA bundles jsvg v1.3.0-jb.8
+    // But apparently JSVG is not in the plugin classpath.
+    implementation("com.github.weisj:jsvg:$jsvgVersion")
+
+    implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
 }
 
 // Disable the default JAR task since we're using shadow JAR

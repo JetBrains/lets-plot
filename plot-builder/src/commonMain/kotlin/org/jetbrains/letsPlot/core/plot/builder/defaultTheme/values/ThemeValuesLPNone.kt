@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Geom
@@ -41,5 +42,8 @@ internal class ThemeValuesLPNone : ThemeValues(VALUES) {
             ),
         )
     }
+
+    override fun defaultFlavor(): ThemeFlavor =
+        error("ThemeValuesLPNone should not use flavor")
 }
 

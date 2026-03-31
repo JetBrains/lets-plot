@@ -124,7 +124,7 @@ class Test:
         )
     ))
 
-    # RGBA
+    # RGBA (float values)
     test_params_list.append((
         np.array([
             [[1, 0, 0, 1], [0, 1, 0, 1], [0, 0, 1, 1]],
@@ -134,6 +134,20 @@ class Test:
         None,  # norm
         _image_spec(
             'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAHElEQVR4nGP4z8DQwPAfiBn+gzCDGpBQAwqqAQBuAwft32FBFAAAAABJRU5ErkJggg==',
+            _image_bbox(width=3, height=2),
+        )
+    ))
+
+    # RGBA (integer values)
+    test_params_list.append((
+        np.array([
+            [[255, 0, 0, 255], [0, 255, 0, 255], [0, 0, 255, 255]],
+            [[0, 255, 0, 77], [0, 0, 255, 77], [255, 0, 0, 77]]  # 0.3 * 255 ≈ 77
+        ]),
+        None,  # cmap
+        None,  # norm
+        _image_spec(
+            'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAACCAYAAACddGYaAAAAHElEQVR4nGP4z8DQwPAfiBn+gzCDOpBQBwqqAwBuEgfwqZbPdQAAAABJRU5ErkJggg==',
             _image_bbox(width=3, height=2),
         )
     ))

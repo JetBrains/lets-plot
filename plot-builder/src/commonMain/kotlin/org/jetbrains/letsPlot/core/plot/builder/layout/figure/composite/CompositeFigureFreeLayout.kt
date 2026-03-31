@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_LARGE_PLOT_SIZE
 

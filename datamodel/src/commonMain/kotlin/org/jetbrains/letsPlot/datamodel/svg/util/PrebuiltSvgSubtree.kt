@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements.LINE
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements.PATH
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements.RECT
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
-import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString.Companion.crlf
+import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString.crlf
 
 internal class PrebuiltSvgSubtree(source: SvgNode, level: Int) {
     val asString: String

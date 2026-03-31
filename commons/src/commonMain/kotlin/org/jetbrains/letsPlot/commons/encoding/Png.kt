@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.commons.encoding
 
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import kotlin.math.min
+import kotlin.math.roundToLong
 
 /** * PNG encoder/decoder.
  * Supports only 8-bit RGBA PNG format without filters.
@@ -55,7 +56,19 @@ object Png {
         return decode(pngData)
     }
 
-    fun encode(bitmap: Bitmap): ByteArray {
+    // Build pHYs chunk payload: 4B X ppm, 4B Y ppm, 1B unit (0=unspecified, 1=meter)
+    private fun buildPHYS(dpiX: Double, dpiY: Double = dpiX, unit: Int = 1): ByteArray {
+        val xPpm = (dpiX / 0.0254).roundToLong().coerceIn(0L, 0xFFFFFFFFL)
+        val yPpm = (dpiY / 0.0254).roundToLong().coerceIn(0L, 0xFFFFFFFFL)
+
+        val buf = ByteBuffer(ByteArray(9))
+        buf.putInt((xPpm and 0xFFFFFFFFL).toInt())
+        buf.putInt((yPpm and 0xFFFFFFFFL).toInt())
+        buf.put(unit.toByte())
+        return buf.array()
+    }
+
+    fun encode(bitmap: Bitmap, dpi: Number? = null): ByteArray {
         val output = OutputStream()
 
         // Write PNG signature
@@ -63,6 +76,11 @@ object Png {
 
         // IHDR chunk
         output.writePngChunk("IHDR", buildIHDR(bitmap.width, bitmap.height))
+
+        // pHYs chunk
+        if (dpi != null) {
+            output.writePngChunk("pHYs", buildPHYS(dpi.toDouble()))
+        }
 
         // IDAT chunk
         val rawScanlines = run {

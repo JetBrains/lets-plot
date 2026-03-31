@@ -9,6 +9,7 @@ import demoAndTestShared.*
 import junit.framework.TestCase.assertEquals
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgUID
+import org.jetbrains.letsPlot.core.util.PlotSvgExport
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -70,17 +71,7 @@ internal class PlotSvgExportTest {
             |}
         """.trimMargin()
 
-        PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = parsePlotSpec(spec),
-            useCssPixelatedImageRendering = false
-        ).let {
-            assertTrue(it.contains("style=\"image-rendering: optimizeSpeed\""))
-        }
-
-        PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = parsePlotSpec(spec),
-            useCssPixelatedImageRendering = true
-        ).let {
+        PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec = parsePlotSpec(spec)).let {
             assertTrue(it.contains("style=\"image-rendering: optimizeSpeed; image-rendering: pixelated\""))
         }
     }
@@ -169,10 +160,7 @@ internal class PlotSvgExportTest {
             |  ]
             |}""".trimMargin()
 
-        PlotSvgExport.buildSvgImageFromRawSpecs(
-            plotSpec = parsePlotSpec(spec),
-            useCssPixelatedImageRendering = true
-        ).let {
+        PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec = parsePlotSpec(spec)).let {
             // Double.toString() should not be used for formatting numbers.
             assertEquals(-1, it.indexOf("717273.0"))
 

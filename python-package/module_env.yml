@@ -5,7 +5,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.9
+  - python=3.13
   - numpy>=1.24.2
   #- jupyter #=1.0.0
   - statsmodels # Required for residual plots 'lm' and 'loess' methods.
@@ -13,6 +13,7 @@ dependencies:
   - geopandas>=0.12.2
   - shapely>=2.0.0
   - pytest>=8.1.1
+  - pytest-timeout
   - jax >=0.3.25
   - pip
   - pip:

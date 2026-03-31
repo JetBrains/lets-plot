@@ -6,24 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 
 interface ContextualMappingProvider {
     fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping
-
-    companion object {
-        val NONE = object : ContextualMappingProvider {
-            override fun createContextualMapping(dataAccess: MappedDataAccess, dataFrame: DataFrame): ContextualMapping {
-                return ContextualMapping(
-                    tooltipLines = emptyList(),
-                    tooltipAnchor = null,
-                    tooltipMinWidth = null,
-                    ignoreInvisibleTargets = false,
-                    hasGeneralTooltip = false,
-                    hasAxisTooltip = false,
-                    isCrosshairEnabled = false,
-                    tooltipTitle = null
-                )
-            }
-        }
-    }
 }

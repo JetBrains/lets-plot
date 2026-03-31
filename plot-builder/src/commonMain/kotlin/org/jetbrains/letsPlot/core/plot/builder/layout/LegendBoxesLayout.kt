@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 
-// ToDo: internal
 /*internal*/ class LegendBoxesLayout(
     private val outerBounds: DoubleRectangle,
     private val innerBounds: DoubleRectangle,

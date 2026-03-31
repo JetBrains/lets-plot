@@ -6,19 +6,20 @@
 package org.jetbrains.letsPlot.raster.mapping.svg
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.raster.shape.*
+import org.jetbrains.letsPlot.core.canvas.Context2d
+import org.jetbrains.letsPlot.raster.scene.*
 import kotlin.math.roundToInt
 
 
 internal object DebugOptions {
     const val DEBUG_DRAWING_ENABLED: Boolean = false
 
-    fun drawBoundingBoxes(rootElement: Pane, canvas: Canvas) {
+    fun drawBoundingBoxes(rootElement: Pane, ctx: Context2d) {
         //val strokePaint = Paint().setStroke(true)
         //val fillPaint = Paint().setStroke(false)
 
-        depthFirstTraversal(rootElement).forEach { el ->
+        depthFirstTraversal(rootElement, onlyVisible = false)
+            .forEach { el ->
             val color = when (el) {
                 is Pane -> Color.CYAN
                 is Group -> Color.YELLOW
@@ -31,14 +32,13 @@ internal object DebugOptions {
             }
 
             val fillColor = color.changeAlpha((255*0.02).roundToInt())
-            canvas.context2d.setFillStyle(fillColor)
-            canvas.context2d.fillRect(el.screenBounds.left, el.screenBounds.top, el.screenBounds.width, el.screenBounds.height)
-
             val strokeColor = color.changeAlpha((255*0.7).roundToInt())
-            //val strokeWidth = if(el is Container) 3f else 1f
-            //strokeColor.pathEffect = if (el is Container) PathEffect.makeDash(floatArrayOf(3f, 8f), 0f) else null
-            canvas.context2d.setStrokeStyle(strokeColor)
-            canvas.context2d.strokeRect(el.screenBounds.left, el.screenBounds.top, el.screenBounds.width, el.screenBounds.height)
+            ctx.setFillStyle(fillColor)
+            ctx.setStrokeStyle(strokeColor)
+
+            val screenBounds = el.bBoxGlobal
+            ctx.fillRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
+            ctx.strokeRect(screenBounds.left, screenBounds.top, screenBounds.width, screenBounds.height)
         }
     }
 }

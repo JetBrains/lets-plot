@@ -9,12 +9,12 @@ import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
-import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms.createBreaksGeneratorForTransformedDomain
 
 internal class ContinuousScale : AbstractScale<Double> {
 
     private val continuousTransform: ContinuousTransform
-    private val customBreaksGenerator: BreaksGenerator?
+    private val customBreaksGenerator: OriginalDomainBreaksGenerator?
+    private val breakWidth: Double?
 
     override val isContinuous: Boolean
     override val isContinuousDomain: Boolean = true
@@ -29,6 +29,7 @@ internal class ContinuousScale : AbstractScale<Double> {
         isContinuous = continuousOutput
         continuousTransform = Transforms.IDENTITY
         customBreaksGenerator = null
+        breakWidth = null
 
         // see: https://ggplot2.tidyverse.org/reference/scale_continuous.html
         // defaults for continuous scale.
@@ -39,14 +40,19 @@ internal class ContinuousScale : AbstractScale<Double> {
     private constructor(b: MyBuilder) : super(b) {
         continuousTransform = b.myContinuousTransform
         customBreaksGenerator = b.myCustomBreaksGenerator
+        breakWidth = b.myBreakWidth
         isContinuous = b.myContinuousOutput
     }
 
-    override fun getBreaksGenerator(): BreaksGenerator {
+    override fun getBreaksGenerator(): TransformedDomainBreaksGenerator {
         return if (customBreaksGenerator != null) {
-            Transforms.BreaksGeneratorForTransformedDomain(continuousTransform, customBreaksGenerator)
+            TransformedDomainBreaksGenerator(continuousTransform, customBreaksGenerator)
+        } else if (breakWidth != null) {
+            TransformedDomainBreaksGenerator.forTransformWithFixedBreakWidth(
+                continuousTransform, breakWidth, providedFormatter, expFormat
+            )
         } else {
-            createBreaksGeneratorForTransformedDomain(continuousTransform, providedFormatter, expFormat)
+            TransformedDomainBreaksGenerator.forTransform(continuousTransform, providedFormatter, expFormat)
         }
     }
 
@@ -63,7 +69,7 @@ internal class ContinuousScale : AbstractScale<Double> {
                     ?: ScaleBreaks.Fixed.withTransform(
                         domainValues,
                         transform,
-                        formatter = ::formatValue,
+                        formatter = formatter,
                         alternativeLabels = fixedLabels
                     )
             }
@@ -80,7 +86,8 @@ internal class ContinuousScale : AbstractScale<Double> {
 
     private class MyBuilder(scale: ContinuousScale) : AbstractBuilder<Double>(scale) {
         var myContinuousTransform: ContinuousTransform = scale.continuousTransform
-        var myCustomBreaksGenerator: BreaksGenerator? = scale.customBreaksGenerator
+        var myCustomBreaksGenerator: OriginalDomainBreaksGenerator? = scale.customBreaksGenerator
+        var myBreakWidth: Double? = scale.breakWidth
 
         val myContinuousOutput: Boolean = scale.isContinuous
 
@@ -94,8 +101,13 @@ internal class ContinuousScale : AbstractScale<Double> {
             return this
         }
 
-        override fun breaksGenerator(v: BreaksGenerator): Scale.Builder {
+        override fun breaksGenerator(v: OriginalDomainBreaksGenerator): Scale.Builder {
             myCustomBreaksGenerator = v
+            return this
+        }
+
+        override fun breakWidth(v: Double): Scale.Builder {
+            myBreakWidth = v
             return this
         }
 

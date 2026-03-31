@@ -11,22 +11,24 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionUtil
 import org.jetbrains.letsPlot.core.interact.ToolFeedback
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 import org.jetbrains.letsPlot.core.interact.mouse.MouseDragInteraction
 import kotlin.math.abs
 
 class PanGeomFeedback(
-    private val onCompleted: ((
+    private val modifiersMatcher: ModifiersMatcher,
+    private val onCompleted: (
         targetId: String?,
         dataBounds: DoubleRectangle,
         flipped: Boolean,
         mode: PanningMode
-    ) -> Unit)
+    ) -> Unit
 ) : ToolFeedback {
 
     private var panningMode: PanningMode? = null
 
     override fun start(ctx: InteractionContext): Disposable {
-        val interaction = MouseDragInteraction(ctx)
+        val interaction = MouseDragInteraction(ctx, modifiersMatcher)
 
         interaction.loop(
             onStarted = {},
@@ -65,7 +67,6 @@ class PanGeomFeedback(
             },
             onCompleted = {
                 val (target, _, _, dragDelta) = it
-
                 val viewport = InteractionUtil.viewportFromTransform(target.geomBounds, translate = dragDelta)
                 val (dataBounds, flipped) = target.applyViewport(viewport, ctx)
 

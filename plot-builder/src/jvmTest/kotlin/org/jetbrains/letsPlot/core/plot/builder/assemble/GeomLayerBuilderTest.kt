@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.HistogramGeom
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
@@ -44,7 +45,7 @@ class GeomLayerBuilderTest {
             .put(cat, listOf("a", "a", "b", "b"))
             .build()
 
-        val geomProvider = GeomProvider.histogram()
+        val geomProvider = GeomProvider.histogram { HistogramGeom() }
         val stat = Stats.bin()
         val posProvider = PosProvider.barStack()
 

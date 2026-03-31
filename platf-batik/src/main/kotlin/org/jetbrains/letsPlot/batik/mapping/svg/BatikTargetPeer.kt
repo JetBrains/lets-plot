@@ -5,19 +5,19 @@
 
 package org.jetbrains.letsPlot.batik.mapping.svg
 
-import org.jetbrains.letsPlot.commons.event.MouseEvent
-import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
-import org.jetbrains.letsPlot.commons.registration.Registration
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
-import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
-import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
-import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
-import org.jetbrains.letsPlot.datamodel.mapping.svg.shared.TargetPeer
 import org.apache.batik.anim.dom.*
 import org.apache.batik.dom.AbstractDocument
 import org.apache.batik.dom.events.DOMMouseEvent
 import org.apache.batik.util.SVGConstants
+import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.datamodel.mapping.svg.shared.TargetPeer
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
+import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import org.w3c.dom.Element
 import org.w3c.dom.Node
 import org.w3c.dom.events.EventListener
@@ -87,7 +87,6 @@ internal class BatikTargetPeer(private val doc: AbstractDocument) : TargetPeer<N
                 SvgEventSpec.MOUSE_OVER -> addMouseHandler(source, target, spec, SVGConstants.SVG_MOUSEOVER_EVENT_TYPE)
                 SvgEventSpec.MOUSE_MOVE -> addMouseHandler(source, target, spec, SVGConstants.SVG_MOUSEMOVE_EVENT_TYPE)
                 SvgEventSpec.MOUSE_OUT -> addMouseHandler(source, target, spec, SVGConstants.SVG_MOUSEOUT_EVENT_TYPE)
-                else -> throw IllegalArgumentException("unexpected event spec $spec")
             }
             regs.add(handlerReg)
         }

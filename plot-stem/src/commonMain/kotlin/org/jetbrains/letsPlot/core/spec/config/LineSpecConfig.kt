@@ -1,0 +1,238 @@
+/*
+ * Copyright (c) 2022. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.spec.config
+
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.*
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.has
+
+open class LineSpecConfig(
+    opts: Map<String, Any>,
+    val constantsMap: Map<Aes<*>, Any>,
+    val groupingVarNames: List<String>?,
+    private val varBindings: List<VarBinding>,
+) : OptionsAccessor(opts) {
+
+    val lines = if (has(Option.LinesSpec.LINES)) {
+        getStringList(Option.LinesSpec.LINES)
+    } else {
+        null
+    }
+    private val formats = getList(Option.LinesSpec.FORMATS)
+    private val variables = getStringList(Option.LinesSpec.VARIABLES)
+
+    private val titleLine = getString(Option.LinesSpec.TITLE)
+
+    open val sourceRePattern = SOURCE_RE_PATTERN
+
+    fun create(): LinesContentSpecification {
+        val allLines = parseLines()
+        val title = titleLine?.let(::parseLine)
+        return LinesContentSpecification(myValueSources.map { it.value }, allLines, title)
+    }
+
+    private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(formats)
+        .let { specifiedFormats ->
+            val valueSources = specifiedFormats.mapValues { (field, format) ->
+                createValueSource(fieldName = field.name, isAes = field.isAes, format = format)
+            }
+            // the specified format for the variable should be applied also to the aes (if it doesn't have its own format())
+            val aesValueSources = mutableMapOf<Field, ValueSource>()
+            specifiedFormats.forEach { (field, format) ->
+                aesValueSources += getAesValueSourceForVariable(field, format, valueSources)
+            }
+            valueSources + aesValueSources
+        }.toMutableMap()
+
+    // Create lines from the given variable list
+    private val myLinesForVariableList: List<LinePattern> = prepareVariables(variables)
+
+    private fun parseLines(): List<LinePattern>? {
+        val lines = lines?.map(::parseLine)
+        return when {
+            lines != null -> myLinesForVariableList + lines
+            myLinesForVariableList.isNotEmpty() -> myLinesForVariableList
+            else -> null
+        }
+    }
+
+    private fun parseLine(line: String): LinePattern {
+        val label = detachLabel(line)
+        val valueString = line.substringAfter(LABEL_SEPARATOR)
+
+        val fieldsInPattern = mutableListOf<ValueSource>()
+        val pattern: String = sourceRePattern.replace(valueString) {
+            if (it.value == "\\$AES_NAME_PREFIX" || it.value == "\\$VARIABLE_NAME_PREFIX") {
+                // it is a part of the text (not of the name)
+                it.value.removePrefix("\\")
+            } else {
+                fieldsInPattern += getValueSource(it.value)
+                "{}"
+            }
+        }
+        return LinePattern(
+            label,
+            pattern,
+            fieldsInPattern
+        )
+    }
+
+    open fun createValueSource(fieldName: String, isAes: Boolean, format: String? = null): ValueSource {
+        return when {
+            isAes && fieldName == Option.Mapping.GROUP -> {
+                require(groupingVarNames != null) { "Variable name for 'group' is not specified" }
+                require(groupingVarNames.isNotEmpty()) { "Variable name for 'group' is not specified" }
+                require(groupingVarNames.size == 1) { "Multiple variable names for 'group' is specified: $groupingVarNames" }
+
+                DataFrameField(groupingVarNames[0], format)
+            }
+
+            isAes -> {
+                val aes = Option.Mapping.toAes(fieldName)
+                when (val constant = constantsMap[aes]) {
+                    null -> MappingField(aes, format = format)
+                    else -> ConstantField(aes, constant, format)
+                }
+            }
+
+            else -> {
+                DataFrameField(fieldName, format)
+            }
+        }
+    }
+
+    private fun prepareFormats(formats: List<*>): Map<Field, String> {
+        val allFormats = mutableMapOf<Field, String>()
+        formats.forEach { lineFormat ->
+            require(lineFormat is Map<*, *>) { "Wrong 'format' arguments" }
+            require(lineFormat.has(Option.LinesSpec.Format.FIELD) && lineFormat.has(Option.LinesSpec.Format.FORMAT)) {
+                "Invalid 'format' arguments: 'field' and 'format' are expected"
+            }
+
+            val field = lineFormat[Option.LinesSpec.Format.FIELD] as String
+            val format = lineFormat[Option.LinesSpec.Format.FORMAT] as String
+
+            if (field.startsWith(AES_NAME_PREFIX)) {
+                val positionals = when (field.removePrefix(AES_NAME_PREFIX)) {
+                    "X" -> Aes.values().filter(Aes.Companion::isPositionalX)
+                    "Y" -> Aes.values().filter(Aes.Companion::isPositionalY)
+
+                    else -> {
+                        // it is aes name
+                        val aesField = aesField(field.removePrefix(AES_NAME_PREFIX))
+                        allFormats[aesField] = format
+                        emptyList()
+                    }
+                }
+                positionals.forEach { aes ->
+                    val aesField = aesField(aes.name)
+                    if (aesField !in allFormats)
+                        allFormats[aesField] = format
+                }
+            } else {
+                val varField = varField(detachVariableName(field))
+                allFormats[varField] = format
+            }
+        }
+        return allFormats
+    }
+
+    open fun prepareVariables(variables: List<String>): List<LinePattern> {
+        return variables.map { variableName ->
+            val valueSource = getValueSource(varField(variableName))
+            LinePattern.defaultLineForValueSource(valueSource)
+        }
+    }
+
+    private fun getAesValueSourceForVariable(
+        field: Field,
+        format: String?,
+        valueSources: Map<Field, ValueSource>
+    ): Map<Field, ValueSource> {
+        if (field.isAes) {
+            return emptyMap()
+        }
+
+        return varBindings
+            .filter { it.variable.name == field.name }
+            .map(VarBinding::aes).associate { aes ->
+                val aesField = aesField(aes.name)
+                if (aesField in valueSources)
+                    aesField to valueSources[aesField]!!
+                else
+                    aesField to createValueSource(
+                        fieldName = aes.name,
+                        isAes = true,
+                        format = format
+                    )
+            }
+    }
+
+    internal fun getValueSource(field: Field): ValueSource {
+        if (field !in myValueSources) {
+            // If format() is not specified for the variable, use the aes formatting
+            val aesValueSources =
+                getAesValueSourceForVariable(field, format = null, valueSources = myValueSources)
+
+            // Choose the specified before or use the first aes
+            val specifiedBefore = (aesValueSources
+                .filter { it.key in myValueSources }
+                .takeIf { it.isNotEmpty() }
+                ?: aesValueSources)
+                .toList()
+                .minByOrNull { (aesField, _) -> aesField.name }
+                ?.second
+
+            myValueSources[field] =
+                specifiedBefore ?: createValueSource(fieldName = field.name, isAes = field.isAes)
+        }
+        return myValueSources[field]!!
+    }
+
+    open fun getValueSource(fieldString: String): ValueSource {
+        val field = when {
+            fieldString.startsWith(AES_NAME_PREFIX) -> {
+                aesField(fieldString.removePrefix(AES_NAME_PREFIX))
+            }
+
+            fieldString.startsWith(VARIABLE_NAME_PREFIX) -> {
+                varField(detachVariableName(fieldString))
+            }
+
+            else -> error("Unknown type of the field with name = \"$fieldString\"")
+        }
+
+        return getValueSource(field)
+    }
+
+    private fun detachVariableName(field: String) =
+        field.removePrefix(VARIABLE_NAME_PREFIX).removeSurrounding("{", "}")
+
+    private fun detachLabel(line: String): String? {
+        return if (LABEL_SEPARATOR in line) {
+            line.substringBefore(LABEL_SEPARATOR).trim()
+        } else {
+            null
+        }
+    }
+
+    private fun aesField(aesName: String) = Field(aesName, true)
+    internal fun varField(varName: String) = Field(varName, false)
+
+    data class Field(val name: String, val isAes: Boolean)
+
+    companion object {
+        private const val AES_NAME_PREFIX = "^"
+        private const val VARIABLE_NAME_PREFIX = "@"
+        private const val LABEL_SEPARATOR = "|"
+
+        // escaping ('\^', '\@') or aes name ('^aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
+        @Suppress("RegExpRedundantEscape")
+        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
+    }
+}

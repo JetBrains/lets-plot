@@ -36,6 +36,19 @@ class YearInterval internal constructor(
         )
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as YearInterval
+        if (count != other.count) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return count
+    }
+
     companion object {
         const val TICK_FORMAT = "%Y"
         const val MS = 31536e6

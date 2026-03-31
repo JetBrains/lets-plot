@@ -14,30 +14,30 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimNode
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.getChildren
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.newElement
-import org.jetbrains.letsPlot.raster.shape.*
+import org.jetbrains.letsPlot.raster.scene.*
 
 internal class CanvasTargetPeer(
     private val peer: SvgCanvasPeer
-) : TargetPeer<Element> {
-    override fun appendChild(target: Element, child: Element) {
+) : TargetPeer<Node> {
+    override fun appendChild(target: Node, child: Node) {
         getChildren(target as Group).add(child)
     }
 
-    override fun removeAllChildren(target: Element) {
+    override fun removeAllChildren(target: Node) {
         if (target is Group) {
             getChildren(target).clear()
         }
     }
 
-    override fun newSvgElement(source: SvgElement): Element {
+    override fun newSvgElement(source: SvgElement): Node {
         return newElement(source, peer)
     }
 
-    override fun newSvgTextNode(source: SvgTextNode): Element {
+    override fun newSvgTextNode(source: SvgTextNode): Node {
         TODO() // return Text(source.textContent().get())
     }
 
-    override fun newSvgSlimNode(source: SvgSlimNode): Element {
+    override fun newSvgSlimNode(source: SvgSlimNode): Node {
         return when (source.elementName) {
             SvgSlimElements.GROUP -> Group()
             SvgSlimElements.LINE -> Line()
@@ -48,11 +48,11 @@ internal class CanvasTargetPeer(
         }
     }
 
-    override fun setAttribute(target: Element, name: String, value: String) {
+    override fun setAttribute(target: Node, name: String, value: String) {
         SvgUtils.setAttribute(target, name, value)
     }
 
-    override fun hookEventHandlers(source: SvgElement, target: Element, eventSpecs: Set<SvgEventSpec>): Registration {
+    override fun hookEventHandlers(source: SvgElement, target: Node, eventSpecs: Set<SvgEventSpec>): Registration {
         error("UNSUPPORTED: hookEventHandlers")
     }
 }

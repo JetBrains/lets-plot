@@ -42,6 +42,7 @@ object DefaultSampling {
     val TILE = POINT    // optimized
     val BIN_2D = POINT
     val HEX = POINT
+    val POINT_DENSITY = POINT
     val JITTER = POINT
     val SINA = POINT
     val Q_Q = POINT
@@ -71,6 +72,7 @@ object DefaultSampling {
     // val BOX_PLOT = random(500, SEED) - tmp disabled (see GeomProto)
     val LINE_RANGE = BAR
     val POINT_RANGE = BAR
+    val BRACKET = BAR
     val LOLLIPOP = BAR
 
     val HISTOGRAM = BAR

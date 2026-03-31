@@ -9,8 +9,9 @@ import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil.backendSpecTransform
-import org.jetbrains.letsPlot.core.spec.config.TestUtil.createPlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.config.TestUtil.assertPlotWontFail
+import org.jetbrains.letsPlot.core.spec.config.TestUtil.createPlotConfigFrontend
+import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -56,7 +57,7 @@ class DiscreteScaleForContinuousVarTest {
 
         assertPlotWontFail(plotSpecsProcessed)
 
-        val mapperByAes = plotConfigFrontend.createScaleMappers()
+        val (mapperByAes, _) = PlotConfigFrontendUtil.createMappersAndScalesBeforeFacets(plotConfigFrontend)
         val mapper = mapperByAes.getValue(Aes.FILL)
 
         // this is discrete scale so input value for mapper is index

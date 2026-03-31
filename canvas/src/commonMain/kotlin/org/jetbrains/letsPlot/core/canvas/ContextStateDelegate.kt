@@ -14,9 +14,10 @@ private fun log(str: () -> String) {
         println(str())
 }
 
-class ContextStateDelegate(
+open class ContextStateDelegate(
     logEnabled: Boolean = true,
-    failIfNotImplemented: Boolean = true
+    failIfNotImplemented: Boolean = true,
+    override val contentScale: Double = 1.0
 ) : Context2d by Context2dDelegate(
     logEnabled = logEnabled,
     failIfNotImplemented = failIfNotImplemented
@@ -63,6 +64,31 @@ class ContextStateDelegate(
     fun getFont(): Font {
         return currentState.font
     }
+
+    fun getStrokeColor(): Color {
+        return currentState.strokeColor
+    }
+
+    fun getFillColor(): Color {
+        return currentState.fillColor
+    }
+
+    fun getColor(fill: Boolean): Color {
+        return if (fill) getFillColor() else getStrokeColor()
+    }
+
+    fun getTextAlign(): TextAlign {
+        return currentState.fontTextAlign
+    }
+
+    fun getTextBaseline(): TextBaseline {
+        return currentState.fontBaseline
+    }
+
+    fun getLineWidth(): Double {
+        return currentState.strokeWidth
+    }
+
 
     override fun beginPath() {
         currentPath = Path2d()

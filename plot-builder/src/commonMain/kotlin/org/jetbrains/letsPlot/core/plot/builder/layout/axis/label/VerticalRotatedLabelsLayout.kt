@@ -7,14 +7,16 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.axis.label
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
-import kotlin.math.*
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 internal class VerticalRotatedLabelsLayout(
     orientation: Orientation,
@@ -105,7 +107,7 @@ internal class VerticalRotatedLabelsLayout(
         val verticalAnchor = Text.VerticalAnchor.CENTER
 
         val adjustedLabelBoundsList = labelBoundsList.map {
-            val origin = DoubleVector( it.origin.x + xBBoxOffset(it), yBBoxOffset(it) + it.origin.y)
+            val origin = DoubleVector(it.origin.x + xBBoxOffset(it), yBBoxOffset(it) + it.origin.y)
             DoubleRectangle(origin, it.dimension)
         }
 

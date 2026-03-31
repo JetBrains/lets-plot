@@ -20,7 +20,8 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 
 class Context2dDelegate(
     private val logEnabled: Boolean = false,
-    private val failIfNotImplemented: Boolean = false
+    private val failIfNotImplemented: Boolean = false,
+    override val contentScale: Double = 1.0
 ) : Context2d {
     private fun log(msg: String) {
         if (logEnabled) {
@@ -32,7 +33,12 @@ class Context2dDelegate(
         }
     }
 
+    override fun dispose() {
+        log("dispose")
+    }
+
     override fun clearRect(rect: DoubleRectangle) { log("clearRect: $rect") }
+    override fun clearRect(x: Double, y: Double, w: Double, h: Double) { log("clearRect: x=$x, y=$y, w=$w, h=$h") }
     override fun drawImage(snapshot: Canvas.Snapshot) { log("drawImage: $snapshot") }
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) { log("drawImage: $snapshot, x=$x, y=$y") }
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) { log("drawImage: $snapshot, x=$x, y=$y, dw=$dw, dh=$dh") }
@@ -47,6 +53,10 @@ class Context2dDelegate(
     override fun moveTo(x: Double, y: Double) { log("moveTo: x=$x, y=$y") }
     override fun lineTo(x: Double, y: Double) { log("lineTo: x=$x, y=$y") }
     override fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { log("arc: x=$x, y=$y, radius=$radius, startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise") }
+    override fun drawCircle(x: Double, y: Double, radius: Double) {
+        log("drawCircle: x=$x, y=$y, radius=$radius")
+    }
+
     override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) { log("ellipse: x=$x, y=$y, radiusX=$radiusX, radiusY=$radiusY, rotation=$rotation, startAngle=$startAngle, endAngle=$endAngle, anticlockwise=$anticlockwise") }
     override fun save() { log("save") }
     override fun restore() { log("restore") }
@@ -97,6 +107,9 @@ object NullSnapshot : Canvas.Snapshot {
         get() = Bitmap(1, 1, intArrayOf(0xFFFFFFFF.toInt())) // White pixel
 
     override fun copy(): Canvas.Snapshot = this
+    override fun dispose() {
+        // No resources to dispose
+    }
 }
 
 open class CanvasControlDelegate(
@@ -104,6 +117,7 @@ open class CanvasControlDelegate(
     height: Int,
     override val pixelDensity: Double = 1.0,
 ) : CanvasControl {
+    override val canvasPeer: CanvasPeer get() = TODO("Not yet implemented")
     override val size: Vector = Vector(width, height)
     override fun addChild(canvas: Canvas) {}
     override fun addChild(index: Int, canvas: Canvas) {}

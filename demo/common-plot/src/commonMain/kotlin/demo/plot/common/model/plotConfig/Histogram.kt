@@ -18,7 +18,8 @@ open class Histogram {
             basic(),
             basicWithVLine(),
             withWeights(),
-            densityMapping()
+            densityMapping(),
+            withBreaks()
         )
     }
 
@@ -48,18 +49,19 @@ open class Histogram {
 
 
         fun basic(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'x'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'histogram'" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'x'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'histogram'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -67,23 +69,25 @@ open class Histogram {
         }
 
         fun basicWithVLine(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'x'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "                  {'geom': 'histogram'}," +
-                    "                  {'geom': { " +
-                    "                              'name' : 'vline'," +
-                    "                              'data': { 'vl': [2.0, 5.0] }" +
-                    "                           }," +
-                    "                          'mapping': {'xintercept': 'vl'}, " +
-                    "                          'color': 'red'" +
-                    "                  }" +
-                    "              ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'x'
+                  },
+                  'layers': [
+                    {'geom': 'histogram'},
+                    {
+                      'geom': {
+                        'name': 'vline',
+                        'data': {'vl': [2.0, 5.0]}
+                      },
+                      'mapping': {'xintercept': 'vl'}, 
+                      'color': 'red'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -91,19 +95,20 @@ open class Histogram {
         }
 
         fun withWeights(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'x'," +
-                    "             'weight': 'weight'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'histogram'" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'x',
+                    'weight': 'weight'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'histogram'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec = HashMap(parsePlotSpec(spec))
             plotSpec["data"] = DATA
@@ -111,27 +116,50 @@ open class Histogram {
         }
 
         fun densityMapping(): MutableMap<String, Any> {
-            val spec = "{" +
-                    "   'kind': 'plot'," +
-                    "   'mapping': {" +
-                    "             'x': 'x'" +
-                    "           }," +
-
-                    "   'layers': [" +
-                    "               {" +
-                    "                  'geom': 'histogram'," +
-                    "                  'mapping': {" +
-                    "                            'y': '..density..'" +
-                    "                          }," +
-                    "                  'fill': 'orange'" +
-                    "               }" +
-                    "           ]" +
-                    "}"
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'mapping': {
+                    'x': 'x'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'histogram',
+                      'mapping': {
+                        'y': '..density..'
+                      },
+                      'fill': 'orange'
+                    }
+                  ]
+                }
+            """.trimIndent()
 
             val plotSpec1 = HashMap(parsePlotSpec(spec))
             plotSpec1["data"] = DATA
             return plotSpec1
         }
 
+        fun withBreaks(): MutableMap<String, Any> {
+            val spec = """
+                {
+                  'kind': 'plot',
+                  'data': {
+                    'x': [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 4, 4]
+                  },
+                  'mapping': {
+                    'x': 'x'
+                  },
+                  'layers': [
+                    {
+                      'geom': 'histogram',
+                      'breaks': [0, 3, 4],
+                      'color': 'white'
+                    }
+                  ]
+                }
+            """.trimIndent()
+
+            return HashMap(parsePlotSpec(spec))
+        }
     }
 }

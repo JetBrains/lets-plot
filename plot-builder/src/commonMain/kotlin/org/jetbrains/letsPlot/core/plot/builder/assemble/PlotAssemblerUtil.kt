@@ -146,16 +146,12 @@ internal object PlotAssemblerUtil {
         val legendBoxInfos = ArrayList<LegendBoxInfo>()
         for (legendTitle in colorBarAssemblerByTitle.keys) {
             val boxInfo = colorBarAssemblerByTitle.getValue(legendTitle).createColorBar()
-            if (!boxInfo.isEmpty) {
-                legendBoxInfos.add(boxInfo)
-            }
+            boxInfo?.let { legendBoxInfos.add(it) }
         }
 
         for (legendTitle in legendAssemblerByTitle.keys) {
             val boxInfo = legendAssemblerByTitle.getValue(legendTitle).createLegend()
-            if (!boxInfo.isEmpty) {
-                legendBoxInfos.add(boxInfo)
-            }
+            boxInfo?.let { legendBoxInfos.add(it) }
         }
         return legendBoxInfos
     }

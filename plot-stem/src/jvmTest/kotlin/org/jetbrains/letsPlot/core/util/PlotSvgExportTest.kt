@@ -2,12 +2,10 @@ package org.jetbrains.letsPlot.core.util
 
 import demoAndTestShared.parsePlotSpec
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.xml.Xml
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
-import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
 import kotlin.test.Test
 
 class PlotSvgExportTest {
@@ -36,11 +34,10 @@ class PlotSvgExportTest {
 
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpecWithGgSize,
-            plotSize = null,
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            plotSize = null
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("222.0")
         assertThat(root.attributes["height"]).isEqualTo("111.0")
         assertThat(root.attributes).doesNotContainKey("viewBox")
@@ -57,11 +54,10 @@ class PlotSvgExportTest {
 
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpecWithGgSize,
-            plotSize = DoubleVector(400, 200),
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            plotSize = DoubleVector(400, 200)
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("400.0")
         assertThat(root.attributes["height"]).isEqualTo("200.0")
         assertThat(root.attributes).doesNotContainKey("viewBox")
@@ -71,11 +67,10 @@ class PlotSvgExportTest {
     fun `buildSvg()`() {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
-            plotSize = null,
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            plotSize = null
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("600.0")
         assertThat(root.attributes["height"]).isEqualTo("400.0")
         assertThat(root.attributes).doesNotContainKey("viewBox")
@@ -85,11 +80,10 @@ class PlotSvgExportTest {
     fun `buildSvg(w=500, h=300) in jvm default unit is px`() {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
-            plotSize = DoubleVector(500, 300),
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            plotSize = DoubleVector(500, 300)
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("500.0")
         assertThat(root.attributes["height"]).isEqualTo("300.0")
         assertThat(root.attributes).doesNotContainKey("viewBox")
@@ -100,11 +94,10 @@ class PlotSvgExportTest {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = DoubleVector(8, 6),
-            sizeUnit = SizeUnit.IN,
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            sizeUnit = SizeUnit.IN
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("8.0in")
         assertThat(root.attributes["height"]).isEqualTo("6.0in")
         assertThat(root.attributes["viewBox"]).isEqualTo("0 0 768.0 576.0")
@@ -115,11 +108,10 @@ class PlotSvgExportTest {
         val svg = MonolithicCommon.buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = DoubleVector(8, 6),
-            sizeUnit = null,
-            svgToString = SvgToString(rgbEncoder = UnsupportedRGBEncoder)
+            sizeUnit = null
         ) { _ -> }
 
-        val root = Xml.parse(svg) as XmlNode.Element
+        val root = Xml.parse(svg).root as XmlNode.Element
         assertThat(root.attributes["width"]).isEqualTo("8.0in")
         assertThat(root.attributes["height"]).isEqualTo("6.0in")
         assertThat(root.attributes["viewBox"]).isEqualTo("0 0 768.0 576.0")

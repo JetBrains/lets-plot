@@ -8,8 +8,11 @@ package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.guide.*
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.base.theme.TagLocation
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_MINOR_TICKS
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_MINOR_TICKS_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_ONTOP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_SPACING
@@ -20,6 +23,8 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_PANEL_SPACING
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_SPACING
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LEGEND_BOX
@@ -44,7 +49,10 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TAG
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_CAPTION_POSITION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TAG_POSITION
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_TAG_LOCATION
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_INSET
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_MARGIN
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PLOT_SUBTITLE
@@ -101,7 +109,10 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.HJUST to 1.0,
                 Elem.SIZE to Defaults.FONT_SMALL
             ),
-
+            PLOT_TAG to mapOf(
+                Elem.SIZE to Defaults.FONT_LARGE,
+                Elem.HJUST to 0.5
+            ),
             PANEL_BORDER_RECT to ELEMENT_BLANK,
             PANEL_BORDER_ONTOP to true,
 
@@ -115,6 +126,8 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
             AXIS_ONTOP to true,
             AXIS_TICKS_LENGTH to 4.0,
+            AXIS_MINOR_TICKS_LENGTH to 2.0,
+            AXIS_MINOR_TICKS to ELEMENT_BLANK,
 
             AXIS_TEXT to mapOf(
                 Elem.Margin.TOP to 0.0,
@@ -196,6 +209,9 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
                 Elem.Margin.LEFT to 3.0,
             ),
 
+            FACET_PANEL_SPACING to 10.0,
+            FACET_STRIP_SPACING to 0.0,
+
             // Tooltip
             TOOLTIP_RECT to mapOf(
                 Elem.SIZE to 1.0,
@@ -225,6 +241,8 @@ internal open class ThemeValuesBase : ThemeValues(VALUES) {
 
             PLOT_TITLE_POSITION to TitlePosition.PANEL,
             PLOT_CAPTION_POSITION to TitlePosition.PANEL,
+            PLOT_TAG_POSITION to (0.0 to 1.0),
+            PLOT_TAG_LOCATION to TagLocation.PLOT,
         )
     }
 }

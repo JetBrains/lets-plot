@@ -71,8 +71,8 @@ object GeomMeta {
 
     private fun renderedAesList(geomKind: GeomKind): List<Aes<*>> {
         return when (geomKind) {
-            GeomKind.POINT,
-            GeomKind.BLANK -> POINT
+            GeomKind.POINT -> POINT
+
 
             GeomKind.PATH -> PATH
             GeomKind.LINE -> PATH
@@ -82,6 +82,17 @@ object GeomMeta {
                 Aes.YMIN, Aes.YMAX,
 
                 Aes.SIZE, // path width
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.FILL,
+                Aes.ALPHA
+            )
+
+            GeomKind.BLANK -> listOf(
+                Aes.X, Aes.Y,
+
+                // Copy from GeomKind.SMOOTH to sync grouping
+                Aes.SIZE,
                 Aes.LINETYPE,
                 Aes.COLOR,
                 Aes.FILL,
@@ -316,6 +327,7 @@ object GeomMeta {
             GeomKind.DENSITY -> AREA
             GeomKind.DENSITY2D -> PATH
             GeomKind.DENSITY2DF -> POLYGON
+            GeomKind.POINT_DENSITY -> POINT
             GeomKind.JITTER -> POINT
             GeomKind.Q_Q -> listOf(
                 Aes.X, Aes.Y,
@@ -509,6 +521,48 @@ object GeomMeta {
                 Aes.ALPHA,
                 Aes.SHAPE,
                 Aes.LINETYPE
+            )
+
+            GeomKind.BRACKET -> listOf(
+                Aes.XMIN, Aes.XMAX,
+                Aes.Y,
+                Aes.LENSTART,
+                Aes.LENEND,
+                Aes.LABEL,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
+                Aes.SEGMENT_COLOR,
+                Aes.SEGMENT_SIZE,
+                Aes.SEGMENT_ALPHA
+            )
+
+            GeomKind.BRACKET_DODGE -> listOf(
+                Aes.X, Aes.Y,
+                Aes.ISTART, Aes.IEND,
+                Aes.LENSTART,
+                Aes.LENEND,
+                Aes.LABEL,
+                Aes.SIZE,
+                Aes.LINETYPE,
+                Aes.COLOR,
+                Aes.ALPHA,
+                Aes.FAMILY,
+                Aes.FONTFACE,
+                Aes.HJUST,
+                Aes.VJUST,
+                Aes.ANGLE,
+                Aes.LINEHEIGHT,
+                Aes.SEGMENT_COLOR,
+                Aes.SEGMENT_SIZE,
+                Aes.SEGMENT_ALPHA
             )
         }
     }

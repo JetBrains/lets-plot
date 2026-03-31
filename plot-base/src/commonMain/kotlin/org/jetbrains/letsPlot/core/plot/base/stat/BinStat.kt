@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
  * @param binWidth Used to compute binCount such that bins covers the range of the data
  * @param xPosKind Specifies a way in which bin x-position is interpreted (center, boundary)
  * @param xPos Bin x-position.
+ * @param breaks Optional list of bin boundaries. If specified, binCount, binWidth, xPosKind and xPos are ignored.
  * @param threshold Threshold for bin trimming
  *
  * Computed values:
@@ -31,6 +32,7 @@ open class BinStat(
     binWidth: Double?,
     private val xPosKind: XPosKind,
     private val xPos: Double,
+    private val breaks: List<Double>,
     private val threshold: Double?,
 ) : BaseStat(DEF_MAPPING) {
     private val binOptions = BinStatUtil.BinOptions(binCount, binWidth)
@@ -51,8 +53,16 @@ open class BinStat(
         val statSumPct = ArrayList<Double>()
 
         val rangeX = statCtx.overallXRange()
-        if (rangeX != null) { // null means all input values are null
-            val binsData = BinStatUtil.computeHistogramStatSeries(
+        val filteredBreaks = breaks.filter(Double::isFinite).distinct().sorted()
+        when {
+            filteredBreaks.isNotEmpty() -> {
+                BinStatUtil.computeHistogramBins(
+                    data.getNumeric(TransformVar.X),
+                    filteredBreaks,
+                    BinStatUtil.weightAtIndex(data)
+                )
+            }
+            rangeX != null -> BinStatUtil.computeHistogramStatSeries(
                 data,
                 rangeX,
                 data.getNumeric(TransformVar.X),
@@ -60,6 +70,8 @@ open class BinStat(
                 xPos,
                 binOptions
             )
+            else -> null // null means all input values are null
+        }?.let { binsData ->
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)
             statDensity.addAll(binsData.density)

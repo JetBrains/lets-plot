@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.intern.gcommon.collect.Ordering
+import org.jetbrains.letsPlot.commons.intern.splitByNull
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -43,6 +43,31 @@ object GeomUtil {
             0.0
         )
     }
+
+    val TO_LOCATION_X_ZERO_WITH_FINITE_Y = { p: DataPointAesthetics ->
+        toLocationOrNull(
+            p.x(),
+            0.0,
+            requireAlso = p.y()
+        )
+    }
+
+    val TO_LOCATION_X_YMAX_WITH_FINITE_YMIN = { p: DataPointAesthetics ->
+        toLocationOrNull(
+            x = p.x(),
+            y = p.ymax(),
+            requireAlso = p.ymin()
+        )
+    }
+
+    val TO_LOCATION_X_YMIN_WITH_FINITE_YMAX = { p: DataPointAesthetics ->
+        toLocationOrNull(
+            x = p.x(),
+            y = p.ymin(),
+            requireAlso = p.ymax()
+        )
+    }
+
     val TO_RECTANGLE = { p: DataPointAesthetics ->
         if (SeriesUtil.allFinite(p.xmin(), p.ymin(), p.xmax(), p.ymax())) {
             rectToGeometry(
@@ -81,6 +106,12 @@ object GeomUtil {
 
     private fun toLocationOrNull(x: Double?, y: Double?): DoubleVector? {
         return if (SeriesUtil.isFinite(x) && SeriesUtil.isFinite(y)) {
+            DoubleVector(x!!, y!!)
+        } else null
+    }
+
+    private fun toLocationOrNull(x: Double?, y: Double?, requireAlso: Double?): DoubleVector? {
+        return if (SeriesUtil.allFinite(x, y, requireAlso)) {
             DoubleVector(x!!, y!!)
         } else null
     }
@@ -144,7 +175,7 @@ object GeomUtil {
         return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }
 
-    fun createGroups(
+    private fun createGroups(
         dataPoints: Iterable<DataPointAesthetics>,
         sorted: Boolean = false
     ): Map<Int, List<DataPointAesthetics>> {
@@ -174,12 +205,14 @@ object GeomUtil {
             }
     }
 
-    fun createPathGroups(
+    // Builds a list of PathData splitting by group and null points.
+    fun createPaths(
         dataPoints: Iterable<DataPointAesthetics>,
         pointTransform: ((DataPointAesthetics) -> DoubleVector?),
         sorted: Boolean,
-        closePath: Boolean = false
-    ): Map<Int, PathData> {
+        closePath: Boolean = false,
+        nullsCounter: (Int) -> Unit,
+    ): List<PathData> {
         val groups = createGroups(dataPoints, sorted).let { groups ->
             if (closePath) {
                 groups.mapValues { (_, group) -> group + group.first() }
@@ -188,13 +221,32 @@ object GeomUtil {
             }
         }
 
-        return groups.mapValues { (_, aesthetics) ->
-            val points = aesthetics.mapNotNull { aes -> pointTransform(aes)?.let { p -> PathPoint(aes, p) } }
-            when (points.isEmpty()) {
-                true -> null
-                false -> PathData.create(points)
+        var nulls = 0
+        var singlePointPaths = 0
+        val result = groups.values
+            .map { aesthetics -> toPathPoints(aesthetics, pointTransform) }
+            .also { a ->
+                nulls += a.flatten().count { it == null }
             }
-        }.filterNotNullValues()
+            .map { pathPoints -> pathPoints.splitByNull() }
+            .flatten()
+            .mapNotNull {
+                if (it.size == 1) singlePointPaths++
+                PathData.create(it)
+            }
+
+        nullsCounter(nulls + singlePointPaths)
+
+        return result
+    }
+
+    private fun toPathPoints(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pointTransform: ((DataPointAesthetics) -> DoubleVector?)
+    ): List<PathPoint?> {
+        return dataPoints.map { aes ->
+            pointTransform(aes)?.let { p -> PathPoint(aes, p) }
+        }
     }
 
     fun rectToGeometry(minX: Double, minY: Double, maxX: Double, maxY: Double): List<DoubleVector> {

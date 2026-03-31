@@ -11,12 +11,10 @@ object SpecialSymbolsBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(SpecialSymbols()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Special symbols",
-                listOf(plotSpec()),
-//                demoComponentSize
-            ))
+                listOf(plotSpec())
+            )
         }
     }
 }

@@ -20,6 +20,9 @@ import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandle
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import java.awt.Graphics
+import java.awt.Rectangle
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import javax.imageio.ImageIO
@@ -38,12 +41,32 @@ class AwtCanvasControl(
 
     fun component(): JComponent = myComponent
 
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(FontManager.DEFAULT, pixelDensity)
+
     override fun addChild(canvas: Canvas) {
         addChild(myComponent.componentCount, canvas)
     }
 
     override fun addChild(index: Int, canvas: Canvas) {
-        val canvasComponent = CanvasComponent(canvas as AwtCanvas)
+        require(canvas is AwtCanvas)
+
+        val canvasComponent = object : JComponent() {
+            init {
+                bounds = Rectangle(0, 0, canvas.size.x, canvas.size.y)
+                isOpaque = false
+            }
+
+            override fun paintComponent(g: Graphics?) {
+                super.paintComponent(g)
+
+                g!!.drawImage(
+                    canvas.image,
+                    0, 0, canvas.size.x, canvas.size.y,
+                    0, 0, canvas.image.width, canvas.image.height,
+                    this
+                )
+            }
+        }
         myComponent.add(canvasComponent, myComponent.componentCount - index)
         myComponent.revalidate()
         myMappedCanvases[canvas] = canvasComponent

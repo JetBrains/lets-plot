@@ -11,12 +11,14 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipFormatting
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.TooltipFormatting
 
 internal class PlotAssemblerPlotContext constructor(
     private val geomTiles: PlotGeomTiles,
     override val expFormat: ExponentFormat,
     override val tz: TimeZone?,
+    private val myScaleFactor: Double = 1.0,
+    private val messageConsumer: (String) -> Unit
 ) : PlotContext {
 
     private val tooltipFormatters: MutableMap<Aes<*>, (Any?) -> String> = HashMap()
@@ -28,6 +30,10 @@ internal class PlotAssemblerPlotContext constructor(
         return geomTiles.scalesBeforeFacets.getValue(aes)
     }
 
+    override fun getScaleFactor(): Double {
+        return myScaleFactor
+    }
+
     override fun overallTransformedDomain(aes: Aes<*>): DoubleSpan {
         return geomTiles.overallTransformedDomain(aes)
     }
@@ -37,6 +43,10 @@ internal class PlotAssemblerPlotContext constructor(
         return tooltipFormatters.getOrPut(aes) {
             TooltipFormatting.fromScale(aes, this)
         }
+    }
+
+    override fun getMessageConsumer(): (String) -> Unit {
+        return messageConsumer
     }
 
     private companion object {

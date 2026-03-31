@@ -9,16 +9,17 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 
 open class PointGeom : GeomBase() {
 
     var animation: Any? = null
     var sizeUnit: String? = null
+    override val geomName: String = "point"
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -32,10 +33,11 @@ open class PointGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
 
         val count = aesthetics.dataPointCount()
         val slimGroup = SvgSlimElements.g(count)
+        var goodPointsCount = 0
 
         for (i in 0 until count) {
             val p = aesthetics.dataPointAt(i)
@@ -47,17 +49,24 @@ open class PointGeom : GeomBase() {
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
             // TODO: Need refactoring: It's better to use NamedShape.FILLED_CIRCLE.size(1.0)
             // but Shape.size() can't be used because it takes DataPointAesthetics as param
-            val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
+
+            val scaleFactor = if (sizeUnit.isNullOrBlank()) {
+                ctx.getScaleFactor()
+            } else {
+                AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.POINT_UNIT_SIZE)
+            }
 
             targetCollector.addPoint(
-                i, location, (shape.size(p, sizeUnitRatio) + shape.strokeWidth(p)) / 2,
+                i, location, (shape.size(p, scaleFactor) + shape.strokeWidth(p)) / 2,
                 GeomTargetCollector.TooltipParams(
                     markerColors = colorsByDataPoint(p)
                 )
             )
-            val o = PointShapeSvg.create(shape, location, p, sizeUnitRatio)
+            val o = PointShapeSvg.create(shape, location, p, scaleFactor)
             o.appendTo(slimGroup)
+            goodPointsCount += 1
         }
+        addNulls(count - goodPointsCount)
         root.add(wrap(slimGroup))
     }
 

@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.livemap.mapengine.basemap
 
 import org.jetbrains.letsPlot.commons.intern.spatial.computeRect
 import org.jetbrains.letsPlot.livemap.api.mapEntity
+import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.AbstractSystem
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsComponentManager
 import org.jetbrains.letsPlot.livemap.core.ecs.addComponents
@@ -85,6 +86,7 @@ class BasemapCellLoadingSystem(componentManager: EcsComponentManager) :
                     "tile_${layerKind}_$cellKey"
                 )
                     .addComponents {
+                        +BusyStateComponent() // tile is loading
                         +WorldOriginComponent(tileRect.origin)
                         +RenderableComponent().apply {
                             renderer = NULL_RENDERER

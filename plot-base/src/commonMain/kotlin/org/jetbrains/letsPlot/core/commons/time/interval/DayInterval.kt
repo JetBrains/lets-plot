@@ -24,6 +24,19 @@ class DayInterval(
         )
     }
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as DayInterval
+        if (count != other.count) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return count
+    }
+
     companion object {
         const val TICK_FORMAT = "%b %e"
     }

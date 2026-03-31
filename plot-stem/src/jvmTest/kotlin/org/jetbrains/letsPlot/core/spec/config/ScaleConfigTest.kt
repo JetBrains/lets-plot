@@ -200,7 +200,12 @@ class ScaleConfigTest {
 
         val opts = parsePlotSpec(spec)
         val config = PlotConfigFrontend.create(opts) {}
-        PlotConfigFrontendUtil.createPlotAssembler(config)
+        PlotConfigFrontendUtil.createPlotAssembler(
+            config,
+            sharedContinuousDomainX = null,
+            sharedContinuousDomainY = null,
+            detachedLegendsCollector = null,
+        )
     }
 
     @Test

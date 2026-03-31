@@ -13,12 +13,20 @@ data class Rect<TypeT>(
 ) {
 
     companion object {
+        fun <TypeT> LTRB(left: Number, top: Number, right: Number, bottom: Number): Rect<TypeT> {
+            return LTRB(left.toDouble(), top.toDouble(), right.toDouble(), bottom.toDouble())
+        }
+
         fun <TypeT> LTRB(left: Double, top: Double, right: Double, bottom: Double): Rect<TypeT> {
             return Rect(Vec(left, top), Vec(right-left, bottom-top))
         }
 
         fun <TypeT> LTRB(leftTop: Vec<TypeT>, rightBottom: Vec<TypeT>): Rect<TypeT> {
             return Rect(leftTop, rightBottom - leftTop)
+        }
+
+        fun <TypeT> XYWH(x: Number, y: Number, width: Number, height: Number): Rect<TypeT> {
+            return Rect(Vec(x, y), Vec(width, height))
         }
 
         fun <TypeT> XYWH(x: Double, y: Double, width: Double, height: Double): Rect<TypeT> {

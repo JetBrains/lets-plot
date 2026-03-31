@@ -5,13 +5,13 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.commons.intern.indicesOf
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
 
 class Density2dfStat(
     bandWidthX: Double?,
@@ -35,7 +35,8 @@ class Density2dfStat(
     nY = nY,
     isContour = isContour,
     binCount = binCount,
-    binWidth = binWidth
+    binWidth = binWidth,
+    defaultMappings = DEF_MAPPING
 ) {
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -45,74 +46,33 @@ class Density2dfStat(
 
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
-        val (xVector, yVector) = (xs zip ys)
-            .filter { SeriesUtil.allFinite(it.first, it.second) }
-            .unzip()
+        val finiteIndices = xs.indicesOf(SeriesUtil::isFinite) intersect ys.indicesOf(SeriesUtil::isFinite)
 
         // if no data, return empty
-        if (xVector.isEmpty()) {
+        if (finiteIndices.isEmpty()) {
             return withEmptyStatValues()
         }
 
-        // if length of x and y doesn't match, throw error
-        if (xVector.size != yVector.size) {
-            throw RuntimeException("len(x)= " + xVector.size + " and len(y)= " + yVector.size + " doesn't match!")
-        }
+        val xVector = xs.slice(finiteIndices).requireNoNulls()
+        val yVector = ys.slice(finiteIndices).requireNoNulls()
+        val groupWeight = BinStatUtil.weightVector(data)
+            .slice(finiteIndices)
+            .map { SeriesUtil.finiteOrNull(it) ?: 0.0 }
 
         val xRange = statCtx.overallXRange()
         val yRange = statCtx.overallYRange()
+
+        val (stepsX, stepsY, densityMatrix) = density2dGrid(xVector, yVector, groupWeight, xRange!!, yRange!!)
 
         val statX = ArrayList<Double>()
         val statY = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
 
-        val bandWidth = DoubleArray(2)
-//        bandWidth[0] = if (bandWidths != null) bandWidths!![0] else DensityStatUtil.bandWidth(
-//            bandWidthMethod,
-//            xVector
-//        )
-        bandWidth[0] = getBandWidthX(xVector)
-
-//        bandWidth[1] = if (bandWidths != null) bandWidths!![1] else DensityStatUtil.bandWidth(
-//            bandWidthMethod,
-//            yVector
-//        )
-        bandWidth[1] = getBandWidthY(yVector)
-
-        val stepsX = DensityStatUtil.createStepValues(xRange!!, nX)
-        val stepsY = DensityStatUtil.createStepValues(yRange!!, nY)
-
-        // weight aesthetics
-        val groupWeight = BinStatUtil.weightVector(xVector.size, data)
-
-        val matrixX = BlockRealMatrix(
-            DensityStatUtil.createRawMatrix(
-                xVector,
-                stepsX,
-                kernelFun,
-                bandWidth[0],
-                adjust,
-                groupWeight
-            )
-        )
-        val matrixY = BlockRealMatrix(
-            DensityStatUtil.createRawMatrix(
-                yVector,
-                stepsY,
-                kernelFun,
-                bandWidth[1],
-                adjust,
-                groupWeight
-            )
-        )
-        // size: nY * nX
-        val matrixFinal = matrixY.multiply(matrixX.transpose())
-
         for (row in 0 until nY) {
             for (col in 0 until nX) {
                 statX.add(stepsX[col])
                 statY.add(stepsY[row])
-                statDensity.add(matrixFinal.getEntry(row, col) / SeriesUtil.sum(groupWeight))
+                statDensity.add(densityMatrix.getEntry(row, col) / SeriesUtil.sum(groupWeight))
             }
         }
 
@@ -148,5 +108,12 @@ class Density2dfStat(
                 .putNumeric(Stats.DENSITY, statDensity)
                 .build()
         }
+    }
+
+    companion object {
+        private val DEF_MAPPING: Map<Aes<*>, DataFrame.Variable> = mapOf(
+            Aes.X to Stats.X,
+            Aes.Y to Stats.Y
+        )
     }
 }

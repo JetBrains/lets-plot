@@ -6,11 +6,13 @@
 package demo.plot.export.browser.image
 
 import demo.common.utils.browser.BrowserDemoUtil
-import demo.common.utils.browser.BrowserDemoUtil.createDemoFile
 import kotlinx.html.*
 import kotlinx.html.stream.appendHTML
-import org.jetbrains.letsPlot.core.plot.export.PlotImageExport
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport
+import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format
+import java.io.File
 import java.io.StringWriter
+import kotlin.io.path.Path
 
 object PlotImageDemoUtil {
     private const val DEMO_PROJECT_PATH = "demo/export"
@@ -21,7 +23,7 @@ object PlotImageDemoUtil {
         plotSpec: MutableMap<String, Any>,
         scalingFactors: List<Double>,
         targetDPIs: List<Number>,
-        formats: List<PlotImageExport.Format>
+        formats: List<Format>
     ) {
         BrowserDemoUtil.openInBrowser(DEMO_PROJECT_PATH) {
             getHtml(
@@ -37,7 +39,7 @@ object PlotImageDemoUtil {
     private fun getHtml(
         title: String,
         plotSpec: MutableMap<String, Any>,
-        formats: List<PlotImageExport.Format>,
+        formats: List<Format>,
         scaleFactors: List<Double>,
         targetDPIs: List<Number>
     ): String {
@@ -80,13 +82,21 @@ object PlotImageDemoUtil {
 
                     val titleTrimmed = Regex("[^a-z0-9_]").replace(title.lowercase(), "_")
                     val namePrefix = "${titleTrimmed}_scale_${scalingFactor}_"
-                    val imgFile = createDemoFile(DEMO_PROJECT_PATH, namePrefix, format.defFileExt)
+                    val imgFile: File = BrowserDemoUtil.createDemoFile(DEMO_PROJECT_PATH, namePrefix, format.defFileExt)
+                    val rootDir = BrowserDemoUtil.getRepoRootPath()
                     imgFile.writeBytes(image.bytes)
-                    val imgSrc = imgFile.toURI()
+                    val relativePath = Path(rootDir)
+                        .relativize(imgFile.toPath())
+                        .toString()
+                        .replace(File.separatorChar, '/')
+
+                    val imgSrc = "/$relativePath"
 
                     div("demo") {
-                        p { +"${format} scaleFactor: $scalingFactor, DPI: ${targetDPI}" }
-                        unsafe { +"<img src=\"$imgSrc\" width=\"${image.plotSize.x}\" height=\"${image.plotSize.y}\"/>" }
+                        p { +"$format scaleFactor: $scalingFactor, DPI: $targetDPI" }
+                        unsafe {
+                            +"<img src=\"$imgSrc\" width=\"${image.plotSize.x}\" height=\"${image.plotSize.y}\"/>"
+                        }
                     }
                 }
             }

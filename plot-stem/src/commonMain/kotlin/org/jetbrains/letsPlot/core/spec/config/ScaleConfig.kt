@@ -5,23 +5,28 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat.FormatType.DATETIME_FORMAT
+import org.jetbrains.letsPlot.commons.intern.datetime.Duration
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.commons.data.DataType
+import org.jetbrains.letsPlot.core.commons.time.interval.TimeInterval
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeBreaksGen
+import org.jetbrains.letsPlot.core.plot.base.scale.breaks.TimeFixedBreaksGen
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.*
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.configureDateTimeScaleBreaks
+import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProviderHelper.createDateTimeFixedBreaksGen
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ShapeMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.provider.*
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Scale.AES
 import org.jetbrains.letsPlot.core.spec.Option.Scale.BREAKS
+import org.jetbrains.letsPlot.core.spec.Option.Scale.BREAK_WIDTH
 import org.jetbrains.letsPlot.core.spec.Option.Scale.CHROMA
 import org.jetbrains.letsPlot.core.spec.Option.Scale.COLORS
 import org.jetbrains.letsPlot.core.spec.Option.Scale.DIRECTION
@@ -51,6 +56,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.MapperKind.SIZE_AREA
 import org.jetbrains.letsPlot.core.spec.Option.Scale.NAME
 import org.jetbrains.letsPlot.core.spec.Option.Scale.NA_VALUE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.OUTPUT_VALUES
+import org.jetbrains.letsPlot.core.spec.Option.Scale.OVERFLOW
 import org.jetbrains.letsPlot.core.spec.Option.Scale.PALETTE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.PALETTE_TYPE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.RANGE
@@ -60,6 +66,7 @@ import org.jetbrains.letsPlot.core.spec.Option.Scale.START
 import org.jetbrains.letsPlot.core.spec.Option.Scale.START_HUE
 import org.jetbrains.letsPlot.core.spec.Option.Scale.Viridis
 import org.jetbrains.letsPlot.core.spec.Option.TransformName
+import org.jetbrains.letsPlot.core.commons.color.PaletteOverflow
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.conversion.TypedContinuousIdentityMappers
 
@@ -92,8 +99,16 @@ class ScaleConfig<T> constructor(
         // all 'manual' scales
         if (has(OUTPUT_VALUES)) {
             val outputValues = getList(OUTPUT_VALUES)
-            val mapperOutputValues = aopConversion.applyToList(aes, outputValues)
-            mapperProvider = DefaultMapperProviderUtil.createWithDiscreteOutput(mapperOutputValues, naValue)
+            mapperProvider = if (aes.isColor) {
+                val outputColors = aopConversion.applyToList(Aes.COLOR, outputValues)
+                ColorManualMapperProvider(
+                    colors = outputColors.filterNotNull(),
+                    naValue = naValue as Color
+                )
+            } else {
+                val convertedValues = aopConversion.applyToList(aes, outputValues)
+                DefaultMapperProviderUtil.createWithDiscreteOutput(convertedValues, naValue)
+            }
         }
 
         if (aes == Aes.SHAPE) {
@@ -156,18 +171,18 @@ class ScaleConfig<T> constructor(
 
             COLOR_HUE ->
                 mapperProvider = ColorHueMapperProvider(
-                    hueRange = getRangeOrNull(HUE_RANGE) ?: ColorHueMapperProvider.DEF_HUE_RANGE,
-                    chroma = (getDouble(CHROMA) ?: ColorHueMapperProvider.DEF_CHROMA),
-                    luminance = (getDouble(LUMINANCE) ?: ColorHueMapperProvider.DEF_LUMINANCE),
-                    startHue = getDouble(START_HUE) ?: ColorHueMapperProvider.DEF_START_HUE,
+                    hueRange = getRangeOrNull(HUE_RANGE) ?: ColorMapperDefaults.Hue.DEF_HUE_RANGE,
+                    chroma = (getDouble(CHROMA) ?: ColorMapperDefaults.Hue.DEF_CHROMA),
+                    luminance = (getDouble(LUMINANCE) ?: ColorMapperDefaults.Hue.DEF_LUMINANCE),
+                    startHue = getDouble(START_HUE) ?: ColorMapperDefaults.Hue.DEF_START_HUE,
                     reversed = getDouble(DIRECTION)?.let { it < 0 } ?: false,
                     naValue = naValue as Color
                 )
 
             COLOR_GREY ->
                 mapperProvider = GreyscaleLightnessMapperProvider(
-                    getDouble(START) ?: GreyscaleLightnessMapperProvider.DEF_START,
-                    getDouble(END) ?: GreyscaleLightnessMapperProvider.DEF_END,
+                    getDouble(START) ?: ColorMapperDefaults.GreyscaleLightness.DEF_START,
+                    getDouble(END) ?: ColorMapperDefaults.GreyscaleLightness.DEF_END,
                     naValue as Color
                 )
 
@@ -176,6 +191,7 @@ class ScaleConfig<T> constructor(
                     getString(PALETTE_TYPE),
                     get(PALETTE),
                     getDouble(DIRECTION),
+                    parseOverflow(getString(OVERFLOW)),
                     naValue as Color
                 )
 
@@ -217,40 +233,77 @@ class ScaleConfig<T> constructor(
 
         if (getBoolean(Option.Scale.DATE_TIME)) {
             val dateTimeFormatter = getString(FORMAT)?.let { pattern ->
-                val stringFormat = StringFormat.forOneArg(pattern, type = DATETIME_FORMAT, tz = tz)
+                val stringFormat = FormatterUtil.byPattern(pattern, tz = tz)
                 return@let { value: Any -> stringFormat.format(value) }
             }
-            configureDateTimeScaleBreaks(
-                b,
-                dateTimeFormatter,
-                dataType,
-                tz,
-            )
-        } else if (getBoolean(Option.Scale.TIME)) {
-            b.breaksGenerator(TimeBreaksGen())
-        } else if (!discreteDomain && has(Option.Scale.CONTINUOUS_TRANSFORM)) {
-            val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
-            val transform = when (transformName.lowercase()) {
-                TransformName.IDENTITY -> Transforms.IDENTITY
-                TransformName.LOG10 -> Transforms.LOG10
-                TransformName.LOG2 -> Transforms.LOG2
-                TransformName.SYMLOG -> Transforms.SYMLOG
-                TransformName.REVERSE -> Transforms.REVERSE
-                TransformName.SQRT -> Transforms.SQRT
-                else -> throw IllegalArgumentException(
-                    "Unknown transform name: '$transformName'. Supported: ${
-                        listOf(
-                            TransformName.IDENTITY,
-                            TransformName.LOG10,
-                            TransformName.LOG2,
-                            TransformName.SYMLOG,
-                            TransformName.REVERSE,
-                            TransformName.SQRT
-                        ).joinToString(transform = { "'$it'" })
-                    }."
+
+            val breakWidthSpec = getString(BREAK_WIDTH)
+            if (breakWidthSpec != null) {
+                val breakWidth = TimeInterval.parse(breakWidthSpec)
+                b.breaksGenerator(
+                    createDateTimeFixedBreaksGen(
+                        breakWidth = breakWidth,
+                        dateTimeFormatter = dateTimeFormatter,
+                        dataType = dataType,
+                        tz = tz
+                    )
+                )
+            } else {
+                configureDateTimeScaleBreaks(
+                    b,
+                    dateTimeFormatter,
+                    dataType,
+                    tz,
                 )
             }
-            b.continuousTransform(transform)
+        } else if (getBoolean(Option.Scale.TIME)) {
+            val timeFormatter = getString(FORMAT)?.let { pattern ->
+                val stringFormat = FormatterUtil.byPattern(pattern, tz = null)
+                return@let { value: Any -> stringFormat.format(value) }
+            }
+
+            val breakWidthSpec = getString(BREAK_WIDTH)
+            if (breakWidthSpec != null) {
+                val breakWidth = Duration.parse(breakWidthSpec)
+                b.breaksGenerator(
+                    TimeFixedBreaksGen(
+                        breakWidth = breakWidth,
+                        providedFormatter = timeFormatter
+                    )
+                )
+            } else {
+                b.breaksGenerator(TimeBreaksGen(timeFormatter))
+            }
+        } else if (!discreteDomain) {
+            if (has(Option.Scale.CONTINUOUS_TRANSFORM)) {
+                val transformName = getStringSafe(Option.Scale.CONTINUOUS_TRANSFORM)
+                val transform = when (transformName.lowercase()) {
+                    TransformName.IDENTITY -> Transforms.IDENTITY
+                    TransformName.LOG10 -> Transforms.LOG10
+                    TransformName.LOG2 -> Transforms.LOG2
+                    TransformName.SYMLOG -> Transforms.SYMLOG
+                    TransformName.REVERSE -> Transforms.REVERSE
+                    TransformName.SQRT -> Transforms.SQRT
+                    else -> throw IllegalArgumentException(
+                        "Unknown transform name: '$transformName'. Supported: ${
+                            listOf(
+                                TransformName.IDENTITY,
+                                TransformName.LOG10,
+                                TransformName.LOG2,
+                                TransformName.SYMLOG,
+                                TransformName.REVERSE,
+                                TransformName.SQRT
+                            ).joinToString(transform = { "'$it'" })
+                        }."
+                    )
+                }
+                b.continuousTransform(transform)
+            }
+
+            val breakWidth = getDouble(BREAK_WIDTH)
+            if (breakWidth != null) {
+                b.breakWidth(breakWidth)
+            }
         }
 
         if (aes in listOf<Aes<*>>(Aes.X, Aes.Y) && has(Option.Scale.POSITION)) {
@@ -330,25 +383,36 @@ class ScaleConfig<T> constructor(
             return Option.Mapping.toAes(accessor.getStringSafe(AES))
         }
 
+        private fun parseOverflow(value: String?): PaletteOverflow {
+            if (value == null) return PaletteOverflow.AUTO
+            return when (value.lowercase()) {
+                "interpolate", "i" -> PaletteOverflow.INTERPOLATE
+                "cycle", "c" -> PaletteOverflow.CYCLE
+                "generate", "g" -> PaletteOverflow.GENERATE
+                else -> throw IllegalArgumentException(
+                    "overflow: expected one of 'interpolate' ('i'), 'cycle' ('c'), 'generate' ('g') but was: '$value'"
+                )
+            }
+        }
+
         fun <T> createIdentityMapperProvider(
             aes: Aes<T>,
             naValue: T,
             aopConversion: AesOptionConversion
         ): MapperProvider<T> {
-            // There is an option value converter for every AES (which can be used as discrete identity mapper)
-            val discreteMapperProvider =
-                IdentityDiscreteMapperProvider(aopConversion.getConverter(aes))
+            // There is an option value converter for every AES (which can be used as a discrete identity mapper)
+            val discreteMapperProvider = IdentityDiscreteMapperProvider(aopConversion.getConverter(aes))
 
             // For some AES there is also a continuous identity mapper
-            if (TypedContinuousIdentityMappers.contain(aes)) {
+            return if (TypedContinuousIdentityMappers.contain(aes)) {
                 val continuousMapper = TypedContinuousIdentityMappers[aes]
-                return IdentityMapperProvider(
-                    discreteMapperProvider,
-                    ScaleMapper.wrap(continuousMapper, naValue)
+                IdentityMapperProvider(
+                    discreteMapperProvider = discreteMapperProvider,
+                    continuousMapper = ScaleMapper.wrap(continuousMapper, naValue)
                 )
+            } else {
+                discreteMapperProvider
             }
-
-            return discreteMapperProvider
         }
     }
 }

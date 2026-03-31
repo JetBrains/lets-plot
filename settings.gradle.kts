@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 import java.util.*
@@ -7,7 +7,7 @@ import java.util.*
 
 pluginManagement {
     plugins {
-        val kotlinVersion = extra["kotlin_version"] as String
+        val kotlinVersion = extra["kotlin.version"] as String
 
         kotlin("multiplatform").version(kotlinVersion)
         kotlin("js").version(kotlinVersion)
@@ -31,20 +31,19 @@ include("plot-raster")
 include("platf-w3c")
 include("platf-awt")
 include("platf-batik")
-include("platf-jfx-swing")
-include("platf-native")
-include("plot-image-export")
 
 include("python-extension")
 include("python-package-build")
 
 include("js-package")
+include("wasmjs-package")
 include("jvm-package:jvm-publish-common")
-include("jvm-package:jvm-publish-jfx")
 include("jvm-package:jvm-publish-batik")
+include("jvm-package:jvm-publish-swing")
 include("jvm-package:jvm-publish-gis")
 include("jvm-package:jvm-publish-idea-plugin")
 
+include("visual-testing")
 
 include("demo-and-test-shared")
 project(":demo-and-test-shared").projectDir = File("./demo/demo-and-test-shared")
@@ -67,6 +66,12 @@ include("demo-plot-jvm")
 project(":demo-plot-jvm").projectDir = File("./demo/plot-jvm")
 include("demo-plot-browser")
 project(":demo-plot-browser").projectDir = File("./demo/plot-browser")
+
+include("demo-app-wasmjs-minimal")
+project(":demo-app-wasmjs-minimal").projectDir = File("./demo/app-wasmjs-minimal")
+
+include("demo-app-wasm-redraw")
+project(":demo-app-wasm-redraw").projectDir = File("./demo/app-wasm-redraw")
 
 include("demo-export")
 project(":demo-export").projectDir = File("./demo/export")

@@ -1,0 +1,142 @@
+/*
+ * Copyright (c) 2024. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.logging.PortableLogging
+import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
+import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.SpecOverrideState
+import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
+import org.jetbrains.letsPlot.core.util.sizing.SizingOption
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicFromAnyQ
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicObjectToMap
+import org.jetbrains.letsPlot.platf.w3c.jsObject.dynamicToAnyQ
+import org.w3c.dom.HTMLElement
+
+@OptIn(ExperimentalJsExport::class)
+@JsName("FigureModel")
+//@JsExport
+class FigureModelJs internal constructor(
+    private val processedPlotSpec: Map<String, Any>,
+    private val wrapperElement: HTMLElement,
+    private val containerSize: () -> DoubleVector,
+    private var sizingPolicy: SizingPolicy,
+    private val messageHandler: MessageHandler,
+    private var toolEventDispatcher: ToolEventDispatcher,
+    private var figureRegistration: Registration?,
+) {
+    private var toolEventCallback: ((JsAny?) -> Unit)? = null
+    private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
+
+    fun onToolEvent(callback: (JsAny?) -> Unit) {
+        toolEventCallback = callback
+        toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
+
+        // Make snsure that 'implicit' interaction activated.
+        deactivateInteractions(origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT)
+        activateInteractions(
+            origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT,
+            interactionSpecListJs = dynamicFromAnyQ(FIGURE_IMPLICIT_INTERACTIONS)
+        )
+    }
+
+    fun updateView(specOverrideJs: JsAny? = null, optionsJs: JsAny? = null) {
+
+        // view options update (just 'sizing' at the moment).
+        val options: Map<String, Any>? = if (optionsJs != null) {
+            dynamicObjectToMap(optionsJs)
+        } else {
+            null
+        }
+
+        val sizingOptionsUpdate = options?.get(SizingOption.KEY)
+        if (sizingOptionsUpdate is Map<*, *>) {
+            sizingPolicy = sizingPolicy.withUpdate(sizingOptionsUpdate)
+        }
+
+        // plot specs update.
+        val specOverride: Map<String, Any>? = if (specOverrideJs != null) {
+            dynamicObjectToMap(specOverrideJs)
+        } else {
+            null
+        }
+
+        currSpecOverrideList = FigureModelHelper.updateSpecOverrideList(
+            specOverrideList = currSpecOverrideList,
+            newSpecOverride = specOverride
+        )
+
+        val activeTargetId = specOverride?.get(TARGET_ID) as? String
+        val state = SpecOverrideState(ArrayList(currSpecOverrideList), activeTargetId)
+
+        val currentInteractions = toolEventDispatcher.deactivateAllSilently()
+
+        figureRegistration?.dispose()
+        figureRegistration = null
+
+        val plotSpec = SpecOverrideUtil.applySpecOverride(processedPlotSpec, state)
+
+        // Read back expanded overrides (non-empty only when expansion occurred).
+        if (state.expandedOverrides.isNotEmpty()) {
+            currSpecOverrideList = state.expandedOverrides
+        }
+
+//        LOG.info { "New sizing policy: $sizingPolicy" }
+        val newFigureModel = buildPlotFromProcessedSpecsIntern(
+            plotSpec,
+            wrapperElement,
+            containerSize,
+            sizingPolicy,
+            messageHandler,
+        )
+
+        if (newFigureModel == null) return  // something went wrong.
+
+        // Grab properties and discard just created another figure model
+        figureRegistration = newFigureModel.figureRegistration
+        toolEventDispatcher = newFigureModel.toolEventDispatcher
+        toolEventDispatcher.initToolEventCallback { event -> handleToolEvent(event) }
+
+        // Re-activate interactions
+        currentInteractions.forEach { (origin, interactionSpec) ->
+            toolEventDispatcher.activateInteractions(origin, interactionSpec)
+        }
+    }
+
+    fun activateInteractions(origin: String, interactionSpecListJs: JsAny?) {
+        val interactionSpecListRaw = dynamicToAnyQ(interactionSpecListJs)
+        require(interactionSpecListRaw is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
+
+        val interactionSpecList = interactionSpecListRaw.map { spec ->
+            require(spec is Map<*, *>) { "Interaction spec (Map) expected but was: $spec" }
+            InteractionSpec.fromMap(spec)
+        }
+        toolEventDispatcher.activateInteractions(origin, interactionSpecList)
+    }
+
+    fun deactivateInteractions(origin: String) {
+        toolEventDispatcher.deactivateInteractions(origin)
+    }
+
+    private fun handleToolEvent(event: Map<String, Any>) {
+        toolEventCallback?.invoke(dynamicFromAnyQ(event))
+    }
+
+    companion object {
+        private val LOG = PortableLogging.logger("FigureModelJs")
+
+        private val FIGURE_IMPLICIT_INTERACTIONS = listOf(
+            mapOf(
+                InteractionSpec.Name.PROPERTY_NAME to InteractionSpec.Name.ROLLBACK_ALL_CHANGES.value
+            )
+        )
+    }
+}

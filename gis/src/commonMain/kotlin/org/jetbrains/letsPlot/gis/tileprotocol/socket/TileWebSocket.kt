@@ -25,7 +25,6 @@ class TileWebSocket(
             try {
                 client.webSocket(urlString = myUrl) {
                     session = this
-
                     myHandler.onOpen()
 
                     for (frame in incoming) {

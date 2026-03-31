@@ -38,9 +38,24 @@ object Stats {
     val SUMPROP = DataFrame.Variable("..sumprop..", STAT, "sumprop")
     val SUMPCT = DataFrame.Variable("..sumpct..", STAT, "sumpct")
 
+    val R2_ADJ = DataFrame.Variable("..adjr2..", STAT, "adjr2")
+    val R2 = DataFrame.Variable("..r2..", STAT, "r2")
+    val METHOD = DataFrame.Variable("..method..", STAT, "method")
+    val AIC = DataFrame.Variable("..aic..", STAT, "aic")
+    val BIC = DataFrame.Variable("..bic..", STAT, "bic")
+    val F = DataFrame.Variable("..f..", STAT, "f")
+    val DF1 = DataFrame.Variable("..df1..", STAT, "df1")
+    val DF2 = DataFrame.Variable("..df2..", STAT, "df2")
+    val P = DataFrame.Variable("..p..", STAT, "p")
+    val CI_LEVEL = DataFrame.Variable("..cilevel..", STAT, "cilevel")
+    val CI_LOW = DataFrame.Variable("..cilow..", STAT, "cilow")
+    val CI_HIGH = DataFrame.Variable("..cihigh..", STAT, "cihigh")
+
     val SCALED = DataFrame.Variable("..scaled..", STAT, "scaled")
 
     val GROUP = DataFrame.Variable("..group..", STAT, "group")
+
+    val INDEX = DataFrame.Variable("..index..", STAT, "index") // Technical variable for internal purposes
 
     val IDENTITY: Stat = IdentityStat()
 
@@ -72,6 +87,18 @@ object Stats {
             SUMPCT,
             SCALED,
             GROUP,
+            R2,
+            R2_ADJ,
+            METHOD,
+            AIC,
+            BIC,
+            F,
+            DF1,
+            DF2,
+            P,
+            CI_LEVEL,
+            CI_LOW,
+            CI_HIGH,
         )
 
         val result = HashMap<String, DataFrame.Variable>()
@@ -122,6 +149,7 @@ object Stats {
         binWidth: Double? = null,
         center: Double? = null,
         boundary: Double? = null,
+        breaks: List<Double> = emptyList(),
         threshold: Double? = null
     ): BinStat {
         var xPosKind = BinStat.XPosKind.NONE
@@ -139,6 +167,7 @@ object Stats {
             binWidth = binWidth,
             xPosKind = xPosKind,
             xPos = xPosValue,
+            breaks = breaks,
             threshold = threshold
         )
     }

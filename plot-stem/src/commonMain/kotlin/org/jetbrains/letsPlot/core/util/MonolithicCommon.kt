@@ -8,12 +8,19 @@ package org.jetbrains.letsPlot.core.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.assemble.DetachedLegendsCollector
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.CompositeFigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.PlotFigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureDeckLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.back.SpecTransformBackendUtil
 import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig
+import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig.GuidesSharingMode
+import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig.GuidesSharingMode.*
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil
@@ -30,14 +37,12 @@ object MonolithicCommon {
     fun buildSvgImageFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): String {
         return buildSvgImageFromRawSpecs(
             plotSpec = plotSpec,
             plotSize = plotSize,
             sizeUnit = SizeUnit.PX,
-            svgToString = svgToString,
             computationMessagesHandler = computationMessagesHandler
         )
     }
@@ -49,7 +54,6 @@ object MonolithicCommon {
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
         sizeUnit: SizeUnit?,
-        svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): String {
         @Suppress("NAME_SHADOWING")
@@ -64,12 +68,13 @@ object MonolithicCommon {
         }
 
         val success = buildResult as PlotsBuildResult.Success
+
+        val svg: SvgSvgElement = FigureToPlainSvg(success.buildInfo).eval()
+
         val computationMessages = success.buildInfo.computationMessages
         if (computationMessages.isNotEmpty()) {
             computationMessagesHandler(computationMessages)
         }
-
-        val svg: SvgSvgElement = FigureToPlainSvg(success.buildInfo).eval()
 
         if (plotSize != null && unit.isPhysicalUnit) {
             val pixelWidth = svg.width().get()!!
@@ -82,7 +87,7 @@ object MonolithicCommon {
             svg.setAttribute("viewBox", "0 0 $pixelWidth $pixelHeight")
         }
 
-        return svgToString.render(svg)
+        return SvgToString.render(svg)
     }
 
     /**
@@ -95,12 +100,11 @@ object MonolithicCommon {
     fun buildSvgImagesFromRawSpecs(
         plotSpec: MutableMap<String, Any>,
         plotSize: DoubleVector?,
-        svgToString: SvgToString,
         computationMessagesHandler: ((List<String>) -> Unit)
     ): List<String> {
         return listOf(
             buildSvgImageFromRawSpecs(
-                plotSpec, plotSize, svgToString, computationMessagesHandler
+                plotSpec, plotSize, computationMessagesHandler
             )
         )
     }
@@ -108,7 +112,7 @@ object MonolithicCommon {
     fun buildPlotsFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         containerSize: DoubleVector?,
-        sizingPolicy: SizingPolicy
+        sizingPolicy: SizingPolicy,
     ): PlotsBuildResult {
         throwTestingErrors()  // noop
 
@@ -124,7 +128,7 @@ object MonolithicCommon {
                     buildSinglePlotFromProcessedSpecs(
                         plotSpec,
                         containerSize,
-                        sizingPolicy
+                        sizingPolicy,
                     )
                 )
             }
@@ -133,7 +137,7 @@ object MonolithicCommon {
                 buildCompositeFigureFromProcessedSpecs(
                     plotSpec,
                     containerSize,
-                    sizingPolicy
+                    sizingPolicy,
                 )
             )
 
@@ -144,7 +148,7 @@ object MonolithicCommon {
     private fun buildSinglePlotFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         containerSize: DoubleVector?,
-        sizingPolicy: SizingPolicy,
+        sizingPolicy: SizingPolicy
     ): PlotFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val config = PlotConfigFrontend.create(
@@ -160,7 +164,9 @@ object MonolithicCommon {
             sizingPolicy,
             sharedContinuousDomainX = null,  // only applicable to "composite figures"
             sharedContinuousDomainY = null,
-            computationMessages
+            computationMessages,
+            detachedLegendsCollector = null,
+            computationMessages::add
         )
     }
 
@@ -170,7 +176,9 @@ object MonolithicCommon {
         sizingPolicy: SizingPolicy,
         sharedContinuousDomainX: DoubleSpan?,
         sharedContinuousDomainY: DoubleSpan?,
-        computationMessages: List<String>
+        computationMessages: List<String>,
+        detachedLegendsCollector: DetachedLegendsCollector?,
+        messageConsumer: (String) -> Unit
     ): PlotFigureBuildInfo {
 
         val preferredSize = PlotSizeHelper.singlePlotSize(
@@ -185,19 +193,21 @@ object MonolithicCommon {
             config,
             sharedContinuousDomainX,
             sharedContinuousDomainY,
+            detachedLegendsCollector,
+            messageConsumer
         )
         return PlotFigureBuildInfo(
             assembler,
             config.toMap(),
             DoubleRectangle(DoubleVector.ZERO, preferredSize),
-            computationMessages
+            computationMessages,
         )
     }
 
     private fun buildCompositeFigureFromProcessedSpecs(
         plotSpec: Map<String, Any>,
         containerSize: DoubleVector?,
-        sizingPolicy: SizingPolicy,
+        sizingPolicy: SizingPolicy
     ): CompositeFigureBuildInfo {
         val computationMessages = ArrayList<String>()
         val compositeFigureConfig = CompositeFigureConfig(plotSpec, containerTheme = null) {
@@ -213,7 +223,9 @@ object MonolithicCommon {
         return buildCompositeFigure(
             compositeFigureConfig,
             preferredSize,
-            computationMessages
+            computationMessages,
+            containerGuidesSharing = AUTO,
+            containerDetachedLegendsCollector = null,
         )
     }
 
@@ -221,44 +233,77 @@ object MonolithicCommon {
         config: CompositeFigureConfig,
         preferredSize: DoubleVector,
         computationMessages: MutableList<String>,
+        containerGuidesSharing: GuidesSharingMode,
+        containerDetachedLegendsCollector: DetachedLegendsCollector?,
     ): CompositeFigureBuildInfo {
 
         val compositeFigureLayout = config.layout
 
+        val ownGuidesSharingMode = config.guidesSharing
+        val collectLegends = when (containerGuidesSharing) {
+            KEEP, AUTO -> ownGuidesSharingMode == COLLECT
+            COLLECT -> ownGuidesSharingMode in setOf(COLLECT, AUTO)
+        }
+        val ownDetachedLegendsCollector = if (collectLegends) {
+            DetachedLegendsCollector(
+                detachOverlayLegends = config.collectOverlayLegends
+            )
+        } else {
+            null
+        }
+
         val sharedXDomains: List<DoubleSpan?>?
         val sharedYDomains: List<DoubleSpan?>?
-        if (compositeFigureLayout is CompositeFigureGridLayoutBase &&
-            compositeFigureLayout.hasSharedAxis()
-        ) {
-            val sharedDomainsXY = FigureGridScaleShareUtil.getSharedDomains(
-                elementConfigs = config.elementConfigs,
-                gridLayout = compositeFigureLayout
-            )
-            sharedXDomains = sharedDomainsXY.first
-            sharedYDomains = sharedDomainsXY.second
-        } else {
-            sharedXDomains = null
-            sharedYDomains = null
+        val sharedDomainsXY = when {
+            compositeFigureLayout is CompositeFigureGridLayoutBase &&
+                    compositeFigureLayout.hasSharedAxis() -> {
+                FigureGridScaleShareUtil.getSharedDomains(
+                    elementConfigs = config.elementConfigs,
+                    gridLayout = compositeFigureLayout
+                )
+            }
+
+            compositeFigureLayout is CompositeFigureDeckLayout &&
+                    compositeFigureLayout.hasSharedAxis() -> {
+                FigureDeckScaleShareUtil.getSharedDomains(
+                    elementConfigs = config.elementConfigs,
+                    deckLayout = compositeFigureLayout
+                )
+            }
+
+            else -> null
         }
+        sharedXDomains = sharedDomainsXY?.first
+        sharedYDomains = sharedDomainsXY?.second
 
         val elements: List<FigureBuildInfo?> = config.elementConfigs.mapIndexed { index, element ->
             element?.let {
                 when (PlotConfig.figSpecKind(it)) {
                     FigKind.PLOT_SPEC -> buildSinglePlot(
                         config = it as PlotConfigFrontend,
-                        // Sizing doesn't matter - will be updateed by sub-plots layout.
+                        // Sizing doesn't matter - will be updateed by subplots' layout.
                         containerSize = null,
                         sizingPolicy = SizingPolicy.keepFigureDefaultSize(),
                         sharedContinuousDomainX = sharedXDomains?.get(index),
                         sharedContinuousDomainY = sharedYDomains?.get(index),
-                        computationMessages = emptyList()  // No "own messages" when a part of a composite.
+                        computationMessages = emptyList(),  // No "own messages" when a part of a composite.
+                        detachedLegendsCollector = ownDetachedLegendsCollector,
+                        computationMessages::add
                     )
 
                     FigKind.SUBPLOTS_SPEC -> {
+                        @Suppress("NAME_SHADOWING")
+                        val containerGuidesSharing = if (ownDetachedLegendsCollector != null) {
+                            COLLECT
+                        } else {
+                            AUTO
+                        }
                         buildCompositeFigure(
                             config = it as CompositeFigureConfig,
-                            preferredSize = DoubleVector.ZERO, // Will be updateed by sub-plots layout.
-                            computationMessages
+                            preferredSize = DoubleVector.ZERO, // Will be updateed by subplots' layout.
+                            computationMessages,
+                            containerGuidesSharing = containerGuidesSharing,
+                            containerDetachedLegendsCollector = ownDetachedLegendsCollector,
                         )
                     }
 
@@ -267,15 +312,44 @@ object MonolithicCommon {
             }
         }
 
+        val theme = config.theme
+
+        // Create legend blocks from collected legends
+        val legendBlocks = ownDetachedLegendsCollector?.collectedLegends?.let { collectedLegends ->
+            if (ownGuidesSharingMode == AUTO) {
+                // Pass through collected legends to the container
+                containerDetachedLegendsCollector?.collect(collectedLegends)
+                emptyList()
+            } else {
+                // Must be own COLLECT mode.
+                // Group legends by position and justification
+                val legendsByPositionAndJustification = collectedLegends.groupBy {
+                    it.position to it.justification
+                }
+
+                // Create a LegendBlockInfo for each group
+                legendsByPositionAndJustification.values.map { legendsInGroup ->
+                    LegendsBlockInfo.arrangeLegendBoxes(legendsInGroup, theme = theme.legend())
+                }
+            }
+        } ?: emptyList()
+
+        val title: String? = config.title?.takeIf { theme.plot().showTitle() }
+        val subtitle: String? = config.subtitle?.takeIf { theme.plot().showSubtitle() }
+        val caption: String? = config.caption?.takeIf { theme.plot().showCaption() }
+        val tag: String? = config.fullTag?.takeIf { theme.plot().showTag() }
+
         return CompositeFigureBuildInfo(
             elements = elements,
             layout = compositeFigureLayout,
             bounds = DoubleRectangle(DoubleVector.ZERO, preferredSize),
-            title = config.title,
-            subtitle = config.subtitle,
-            caption = config.caption,
-            theme = config.theme,
-            computationMessages
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
+            theme = theme,
+            computationMessages,
+            legendBlocks = legendBlocks
         )
     }
 

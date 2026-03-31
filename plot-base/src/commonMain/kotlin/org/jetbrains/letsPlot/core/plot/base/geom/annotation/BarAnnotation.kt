@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.PathPoint
 import org.jetbrains.letsPlot.core.plot.base.geom.util.PolygonData
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import kotlin.math.PI
 import kotlin.math.abs
@@ -28,7 +28,7 @@ object BarAnnotation {
     fun build(
         root: SvgRoot,
         polygons: List<PolygonData>,
-        transform: (p: DataPointAesthetics, ctx: GeomContext) -> DoubleRectangle?,
+        transform: (p: DataPointAesthetics) -> DoubleRectangle?,
         helper: GeomHelper,
         coord: CoordinateSystem,
         ctx: GeomContext
@@ -43,7 +43,7 @@ object BarAnnotation {
     private fun nonLinearAnnotations(
         root: SvgRoot,
         polygons: List<PolygonData>,
-        transform: (p: DataPointAesthetics, ctx: GeomContext) -> DoubleRectangle?,
+        transform: (p: DataPointAesthetics) -> DoubleRectangle?,
         helper: GeomHelper,
         ctx: GeomContext
     ) {
@@ -51,7 +51,7 @@ object BarAnnotation {
 
         polygons.forEach { polygon ->
             val p = polygon.rings[0][0].aes
-            val rect = transform(p, ctx) ?: return@forEach
+            val rect = transform(p) ?: return@forEach
             val centroid = helper.toClient(rect.center, p) ?: return@forEach
             val zero = helper.toClient(0.0, 0.0, p) ?: return@forEach
 
@@ -154,7 +154,7 @@ object BarAnnotation {
                         )
 
                         // separate label for each line
-                        val labels = MultilineLabel.splitLines(text).map { line ->
+                        val labels = Label.splitLines(text).map { line ->
                             AnnotationUtil.createLabelElement(
                                 line,
                                 location,
@@ -174,10 +174,6 @@ object BarAnnotation {
                         labels.forEach(root::add)
                     }
             }
-    }
-
-    internal fun DoubleRectangle.contains(other: DoubleRectangle): Boolean {
-        return other.xRange() in xRange() && other.yRange() in yRange()
     }
 
     private fun placeLabel(

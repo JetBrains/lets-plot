@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     kotlin("multiplatform")
 }
@@ -9,10 +18,15 @@ kotlin {
         binaries.executable()
     }
 
-    val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-    val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
-    val ktorVersion = project.extra["ktor_version"] as String
-    val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
+
+    val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+    val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
+    val ktorVersion = project.extra["ktor.version"] as String
+    val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
     val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
     // Fix "The Default Kotlin Hierarchy Template was not applied to 'project'..." warning
@@ -43,14 +57,15 @@ kotlin {
                 implementation(project(":plot-livemap"))
                 implementation(project(":gis"))
 
-                implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+                implementation("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
                 implementation("io.ktor:ktor-client-cio:${ktorVersion}")
-                implementation("org.slf4j:slf4j-simple:${project.extra["slf4j_version"]}")  // Enable logging to console
+                implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
                 implementation(project(":platf-awt"))
 
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinxHtmlVersion}")
             }
         }
+
         jsMain {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
             dependencies {
@@ -61,5 +76,19 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
+
+    }
+}
+
+tasks.named("demoRunnerMainClasses") {
+    // Check if "dev" property is passed via -Pdev or if DEV env var is set
+    val isDev = project.hasProperty("dev") || System.getenv("DEV") != null
+
+    if (isDev) {
+        dependsOn(":js-package:jsBrowserDevelopmentWebpack")
+        dependsOn(":wasmjs-package:wasmJsBrowserDevelopmentWebpack")
+    } else {
+        dependsOn(":js-package:jsBrowserProductionWebpack")
+        dependsOn(":wasmjs-package:wasmJsBrowserProductionWebpack")
     }
 }

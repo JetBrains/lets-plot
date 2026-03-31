@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayo
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayout.Companion.verticalFixedBreaks
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.AxisLabelsLayout.Companion.verticalFlexBreaks
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.label.BreakLabelsLayoutUtil
-import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 
 internal class AxisLayouter private constructor(
     val orientation: Orientation,
@@ -52,7 +52,7 @@ internal class AxisLayouter private constructor(
         fun create(
             orientation: Orientation,
             breaksProvider: AxisBreaksProvider,
-            geomAreaInsets: Insets,
+            geomAreaInsets: DoubleInsets,
             theme: AxisTheme,
             polar: Boolean
         ): AxisLayouter {

@@ -21,6 +21,16 @@ class StepGeom : LineGeom() {
     fun setDirection(dir: String) {
         myDirection = Direction.toDirection(dir)
     }
+    // commit name:
+    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+        // filter out points with NaN x-values but keep +/-Infinity (for 'padded' mode)
+        val data = dataPoints.filter { p: DataPointAesthetics ->
+            val x = p.x()
+            x != null && (x.isFinite() || x.isInfinite())
+        }
+
+        return GeomUtil.ordered_X(data)
+    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -29,10 +39,10 @@ class StepGeom : LineGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = GeomUtil.ordered_X(aesthetics.dataPoints())
+        val dataPoints = dataPoints(aesthetics)
         val linesHelper = LinesHelper(pos, coord, ctx)
 
-        val pathDataList = linesHelper.createPathDataByGroup(dataPoints, toLocationFor(overallAesBounds(ctx)))
+        val pathDataList = linesHelper.createPaths(dataPoints, toLocationFor(overallAesBounds(ctx)))
         val horizontalThenVertical = when {
             !ctx.flipped && myDirection == Direction.HV -> true
             ctx.flipped && myDirection == Direction.VH -> true
@@ -42,7 +52,7 @@ class StepGeom : LineGeom() {
 
         root.appendNodes(linePaths)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.STEP, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
         targetCollectorHelper.addPaths(pathDataList)
     }
 

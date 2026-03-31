@@ -63,11 +63,12 @@ class GeomProvider internal constructor(
             ) { BarGeom() }
         }
 
-        fun histogram(): GeomProvider {
+        fun histogram(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.HISTOGRAM,
-                HistogramGeom.HANDLES_GROUPS
-            ) { HistogramGeom() }
+                HistogramGeom.HANDLES_GROUPS,
+                supplier
+            )
         }
 
         fun dotplot(supplier: (Context) -> Geom): GeomProvider {
@@ -273,6 +274,13 @@ class GeomProvider internal constructor(
             ) { Density2dfGeom() }
         }
 
+        fun pointDensity(): GeomProvider {
+            return GeomProvider(
+                GeomKind.POINT_DENSITY,
+                PointDensityGeom.HANDLES_GROUPS
+            ) { PointDensityGeom() }
+        }
+
         fun jitter(): GeomProvider {
             return GeomProvider(
                 GeomKind.JITTER,
@@ -413,6 +421,22 @@ class GeomProvider internal constructor(
             return GeomProvider(
                 GeomKind.LOLLIPOP,
                 LollipopGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
+        fun bracket(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.BRACKET,
+                BracketGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
+        fun bracketDodge(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.BRACKET_DODGE,
+                BracketDodgeGeom.HANDLES_GROUPS,
                 supplier
             )
         }

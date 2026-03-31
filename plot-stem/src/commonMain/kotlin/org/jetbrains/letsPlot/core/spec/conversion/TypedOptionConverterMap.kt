@@ -18,8 +18,12 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.INTERCEPT
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
@@ -39,13 +43,13 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SEGMENT_SIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SHAPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLICE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SLOPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SPEED
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STACKSIZE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_START
-import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.SIZE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_END
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.STROKE_START
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.UPPER
@@ -140,10 +144,15 @@ internal class TypedOptionConverterMap(colorConverter: ColorOptionConverter) {
         this.put(SLICE, DOUBLE_CVT)
         this.put(EXPLODE, DOUBLE_CVT)
 
+        this.put(ISTART, DOUBLE_CVT)
+        this.put(IEND, DOUBLE_CVT)
+
         this.put(SIZE_START, DOUBLE_CVT)
         this.put(SIZE_END, DOUBLE_CVT)
         this.put(STROKE_START, DOUBLE_CVT)
         this.put(STROKE_END, DOUBLE_CVT)
+        this.put(LENSTART, DOUBLE_CVT)
+        this.put(LENEND, DOUBLE_CVT)
 
         this.put(POINT_SIZE, DOUBLE_CVT)
         this.put(POINT_STROKE, DOUBLE_CVT)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.geometry
 
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -135,7 +136,19 @@ class AffineTransform(
         if (m00 == 1.0 && m10 == 0.0 && m01 == 0.0 && m11 == 1.0 && m02 == 0.0 && m12 == 0.0) {
             return "IDENTITY"
         }
-        return """sx=$sx, ry=$ry, rx=$rx, sy=$sy, tx=$tx, ty=$ty"""
+
+        return listOfNotNull(
+            sx.takeIf { it != 1.0 }?.let { "sx=$it" },
+            sy.takeIf { it != 1.0 }?.let { "sy=$it" },
+            rx.takeIf { it != 0.0 }?.let { "rx=$it" },
+            ry.takeIf { it != 0.0 }?.let { "ry=$it" },
+            tx.takeIf { it != 0.0 }?.let { "tx=$it" },
+            ty.takeIf { it != 0.0 }?.let { "ty=$it" }
+        ).joinToString(", ")
+    }
+
+    override fun toString(): String {
+        return "AffineTransform(${repr()})"
     }
 
 
@@ -155,17 +168,15 @@ class AffineTransform(
         }
 
         fun makeRotation(angle: Number, centerX: Number = 0, centerY: Number = 0): AffineTransform {
-            // TODO: check is it really needed
-            //val tolerance = (1.0f / (1 shl 12)).toDouble()
-            val sin = sin(angle.toDouble())//.takeIf { abs(it) > tolerance } ?: 0.0
-            val cos = cos(angle.toDouble())//.takeIf { abs(it) > tolerance } ?: 0.0
+            val tolerance = (1.0f / (1 shl 12)).toDouble()
+            val sin = sin(angle.toDouble()).takeIf { abs(it) > tolerance } ?: 0.0
+            val cos = cos(angle.toDouble()).takeIf { abs(it) > tolerance } ?: 0.0
+            val center = DoubleVector(centerX, centerY)
             return makeTransform(
-                sx = cos,
-                ry = sin,
-                rx = -sin,
-                sy = cos,
-                tx = centerX.toDouble() * (1 - cos) + centerY.toDouble() * sin,
-                ty = centerY.toDouble() * (1 - cos) - centerX.toDouble() * sin
+                sx = cos, sy = cos,
+                rx = -sin, ry = sin,
+                tx = center.x * (1 - cos) + center.y * sin,
+                ty = center.y * (1 - cos) - center.x * sin
             )
         }
 

@@ -12,6 +12,7 @@ plugins {
 val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_package"] as String).toBoolean()
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
+val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 
 // To improve the building time of the Python extension in development mode.
 val pythonExtensionDebugBuild = project.findProperty("python_extension_debug_build") == "true"
@@ -64,6 +65,9 @@ kotlin {
         target.compilations.getByName("main") {
             val python by cinterops.creating {
                 compilerOpts("-I${rootProject.project.extra["python.include_path"]}")
+                if (os.isWindows) {
+                    compilerOpts("-mcrc32")
+                }
             }
         }
         target
@@ -85,7 +89,6 @@ kotlin {
                 implementation(project(":plot-base"))
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
-                implementation(project(":platf-native"))
                 implementation(project(":platf-imagick"))
                 implementation(project(":plot-raster"))
             }
@@ -95,6 +98,8 @@ kotlin {
                 dependencies {
                     implementation(project(":demo-and-test-shared"))
                     implementation(project(":demo-common-svg"))
+                    implementation(project(":visual-testing"))
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
                 }
             }
     }

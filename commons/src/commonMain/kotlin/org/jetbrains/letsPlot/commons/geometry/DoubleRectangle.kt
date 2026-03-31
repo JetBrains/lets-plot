@@ -13,7 +13,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     // ToDo: this breaks TooltipBox
 //    init {
-//        check(dimension.x >= 0 && dimension.y >= 0) { "Rectangle dimentions should be positive: $dimension" }
+//        check(dimension.x >= 0 && dimension.y >= 0) { "Rectangle dimensions should be non-negative: $dimension" }
 //    }
 
     val center: DoubleVector
@@ -74,6 +74,16 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
 
     operator fun contains(v: DoubleVector): Boolean {
         return origin.x <= v.x && origin.x + dimension.x >= v.x && origin.y <= v.y && origin.y + dimension.y >= v.y
+    }
+
+    operator fun contains(v: Vector): Boolean {
+        return this.contains(DoubleVector(v.x, v.y))
+    }
+
+    operator fun contains(other: DoubleRectangle): Boolean {
+        if (other.xRange() !in xRange()) return false
+        if (other.yRange() !in yRange()) return false
+        return true
     }
 
     fun flip(): DoubleRectangle {
@@ -159,7 +169,7 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
             DoubleVector(newWidth * scaling, height * scaling)
         }
 
-        // The srinked rect has the same center as this one.
+        // The shrunk rect has the same center as this one.
         val newOrigin = DoubleVector(
             x = origin.x + (width - newSize.x) / 2,
             y = origin.y + (height - newSize.y) / 2,
@@ -167,10 +177,18 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return DoubleRectangle(newOrigin, newSize)
     }
 
-    fun inflate(delta: Double): DoubleRectangle {
+    fun inflate(amount: DoubleVector): DoubleRectangle {
+        return inflate(amount.x, amount.y)
+    }
+
+    fun inflate(amount: Double): DoubleRectangle {
+        return inflate(amount, amount)
+    }
+
+    fun inflate(amountX: Double, amountY: Double): DoubleRectangle {
         return DoubleRectangle(
-            origin.subtract(DoubleVector(delta, delta)),
-            dimension.add(DoubleVector(delta * 2, delta * 2))
+            origin.subtract(DoubleVector(amountX, amountY)),
+            dimension.add(DoubleVector(amountX * 2, amountY * 2))
         )
     }
 
@@ -198,6 +216,22 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         return "[rect $origin, $dimension]"
     }
 
+    fun include(p: DoubleVector): DoubleRectangle {
+        val x0 = min(left, p.x)
+        val x1 = max(right, p.x)
+        val y0 = min(top, p.y)
+        val y1 = max(bottom, p.y)
+        return DoubleRectangle(x0, y0, x1 - x0, y1 - y0)
+    }
+
+    fun include(points: List<DoubleVector>): DoubleRectangle {
+        var rect = this
+        for (p in points) {
+            rect = rect.include(p)
+        }
+        return rect
+    }
+
     companion object {
         fun span(leftTop: DoubleVector, rightBottom: DoubleVector): DoubleRectangle {
             val x0 = min(leftTop.x, rightBottom.x)
@@ -220,6 +254,21 @@ class DoubleRectangle(val origin: DoubleVector, val dimension: DoubleVector) {
         @Suppress("FunctionName")
         fun XYWH(x: Number, y: Number, width: Number, height: Number): DoubleRectangle {
             return DoubleRectangle(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
+        }
+
+        @Suppress("FunctionName")
+        fun WH(width: Number, height: Number): DoubleRectangle {
+            return DoubleRectangle(0.0, 0.0, width.toDouble(), height.toDouble())
+        }
+
+        @Suppress("FunctionName")
+        fun WH(dim: DoubleVector): DoubleRectangle {
+            return DoubleRectangle(DoubleVector.ZERO, dim)
+        }
+
+        @Suppress("FunctionName")
+        fun WH(dim: Vector): DoubleRectangle {
+            return DoubleRectangle(DoubleVector.ZERO, DoubleVector(dim.x, dim.y))
         }
 
         fun hvRange(hRange: DoubleSpan, vRange: DoubleSpan): DoubleRectangle {

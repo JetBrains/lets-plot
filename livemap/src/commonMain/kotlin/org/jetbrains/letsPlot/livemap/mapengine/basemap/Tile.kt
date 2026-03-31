@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.livemap.containers.LinkedList
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
 
 interface Tile {
-    class SnapshotTile(val snapshot: Canvas.Snapshot) : Tile
+    class SnapshotTile(val snapshot: Canvas.Snapshot, val scale: Double) : Tile
 
     class SubTile(val tile: Tile, val subKey: CellKey) : Tile
 

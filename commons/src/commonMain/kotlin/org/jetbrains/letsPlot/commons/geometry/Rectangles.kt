@@ -62,13 +62,6 @@ object Rectangles {
         return extendRight(extendLeft(r, left), right)
     }
 
-    fun shrinkRight(r: Rectangle, distance: Int): Rectangle {
-        if (r.dimension.x < distance) {
-            throw IllegalArgumentException("To small rectangle = $r, distance = $distance")
-        }
-        return r.changeDimension(r.dimension.sub(Vector(distance, 0)))
-    }
-
     private fun topLeft(r: Rectangle): Vector {
         return r.origin
     }

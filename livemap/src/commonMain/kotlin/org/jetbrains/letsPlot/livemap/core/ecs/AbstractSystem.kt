@@ -5,10 +5,14 @@
 
 package org.jetbrains.letsPlot.livemap.core.ecs
 
+import org.jetbrains.letsPlot.commons.intern.concurrent.Lock
+import org.jetbrains.letsPlot.commons.intern.concurrent.execute
 import kotlin.reflect.KClass
 
-abstract class AbstractSystem<T : EcsContext> protected constructor(val componentManager: EcsComponentManager) :
-    EcsSystem {
+abstract class AbstractSystem<T : EcsContext> protected constructor(
+    val componentManager: EcsComponentManager
+) : EcsSystem {
+    private val tasksLock = Lock()
     private val myTasks = ArrayList<() -> Unit>()
 
     override fun init(context: EcsContext) {
@@ -30,7 +34,7 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
 
     protected open fun updateImpl(context: T, dt: Double) {}
 
-    inline fun <reified T: EcsComponent> getEntities(): Sequence<EcsEntity> {
+    inline fun <reified T : EcsComponent> getEntities(): Sequence<EcsEntity> {
         return componentManager.getEntities(T::class)
     }
 
@@ -42,7 +46,7 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         return componentManager.getEntities(componentTypes)
     }
 
-    inline fun <reified T: EcsComponent> getMutableEntities(): List<EcsEntity> {
+    inline fun <reified T : EcsComponent> getMutableEntities(): List<EcsEntity> {
         return componentManager.getEntities(T::class).toList()
     }
 
@@ -82,24 +86,26 @@ abstract class AbstractSystem<T : EcsContext> protected constructor(val componen
         return componentManager.createEntity(name)
     }
 
-    //@Synchronized
     protected fun runLaterBySystem(entity: EcsEntity, entityHandler: (EcsEntity) -> Unit) {
-        myTasks.add {
-            if (componentManager.containsEntity(entity)) {
-                entityHandler(entity)
+        tasksLock.execute {
+            myTasks.add {
+                if (componentManager.containsEntity(entity)) {
+                    entityHandler(entity)
+                }
             }
         }
     }
 
-    //@Synchronized
     private fun fetchTasks(): List<() -> Unit> {
-        if (myTasks.isEmpty()) {
-            return emptyList()
+        tasksLock.execute {
+            if (myTasks.isEmpty()) {
+                return emptyList()
+            }
+            return ArrayList(myTasks).also { myTasks.clear() }
         }
-        return ArrayList(myTasks).also { myTasks.clear() }
     }
 
     private fun executeTasks() {
-        fetchTasks().forEach{ it() }
+        fetchTasks().forEach { it() }
     }
 }

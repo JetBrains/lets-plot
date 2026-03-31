@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg.attr
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathData
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.raster.mapping.svg.SvgPathParser
-import org.jetbrains.letsPlot.raster.shape.Path
+import org.jetbrains.letsPlot.raster.scene.Path
 
 internal object SvgPathAttrMapping : SvgShapeMapping<Path>() {
     override fun setAttribute(target: Path, name: String, value: Any?) {

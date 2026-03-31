@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -63,11 +63,11 @@ class LegendComponent(
         breakComponent.add(createKeyElement(br, keySize))
 
         // add label at position as was layout
-        val label = MultilineLabel(br.label)
+        val label = Label(br.label)
         val labelSpec = PlotLabelSpecFactory.legendItem(theme)
         label.addClassName(Style.LEGEND_ITEM)
+        label.setFontSize(labelSpec.font.size.toDouble())
         label.setLineHeights(labelSpec.heights(br.label))
-        label.setFontSize(labelSpec.font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(labelBox.origin)

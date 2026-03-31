@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgStyleElement
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle.Companion.NONE_FAMILY
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle.Companion.NONE_SIZE
-import org.jetbrains.letsPlot.raster.shape.Group
+import org.jetbrains.letsPlot.raster.scene.Group
 
 internal class SvgStyleElementMapper(
     source: SvgStyleElement,

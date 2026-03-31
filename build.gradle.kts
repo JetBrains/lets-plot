@@ -1,15 +1,18 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 // okhttp3 added for publishing to the Sonatype Central Repository:
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -27,7 +30,6 @@ buildscript {
 plugins {
     kotlin("multiplatform") apply false
     kotlin("js") apply false
-    id("org.openjfx.javafxplugin") version "0.1.0" apply false
 }
 
 
@@ -43,7 +45,7 @@ val letsPlotTaskGroup by extra { "lets-plot" }
 
 allprojects {
     group = "org.jetbrains.lets-plot"
-    version = "4.7.2-SNAPSHOT" // see also: python-package/lets_plot/_version.py
+    version = "4.9.1-SNAPSHOT" // see also: python-package/lets_plot/_version.py
 //    version = "0.0.0-SNAPSHOT"  // for local publishing only
 
     // Generate JVM 1.8 bytecode
@@ -304,7 +306,10 @@ val multiPlatformCoreModulesForPublish = listOf(
     "plot-builder",
     "plot-raster",
     "plot-stem",
-    "plot-livemap"
+    "plot-livemap",
+    "visual-testing",
+    "platf-w3c",
+    "wasmjs-package"
 )
 
 subprojects {
@@ -321,7 +326,6 @@ subprojects {
 val jvmCoreModulesForPublish = listOf(
     "platf-awt",
     "platf-batik",
-    "platf-jfx-swing"
 )
 
 subprojects {
@@ -360,9 +364,9 @@ subprojects {
         val targetsToPublish = listOf(
             "platf-awt",
             "platf-batik",
-            "platf-jfx-swing",
             "jvm",
             "js",
+            "wasmJs",
             "kotlinMultiplatform",
             "metadata"
         )

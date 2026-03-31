@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendAssembler
 import org.jetbrains.letsPlot.core.plot.builder.guide.ColorBarComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBreak
 import org.jetbrains.letsPlot.core.plot.builder.guide.LegendComponent
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapperDefaults
 
 open class LegendDemo : SimpleDemoBase() {
 
@@ -61,7 +61,7 @@ open class LegendDemo : SimpleDemoBase() {
     private fun colorBar(): GroupComponent {
         val domain = DoubleSpan(0.0, 4.0)
 
-        val mapper = ScaleMapper.wrap(ColorMapper.gradientDefault(domain))
+        val mapper = ScaleMapper.wrap(ColorMapperDefaults.gradientDefault(domain))
 
         val breakValues = List(3) { i -> (i + 1).toDouble() }
         val scaleBreaks = ScaleBreaks.DemoAndTest.continuous(breakValues)

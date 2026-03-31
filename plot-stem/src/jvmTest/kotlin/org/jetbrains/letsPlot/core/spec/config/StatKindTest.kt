@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.spec.config
 
-import org.jetbrains.letsPlot.core.spec.StatKind
+import org.jetbrains.letsPlot.core.plot.base.StatKind
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

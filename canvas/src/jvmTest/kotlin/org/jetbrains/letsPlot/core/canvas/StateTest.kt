@@ -19,13 +19,15 @@ class StateTest {
         context.closePath()
         context.clip()
 
-        assertThat(context.getClipPath())
+        val commands = context.getClipPath().getCommands()
+        assertThat(commands)
             .usingRecursiveComparison()
             .isEqualTo(
             Path2d()
                 .moveTo(0.0, 0.0)
                 .lineTo(1.0, 1.0)
                 .closePath()
+                .getCommands()
         )
 
         context.restore()

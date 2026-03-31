@@ -7,7 +7,10 @@ package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Stat
+import org.jetbrains.letsPlot.core.plot.base.StatKind
+import org.jetbrains.letsPlot.core.plot.base.StatKind.*
 import org.jetbrains.letsPlot.core.plot.base.stat.*
+import org.jetbrains.letsPlot.core.plot.base.stat.SmoothStat.Method
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Bin2d
@@ -18,13 +21,13 @@ import org.jetbrains.letsPlot.core.spec.Option.Stat.Density
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Density2d
 import org.jetbrains.letsPlot.core.spec.Option.Stat.DensityRidges
 import org.jetbrains.letsPlot.core.spec.Option.Stat.ECDF
+import org.jetbrains.letsPlot.core.spec.Option.Stat.PointDensity
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQ
 import org.jetbrains.letsPlot.core.spec.Option.Stat.QQLine
+import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Smooth
 import org.jetbrains.letsPlot.core.spec.Option.Stat.Summary
 import org.jetbrains.letsPlot.core.spec.Option.Stat.YDensity
-import org.jetbrains.letsPlot.core.spec.Option.Stat.Sina
-import org.jetbrains.letsPlot.core.spec.StatKind.*
 import org.jetbrains.letsPlot.core.spec.config.OptionsAccessor
 
 object StatProto {
@@ -63,6 +66,7 @@ object StatProto {
                     binWidth = options.getDouble(Bin.BINWIDTH),
                     center = options.getDouble(Bin.CENTER),
                     boundary = options.getDouble(Bin.BOUNDARY),
+                    breaks = options.getDoubleList(Bin.BREAKS),
                     threshold = options.getDouble(Bin.THRESHOLD)
                 )
             }
@@ -122,6 +126,7 @@ object StatProto {
             }
 
             SMOOTH -> configureSmoothStat(options)
+            SMOOTH_SUMMARY -> configureSmoothStatSummary(options)
 
             BOXPLOT -> {
                 Stats.boxplot(
@@ -143,6 +148,7 @@ object StatProto {
             DENSITY -> configureDensityStat(options)
             DENSITY2D -> configureDensity2dStat(options, false)
             DENSITY2DF -> configureDensity2dStat(options, true)
+            POINTDENSITY -> configurePointDensityStat(options)
             StatKind.QQ -> configureQQStat(options)
             QQ2 -> Stats.qq2()
             QQ_LINE -> configureQQLineStat(options)
@@ -186,23 +192,9 @@ object StatProto {
         // seed  - random seed for LOESS sampling
         // max_n (1000)  - maximum points in DF for LOESS
 
-        val smoothingMethod = options.getString(Smooth.METHOD)?.let {
-            when (it.lowercase()) {
-                "lm" -> SmoothStat.Method.LM
-                "loess", "lowess" -> SmoothStat.Method.LOESS
-                "glm" -> SmoothStat.Method.GLM
-                "gam" -> SmoothStat.Method.GAM
-                "rlm" -> SmoothStat.Method.RLM
-                else -> throw IllegalArgumentException(
-                    "Unsupported smoother method: '$it'\n" +
-                            "Use one of: lm, loess, lowess, glm, gam, rlm."
-                )
-            }
-        }
-
         return SmoothStat(
             smootherPointCount = options.getIntegerDef(Smooth.POINT_COUNT, SmoothStat.DEF_EVAL_POINT_COUNT),
-            smoothingMethod = smoothingMethod ?: SmoothStat.DEF_SMOOTHING_METHOD,
+            smoothingMethod = smoothingMethod(options.getString(Smooth.METHOD)) ?: SmoothStat.DEF_SMOOTHING_METHOD,
             confidenceLevel = options.getDoubleDef(Smooth.CONFIDENCE_LEVEL, SmoothStat.DEF_CONFIDENCE_LEVEL),
             displayConfidenceInterval = options.getBoolean(
                 Smooth.DISPLAY_CONFIDENCE_INTERVAL,
@@ -213,6 +205,33 @@ object StatProto {
             loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStat.DEF_LOESS_CRITICAL_SIZE),
             samplingSeed = options.getLongDef(Smooth.SAMPLING_SEED, SmoothStat.DEF_SAMPLING_SEED)
         )
+    }
+
+    private fun configureSmoothStatSummary(options: OptionsAccessor): SmoothStatSummary {
+        return SmoothStatSummary(
+            smoothingMethod = smoothingMethod(options.getString(Smooth.METHOD)) ?: SmoothStat.DEF_SMOOTHING_METHOD,
+            confidenceLevel = options.getDoubleDef(Smooth.CONFIDENCE_LEVEL, SmoothStat.DEF_CONFIDENCE_LEVEL),
+            span = options.getDoubleDef(Smooth.SPAN, SmoothStat.DEF_SPAN),
+            polynomialDegree = options.getIntegerDef(Smooth.POLYNOMIAL_DEGREE, SmoothStat.DEF_DEG),
+            loessCriticalSize = options.getIntegerDef(Smooth.LOESS_CRITICAL_SIZE, SmoothStat.DEF_LOESS_CRITICAL_SIZE),
+            samplingSeed = options.getLongDef(Smooth.SAMPLING_SEED, SmoothStat.DEF_SAMPLING_SEED)
+        )
+    }
+
+    private fun smoothingMethod(method: String?): Method? {
+        return method?.let {
+            when (it.lowercase()) {
+                "lm" -> Method.LM
+                "loess", "lowess" -> Method.LOESS
+                "glm" -> Method.GLM
+                "gam" -> Method.GAM
+                "rlm" -> Method.RLM
+                else -> throw IllegalArgumentException(
+                    "Unsupported smoother method: '$it'\n" +
+                            "Use one of: lm, loess, lowess, glm, gam, rlm."
+                )
+            }
+        }
     }
 
     private fun configureDensityRidgesStat(options: OptionsAccessor): DensityRidgesStat {
@@ -327,46 +346,11 @@ object StatProto {
     }
 
     private fun configureDensity2dStat(options: OptionsAccessor, filled: Boolean): AbstractDensity2dStat {
-        var bwValueX: Double? = null
-        var bwValueY: Double? = null
-        var bwMethod: DensityStat.BandWidthMethod? = null
-        options[Density2d.BAND_WIDTH]?.run {
-            if (this is Number) {
-                bwValueX = this.toDouble()
-                bwValueY = this.toDouble()
-            } else if (this is String) {
-                bwMethod = DensityStatUtil.toBandWidthMethod(this)
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
-                    when (i) {
-                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
-                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
-                        else -> break
-                    }
-                }
-            }
-        }
-
+        val (bwValueX, bwValueY, bwMethod) = getBandWidth2d(options)
         val kernel = options.getString(Density2d.KERNEL)?.let {
             DensityStatUtil.toKernel(it)
         }
-
-        var nX: Int? = null
-        var nY: Int? = null
-        options[Density2d.N]?.run {
-            if (this is Number) {
-                nX = this.toInt()
-                nY = this.toInt()
-            } else if (this is List<*>) {
-                for ((i, v) in this.withIndex()) {
-                    when (i) {
-                        0 -> nX = v?.let { (v as Number).toInt() }
-                        1 -> nY = v?.let { (v as Number).toInt() }
-                        else -> break
-                    }
-                }
-            }
-        }
+        val (nX, nY) = getN2d(options)
 
         return if (filled) {
             Density2dfStat(
@@ -395,6 +379,27 @@ object StatProto {
                 binWidth = options.getDoubleDef(Density2d.BINWIDTH, AbstractDensity2dStat.DEF_BIN_WIDTH)
             )
         }
+    }
+
+    private fun configurePointDensityStat(options: OptionsAccessor): PointDensityStat {
+        val (bwValueX, bwValueY, bwMethod) = getBandWidth2d(options)
+        val kernel = options.getString(Density2d.KERNEL)?.let {
+            DensityStatUtil.toKernel(it)
+        }
+        val (nX, nY) = getN2d(options)
+
+        return PointDensityStat(
+            bandWidthX = bwValueX,
+            bandWidthY = bwValueY,
+            bandWidthMethod = bwMethod ?: AbstractDensity2dStat.DEF_BW,
+            adjust = options.getDoubleDef(Density2d.ADJUST, AbstractDensity2dStat.DEF_ADJUST),
+            kernel = kernel ?: AbstractDensity2dStat.DEF_KERNEL,
+            nX = nX ?: AbstractDensity2dStat.DEF_N,
+            nY = nY ?: AbstractDensity2dStat.DEF_N,
+            method = options.getString(PointDensity.METHOD)?.let {
+                PointDensityStat.Method.safeValueOf(it)
+            } ?: PointDensityStat.DEF_METHOD
+        )
     }
 
     private fun configureQQStat(options: OptionsAccessor): QQStat {
@@ -467,6 +472,49 @@ object StatProto {
             }
         }
         return Pair(bwValue, bwMethod)
+    }
+
+    private fun getBandWidth2d(options: OptionsAccessor): Triple<Double?, Double?, DensityStat.BandWidthMethod?> {
+        var bwValueX: Double? = null
+        var bwValueY: Double? = null
+        var bwMethod: DensityStat.BandWidthMethod? = null
+        options[Density2d.BAND_WIDTH]?.let {
+            if (it is Number) {
+                bwValueX = it.toDouble()
+                bwValueY = it.toDouble()
+            } else if (it is String) {
+                bwMethod = DensityStatUtil.toBandWidthMethod(it)
+            } else if (it is List<*>) {
+                for ((i, v) in it.withIndex()) {
+                    when (i) {
+                        0 -> bwValueX = v?.let { (v as Number).toDouble() }
+                        1 -> bwValueY = v?.let { (v as Number).toDouble() }
+                        else -> break
+                    }
+                }
+            }
+        }
+        return Triple(bwValueX, bwValueY, bwMethod)
+    }
+
+    private fun getN2d(options: OptionsAccessor): Pair<Int?, Int?> {
+        var nX: Int? = null
+        var nY: Int? = null
+        options[Density2d.N]?.let {
+            if (it is Number) {
+                nX = it.toInt()
+                nY = it.toInt()
+            } else if (it is List<*>) {
+                for ((i, v) in it.withIndex()) {
+                    when (i) {
+                        0 -> nX = v?.let { (v as Number).toInt() }
+                        1 -> nY = v?.let { (v as Number).toInt() }
+                        else -> break
+                    }
+                }
+            }
+        }
+        return Pair(nX, nY)
     }
 
     private fun getYDensityScale(options: OptionsAccessor): BaseYDensityStat.Scale? {

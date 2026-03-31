@@ -6,30 +6,26 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.Aesthetics
-import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
-import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.QuantilesHelper
+import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
 import org.jetbrains.letsPlot.core.plot.base.stat.BaseYDensityStat
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.random.Random
 
 class SinaGeom : GeomBase() {
     var seed: Long? = null
     var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
     var showHalf: Double = DEF_SHOW_HALF
+
+    override val legendKeyElementFactory: LegendKeyElementFactory
+        get() = PointLegendKeyElementFactory()
 
     override fun buildIntern(
         root: SvgRoot,
@@ -57,7 +53,7 @@ class SinaGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.POINT, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
         val jitterTransform = toJitterTransform(ctx, rand)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->

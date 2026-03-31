@@ -7,6 +7,9 @@
 
 package org.jetbrains.letsPlot.pythonExtension.interop
 
+import ImageMagick.DrawGetVectorGraphics
+import Python.PyErr_SetString
+import Python.PyExc_ValueError
 import Python.PyObject
 import Python.Py_BuildValue
 import kotlinx.cinterop.ByteVar
@@ -17,41 +20,50 @@ import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.util.*
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.computeExportParameters
-import org.jetbrains.letsPlot.core.util.PlotHtmlExport
-import org.jetbrains.letsPlot.core.util.PlotHtmlHelper
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvas
-import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasControl
+import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
 import org.jetbrains.letsPlot.imagick.canvas.MagickFontManager
-import org.jetbrains.letsPlot.nat.util.PlotSvgExportNative
 import org.jetbrains.letsPlot.pythonExtension.interop.TypeUtils.pyDictToMap
-import org.jetbrains.letsPlot.raster.builder.MonolithicCanvas
+import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
+import org.jetbrains.letsPlot.raster.view.RenderingHints.KEY_OFFSCREEN_BUFFERING
+import org.jetbrains.letsPlot.raster.view.RenderingHints.VALUE_OFFSCREEN_BUFFERING_OFF
+import kotlin.time.TimeSource
 
 object PlotReprGenerator {
     private val defaultFontManager by lazy { MagickFontManager.default() }
 
-    @Suppress("unused") // This function is used in kotlin_bridge.c
-    fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
-        return try {
-            val plotSpecMap = pyDictToMap(plotSpecDict)
-
-            @Suppress("UNCHECKED_CAST")
-            val html = PlotHtmlHelper.getDynamicDisplayHtmlForRawSpec(plotSpecMap as MutableMap<String, Any>)
-            Py_BuildValue("s", html)
-        } catch (e: Throwable) {
-            Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}")
-        }
-    }
+    // Deprecated: replaced by generateDisplayHtmlForRawSpec() with default parameters
+    // Used to be called from kotlin_bridge.c generate_html() function
+//    @Suppress("unused") // This function is used in kotlin_bridge.c
+//    fun generateDynamicDisplayHtml(plotSpecDict: CPointer<PyObject>?): CPointer<PyObject>? {
+//        return try {
+//            val plotSpecMap = pyDictToMap(plotSpecDict)
+//
+//            @Suppress("UNCHECKED_CAST")
+//            val html = PlotHtmlHelper.getDisplayHtmlForRawSpec(
+//                plotSpec = plotSpecMap as MutableMap<String, Any>,
+//                sizingPolicy = SizingPolicy.notebookCell(),
+//                dynamicScriptLoading = true,
+//                forceImmediateRender = false,
+//                responsive = false,
+//                removeComputationMessages = false,
+//                logComputationMessages = false
+//            )
+//            Py_BuildValue("s", html)
+//        } catch (e: Throwable) {
+//            Py_BuildValue("s", "generateDynamicDisplayHtml() - Exception: ${e.message}")
+//        }
+//    }
 
     @Suppress("unused") // This function is used in kotlin_bridge.c
     fun generateSvg(
         plotSpecDict: CPointer<PyObject>?,
         width: Float,
         height: Float,
-        unit: CPointer<ByteVar>,
-        useCssPixelatedImageRendering: Int,
+        unit: CPointer<ByteVar>
     ): CPointer<PyObject>? {
         return try {
             val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
@@ -60,11 +72,10 @@ object PlotReprGenerator {
             val plotSpecMap = pyDictToMap(plotSpecDict)
 
             @Suppress("UNCHECKED_CAST")
-            val svg = PlotSvgExportNative.buildSvgImageFromRawSpecs(
+            val svg = PlotSvgExport.buildSvgImageFromRawSpecs(
                 plotSpec = plotSpecMap as MutableMap<String, Any>,
                 plotSize = plotSize,
-                sizeUnit = sizeUnit,
-                useCssPixelatedImageRendering = useCssPixelatedImageRendering == 1,
+                sizeUnit = sizeUnit
             )
             Py_BuildValue("s", svg)
         } catch (e: Throwable) {
@@ -73,14 +84,14 @@ object PlotReprGenerator {
                     <text x="0" y="20">generateSvg() - Exception: ${e.message}</text>
                 </svg>
             """.trimIndent()
-            println(e.message)
-            e.printStackTrace()
+            //println(e.message)
+            //e.printStackTrace()
             Py_BuildValue("s", svgStr)
         }
     }
 
     @Suppress("unused") // This function is used in kotlin_bridge.c
-    fun generateStaticHtmlPage(
+    fun generateExportHtml(
         plotSpecDict: CPointer<PyObject>?,
         scriptUrlCStr: CPointer<ByteVar>,
         iFrame: Int
@@ -97,7 +108,7 @@ object PlotReprGenerator {
             )
             Py_BuildValue("s", html)
         } catch (e: Throwable) {
-            Py_BuildValue("s", "generateStaticHtmlPage() - Exception: ${e.message}")
+            Py_BuildValue("s", "generateExportHtml() - Exception: ${e.message}")
         }
     }
 
@@ -120,20 +131,25 @@ object PlotReprGenerator {
         sizingOptionsDict: CPointer<PyObject>,
         dynamicScriptLoading: Int,
         forceImmediateRender: Int,
-        responsive: Int
+        responsive: Int,
+        height100pct: Int,
     ): CPointer<PyObject>? {
         return try {
             val plotSpecMap = pyDictToMap(plotSpecDict)
             val sizingOptionsMap = pyDictToMap(sizingOptionsDict)
             val sizingPolicy = SizingPolicy.create(sizingOptionsMap)
+            val displayHtmlPolicy = DisplayHtmlPolicy(
+                dynamicScriptLoading = dynamicScriptLoading == 1,
+                forceImmediateRender = forceImmediateRender == 1,
+                responsive = responsive == 1,
+                height100pct = height100pct == 1,
+            )
 
             @Suppress("UNCHECKED_CAST")
             val html = PlotHtmlHelper.getDisplayHtmlForRawSpec(
                 plotSpec = plotSpecMap as MutableMap<String, Any>,
                 sizingPolicy = sizingPolicy,
-                dynamicScriptLoading = dynamicScriptLoading == 1,
-                forceImmediateRender = forceImmediateRender == 1,
-                responsive = responsive == 1,
+                displayHtmlPolicy = displayHtmlPolicy,
                 removeComputationMessages = false,
                 logComputationMessages = false
             )
@@ -143,6 +159,44 @@ object PlotReprGenerator {
         }
     }
 
+    @Suppress("unused") // This function is used in kotlin_bridge.c
+    fun generateStaticHtmlPageForRawSpec(
+        plotSpecDict: CPointer<PyObject>,
+        scriptUrlCStr: CPointer<ByteVar>,
+        sizingOptionsDict: CPointer<PyObject>,
+        dynamicScriptLoading: Int,
+        forceImmediateRender: Int,
+        responsive: Int,
+        height100pct: Int,
+    ): CPointer<PyObject>? {
+        return try {
+            val plotSpecMap = pyDictToMap(plotSpecDict)
+            val scriptUrl = scriptUrlCStr.toKString()
+            val sizingOptionsMap = pyDictToMap(sizingOptionsDict)
+            val sizingPolicy = SizingPolicy.create(sizingOptionsMap)
+            val displayHtmlPolicy = DisplayHtmlPolicy(
+                dynamicScriptLoading = dynamicScriptLoading == 1,
+                forceImmediateRender = forceImmediateRender == 1,
+                responsive = responsive == 1,
+                height100pct = height100pct == 1,
+            )
+
+            @Suppress("UNCHECKED_CAST")
+            val html = PlotHtmlHelper.getStaticHtmlPageForRawSpec(
+                plotSpec = plotSpecMap as MutableMap<String, Any>,
+                scriptUrl = scriptUrl,
+                sizingPolicy = sizingPolicy,
+                displayHtmlPolicy = displayHtmlPolicy,
+                removeComputationMessages = false,
+                logComputationMessages = false
+            )
+            Py_BuildValue("s", html)
+        } catch (e: Throwable) {
+            Py_BuildValue("s", "generateStaticHtmlPageForRawSpec() - Exception: ${e.message}")
+        }
+    }
+
+    // Returns bitmap and dpi or null on error
     fun exportBitmap(
         plotSpec: Map<*, *>,
         fontManager: MagickFontManager,
@@ -150,45 +204,49 @@ object PlotReprGenerator {
         sizeUnit: SizeUnit? = null,
         dpi: Number? = null,
         scale: Number? = null,
-    ): Bitmap? {
-        var canvasReg: Registration? = null
+        antialiasing: Boolean = true
+    ): Pair<Bitmap, Double> {
+        val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
+
+        @Suppress("UNCHECKED_CAST")
+        val rawPlotSpec = plotSpec as MutableMap<String, Any>
+
+        val plotCanvasDrawable = PlotCanvasDrawable()
+
+        plotCanvasDrawable.setRenderingHint(KEY_OFFSCREEN_BUFFERING, VALUE_OFFSCREEN_BUFFERING_OFF)
+
+        plotCanvasDrawable.update(
+            processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
+            sizingPolicy = exportParameters.sizingPolicy,
+            computationMessagesHandler = { }
+        )
+
+        val magickCanvasPeer = MagickCanvasPeer(
+            pixelDensity = exportParameters.scaleFactor,
+            fontManager = fontManager,
+            antialiasing = antialiasing
+        )
+
+        var canvasReg: Registration? = plotCanvasDrawable.mapToCanvas(magickCanvasPeer)
+
         try {
-            val (sizingPolicy, scaleFactor) = computeExportParameters(plotSize, dpi, sizeUnit, scale)
-
-            @Suppress("UNCHECKED_CAST")
-            val plotCanvasFigure = MonolithicCanvas.buildPlotFigureFromRawSpec(
-                rawSpec = plotSpec as MutableMap<String, Any>,
-                sizingPolicy = sizingPolicy,
-                computationMessagesHandler = {
-                    //println(it.joinToString("\n"))
-                }
+            val canvas = magickCanvasPeer.createCanvas(
+                plotCanvasDrawable.size,
+                contentScale = exportParameters.scaleFactor
             )
+            val ctx = canvas.context2d
+            plotCanvasDrawable.paint(ctx)
 
-            val canvasControl = MagickCanvasControl(
-                w = plotCanvasFigure.bounds().get().width,
-                h = plotCanvasFigure.bounds().get().height,
-                pixelDensity = scaleFactor,
-                fontManager = fontManager,
-            )
-
-            canvasReg = plotCanvasFigure.mapToCanvas(canvasControl)
-
-            // TODO: canvasControl can provide takeSnapshot() method
-            val plotCanvas = canvasControl.children.last() as MagickCanvas
-            require(plotCanvas.size.x > 0 && plotCanvas.size.y > 0) {
-                "Plot canvas size must be greater than zero"
-            }
-
-            // Save the image to a file
-            val snapshot = plotCanvas.takeSnapshot()
+            val snapshot = canvas.takeSnapshot()
             val bitmap = snapshot.bitmap
-            snapshot.dispose()
-            canvasControl.dispose()
 
-            return bitmap
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            return null
+            canvasReg?.dispose()
+            canvasReg = null
+
+            ctx.dispose()
+            snapshot.dispose()
+
+            return bitmap to exportParameters.dpi
         } finally {
             canvasReg?.dispose()
         }
@@ -204,19 +262,15 @@ object PlotReprGenerator {
         scale: Float
     ): CPointer<PyObject>? {
         try {
-            val plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null
-            val sizeUnit = SizeUnit.fromName(unit.toKString())
-            val dpi = if (dpi >= 0) dpi.toDouble() else null
-            val scaleFactor = if (scale >= 0) scale.toDouble() else null
 
-            val bitmap = exportBitmap(
+            val (bitmap, bitmapDpi) = exportBitmap(
                 plotSpec = pyDictToMap(plotSpecDict),
-                plotSize = plotSize,
-                sizeUnit = sizeUnit,
-                dpi = dpi,
-                scale = scaleFactor,
+                plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null,
+                sizeUnit = SizeUnit.fromName(unit.toKString()),
+                dpi = if (dpi >= 0) dpi.toDouble() else null,
+                scale = if (scale >= 0) scale.toDouble() else null,
                 fontManager = defaultFontManager
-            ) ?: return Py_BuildValue("s", "Failed to generate image")
+            )
             // We can't use PyBytes_FromStringAndSize(ptr, bytes.size.toLong()):
             // Type mismatch: inferred type is CPointer<ByteVarOf<Byte>>? but String? was expected
             // This happens because PyBytes_FromStringAndSize has the following signature:
@@ -224,11 +278,125 @@ object PlotReprGenerator {
             // Here `const char*` refers to a pointer to a byte buffer. Kotlin cinterop fails to infer that
             // and generate a function with a String parameter instead of ByteArray
 
-            val png: ByteArray = Png.encode(bitmap)
+            val png: ByteArray = Png.encode(bitmap, bitmapDpi)
             return Py_BuildValue("s", Base64.encode(png))
         } catch (e: Throwable) {
-            e.printStackTrace()
-            return Py_BuildValue("s", "exportPng() - Exception: ${e.message}")
+            //e.printStackTrace()
+
+            // Set a Python exception with the caught error message
+            PyErr_SetString(PyExc_ValueError, "${e.message}")
+            // Return null to signal that an exception was raised
+            return null
+        }
+    }
+
+    @Suppress("unused") // This function is used in kotlin_bridge.c
+    fun exportMvg(
+        plotSpecDict: CPointer<PyObject>?,
+        width: Float,
+        height: Float,
+        unit: CPointer<ByteVar>,
+        dpi: Int,
+        scale: Float
+    ): CPointer<PyObject>? {
+        try {
+
+            val mvg = generateMvg(
+                plotSpec = pyDictToMap(plotSpecDict),
+                plotSize = if (width >= 0 && height >= 0) DoubleVector(width, height) else null,
+                sizeUnit = SizeUnit.fromName(unit.toKString()),
+                dpi = if (dpi >= 0) dpi.toDouble() else null,
+                scale = if (scale >= 0) scale.toDouble() else null
+            )
+            return Py_BuildValue("s", mvg)
+        } catch (e: Throwable) {
+            //e.printStackTrace()
+
+            // Set a Python exception with the caught error message
+            PyErr_SetString(PyExc_ValueError, "${e.message}")
+            // Return null to signal that an exception was raised
+            return null
+        }
+    }
+
+    @Suppress("unused") // This function is used in kotlin_bridge.c
+    fun generateMvg(
+        plotSpec: Map<*, *>,
+        plotSize: DoubleVector? = null,
+        sizeUnit: SizeUnit? = null,
+        dpi: Number? = null,
+        scale: Number? = null,
+    ): String {
+        var canvasReg: Registration? = null
+            val start = TimeSource.Monotonic.markNow()
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotSpec parsed")
+
+            val exportParameters = computeExportParameters(plotSize, dpi, sizeUnit, scale)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): exportParameters(dpi=${exportParameters.dpi}, scaleFactor=${exportParameters.scaleFactor}, sizingPolicy=${exportParameters.sizingPolicy})")
+
+            @Suppress("UNCHECKED_CAST")
+            val rawPlotSpec = plotSpec as MutableMap<String, Any>
+
+            val plotCanvasDrawable = PlotCanvasDrawable()
+            plotCanvasDrawable.update(
+                processedSpec = MonolithicCommon.processRawSpecs(rawPlotSpec, frontendOnly = false),
+                sizingPolicy = exportParameters.sizingPolicy,
+                computationMessagesHandler = { }
+            )
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plotCanvasFigure built, size=${plotCanvasDrawable.size}")
+
+            val magickCanvasPeer = MagickCanvasPeer(
+                pixelDensity = exportParameters.scaleFactor,
+                fontManager = defaultFontManager,
+            )
+
+            canvasReg = plotCanvasDrawable.mapToCanvas(magickCanvasPeer)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot mapped to canvas")
+
+        try {
+            val canvas = magickCanvasPeer.createCanvas(plotCanvasDrawable.size)
+            val ctx = canvas.context2d
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): canvas size: ${canvas.size}, pixelDensity=${magickCanvasPeer.pixelDensity}")
+
+            plotCanvasDrawable.paint(ctx)
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): plot painted")
+
+            // Save the image to a file
+            val snapshot = canvas.takeSnapshot()
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): snapshot taken")
+
+            // bitmap is a getter property that does on read. Read it to measure the time.
+            snapshot.bitmap
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): bitmap extracted")
+
+            val wand = canvas.context2d.wand
+            val mvg = DrawGetVectorGraphics(wand)?.toKString() ?: "MagicWand: MVG is null"
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): MVG extracted, length=${mvg.length}")
+
+            ctx.dispose()
+            snapshot.dispose()
+
+            println("${TimeSource.Monotonic.markNow() - start}: exportMvg(): resources disposed")
+
+            val contentPosStart = mvg.indexOf("<vector-graphics>")
+            val contentPosEnd = mvg.indexOf("</vector-graphics>")
+
+            if (contentPosStart < 0 || contentPosEnd < 0 || contentPosEnd <= contentPosStart) {
+                return ""
+            }
+
+            return mvg.substring(contentPosStart + "<vector-graphics>".length, contentPosEnd)
+        } finally {
+            canvasReg.dispose()
         }
     }
 }

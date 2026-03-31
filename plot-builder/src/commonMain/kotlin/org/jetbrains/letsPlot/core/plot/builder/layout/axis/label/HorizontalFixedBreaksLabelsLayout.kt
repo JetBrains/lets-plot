@@ -12,13 +12,13 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.H_AXIS_LABELS_EXPAND
-import org.jetbrains.letsPlot.core.plot.builder.layout.util.Insets
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import kotlin.math.max
 
 internal class HorizontalFixedBreaksLabelsLayout constructor(
     orientation: Orientation,
     breaks: ScaleBreaks,
-    private val geomAreaInsets: Insets,
+    private val geomAreaInsets: DoubleInsets,
     theme: AxisTheme,
     private val polar: Boolean
 ) : AbstractFixedBreaksLabelsLayout(

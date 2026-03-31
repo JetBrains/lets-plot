@@ -27,4 +27,17 @@ internal class WeekInterval(
             dateTime.date.addDays(count * 7)
         )
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as WeekInterval
+        if (count != other.count) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return count
+    }
 }

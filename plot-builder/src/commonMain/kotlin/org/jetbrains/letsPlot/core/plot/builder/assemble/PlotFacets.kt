@@ -66,10 +66,18 @@ abstract class PlotFacets {
 
     companion object {
         const val DEF_ORDER_DIR = 0 // no ordering
-        val DEF_FORMATTER: (Any) -> String = { it.toString() }
         const val DEF_LAB_WIDTH = -1
 
-        val UNDEFINED: PlotFacets = FacetGrid(null, null, emptyList<Any>(), emptyList<Any>())
+        val NO_FORMATTER: (Any) -> String = { throw IllegalStateException("Illegal use of 'no formatter'.") }
+
+        val UNDEFINED: PlotFacets = FacetGrid(
+            xVar = null,
+            yVar = null,
+            xLevels = emptyList<Any>(),
+            yLevels = emptyList<Any>(),
+            xFormatter = NO_FORMATTER,
+            yFormatter = NO_FORMATTER
+        )
 
         fun levelTupleAndDataPairs(
             data: DataFrame,

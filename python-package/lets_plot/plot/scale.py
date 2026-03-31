@@ -2,7 +2,7 @@
 # Copyright (c) 2019. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
-from .core import FeatureSpec, FeatureSpecArray
+from .core import FeatureSpec, FeatureSpecArray, ColorScaleFeatureSpec
 from .util import as_boolean
 
 #
@@ -821,6 +821,9 @@ def scale_fill_continuous(name=None, breaks=None, labels=None, lablim=None,
     ``FeatureSpec``
         Scale specification.
 
+    Notes
+    -----
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -899,6 +902,10 @@ def scale_color_continuous(name=None, breaks=None, labels=None, lablim=None, lim
     -------
     ``FeatureSpec``
         Scale specification.
+
+    Notes
+    -----
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -986,6 +993,8 @@ def scale_gradient(aesthetic, *,
     -----
     Define smooth gradient between two colors (defined by low and high) for the specified aesthetics.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -1068,6 +1077,8 @@ def scale_fill_gradient(low=None, high=None, name=None, breaks=None, labels=None
     -----
     Define smooth gradient between two colors (defined by low and high) for ``fill`` aesthetic.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -1147,6 +1158,8 @@ def scale_color_gradient(low=None, high=None, name=None, breaks=None, labels=Non
     Notes
     -----
     Define smooth gradient between two colors (defined by low and high) for ``color`` aesthetic.
+
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -1235,6 +1248,9 @@ def scale_gradient2(aesthetic, *,
     -----
     Define diverging color gradient for the specified aesthetics. Default mid point is set to white color.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+    For palette generation, ``midpoint`` should be in range -1..1.
+
     Examples
     --------
     .. jupyter-execute::
@@ -1322,6 +1338,9 @@ def scale_fill_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, b
     -----
     Define diverging color gradient for ``fill`` aesthetic. Default mid point is set to white color.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+    For palette generation, ``midpoint`` should be in range -1..1.
+
     Examples
     --------
     .. jupyter-execute::
@@ -1407,6 +1426,9 @@ def scale_color_gradient2(low=None, mid=None, high=None, midpoint=0, name=None, 
     -----
     Define diverging color gradient for ``color`` aesthetic. Default mid point is set to white color.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+    For palette generation, ``midpoint`` should be in range -1..1.
+
     Examples
     --------
     .. jupyter-execute::
@@ -1489,6 +1511,8 @@ def scale_gradientn(aesthetic, *,
     -----
     Define smooth color gradient between multiple colors for the specified aesthetics.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -1570,6 +1594,8 @@ def scale_color_gradientn(colors=None, name=None, breaks=None, labels=None, labl
     -----
     Define smooth color gradient between multiple colors for ``color`` aesthetic.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -1648,6 +1674,8 @@ def scale_fill_gradientn(colors=None, name=None, breaks=None, labels=None, labli
     Notes
     -----
     Define smooth color gradient between multiple colors for ``fill`` aesthetic.
+
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -1736,6 +1764,8 @@ def scale_hue(aesthetic, *,
     Notes
     -----
     Define qualitative color scale with evenly spaced hues for the specified aesthetics.
+
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -1826,6 +1856,8 @@ def scale_fill_hue(h=None, c=None, l=None, h_start=None, direction=None, name=No
     -----
     Define qualitative color scale with evenly spaced hues for ``fill`` aesthetic.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -1911,6 +1943,8 @@ def scale_color_hue(h=None, c=None, l=None, h_start=None, direction=None, name=N
     Notes
     -----
     Define qualitative color scale with evenly spaced hues for ``color``  aesthetic.
+
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -2107,6 +2141,10 @@ def scale_fill_discrete(direction=None,
     ``FeatureSpec``
         Scale specification.
 
+    Notes
+    -----
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
       .. jupyter-execute::
@@ -2188,6 +2226,10 @@ def scale_color_discrete(direction=None,
     -------
     ``FeatureSpec``
         Scale specification.
+
+    Notes
+    -----
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -2275,6 +2317,8 @@ def scale_grey(aesthetic, *,
     -----
     Define sequential grey color scale for the specified aesthetics.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -2359,6 +2403,8 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
     -----
     Define sequential grey color scale for ``fill`` aesthetic.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -2439,6 +2485,8 @@ def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, 
     -----
     Define sequential grey color scale for ``color``  aesthetic.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -2489,7 +2537,8 @@ def _greyscale_check_parameters(start=None, end=None):
 
 
 def scale_brewer(aesthetic, *,
-                 type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+                 type=None, palette=None, direction=None, overflow=None,
+                 name=None, breaks=None, labels=None, lablim=None, limits=None,
                  na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for the specified aesthetics.
@@ -2507,6 +2556,15 @@ def scale_brewer(aesthetic, *,
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
+    overflow : {'interpolate', 'cycle', 'generate'} or {'i', 'c', 'g'}
+        How to handle the case when more colors are needed than the palette provides:
+
+        - 'interpolate' ('i') - interpolate between existing palette colors.
+        - 'cycle' ('c') - cyclically repeat palette colors.
+        - 'generate' ('g') - generate new colors similar to the original palette colors by varying their luminance.
+
+        If None, the default, the method is chosen based on the palette type:
+        'generate' for qualitative palettes, 'interpolate' for sequential and diverging.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -2554,6 +2612,8 @@ def scale_brewer(aesthetic, *,
     However, the original color schemes (particularly the qualitative ones) were not intended for this and the
     perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Palettes:
 
     - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
@@ -2590,10 +2650,12 @@ def scale_brewer(aesthetic, *,
                   type=type,
                   palette=palette,
                   direction=direction,
+                  overflow=overflow,
                   scale_mapper_kind='color_brewer')
 
 
-def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+def scale_fill_brewer(type=None, palette=None, direction=None, overflow=None,
+                      name=None, breaks=None, labels=None, lablim=None, limits=None,
                       na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for ``fill`` aesthetic.
@@ -2609,6 +2671,15 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
+    overflow : {'interpolate', 'cycle', 'generate'} or {'i', 'c', 'g'}
+        How to handle the case when more colors are needed than the palette provides:
+
+        - 'interpolate' ('i') - interpolate between existing palette colors.
+        - 'cycle' ('c') - cyclically repeat palette colors.
+        - 'generate' ('g') - generate new colors similar to the original palette colors by varying their luminance.
+
+        If None, the default, the method is chosen based on the palette type:
+        'generate' for qualitative palettes, 'interpolate' for sequential and diverging.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -2656,6 +2727,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
     However, the original color schemes (particularly the qualitative ones) were not intended for this and the
     perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Palettes:
 
     - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
@@ -2682,6 +2755,7 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                         type=type,
                         palette=palette,
                         direction=direction,
+                        overflow=overflow,
                         name=name,
                         breaks=breaks,
                         labels=labels,
@@ -2693,7 +2767,8 @@ def scale_fill_brewer(type=None, palette=None, direction=None, name=None, breaks
                         format=format)
 
 
-def scale_color_brewer(type=None, palette=None, direction=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
+def scale_color_brewer(type=None, palette=None, direction=None, overflow=None,
+                       name=None, breaks=None, labels=None, lablim=None, limits=None,
                        na_value=None, guide=None, trans=None, format=None):
     """
     Sequential, diverging and qualitative color scales from colorbrewer2.org for ``color``  aesthetic.
@@ -2709,6 +2784,15 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     direction : {1, -1}, default=1
         Set the order of colors in the scale. If 1, colors are as output by brewer palette.
         If -1, the order of colors is reversed.
+    overflow : {'interpolate', 'cycle', 'generate'} or {'i', 'c', 'g'}
+        How to handle the case when more colors are needed than the palette provides:
+
+        - 'interpolate' ('i') - interpolate between existing palette colors.
+        - 'cycle' ('c') - cyclically repeat palette colors.
+        - 'generate' ('g') - generate new colors similar to the original palette colors by varying their luminance.
+
+        If None, the default, the method is chosen based on the palette type:
+        'generate' for qualitative palettes, 'interpolate' for sequential and diverging.
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
@@ -2756,6 +2840,8 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
     However, the original color schemes (particularly the qualitative ones) were not intended for this and
     the perceptual result is left to the appreciation of the user. See colorbrewer2.org for more information.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Palettes:
 
     - Diverging : BrBG, PiYG, PRGn, PuOr, RdBu, RdGy, RdYlBu, RdYlGn, Spectral.
@@ -2780,6 +2866,7 @@ def scale_color_brewer(type=None, palette=None, direction=None, name=None, break
                         type=type,
                         palette=palette,
                         direction=direction,
+                        overflow=overflow,
                         name=name,
                         breaks=breaks,
                         labels=labels,
@@ -2866,6 +2953,8 @@ def scale_viridis(aesthetic, *,
     Notes
     -----
     Can be used for both, continuous and discrete data.
+
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -2976,6 +3065,8 @@ def scale_fill_viridis(alpha=None, begin=None, end=None, direction=None, option=
     -----
     Can be used for both, continuous and discrete data.
 
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
+
     Examples
     --------
     .. jupyter-execute::
@@ -3080,6 +3171,8 @@ def scale_color_viridis(alpha=None, begin=None, end=None, direction=None, option
     Notes
     -----
     Can be used for both, continuous and discrete data.
+
+    Use the ``palette(n)`` method to generate a list of n colors from this scale.
 
     Examples
     --------
@@ -3566,13 +3659,20 @@ def _scale(aesthetic, *,
             args['breaks'] = new_breaks + breaks_without_label
             args['labels'] = new_labels
 
+    # Color aesthetics that support palette generation
+    _COLOR_AESTHETICS = {'color', 'fill', 'paint_a', 'paint_b', 'paint_c'}
+
     specs = []
     if isinstance(aesthetic, list):
         args.pop('aesthetic')
         for aes in aesthetic:
             specs.append(FeatureSpec('scale', aesthetic=aes, **args, **kwargs))
     else:
-        specs.append(FeatureSpec('scale', **args, **kwargs))
+        # Use ColorScaleFeatureSpec for color aesthetics when creating a single spec
+        if aesthetic in _COLOR_AESTHETICS:
+            specs.append(ColorScaleFeatureSpec('scale', **args, **kwargs))
+        else:
+            specs.append(FeatureSpec('scale', **args, **kwargs))
 
     if len(specs) == 1:
         return specs[0]

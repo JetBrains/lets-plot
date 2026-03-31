@@ -17,19 +17,14 @@ internal object Markdown {
             return listOf(RichTextNode.Text(""))
         }
 
-        val html = Markdown.mdToHtml(text)
-        val doc = Xml.parseSafe("<p>$html</p>") // wrap in <p> to make it a valid XML with a single root element
-            .let { (doc, unparsed) ->
-                if (unparsed.isEmpty()) return@let doc
+        val res = Xml.parse("<p>${Markdown.mdToHtml(text)}</p>")
 
-                // Failed to parse. Add the unparsed text as a text node to the document for better user experience.
-                when (doc) {
-                    is XmlNode.Element -> doc.copy(children = doc.children + XmlNode.Text(unparsed))
-                    is XmlNode.Text -> doc.copy(content = doc.content + unparsed)
-                }
-            }
+        if (res.errorPos != null) {
+            // Parsing error - return plain text
+            return listOf(RichTextNode.Text(text))
+        }
 
-        return renderRichText(doc)
+        return renderRichText(res.root)
     }
 
     private fun renderRichText(node: XmlNode): List<RichTextNode> {
@@ -38,10 +33,8 @@ internal object Markdown {
         when (node) {
             is XmlNode.Text -> output += RichTextNode.Text(node.content)
             is XmlNode.Element -> {
-                if (node.name == "a") {
-                    val href = node.attributes["href"] ?: ""
-                    val text = node.children.joinToString("") { (it as? XmlNode.Text)?.content ?: "" }
-                    output += Hyperlink.HyperlinkElement(text, href)
+                if (Hyperlink.canRender(node)) {
+                    output += Hyperlink.render(node)
                     return output
                 }
 
@@ -64,7 +57,7 @@ internal object Markdown {
                     ?: Pair(emptyList(), emptyList())
 
                 output += prefix
-                output += node.children.flatMap(::renderRichText)
+                output += node.children.flatMap{ renderRichText(it) }
                 output += suffix
             }
         }

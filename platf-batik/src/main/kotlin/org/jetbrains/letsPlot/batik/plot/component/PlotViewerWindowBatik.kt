@@ -6,9 +6,9 @@
 package org.jetbrains.letsPlot.batik.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.component.ApplicationContext
-import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotContentPane
+import org.jetbrains.letsPlot.awt.plot.util.PlotContentPaneBase
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
-import org.jetbrains.letsPlot.awt.plot.component.PlotViewerWindowBase
+import org.jetbrains.letsPlot.awt.plot.util.PlotViewerWindowBase
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -27,7 +27,7 @@ open class PlotViewerWindowBatik(
 
     override fun createWindowContent(preferredSizeFromPlot: Boolean): JComponent {
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
-        return object : DefaultPlotContentPane(
+        return object : PlotContentPaneBase(
             processedSpec = processedSpec,
             preferredSizeFromPlot = preferredSizeFromPlot,
             repaintDelay = repaintDelay,

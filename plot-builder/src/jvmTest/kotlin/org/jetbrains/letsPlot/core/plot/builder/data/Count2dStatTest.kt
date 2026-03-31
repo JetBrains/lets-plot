@@ -13,28 +13,50 @@ import org.junit.Test
 class Count2dStatTest {
     @Test
     fun emptyDataFrame() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         val x = dataProcessor.putVariable(name = "x", values = emptyList(), mappingAes = Aes.X)
         val y = dataProcessor.putVariable(name = "y", values = emptyList(), mappingAes = Aes.Y)
 
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf.variables())
-            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT, Stats.SUMPROP, Stats.SUMPCT)
+            .containsExactlyInAnyOrder(
+                x,
+                y,
+                Stats.X,
+                Stats.Y,
+                Stats.SUM,
+                Stats.COUNT,
+                Stats.PROP,
+                Stats.PROPPCT,
+                Stats.SUMPROP,
+                Stats.SUMPCT
+            )
 
         assertThat(statDf.rowCount()).isZero()
     }
 
     @Test
     fun checkStatVars() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         val x = dataProcessor.putVariable(name = "x", values = listOf("0"), mappingAes = Aes.X)
         val y = dataProcessor.putVariable(name = "y", values = listOf("0"), mappingAes = Aes.Y)
 
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf.variables())
-            .containsExactlyInAnyOrder(x, y, Stats.X, Stats.Y, Stats.SUM, Stats.COUNT, Stats.PROP, Stats.PROPPCT, Stats.SUMPROP, Stats.SUMPCT)
+            .containsExactlyInAnyOrder(
+                x,
+                y,
+                Stats.X,
+                Stats.Y,
+                Stats.SUM,
+                Stats.COUNT,
+                Stats.PROP,
+                Stats.PROPPCT,
+                Stats.SUMPROP,
+                Stats.SUMPCT
+            )
 
         assertThat(statDf[Stats.X]).containsExactly("0")
         assertThat(statDf[Stats.Y]).containsExactly("0")
@@ -48,7 +70,7 @@ class Count2dStatTest {
 
     @Test
     fun simple() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "1"), mappingAes = Aes.Y)
 
@@ -62,7 +84,7 @@ class Count2dStatTest {
 
     @Test
     fun overlapped() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0"), mappingAes = Aes.Y)
 
@@ -76,7 +98,7 @@ class Count2dStatTest {
 
     @Test
     fun `overlapped weighted`() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0"), mappingAes = Aes.Y)
         dataProcessor.putVariable(name = "w", values = listOf(1.0, 3.0), mappingAes = Aes.WEIGHT)
@@ -91,13 +113,13 @@ class Count2dStatTest {
 
     @Test
     fun `overlapped weighted grouped`() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0"), mappingAes = Aes.Y)
         dataProcessor.putVariable(name = "w", values = listOf(1.0, 3.0), mappingAes = Aes.WEIGHT)
         dataProcessor.putVariable(name = "g", values = listOf("A", "B"))
 
-        dataProcessor.groupingVarName = "g"
+        dataProcessor.explicitGroupingVarNames = listOf("g")
         val statDf = dataProcessor.applyStat(Stats.count2d())
 
         assertThat(statDf[Stats.SUM]).containsExactly(4.0, 4.0)
@@ -108,13 +130,13 @@ class Count2dStatTest {
 
     @Test
     fun `nulls completely ignored`() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0", null), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0", "0"), mappingAes = Aes.Y)
         dataProcessor.putVariable(name = "w", values = listOf(1.0, 3.0, 5.0), mappingAes = Aes.WEIGHT)
         dataProcessor.putVariable(name = "g", values = listOf("A", "B", "B"))
 
-        dataProcessor.groupingVarName = null
+        dataProcessor.explicitGroupingVarNames = null
         dataProcessor.applyStat(Stats.count2d()).let { statDf ->
             assertThat(statDf[Stats.SUM]).containsExactly(4.0)
             assertThat(statDf[Stats.COUNT]).containsExactly(4.0)
@@ -122,7 +144,7 @@ class Count2dStatTest {
             assertThat(statDf[Stats.SUMPROP]).containsExactly(1.0)
         }
 
-        dataProcessor.groupingVarName = "g"
+        dataProcessor.explicitGroupingVarNames = listOf("g")
         dataProcessor.applyStat(Stats.count2d()).let { statDf ->
             assertThat(statDf[Stats.SUM]).containsExactly(4.0, 4.0)
             assertThat(statDf[Stats.COUNT]).containsExactly(1.0, 3.0)

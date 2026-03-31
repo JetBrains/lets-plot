@@ -5,12 +5,12 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeValues.Companion.mergeWith
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 
 object ThemeUtil {
 
@@ -30,12 +30,17 @@ object ThemeUtil {
         val effectiveOptions = baselineValues + userOptions
 
         if (themeName == ThemeOption.Name.LP_NONE) {
-            // Not apply flavor to 'none' theme
+            // Not apply flavor to the 'none' theme
             return effectiveOptions
         }
 
-        val flavorName = effectiveOptions[ThemeOption.FLAVOR] as? String ?: error("Flavor name should be specified")
-        val flavor = ThemeFlavor.forName(flavorName)
+        val userFlavorName = userOptions[ThemeOption.FLAVOR] as? String
+
+        val flavor: ThemeFlavor = when (userFlavorName) {
+            null,
+            ThemeOption.Flavor.STANDARD -> baselineValues.defaultFlavor()
+            else -> ThemeFlavor.forName(userFlavorName)
+        }
 
         val geomThemeOptions = mapOf(
             ThemeOption.GEOM to mapOf(
@@ -47,11 +52,12 @@ object ThemeUtil {
 
         // resolve symbolic colors
         val withResolvedColors = effectiveOptions.mapValues { (parameter, options) ->
+            val flavorNameForError = userFlavorName ?: "default($themeName)"
             val subOptions = options as? Map<*, *> ?: return@mapValues options
             subOptions.mapValues subOptionsScope@{ (key, value) ->
                 val color = value as? SymbolicColor ?: return@subOptionsScope value
                 flavor.symbolicColors[color]
-                    ?: error("Undefined color in flavor scheme = '$flavorName': '$parameter': '${key}' = '${color.name}'")
+                    ?: error("Undefined color in flavor scheme = '$flavorNameForError': '$parameter': '${key}' = '${color.name}'")
             }
         }
 

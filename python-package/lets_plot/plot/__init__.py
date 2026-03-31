@@ -14,6 +14,7 @@ from .geom_function_ import *
 from .geom_imshow_ import *
 from .geom_livemap_ import *
 from .ggbunch_ import *
+from .ggdeck_ import *
 from .gggrid_ import *
 from .ggtb_ import *
 from .guide import *
@@ -58,6 +59,7 @@ __all__ = (coord.__all__ +
            marginal_layer.__all__ +
            font_features.__all__ +
            ggbunch_.__all__ +
+           ggdeck_.__all__ +
            gggrid_.__all__ +
            ggtb_.__all__ +
            expand_limits_.__all__

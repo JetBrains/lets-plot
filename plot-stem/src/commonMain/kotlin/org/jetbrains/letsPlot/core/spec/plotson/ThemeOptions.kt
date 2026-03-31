@@ -25,6 +25,7 @@ class ThemeOptions : Options() {
 
     enum class ThemeName(val value: String) {
         GREY(ThemeOption.Name.R_GREY),
+        GRAY(ThemeOption.Name.R_GRAY),
         LIGHT(ThemeOption.Name.R_LIGHT),
         CLASSIC(ThemeOption.Name.R_CLASSIC),
         MINIMAL(ThemeOption.Name.R_MINIMAL),
@@ -39,6 +40,7 @@ class ThemeOptions : Options() {
         SOLARIZED_DARK(ThemeOption.Flavor.SOLARIZED_DARK),
         HIGH_CONTRAST_LIGHT(ThemeOption.Flavor.HIGH_CONTRAST_LIGHT),
         HIGH_CONTRAST_DARK(ThemeOption.Flavor.HIGH_CONTRAST_DARK),
+        STANDARD(ThemeOption.Flavor.STANDARD)
     }
 
     class Element : Options() {

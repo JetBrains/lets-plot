@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.GradientUtil
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.array
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsBuilder.Companion.constant
@@ -21,7 +22,6 @@ import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.builder.SvgLayerRenderer
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProviders
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import kotlin.math.*
 
 open class PolygonWithCoordMapDemo : SimpleDemoBase() {
@@ -44,7 +44,7 @@ open class PolygonWithCoordMapDemo : SimpleDemoBase() {
     }
 
     private fun colorMapper(values: Iterable<Double>): (Double?) -> Color {
-        return ColorMapper.gradient(DoubleSpan.encloseAll(values), Color.DARK_BLUE, Color.LIGHT_BLUE, Color.GRAY)
+        return GradientUtil.gradient(DoubleSpan.encloseAll(values), Color.DARK_BLUE, Color.LIGHT_BLUE, Color.GRAY)
     }
 
     private fun create(): GroupComponent {

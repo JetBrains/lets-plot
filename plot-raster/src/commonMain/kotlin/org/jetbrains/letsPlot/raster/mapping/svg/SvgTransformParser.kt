@@ -20,20 +20,14 @@ internal object SvgTransformParser {
     private const val ROTATE_Y = 2
     private const val TRANSLATE_X = 0
     private const val TRANSLATE_Y = 1
-    private const val MATRIX_11 = 0
-    private const val MATRIX_12 = 1
-    private const val MATRIX_21 = 2
-    private const val MATRIX_22 = 3
-    private const val MATRIX_DX = 4
-    private const val MATRIX_DY = 5
 
-    private fun toRadians(degrees: Float): Float = (degrees * PI / 180).toFloat()
+    private fun toRadians(degrees: Double): Double = (degrees * PI / 180)
 
     fun parseSvgTransform(svgTransform: String): List<AffineTransform> {
-        val results = parseTransform(svgTransform)
+        val transformData = parseTransform(svgTransform)
 
         val transforms = ArrayList<AffineTransform>()
-        for (res in results) {
+        for (res in transformData) {
             val transform: AffineTransform =
                 when (res.name) {
                     SvgTransform.SCALE -> {
@@ -45,25 +39,25 @@ internal object SvgTransformParser {
                     SvgTransform.SKEW_X -> {
                         val angle = res.getParam(SKEW_X_ANGLE)!!
                         val factor = sin(toRadians(angle))
-                        AffineTransform.makeShear(factor, 0.0f)
+                        AffineTransform.makeShear(factor, 0.0)
                     }
 
                     SvgTransform.SKEW_Y -> {
                         val angle = res.getParam(SKEW_Y_ANGLE)!!
                         val factor = sin(toRadians(angle))
-                        AffineTransform.makeShear(0.0f, factor)
+                        AffineTransform.makeShear(0.0, factor)
                     }
 
                     SvgTransform.ROTATE -> {
                         val angle = toRadians(res.getParam(ROTATE_ANGLE)!!)
-                        val pivotX = if (res.paramCount == 3) res.getParam(ROTATE_X)!! else 0.0f
-                        val pivotY = if (res.paramCount == 3) res.getParam(ROTATE_Y)!! else 0.0f
+                        val pivotX = if (res.paramCount == 3) res.getParam(ROTATE_X)!! else 0.0
+                        val pivotY = if (res.paramCount == 3) res.getParam(ROTATE_Y)!! else 0.0
                         AffineTransform.makeRotation(angle, pivotX, pivotY)
                     }
 
                     SvgTransform.TRANSLATE -> {
                         val dX = res.getParam(TRANSLATE_X)!!
-                        val dY = res.getParam(TRANSLATE_Y) ?: 0.0f
+                        val dY = res.getParam(TRANSLATE_Y) ?: 0.0
                         AffineTransform.makeTranslation(dX, dY)
                     }
 
@@ -95,7 +89,7 @@ internal object SvgTransformParser {
     private const val FIRST_PARAM_INDEX = 2
 
 
-    private fun parseTransform(input: String?): List<Result> {
+    private fun parseTransform(input: String?): List<TransformData> {
         return parse(
             input,
             TRANSFORM_EXP
@@ -114,14 +108,14 @@ internal object SvgTransformParser {
         return matcher.groupValues.size - FIRST_PARAM_INDEX
     }
 
-    private fun parse(input: String?, regExp: Regex): List<Result> {
+    private fun parse(input: String?, regExp: Regex): List<TransformData> {
         if (input == null) return listOf()
 
-        val results = ArrayList<Result>()
+        val transformData = ArrayList<TransformData>()
         var matcher: MatchResult? = regExp.find(input)
         while (matcher != null) {
             val paramCount = getParamCount(matcher)
-            val r = Result(
+            val r = TransformData(
                 getName(matcher), paramCount
             )
             for (i in 0 until paramCount) {
@@ -129,10 +123,10 @@ internal object SvgTransformParser {
                 if (g == "") break
                 r.addParam(g)
             }
-            results.add(r)
+            transformData.add(r)
             matcher = matcher.next()
         }
-        return results
+        return transformData
     }
 
     private class MyPatternBuilder(s: String) {
@@ -166,20 +160,20 @@ internal object SvgTransformParser {
         }
     }
 
-    internal class Result constructor(val name: String, paramCount: Int) {
-        private val myParams: MutableList<Float?> = ArrayList(paramCount)
+    internal class TransformData(val name: String, paramCount: Int) {
+        private val myParams: MutableList<Double?> = ArrayList(paramCount)
 
-        val args: List<Float?>
+        val args: List<Double?>
             get() = myParams
 
         val paramCount: Int
             get() = myParams.size
 
         fun addParam(p: String?) {
-            myParams.add(if (p == "") null else p?.toFloat())
+            myParams.add(if (p == "") null else p?.toDouble())
         }
 
-        fun getParam(i: Int): Float? {
+        fun getParam(i: Int): Double? {
             if (!containsParam(i)) {
                 return null
             }

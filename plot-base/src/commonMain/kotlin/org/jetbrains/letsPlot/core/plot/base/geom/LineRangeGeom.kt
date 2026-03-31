@@ -35,7 +35,7 @@ class LineRangeGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.LINE_RANGE, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
         val tooltipHelper = RectangleTooltipHelper(
             pos = pos,
             coord = coord,

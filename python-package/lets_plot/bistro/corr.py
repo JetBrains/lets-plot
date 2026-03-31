@@ -5,25 +5,16 @@
 """Correlation matrix implementation module"""
 from typing import Any
 
-from lets_plot.plot.util import is_pandas_data_frame
-
-try:
-    import numpy
-except ImportError:
-    numpy = None
-
-try:
-    import pandas
-except ImportError:
-    pandas = None
-
+from lets_plot._type_utils import LazyModule
 from lets_plot.plot.core import PlotSpec
 
 __all__ = ['corr_plot']
 
+pandas = LazyModule('pandas')
+
 
 def _is_corr_matrix(data: Any):
-    if is_pandas_data_frame(data):
+    if pandas.lazy_is_instance(data, 'DataFrame'):
         if data.shape[0] != data.shape[1]:
             return False
 
@@ -426,7 +417,7 @@ class corr_plot:
         if _is_corr_matrix(data):
             coefficients = True
         else:
-            if is_pandas_data_frame(data):
+            if pandas.lazy_is_instance(data, 'DataFrame'):
                 data = data.corr(numeric_only=True)
                 coefficients = True
             else:

@@ -1,0 +1,23 @@
+package org.jetbrains.letsPlot.commons.logging
+
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.reflect.KClass
+
+actual object PortableLogging {
+    actual fun logger(cl: KClass<*>): Logger {
+        return logger(cl.simpleName ?: "<anonymous>")
+    }
+
+    actual fun logger(name: String): Logger {
+        val kl = KotlinLogging.logger(name)
+        return object : Logger {
+            override fun error(e: Throwable, message: () -> String) {
+                kl.error(e, message)
+            }
+
+            override fun info(message: () -> String) {
+                kl.info(message)
+            }
+        }
+    }
+}

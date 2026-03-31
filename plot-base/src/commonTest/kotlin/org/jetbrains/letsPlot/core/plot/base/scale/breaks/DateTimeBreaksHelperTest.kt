@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.scale.breaks
 
 import demoAndTestShared.assertArrayEquals
 import org.jetbrains.letsPlot.commons.intern.datetime.*
+import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.commons.time.interval.NiceTimeInterval
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -126,13 +127,6 @@ class DateTimeBreaksHelperTest {
     fun years3() {
         val expected = intArrayOf(2014, 2016, 2018, 2020, 2022)
         assertYears(expected, 10, 5)
-    }
-
-    @Test
-    fun days_Reversed() {
-        // 2-days step backward: 1/1/13, 12/30/12, 28, 26, 24
-        val expected = intArrayOf(1, 30, 28, 26, 24)
-        assertDays(expected, -10, 3)
     }
 
     @Test
@@ -313,7 +307,7 @@ class DateTimeBreaksHelperTest {
                 date,
                 BASE_TIME
             )
-            val month = Month.entries[month2.toInt()]
+            val month = Month.entries[month2]
             val dateTime2 = DateTime(
                 Date(1, month, date.year + addYear),
                 BASE_TIME
@@ -380,9 +374,9 @@ class DateTimeBreaksHelperTest {
             targetBreakCount: Int,
             minInterval: NiceTimeInterval? = null
         ): Array<Double> {
+            val domain = DoubleSpan(fromInstant.toDouble(), toInstant.toDouble())
             val helper = DateTimeBreaksHelper(
-                fromInstant.toDouble(),
-                toInstant.toDouble(),
+                domain,
                 targetBreakCount,
                 providedFormatter = null,
                 minInterval = minInterval,

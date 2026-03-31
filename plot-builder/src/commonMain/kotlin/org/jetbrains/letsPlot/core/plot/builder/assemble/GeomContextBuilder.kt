@@ -22,7 +22,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var aesthetics: Aesthetics? = null
     private var aestheticMappers: Map<Aes<*>, ScaleMapper<*>>? = null
     private var aesBounds: DoubleRectangle? = null
-    private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector()
+    private var geomTargetCollector: GeomTargetCollector = NullGeomTargetCollector
     private var fontFamilyRegistry: FontFamilyRegistry? = null
     private var annotation: Annotation? = null
     private var defaultFormatters: Map<Any, (Any) -> String> = emptyMap()
@@ -30,21 +30,11 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var plotContext: PlotContext = NullPlotContext
     private var coordinateSystem: CoordinateSystem? = null
     private var contentBounds: DoubleRectangle? = null
+    private var scaleFactor: Double = 1.0
+    private var geomKind: GeomKind? = null
+    private var messageConsumer: (String) -> Unit = {}
 
     constructor()
-
-    private constructor(ctx: MyGeomContext) {
-        flipped = ctx.flipped
-        aesthetics = ctx.aesthetics
-        aestheticMappers = ctx.aestheticMappers
-        aesBounds = ctx._aesBounds
-        geomTargetCollector = ctx.targetCollector
-        annotation = ctx.annotation
-        defaultFormatters = ctx.defaultFormatters
-        backgroundColor = ctx.backgroundColor
-        plotContext = ctx.plotContext
-        coordinateSystem = ctx._coordinateSystem
-    }
 
     override fun flipped(flipped: Boolean): ImmutableGeomContext.Builder {
         this.flipped = flipped
@@ -106,6 +96,21 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
+    override fun scaleFactor(scaleFactor: Double): ImmutableGeomContext.Builder {
+        this.scaleFactor = scaleFactor
+        return this
+    }
+
+    override fun messageConsumer(messageConsumer: (String) -> Unit): ImmutableGeomContext.Builder {
+        this.messageConsumer = messageConsumer
+        return this
+    }
+
+    override fun geomKind(geomKind: GeomKind): ImmutableGeomContext.Builder {
+        this.geomKind = geomKind
+        return this
+    }
+
     override fun build(): ImmutableGeomContext {
         return MyGeomContext(this)
     }
@@ -118,6 +123,9 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val defaultFormatters = b.defaultFormatters
         val _coordinateSystem = b.coordinateSystem
         val _contentBounds = b.contentBounds
+        val _scaleFactor = b.scaleFactor
+        val _messageConsumer = b.messageConsumer
+        val _geomKind = b.geomKind
 
         override val flipped: Boolean = b.flipped
         override val targetCollector = b.geomTargetCollector
@@ -185,14 +193,16 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return _aesBounds
         }
 
-        override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
-            return with()
-                .geomTargetCollector(targetCollector)
-                .build()
+        override fun getScaleFactor(): Double {
+            return _scaleFactor
         }
 
-        override fun with(): ImmutableGeomContext.Builder {
-            return GeomContextBuilder(this)
+        override fun consumeMessages(messages: List<String>) {
+            messages.forEach { _messageConsumer(it) }
+        }
+
+        override fun geomKind(): GeomKind {
+            return _geomKind ?: error("GeomContext: geom kind is not defined.")
         }
     }
 }

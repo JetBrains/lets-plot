@@ -64,7 +64,7 @@ object LayerRendererUtil {
         val aesthetics: Aesthetics,
         val aestheticMappers: Map<Aes<*>, ScaleMapper<*>>,
         val pos: PositionAdjustment,
-        val contextualMapping: ContextualMapping,
+        val contextualMapping: ContextualMapping?,
         val mappedAes: Set<Aes<*>>,
         val annotation: Annotation?
     )

@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.datamodel.svg.dom
 
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
+import org.jetbrains.letsPlot.commons.encoding.Png
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
@@ -43,11 +43,11 @@ class SvgImageElementEx(x: Double, y: Double, width: Double, height: Double, pri
         }
     }
 
-    fun asImageElement(encoder: RGBEncoder): SvgImageElement {
+    fun asImageElement(): SvgImageElement {
         val imageElement = SvgImageElement()
         SvgUtils.copyAttributes(this, imageElement)
 
-        val hrefValue = encoder.toDataUrl(myBitmap)
+        val hrefValue = Png.encodeDataImage(myBitmap)
         imageElement.href().set(hrefValue)
         return imageElement
     }

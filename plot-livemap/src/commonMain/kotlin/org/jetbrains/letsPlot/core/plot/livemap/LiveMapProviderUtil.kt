@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.livemap
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Rectangle
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -43,7 +44,7 @@ import org.jetbrains.letsPlot.livemap.api.liveMapVectorTiles
 import org.jetbrains.letsPlot.livemap.chart.HoverObject
 import org.jetbrains.letsPlot.livemap.chart.HoverObjectKind
 import org.jetbrains.letsPlot.livemap.config.DevParams
-import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasFigure
+import org.jetbrains.letsPlot.livemap.config.LiveMapCanvasDrawable
 import org.jetbrains.letsPlot.livemap.core.Clipboard
 import org.jetbrains.letsPlot.livemap.core.Projections.azimuthalEqualArea
 import org.jetbrains.letsPlot.livemap.core.Projections.conicEqualArea
@@ -133,7 +134,7 @@ object LiveMapProviderUtil {
             }
 
             val liveMap = liveMapBuilder.build()
-            val liveMapCanvasFigure = LiveMapCanvasFigure(liveMap).apply {
+            val liveMapCanvasFigure = LiveMapCanvasDrawable(liveMap).apply {
                 setBounds(
                     Rectangle(
                         bounds.origin.x.roundToInt(),
@@ -199,7 +200,13 @@ object LiveMapProviderUtil {
     private fun createTargetLocators(plotLayers: List<LayerRendererData>, liveMap: LiveMap): List<GeomTargetLocator> {
         class LiveMapInteractionAdapter {
             private var myLiveMap: LiveMap = liveMap
-            private val adapters: List<GeomTargetLocatorAdapter> = plotLayers.mapIndexed(::GeomTargetLocatorAdapter)
+            private val adapters: List<GeomTargetLocator> = plotLayers.mapIndexed { layerIndex, layer ->
+                if (layer.contextualMapping == null) {
+                    GeomTargetLocator.NullGeomTargetLocator
+                } else {
+                    GeomTargetLocatorAdapter(layerIndex, layer)
+                }
+            }
             private var lastCoord: DoubleVector? = null
             private var lastResult: Map<Int, GeomTargetLocator.LookupResult> = emptyMap()
 
@@ -213,8 +220,10 @@ object LiveMapProviderUtil {
                         .hoverObjects()
                         .groupBy(HoverObject::layerIndex)
                         .mapValues { (layerIndex, hoverObjects) ->
-                            adapters[layerIndex].buildLookupResult(coord, hoverObjects)
+                            // Skip NullGeomTargetLocator from layers without contextual mapping (tooltips="none")
+                            (adapters[layerIndex] as? GeomTargetLocatorAdapter)?.buildLookupResult(coord, hoverObjects)
                         }
+                        .filterNotNullValues()
                 }
                 return lastResult[layerIndex]
             }
@@ -223,7 +232,14 @@ object LiveMapProviderUtil {
                 private val layerIndex: Int,
                 private val layer: LayerRendererData
             ) : GeomTargetLocator {
-                override fun search(coord: DoubleVector) = search(layerIndex, coord)
+                private val contextualMapping = layer.contextualMapping
+
+                override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
+                    if (contextualMapping == null) {
+                        return null
+                    }
+                    return search(layerIndex, coord)
+                }
 
                 private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(
                     layer.geomKind,
@@ -247,8 +263,10 @@ object LiveMapProviderUtil {
                         },
                         distance = hoverObjects.maxOf { it.distance },
                         geomKind = layer.geomKind,
-                        contextualMapping = layer.contextualMapping,
-                        isCrosshairEnabled = false, // no crosshair on livemap,
+                        contextualMapping = contextualMapping!!,
+                        isCrosshairEnabled = contextualMapping.isCrosshairEnabled,
+                        hasGeneralTooltip = contextualMapping.hasGeneralTooltip,
+                        hasAxisTooltip = contextualMapping.hasAxisTooltip,
                         hitShapeKind = when (hoverObjects.first().kind) {
                             HoverObjectKind.POINT -> HitShape.Kind.POINT
                             HoverObjectKind.PATH -> HitShape.Kind.PATH

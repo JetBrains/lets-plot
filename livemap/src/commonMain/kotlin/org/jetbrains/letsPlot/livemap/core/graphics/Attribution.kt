@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.livemap.core.util.Geometries.plus
 import kotlin.math.max
 
 class Attribution : RenderBox() {
-    private val texts: MutableList<Text> = mutableListOf()
+    private val tspans: MutableList<Text> = mutableListOf()
     private val clickHandler: MutableList<Registration> = mutableListOf()
     private val alignment = Alignment()
     var text: String by visualProp("")
@@ -60,11 +60,11 @@ class Attribution : RenderBox() {
                 }
             }
 
-            texts.add(attributionText)
+            tspans.add(attributionText)
         }
 
 
-        texts.forEach {
+        tspans.forEach {
             val dim = it.dimension
 
             it.origin = DoubleVector(
@@ -81,35 +81,26 @@ class Attribution : RenderBox() {
         dimension = dimension.add(DoubleVector(padding * 2, padding * 2))
         origin = alignment.calculatePosition(origin, dimension)
 
-        texts.forEach {
+        tspans.forEach {
             it.origin += origin
         }
     }
 
-    protected override fun renderInternal(ctx: Context2d) {
-        ctx.setTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-
+    override fun renderInternal(ctx: Context2d) {
         ctx.save()
         ctx.setFillStyle(background)
-        ctx.fillRect(
-            origin.x,
-            origin.y,
-            dimension.x,
-            dimension.y
-        )
+        ctx.fillRect(0.0, 0.0, dimension.x, dimension.y) // actually produces gray background, not transparent
         ctx.restore()
 
-        texts.forEach {
-            renderPrimitive(ctx, it)
+        tspans.forEach { tspan ->
+            ctx.save()
+            // translate to the origin of the tspan
+            // Both attribution and tspan have absolute origins,
+            // but attribution is a container for tspan, and context is already translated to attribution origin.
+            ctx.translate(tspan.origin.x - origin.x, tspan.origin.y - origin.y)
+            tspan.render(ctx)
+            ctx.restore()
         }
-    }
-
-    private fun renderPrimitive(ctx: Context2d, primitive: RenderBox) {
-        ctx.save()
-        val origin = primitive.origin
-        ctx.setTransform(1.0, 0.0, 0.0, 1.0, origin.x, origin.y)
-        primitive.render(ctx)
-        ctx.restore()
     }
 
     class Alignment {

@@ -37,7 +37,7 @@ class CurveGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val tooltipHelper = TargetCollectorHelper(GeomKind.CURVE, ctx)
+        val tooltipHelper = TargetCollectorHelper(ctx)
         val geomHelper = GeomHelper(pos, coord, ctx)
         val svgElementHelper = geomHelper.createSvgElementHelper()
 

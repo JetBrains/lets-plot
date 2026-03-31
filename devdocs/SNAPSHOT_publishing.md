@@ -7,13 +7,12 @@
 > **Note**: make sure that **version** is set to "0.0.0-SNAPSHOT" in `build.gradle.kts`.
 
 ```shell
-./gradlew publishLetsPlotJvmCommonPublicationToMavenLocalRepository
-./gradlew publishLetsPlotJvmJfxPublicationToMavenLocalRepository
-./gradlew publishLetsPlotJvmBatikPublicationToMavenLocalRepository
-./gradlew publishLetsPlotImageExportPublicationToMavenLocalRepository
-./gradlew publishLetsPlotGISPublicationToMavenLocalRepository
-./gradlew publishLetsPlotCoreModulesToMavenLocalRepository
-./gradlew publishLetsPlotIdeaPluginPublicationToMavenLocalRepository
+./gradlew publishLetsPlotJvmCommonPublicationToMavenLocalRepository \
+          publishLetsPlotJvmSwingPublicationToMavenLocalRepository \
+          publishLetsPlotJvmBatikPublicationToMavenLocalRepository \
+          publishLetsPlotGISPublicationToMavenLocalRepository \
+          publishLetsPlotCoreModulesToMavenLocalRepository \
+          publishLetsPlotIdeaPluginPublicationToMavenLocalRepository
 
 ```
 
@@ -25,6 +24,7 @@ In the `local.properties` file:
 ```properties
 sonatype.username=<your Sonatype username>
 sonatype.password=<your Sonatype access token>
+sonatype.profileID=<your Sonatype profile ID>
 ```
 
 #### SNAPSHOT Version
@@ -35,9 +35,8 @@ Make sure the `version` in the root `build.gradle.kts` file is a SNAPSHOT versio
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
-          publishLetsPlotJvmJfxPublicationToMavenRepository \
+          publishLetsPlotJvmSwingPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
-          publishLetsPlotImageExportPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
           publishLetsPlotCoreModulesToMavenRepository \
           publishLetsPlotIdeaPluginPublicationToMavenRepository
@@ -51,7 +50,7 @@ https://central.sonatype.com/service/rest/repository/browse/maven-snapshots/org/
                 
 #### Using SNAPSHOT artifacts
 
-Add snapshots repository to the `repositories` section of the `build.gradle.kts` file:
+Add snapshot repository to the `repositories` section of the `build.gradle.kts` file:
 
 ```kotlin
 repositories {
@@ -60,6 +59,12 @@ repositories {
     maven(url = "https://central.sonatype.com/repository/maven-snapshots/")
 }
 ```
+         
+To tell Gradle to bypass the local cache and check remote repositories for newer versions or changed metadata:
 
-#### Snapshot Vertsion of JS Artifacts
+```shell
+./gradlew build --refresh-dependencies
+```
+
+#### Snapshot Version of JS Artifacts
 ToDo.

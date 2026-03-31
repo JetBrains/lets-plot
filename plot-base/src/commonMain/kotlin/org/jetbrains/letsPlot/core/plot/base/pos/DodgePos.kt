@@ -6,8 +6,8 @@
 package org.jetbrains.letsPlot.core.plot.base.pos
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
+import org.jetbrains.letsPlot.core.plot.base.*
 
 internal abstract class BaseDodgePos(
     aesthetics: Aesthetics,
@@ -57,23 +57,22 @@ internal abstract class BaseDodgePos(
             return v
         }
 
-        val slotIndex = p.group()!!
-        val median = (myGroupCount - 1) / 2.0
-        val offset = (slotIndex - median) * dataResolution * size!!
-        val center = p[aes]!!
-        val scaler = 1.0 / myGroupCount
-
-        return if (myIsHorizontalPos) {
-            val newX = (v.x + offset - center) * scaler + center
-            DoubleVector(newX, v.y)
-        } else {
-            val newY = (v.y + offset - center) * scaler + center
-            DoubleVector(v.x, newY)
-        }
+        val orientedVector = v.flipIf(!myIsHorizontalPos)
+        val newCoord = position(orientedVector.x, p.group()!!, p[aes]!!, myGroupCount, size!!, dataResolution)
+        return DoubleVector(newCoord, orientedVector.y).flipIf(!myIsHorizontalPos)
     }
 
     override fun handlesGroups(): Boolean {
         return PositionAdjustments.Meta.DODGE.handlesGroups()
+    }
+
+    companion object {
+        internal fun position(coord: Double, slotIndex: Int, center: Double, groupCount: Int, size: Double, dataResolution: Double): Double {
+            val median = (groupCount - 1) / 2.0
+            val offset = (slotIndex - median) * dataResolution * size
+            val scaler = 1.0 / groupCount
+            return (coord + offset - center) * scaler + center
+        }
     }
 }
 

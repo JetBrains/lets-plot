@@ -251,17 +251,29 @@ def position_stack(vjust=None, mode=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9
+        :emphasize-lines: 12,18
 
         from lets_plot import *
         LetsPlot.setup_html()
         data = {
-            'x': [1, 1, 1, 2, 2, 2],
+            'x': [-2, -2, -2, 2, 2, 2],
             'y': [1, 2, 3, 1, 2, 3],
             'g': ["a", "b", "b", "a", "a", "b"],
         }
-        ggplot(data, aes('x', 'y', color='g')) + \\
-            geom_point(position=position_stack(), size=10)
+        gggrid([
+            ggplot(data, aes('x', 'y', fill='g')) + \\
+                geom_label(aes(label='y'), size=10,
+                           color="white", show_legend=False,
+                           position=position_stack(mode='groups')) + \\
+                scale_y_continuous(limits=[0, 6]) + \\
+                ggtitle("mode='groups'"),
+            ggplot(data, aes('x', 'y', fill='g')) + \\
+                geom_label(aes(label='y'), size=10,
+                           color="white", show_legend=False,
+                           position=position_stack(mode='all')) + \\
+                scale_y_continuous(limits=[0, 6]) + \\
+                ggtitle("mode='all'"),
+        ])
 
     """
     return _pos('stack', vjust=vjust, mode=mode)
@@ -298,17 +310,29 @@ def position_fill(vjust=None, mode=None):
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 9
+        :emphasize-lines: 12,18
 
         from lets_plot import *
         LetsPlot.setup_html()
         data = {
             'x': [1, 1, 1, 1, 1, 2, 2, 2],
-            'y': [1, 2, 3, 4, 5, 1, 2, 3],
+            'y': [1, 2, 1, 3, 5, 1, 2, 2],
             'g': ["a", "a", "b", "b", "b", "a", "a", "b"],
         }
-        ggplot(data, aes('x', 'y', color='g')) + \\
-            geom_point(position=position_fill(), size=10)
+        gggrid([
+            ggplot(data, aes('x', 'y', fill='g')) + \\
+                geom_label(aes(label='y'), size=10,
+                           color="white", show_legend=False,
+                           position=position_fill(mode='groups')) + \\
+                coord_cartesian(ylim=[0, 1.1]) + \\
+                ggtitle("mode='groups'"),
+            ggplot(data, aes('x', 'y', fill='g')) + \\
+                geom_label(aes(label='y'), size=10,
+                           color="white", show_legend=False,
+                           position=position_fill(mode='all')) + \\
+                coord_cartesian(ylim=[0, 1.1]) + \\
+                ggtitle("mode='all'"),
+        ])
 
     """
     return _pos('fill', vjust=vjust, mode=mode)

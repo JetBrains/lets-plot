@@ -21,7 +21,11 @@ import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FONTFACE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.FRAME
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.HJUST
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.IEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.ISTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LABEL
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENEND
+import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LENSTART
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEHEIGHT
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINETYPE
 import org.jetbrains.letsPlot.core.plot.base.Aes.Companion.LINEWIDTH
@@ -216,6 +220,14 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
         return aes(EXPLODE, v)
     }
 
+    fun istart(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(ISTART, v)
+    }
+
+    fun iend(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(IEND, v)
+    }
+
     fun sizeStart(v: (Int) -> Double?): AestheticsBuilder {
         return aes(SIZE_START, v)
     }
@@ -230,6 +242,14 @@ class AestheticsBuilder @JvmOverloads constructor(private var myDataPointCount: 
 
     fun strokeEnd(v: (Int) -> Double?): AestheticsBuilder {
         return aes(STROKE_END, v)
+    }
+
+    fun lenstart(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(LENSTART, v)
+    }
+
+    fun lenend(v: (Int) -> Double?): AestheticsBuilder {
+        return aes(LENEND, v)
     }
 
     fun pointSize(v: (Int) -> Double?): AestheticsBuilder {

@@ -5,7 +5,7 @@
 
 package demo.common.utils.batik
 
-import demo.common.utils.swing.PlotObjectsDemoWindowBase
+import demo.common.utils.swingbase.PlotObjectsDemoWindowBase
 import org.jetbrains.letsPlot.batik.plot.util.BatikMapperComponent
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.DisposingHub

@@ -1,9 +1,11 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 /* root package */
+
+@file:Suppress("OPT_IN_USAGE")
 
 import kotlinx.browser.document
 import messages.OverlayMessageHandler
@@ -26,11 +28,6 @@ import tools.DefaultToolbarJs
 import tools.DefaultToolbarJs.Companion.EXPECTED_TOOLBAR_HEIGHT
 
 private val LOG = PortableLogging.logger("MonolithicJs")
-
-// Key for the data attibute <body data-lets-plot-preferred-width='700'>
-// Used in Datalore reports to control size of the plot.
-// See generated HTML (PlotHtmlHelper.kt)
-private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 
 /**
  * Main entry point for creating plots from the JavaScript environment.
@@ -81,8 +78,7 @@ private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
 fun buildPlotFromRawSpecs(
     plotSpecJs: dynamic,
     parentElement: HTMLElement,
-    sizingJs: dynamic,
-    optionsJs: dynamic = null
+    sizingJs: dynamic
 ): FigureModelJs? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
@@ -91,17 +87,11 @@ fun buildPlotFromRawSpecs(
 
         @Suppress("DuplicatedCode")
         val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
-        val options: Map<String, Any> = if (optionsJs != null) {
-            dynamicObjectToMap(optionsJs)
-        } else {
-            emptyMap()
-        }
 
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
-            sizingOptions,
-            options
+            sizingOptions
         )
     } catch (e: RuntimeException) {
         handleException(e, SimpleMessageHandler(parentElement))
@@ -158,8 +148,7 @@ fun buildPlotFromRawSpecs(
 fun buildPlotFromProcessedSpecs(
     plotSpecJs: dynamic,
     parentElement: HTMLElement,
-    sizingJs: dynamic,
-    optionsJs: dynamic = null
+    sizingJs: dynamic
 ): FigureModelJs? {
     return try {
         val plotSpec = dynamicObjectToMap(plotSpecJs)
@@ -168,17 +157,11 @@ fun buildPlotFromProcessedSpecs(
         // we are going to use a truly processed specs.
         val processedSpec = MonolithicCommon.processRawSpecs(plotSpec, frontendOnly = true)
         val sizingOptions: Map<String, Any> = dynamicObjectToMap(sizingJs)
-        val options: Map<String, Any> = if (optionsJs != null) {
-            dynamicObjectToMap(optionsJs)
-        } else {
-            emptyMap()
-        }
 
         buildPlotFromProcessedSpecsPrivate(
             processedSpec,
             parentElement,
-            sizingOptions,
-            options
+            sizingOptions
         )
     } catch (e: RuntimeException) {
         handleException(e, SimpleMessageHandler(parentElement))
@@ -189,23 +172,22 @@ fun buildPlotFromProcessedSpecs(
 private fun buildPlotFromProcessedSpecsPrivate(
     processedSpec: Map<String, Any>,
     containerDiv: HTMLElement,
-    sizingOptions: Map<String, Any>,
-    options: Map<String, Any>
+    sizingOptions: Map<String, Any>
 ): FigureModelJs? {
 
     val showToolbar = PLOT_VIEW_TOOLBOX_HTML || processedSpec.containsKey(Option.Meta.Kind.GG_TOOLBAR)
-    var (plotContainer: HTMLElement, toolbar: DefaultToolbarJs?) = if (showToolbar) {
+    val (plotContainer: HTMLElement, toolbar: DefaultToolbarJs?) = if (showToolbar) {
         // Wrapper for toolbar and chart
-        var outputDiv = document.createElement("div") as HTMLDivElement
+        val outputDiv = document.createElement("div") as HTMLDivElement
         outputDiv.style.display = "inline-block"
         containerDiv.appendChild(outputDiv);
 
         // Toolbar
-        var toolbar = DefaultToolbarJs();
+        val toolbar = DefaultToolbarJs();
         outputDiv.appendChild(toolbar.getElement());
 
         // Plot
-        var plotContainer = document.createElement("div") as HTMLElement;
+        val plotContainer = document.createElement("div") as HTMLElement;
         plotContainer.style.position = "relative"
         outputDiv.appendChild(plotContainer);
         Pair(plotContainer, toolbar)
@@ -282,7 +264,7 @@ internal fun buildPlotFromProcessedSpecsIntern(
     val buildResult = MonolithicCommon.buildPlotsFromProcessedSpecs(
         plotSpec,
         containerSize.invoke(),
-        sizingPolicy
+        sizingPolicy,
     )
     if (buildResult.isError) {
         val errorMessage = (buildResult as Error).error
@@ -291,10 +273,11 @@ internal fun buildPlotFromProcessedSpecsIntern(
     }
 
     val success = buildResult as Success
+    val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
+
     val computationMessages = success.buildInfo.computationMessages
     messageHandler.showComputationMessages(computationMessages)
 
-    val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
     return FigureModelJs(
         plotSpec,
         wrapperElement,

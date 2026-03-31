@@ -26,6 +26,7 @@ abstract class RenderBox : RenderObject {
             }
         }
 
+    // Always absolute position to make click area calculations easier
     open var origin by visualProp(DoubleVector.ZERO)
     open var dimension by visualProp(DoubleVector.ZERO)
 
@@ -49,7 +50,7 @@ abstract class RenderBox : RenderObject {
         renderInternal(ctx)
     }
 
-    public fun <T: RenderBox> T.setState(block: T.() -> Unit): T {
+    fun <T: RenderBox> T.setState(block: T.() -> Unit): T {
         block()
         updateState()
         isDirty = false

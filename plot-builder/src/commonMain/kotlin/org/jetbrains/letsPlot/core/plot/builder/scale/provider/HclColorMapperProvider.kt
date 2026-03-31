@@ -8,10 +8,10 @@ package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 import org.jetbrains.letsPlot.commons.colorspace.HCL
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.GradientUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.ensureApplicableRange
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 
 abstract class HclColorMapperProvider(naValue: Color) : MapperProviderBase<Color>(naValue) {
@@ -19,12 +19,12 @@ abstract class HclColorMapperProvider(naValue: Color) : MapperProviderBase<Color
     protected fun createDiscreteMapper(transformedDomain: List<Double>, from: HCL, to: HCL): ScaleMapper<Color> {
         val mapperDomain = ensureApplicableRange(DoubleSpan.encloseAllQ(transformedDomain))
 
-        val gradientMapper = ColorMapper.gradientHCL(mapperDomain, from, to, naValue, alpha = 1.0)
+        val gradientMapper = GradientUtil.gradientHCL(mapperDomain, from, to, naValue, alpha = 1.0)
         return GuideMappers.asNotContinuous(ScaleMapper.wrap(gradientMapper))
     }
 
     protected fun createContinuousMapper(domain: DoubleSpan, from: HCL, to: HCL): GuideMapper<Color> {
-        val gradientMapper = ColorMapper.gradientHCL(domain, from, to, naValue, alpha = 1.0)
+        val gradientMapper = GradientUtil.gradientHCL(domain, from, to, naValue, alpha = 1.0)
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradientMapper))
     }
 }

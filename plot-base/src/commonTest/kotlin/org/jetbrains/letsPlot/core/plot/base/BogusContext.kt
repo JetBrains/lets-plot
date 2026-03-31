@@ -31,10 +31,6 @@ object BogusContext : GeomContext {
         error("Not available in a bogus geom context")
     }
 
-    override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
-        error("Not available in a bogus geom context")
-    }
-
     override fun isMappedAes(aes: Aes<*>): Boolean {
         error("Not available in a bogus geom context")
     }
@@ -52,6 +48,18 @@ object BogusContext : GeomContext {
     }
 
     override fun getContentBounds(): DoubleRectangle {
+        error("Not available in a bogus geom context")
+    }
+
+    override fun getScaleFactor(): Double {
+        return 1.0
+    }
+
+    override fun consumeMessages(messages: List<String>) {
+        // do nothing
+    }
+
+    override fun geomKind(): GeomKind {
         error("Not available in a bogus geom context")
     }
 

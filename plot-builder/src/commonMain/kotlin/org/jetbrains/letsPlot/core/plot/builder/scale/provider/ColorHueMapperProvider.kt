@@ -13,6 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
+import kotlin.math.max
 
 class ColorHueMapperProvider(
     hueRange: DoubleSpan,
@@ -21,15 +23,16 @@ class ColorHueMapperProvider(
     startHue: Double,
     private val reversed: Boolean,
     naValue: Color
-) : HclColorMapperProvider(
-    naValue = naValue,
-) {
+) : HclColorMapperProvider(naValue),
+    PaletteGenerator {
+
     private val hueRange = DoubleSpan(hueRange.lowerEnd + startHue, hueRange.upperEnd + startHue)
 
     override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
-        val n = discreteTransform.effectiveDomain.size
+        // 'n' must be at least 2.
+        val n = max(discreteTransform.effectiveDomain.size, 2)
 
-        // if full circle prevent first and last colors to be the same
+        // if full circle, prevent first and last colors to be the same
         val hueRange = hueRange.takeUnless { it.length % 360 < 1.0 }
             ?: DoubleSpan(hueRange.lowerEnd, hueRange.upperEnd - 360.0 / n)
 
@@ -59,11 +62,13 @@ class ColorHueMapperProvider(
         )
     }
 
-    companion object {
-        // defaults from ggplot2
-        const val DEF_CHROMA = 100.0
-        const val DEF_LUMINANCE = 65.0
-        const val DEF_START_HUE = 0.0
-        val DEF_HUE_RANGE = DoubleSpan(15.0, 375.0)
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        // Discrete mapper here handles the 'full circle' case better.
+        return createDiscreteMapper(
+            discreteTransform = DiscreteTransform(
+                domainValues = (0 until colorCount).toList(),
+                domainLimits = emptyList()
+            )
+        )
     }
 }

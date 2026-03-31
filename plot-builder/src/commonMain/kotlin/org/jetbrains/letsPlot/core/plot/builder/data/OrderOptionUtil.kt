@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -55,7 +55,7 @@ object OrderOptionUtil {
                     "Unsupported `order` value: $order. Use 1 (ascending) or -1 (descending)."
                 }
 
-                return OrderOption(variableName, orderBy, (order as? Number)?.toInt())
+                return OrderOption(variableName, orderBy, order?.toInt())
             }
 
             fun OrderOption.mergeWith(other: OrderOption): OrderOption {

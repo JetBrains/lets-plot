@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.testing.doubleRectangleComparator
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayout
@@ -20,7 +21,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProviderFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.FixedAxisBreaksProvider
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import kotlin.test.Test
 
@@ -114,7 +114,11 @@ class PolarTileLayoutTest {
                 )
             )
 
-        val theme = ThemeConfig(fontFamilyRegistry = DefaultFontFamilyRegistry()).theme
+        val theme = ThemeConfig(
+            themeOptions = emptyMap(),
+            containerTheme = null,
+            fontFamilyRegistry = DefaultFontFamilyRegistry()
+        ).theme
         val left = AxisLayout(
             breaksProviderFactory = breaksProviderFactory,
             orientation = Orientation.LEFT,

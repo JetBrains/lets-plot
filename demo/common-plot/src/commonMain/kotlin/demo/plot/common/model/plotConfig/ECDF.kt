@@ -7,6 +7,8 @@ package demo.plot.common.model.plotConfig
 
 import demo.plot.common.data.Iris
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.commons.intern.random.RandomGaussian
+import kotlin.random.Random
 
 class ECDF {
     fun plotSpecList(): List<MutableMap<String, Any>> {
@@ -15,6 +17,7 @@ class ECDF {
             withInterpolation(),
             withGrouping(),
             withOrientationChange(),
+            bigDataset()
         )
     }
 
@@ -121,6 +124,35 @@ class ECDF {
 
         val plotSpec = HashMap(parsePlotSpec(spec))
         plotSpec["data"] = Iris.df
+        return plotSpec
+
+    }
+
+    private fun bigDataset(): MutableMap<String, Any> {
+        val n = 50_000
+        val rand = RandomGaussian(Random(42))
+
+        val spec = """
+            {
+              'kind': 'plot',
+              'mapping': {
+                'x': 'x'
+              },
+              'ggtitle': {
+                'text': 'Big dataset'
+              },
+              'layers': [
+                {
+                  'geom': 'step',
+                  'stat': 'ecdf',
+                  'pad': true
+                }
+              ]
+            }
+        """.trimIndent()
+
+        val plotSpec = HashMap(parsePlotSpec(spec))
+        plotSpec["data"] = mapOf("x" to List(n) { rand.nextGaussian() })
         return plotSpec
 
     }

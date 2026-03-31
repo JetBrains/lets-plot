@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
+import kotlin.math.max
 
 interface AxisTheme {
     val axis: String
@@ -18,6 +19,8 @@ interface AxisTheme {
     fun showLine(): Boolean
 
     fun showTickMarks(): Boolean
+
+    fun showMinorTickMarks(): Boolean
 
     fun showLabels(): Boolean
 
@@ -37,9 +40,13 @@ interface AxisTheme {
 
     fun tickMarkColor(): Color
 
+    fun minorTickMarkColor(): Color
+
     fun lineType(): LineType
 
     fun tickMarkLineType(): LineType
+
+    fun minorTickMarkLineType(): LineType
 
     fun labelStyle(): ThemeTextStyle
 
@@ -53,7 +60,11 @@ interface AxisTheme {
 
     fun tickMarkWidth(): Double
 
+    fun minorTickMarkWidth(): Double
+
     fun tickMarkLength(): Double
+
+    fun minorTickMarkLength(): Double
 
     fun tickLabelMargins(): Thickness
 
@@ -65,7 +76,7 @@ interface AxisTheme {
             else -> tickLabelMargins().width
         }
         if (showTickMarks()) {
-            result += tickMarkLength()
+            result += max(tickMarkLength(), 1.0)
         }
         return result
     }

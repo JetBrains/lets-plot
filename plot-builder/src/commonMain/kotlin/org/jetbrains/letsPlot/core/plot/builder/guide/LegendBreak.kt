@@ -46,6 +46,28 @@ class LegendBreak(val label: String) {
         return g
     }
 
+    fun hasSameVisualProperties(other: LegendBreak): Boolean {
+        if (label != other.label) return false
+        if (myLayers.size != other.myLayers.size) return false
+
+        for (i in myLayers.indices) {
+            val thisPoint = myLayers[i].dataPoint
+            val otherPoint = other.myLayers[i].dataPoint
+
+            // Compare all visual aesthetics that appear in the legend key
+            if (thisPoint.color() != otherPoint.color()) return false
+            if (thisPoint.fill() != otherPoint.fill()) return false
+            if (thisPoint.shape() != otherPoint.shape()) return false
+            if (thisPoint.size() != otherPoint.size()) return false
+            if (thisPoint.stroke() != otherPoint.stroke()) return false
+            if (thisPoint.linewidth() != otherPoint.linewidth()) return false
+            if (thisPoint.alpha() != otherPoint.alpha()) return false
+            if (thisPoint.lineType() != otherPoint.lineType()) return false
+        }
+
+        return true
+    }
+
     private class LegendBreakLayer(
         val dataPoint: DataPointAesthetics,
         val keyElementFactory: LegendKeyElementFactory

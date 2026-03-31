@@ -196,8 +196,6 @@ class TransformLog10 {
     private fun scale_y_log10_with_const_y(): MutableMap<String, Any> {
         // ggplot({'x': x}, aes(x='x')) + geom_histogram() + scale_y_log10()
 
-        val rnd = Random(0)
-        val x = (1..100).map { rnd.nextInt(0..5) }.joinToString(transform = Int::toString)
         val spec = """
             {
              'kind': 'plot',

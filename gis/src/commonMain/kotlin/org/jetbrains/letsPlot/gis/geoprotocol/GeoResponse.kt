@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 
 interface GeoResponse {
 
-    data class SuccessGeoResponse internal constructor(
+    data class SuccessGeoResponse(
         val answers: List<GeocodingAnswer>,
         val featureLevel: FeatureLevel?
     ) : GeoResponse {
@@ -20,7 +20,7 @@ interface GeoResponse {
 
         data class GeocodingAnswer(val geocodedFeatures: List<GeocodedFeature>)
 
-        data class GeocodedFeature internal constructor(
+        data class GeocodedFeature(
             val id: String,
             val name: String,
             val centroid: Vec<Untyped>?,
@@ -35,18 +35,18 @@ interface GeoResponse {
 
     data class ErrorGeoResponse(val message: String) : GeoResponse
 
-    data class AmbiguousGeoResponse internal constructor(
+    data class AmbiguousGeoResponse(
         val features: List<AmbiguousFeature>,
         val featureLevel: FeatureLevel?
     ) : GeoResponse {
 
-        data class AmbiguousFeature internal constructor(
+        data class AmbiguousFeature(
             val request: String,
             val namesakeCount: Int,
             val namesakes: List<Namesake>
         )
 
-        data class Namesake internal constructor(val name: String, val parents: List<NamesakeParent>)
+        data class Namesake(val name: String, val parents: List<NamesakeParent>)
 
         data class NamesakeParent(val name: String, val level: FeatureLevel)
     }

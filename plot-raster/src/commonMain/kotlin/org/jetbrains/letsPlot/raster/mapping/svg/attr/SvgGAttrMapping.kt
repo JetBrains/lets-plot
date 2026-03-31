@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
-import org.jetbrains.letsPlot.raster.shape.Group
+import org.jetbrains.letsPlot.raster.scene.Group
 
 
 internal object SvgGAttrMapping : SvgAttrMapping<Group>() {

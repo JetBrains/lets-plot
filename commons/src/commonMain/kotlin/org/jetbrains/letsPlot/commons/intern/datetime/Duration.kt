@@ -68,5 +68,47 @@ class Duration(val totalMillis: Long) : Comparable<Duration> {
         val HOUR = MINUTE.mul(60)
         val DAY = HOUR.mul(24)
         val WEEK = DAY.mul(7)
+
+        /**
+         * Parses a duration specification string.
+         *
+         * @param spec A string in format "<count> <unit>", e.g., "2 weeks", "3 seconds", "12 hours".
+         *             Supported units: ms/millisecond(s), sec/second(s), min/minute(s),
+         *             hour(s), day(s), week(s).
+         */
+        fun parse(spec: String): Duration {
+            val trimmed = spec.trim()
+            val parts = trimmed.split(Regex("\\s+"), limit = 2)
+
+            if (parts.size != 2) {
+                throw IllegalArgumentException(
+                    "Invalid duration format: '$spec'. Expected format: '<count> <unit>' (e.g., '2 seconds', '3 hours')."
+                )
+            }
+
+            val count = parts[0].toIntOrNull()
+                ?: throw IllegalArgumentException(
+                    "Invalid count in duration: '${parts[0]}'. Expected an integer."
+                )
+
+            if (count <= 0) {
+                throw IllegalArgumentException(
+                    "Count must be positive: $count."
+                )
+            }
+
+            return when (val unit = parts[1].lowercase()) {
+                "ms", "millis", "millisecond", "milliseconds" -> MS.mul(count)
+                "sec", "second", "seconds" -> SECOND.mul(count)
+                "min", "minute", "minutes" -> MINUTE.mul(count)
+                "hour", "hours" -> HOUR.mul(count)
+                "day", "days" -> DAY.mul(count)
+                "week", "weeks" -> WEEK.mul(count)
+                else -> throw IllegalArgumentException(
+                    "Unknown time unit: '$unit'. Supported units: ms/millis/millisecond(s), sec/second(s), " +
+                            "min/minute(s), hour(s), day(s), week(s)."
+                )
+            }
+        }
     }
 }

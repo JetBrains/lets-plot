@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgRoot
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 

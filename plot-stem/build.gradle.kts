@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -7,18 +11,21 @@ plugins {
     kotlin("multiplatform")
 }
 
-val kotlinxCoroutinesVersion = project.extra["kotlinx_coroutines_version"] as String
+val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val slf4jVersion = project.extra["slf4j_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val slf4jVersion = project.extra["slf4j.version"] as String
 
-val hamcrestVersion = project.extra["hamcrest_version"] as String
-val mockitoVersion = project.extra["mockito_version"] as String
-val assertjVersion = project.extra["assertj_version"] as String
+val hamcrestVersion = project.extra["hamcrest.version"] as String
+val mockitoVersion = project.extra["mockito.version"] as String
+val assertjVersion = project.extra["assertj.version"] as String
 
 kotlin {
     jvm()
     js {
+        browser()
+    }
+    wasmJs {
         browser()
     }
 
@@ -35,7 +42,10 @@ kotlin {
         commonTest {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(project(":demo-and-test-shared"))
+                implementation(project(":demo-and-test-shared")) {
+                    // w: duplicate library name: org.jetbrains.lets-plot:plot-stem
+                    exclude(group = "org.jetbrains.lets-plot", module = "plot-stem")
+                }
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
@@ -43,7 +53,7 @@ kotlin {
 
         jvmMain {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
@@ -60,7 +70,7 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

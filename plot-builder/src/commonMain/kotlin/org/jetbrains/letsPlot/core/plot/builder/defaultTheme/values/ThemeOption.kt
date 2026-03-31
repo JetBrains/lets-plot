@@ -19,12 +19,18 @@ object ThemeOption {
     const val PLOT_TITLE = "plot_title"
     const val PLOT_SUBTITLE = "plot_subtitle"
     const val PLOT_CAPTION = "plot_caption"
+    const val PLOT_TAG = "plot_tag"
     const val PLOT_MESSAGE = "plot_message"
     const val PLOT_MARGIN = "plot_margin"
     const val PLOT_INSET = "plot_inset"
 
     const val PLOT_TITLE_POSITION = "plot_title_position" // also applied to 'subtitle'
     const val PLOT_CAPTION_POSITION = "plot_caption_position"
+    const val PLOT_TAG_POSITION = "plot_tag_position"
+    const val PLOT_TAG_LOCATION = "plot_tag_location"
+
+    const val PLOT_TAG_PREFIX = "plot_tag_prefix"
+    const val PLOT_TAG_SUFFIX = "plot_tag_suffix"
 
     // ToDo: "text_width_scale" is used Violin demo - update.
 //    const val TEXT_WIDTH_FACTOR = "text_width_scale"
@@ -43,6 +49,8 @@ object ThemeOption {
     const val AXIS_TEXT_SPACING = "axis_text_spacing"
     const val AXIS_TICKS = "axis_ticks"
     const val AXIS_TICKS_LENGTH = "axis_ticks_length"
+    const val AXIS_MINOR_TICKS = "axis_minor_ticks"
+    const val AXIS_MINOR_TICKS_LENGTH = "axis_minor_ticks_length"
     const val AXIS_LINE = "axis_line"
     const val AXIS_TOOLTIP = "axis_tooltip"
     const val AXIS_TOOLTIP_TEXT = "axis_tooltip_text"
@@ -57,6 +65,10 @@ object ThemeOption {
     const val AXIS_TICKS_Y = "axis_ticks_y"
     const val AXIS_TICKS_LENGTH_X = "axis_ticks_length_x"
     const val AXIS_TICKS_LENGTH_Y = "axis_ticks_length_y"
+    const val AXIS_MINOR_TICKS_X = "axis_minor_ticks_x"
+    const val AXIS_MINOR_TICKS_Y = "axis_minor_ticks_y"
+    const val AXIS_MINOR_TICKS_LENGTH_X = "axis_minor_ticks_length_x"
+    const val AXIS_MINOR_TICKS_LENGTH_Y = "axis_minor_ticks_length_y"
     const val AXIS_LINE_X = "axis_line_x"
     const val AXIS_LINE_Y = "axis_line_y"
 
@@ -90,6 +102,12 @@ object ThemeOption {
     const val FACET_STRIP_TEXT = "strip_text"
     const val FACET_STRIP_TEXT_X = "strip_text_x"
     const val FACET_STRIP_TEXT_Y = "strip_text_y"
+    const val FACET_STRIP_SPACING = "strip_spacing"
+    const val FACET_STRIP_SPACING_X = "strip_spacing_x"
+    const val FACET_STRIP_SPACING_Y = "strip_spacing_y"
+    const val FACET_PANEL_SPACING = "panel_spacing"
+    const val FACET_PANEL_SPACING_X = "panel_spacing_x"
+    const val FACET_PANEL_SPACING_Y = "panel_spacing_y"
 
     // Legend
     const val LEGEND_BKGR_RECT = "legend_background"
@@ -174,6 +192,7 @@ object ThemeOption {
     object Name {
         // ggplot2 themes
         const val R_GREY = "grey"
+        const val R_GRAY = "gray"
         const val R_LIGHT = "light"
         const val R_CLASSIC = "classic"
         const val R_MINIMAL = "minimal"
@@ -190,12 +209,7 @@ object ThemeOption {
         const val SOLARIZED_DARK = "solarized_dark"
         const val HIGH_CONTRAST_LIGHT = "high_contrast_light"
         const val HIGH_CONTRAST_DARK = "high_contrast_dark"
-
-        // base theme flavors
-        const val BASE = "base"
-        const val GREY = "grey"
-        const val LIGHT = "light"
-        const val BW = "bw"
+        const val STANDARD= "standard"
     }
 
     object Geom {
@@ -208,6 +222,7 @@ object ThemeOption {
     internal object ForTest {
         val themeNames = listOf(
             Name.R_GREY,
+            Name.R_GRAY,
             Name.R_LIGHT,
             Name.R_CLASSIC,
             Name.R_MINIMAL,
@@ -221,6 +236,8 @@ object ThemeOption {
             LEGEND_KEY_RECT,
             AXIS_TICKS_X,
             AXIS_TICKS_Y,
+            AXIS_MINOR_TICKS_X,
+            AXIS_MINOR_TICKS_Y,
             AXIS_LINE_X,
             AXIS_LINE_Y,
             AXIS_TOOLTIP_X,
@@ -241,6 +258,7 @@ object ThemeOption {
             PLOT_TITLE,
             PLOT_SUBTITLE,
             PLOT_CAPTION,
+            PLOT_TAG,
             AXIS_TITLE_X,
             AXIS_TITLE_Y,
             AXIS_TEXT_X,
@@ -268,6 +286,8 @@ object ThemeOption {
         val numericOptions = listOf(
             AXIS_TICKS_LENGTH_X,
             AXIS_TICKS_LENGTH_Y,
+            AXIS_MINOR_TICKS_LENGTH_X,
+            AXIS_MINOR_TICKS_LENGTH_Y,
         )
 
         //  font_face
@@ -275,6 +295,7 @@ object ThemeOption {
             PLOT_TITLE,
             PLOT_SUBTITLE,
             PLOT_CAPTION,
+            PLOT_TAG,
             AXIS_TITLE_X,
             AXIS_TITLE_Y,
             AXIS_TEXT_X,

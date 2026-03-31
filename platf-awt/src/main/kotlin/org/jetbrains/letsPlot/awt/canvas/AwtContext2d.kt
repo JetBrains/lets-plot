@@ -6,27 +6,31 @@
 package org.jetbrains.letsPlot.awt.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.Font
-import java.awt.*
+import org.jetbrains.letsPlot.core.canvas.Path2d.*
+import java.awt.AlphaComposite
 import java.awt.AlphaComposite.SRC_OVER
+import java.awt.BasicStroke
+import java.awt.Graphics2D
+import java.awt.RenderingHints
 import java.awt.font.GlyphVector
 import java.awt.geom.*
-import java.awt.geom.AffineTransform.getRotateInstance
-import java.awt.geom.Arc2D.OPEN
-import kotlin.math.abs
+import java.util.*
 import java.awt.Color as AwtColor
 import java.awt.Font as AwtFont
 
-internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
-    private var currentPath: GeneralPath = GeneralPath()
-    private var state = ContextState()
-    private val stateStack = ArrayList<ContextState>()
-    private var clipStack = ArrayList<GeneralPath>()
+internal class AwtContext2d(
+    initialGraphics: Graphics2D,
+    contentScale: Double,
+    private val stateDelegate: ContextStateDelegate = ContextStateDelegate(contentScale = contentScale),
+    private val fontManager: FontManager
+) : Context2d by stateDelegate {
+    private var graphics: Graphics2D = (initialGraphics.create() as Graphics2D).apply {
+        stroke = BasicStroke()
+    }
+
+    private val graphicsStack = Stack<Graphics2D>()
 
     init {
         RenderingHints(
@@ -41,74 +45,34 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         setLineCap(LineCap.BUTT)
     }
 
-    internal data class ContextState(
-        var numClipPath: Int = 0,
-        var strokeColor: AwtColor = AwtColor.BLACK,
-        var fillColor: AwtColor = AwtColor.BLACK,
-        var stroke: BasicStroke = BasicStroke(),
-        var textBaseline: TextBaseline = TextBaseline.ALPHABETIC,
-        var textAlign: TextAlign = TextAlign.START,
-        var font: AwtFont = AwtFont(AwtFont.SERIF, AwtFont.PLAIN, 10),
-        var globalAlpha: Float = 1f,
-        var transform: AffineTransform = AffineTransform(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
-    )
-
-    private fun ContextState.applyTransform(x: Double, y: Double): Point2D {
-        return transform.transform(Point2D.Double(x, y), null)
-    }
-
-    private fun Graphics2D.glyphVector(str: String): GlyphVector = font.createGlyphVector(fontRenderContext, str)
-
-    private fun paintText(text: String, x: Double, y: Double, fill: Boolean) {
-        val gv = graphics.glyphVector(text)
-        val position = textPosition(gv, x, y)
-
-        val savedTransform = graphics.transform
-        graphics.translate(position.x, position.y)
-        if (fill) {
-            graphics.color = state.fillColor
-            graphics.fill(gv.outline)
-        } else {
-            graphics.color = state.strokeColor
-            graphics.draw(gv.outline)
-        }
-        graphics.transform = savedTransform
-    }
-
-    private fun textPosition(glyphVector: GlyphVector, x: Double, y: Double): DoubleVector {
-        val box: Rectangle2D = glyphVector.visualBounds
-        val fm = graphics.fontMetrics
-
-        val offsetX = when (state.textAlign) {
-            TextAlign.START -> x
-            TextAlign.CENTER -> x - box.width / 2
-            TextAlign.END -> x - box.width
-        }
-
-        val offsetY = when (state.textBaseline) {
-            TextBaseline.ALPHABETIC -> y
-            TextBaseline.BOTTOM -> y - fm.descent
-            TextBaseline.MIDDLE -> y + (fm.leading + fm.ascent - fm.descent) / 2
-            TextBaseline.TOP -> y + fm.leading + fm.ascent
-        }
-
-        return DoubleVector(offsetX, offsetY)
+    override fun dispose() {
+        graphics.dispose()
     }
 
     override fun clearRect(rect: DoubleRectangle) {
-        graphics.clearRect(rect.left.toInt(), rect.top.toInt(), rect.width.toInt(), rect.height.toInt())
+        clearRect(rect.left, rect.top, rect.width, rect.height)
+    }
+
+    override fun clearRect(x: Double, y: Double, w: Double, h: Double) {
+        graphics.clearRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot) {
+        log { "AwtContext2d.drawImage(snapshot) size=${snapshot.size}, transform=${graphics.transform}" }
+
         drawImage(snapshot, 0.0, 0.0)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double) {
+        log { "AwtContext2d.drawImage(snapshot, x=$x, y=$y) size=${snapshot.size}, transform=${graphics.transform}" }
+
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
         graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), null)
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
+        log { "AwtContext2d.drawImage(snapshot, x=$x, y=$y, dw=$dw, dh=$dh) size=${snapshot.size}, transform=${graphics.transform}" }
+
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
         graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), dw.toInt(), dh.toInt(), null)
     }
@@ -124,6 +88,11 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         dw: Double,
         dh: Double
     ) {
+        log {
+            "AwtContext2d.drawImage(snapshot, sx=$sx, sy=$sy, sw=$sw, sh=$sh, dx=$dx, dy=$dy, dw=$dw, dh=$dh) " +
+                    "size=${snapshot.size}, transform=${graphics.transform}"
+        }
+
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
         graphics.drawImage(
             awtSnapshot.image,
@@ -132,319 +101,297 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         )
     }
 
-    override fun beginPath() {
-        currentPath = GeneralPath()
-    }
+    override fun drawCircle(x: Double, y: Double, radius: Double) {
+        val circle = Arc2D.Double(x - radius, y - radius, 2 * radius, 2 * radius, 0.0, 360.0, Arc2D.OPEN)
 
-    override fun closePath() {
-        currentPath.closePath()
-    }
-
-    override fun clip() {
-        clipStack.add(currentPath)
-        state.numClipPath = clipStack.size
-
-        val currentTransform = graphics.transform
-        graphics.transform = AffineTransform()
-        graphics.clip = currentPath
-        graphics.transform = currentTransform
-    }
-
-    override fun stroke() {
-        graphics.color = state.strokeColor
-        graphics.stroke = state.stroke.copy(width = (state.stroke.lineWidth * minOf(state.transform.scaleX, state.transform.scaleY)).toFloat())
-        graphics.paintPath(currentPath, Graphics2D::draw)
-        graphics.stroke = state.stroke
-    }
-
-    override fun fill() {
-        graphics.color = state.fillColor
-        graphics.fillPath(currentPath)
-    }
-
-    override fun fillEvenOdd() {
-        currentPath.windingRule = Path2D.WIND_EVEN_ODD
-        graphics.color = state.fillColor
-        graphics.fillPath(currentPath)
-    }
-
-    override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
-        graphics.color = state.fillColor
-        graphics.fillRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
-    }
-
-    override fun moveTo(x: Double, y: Double) {
-        val p = state.applyTransform(x, y)
-        currentPath.moveTo(p.x, p.y)
-    }
-
-    override fun lineTo(x: Double, y: Double) {
-        val p = state.applyTransform(x, y)
-        currentPath.lineTo(p.x, p.y)
-    }
-
-    override fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double) {
-        val trCp1x: Double
-        val trCp1y: Double
-        state.applyTransform(cp1x, cp1y).let { trCp1x = it.x; trCp1y = it.y }
-
-        val trCp2x: Double
-        val trCp2y: Double
-        state.applyTransform(cp2x, cp2y).let { trCp2x = it.x; trCp2y = it.y }
-
-        val trX: Double
-        val trY: Double
-        state.applyTransform(x, y).let { trX = it.x; trY = it.y }
-
-        currentPath.curveTo(trCp1x, trCp1y, trCp2x, trCp2y, trX, trY)
-    }
-
-    override fun arc(
-        x: Double,
-        y: Double,
-        radius: Double,
-        startAngle: Double,
-        endAngle: Double,
-        anticlockwise: Boolean
-    ) {
-        val path = buildArc(x, y, radius, radius, 0.0, toDegrees(startAngle), toDegrees(endAngle), anticlockwise)
-        currentPath.append(path, true)
-    }
-
-    override fun ellipse(
-        x: Double,
-        y: Double,
-        radiusX: Double,
-        radiusY: Double,
-        rotation: Double,
-        startAngle: Double,
-        endAngle: Double,
-        anticlockwise: Boolean
-    ) {
-        val path = buildArc(
-            x,
-            y,
-            radiusX,
-            radiusY,
-            toDegrees(rotation),
-            toDegrees(startAngle),
-            toDegrees(endAngle),
-            anticlockwise
-        )
-        currentPath.append(path, true)
-    }
-
-    private fun buildArc(
-        x: Double, y: Double,
-        radiusX: Double, radiusY: Double,
-        rotation: Double,
-        startAngle: Double, endAngle: Double,
-        anticlockwise: Boolean
-    ): Path2D.Double {
-        var start = startAngle % 360
-        var end = endAngle % 360
-        val fullCircle = (start == end && startAngle != endAngle)
-
-        if (!anticlockwise && start > end) start -= 360.0
-        if (anticlockwise && start < end) end -= 360.0
-
-        var length = end - start
-        if (anticlockwise) length = -abs(length)
-
-        val path = Path2D.Double()
-
-        fun appendArcSegment(startDeg: Double, extentDeg: Double) {
-            val arc = Arc2D.Double(
-                x - radiusX, y - radiusY,
-                radiusX * 2, radiusY * 2,
-                -startDeg, -extentDeg,
-                OPEN
-            )
-            path.append(arc, true)
-        }
-
-        if (fullCircle) {
-            appendArcSegment(start, 180.0)
-            appendArcSegment(start + 180.0, 180.0)
-        } else {
-            appendArcSegment(start, length)
-        }
-
-        if (rotation != 0.0) {
-            path.transform(getRotateInstance(Math.toRadians(rotation), x, y))
-        }
-
-        path.transform(graphics.transform)
-        return path
+        withFillGraphics { g -> g.fill(circle) }
+        withStrokeGraphics { g -> g.draw(circle) }
     }
 
     override fun save() {
-        stateStack.add(state.copy())
+        stateDelegate.save()
+        graphicsStack.push(graphics.create() as Graphics2D)
     }
 
     override fun restore() {
-        stateStack.lastOrNull()
-            ?.let {
-                state = it
+        stateDelegate.restore()
 
-                if (state.numClipPath < clipStack.size) {
-                    clipStack.subList(state.numClipPath, clipStack.size).clear()
-                }
-
-                graphics.transform = AffineTransform()
-                graphics.clip = clipStack.lastOrNull()
-                graphics.transform = state.transform
-                graphics.stroke = state.stroke
-                graphics.font = state.font
-                graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
-
-                stateStack.removeAt(stateStack.lastIndex)
-            }
+        graphics = graphicsStack.pop()
     }
 
     override fun setFillStyle(color: Color?) {
-        state.fillColor = color?.toAwtColor() ?: AwtColor.BLACK
+        stateDelegate.setFillStyle(color)
     }
 
     override fun setStrokeStyle(color: Color?) {
-        state.strokeColor = color?.toAwtColor() ?: AwtColor.BLACK
-    }
-
-    override fun setGlobalAlpha(alpha: Double) {
-        state.globalAlpha = alpha.toFloat()
-        graphics.composite = AlphaComposite.getInstance(SRC_OVER, state.globalAlpha)
-    }
-
-    override fun setFont(f: Font) {
-        state.font = f.toAwtFont()
-        graphics.font = state.font
+        stateDelegate.setStrokeStyle(color)
     }
 
     override fun setLineWidth(lineWidth: Double) {
-        state.stroke = state.stroke.copy(
-            width = lineWidth.toFloat()
-        )
+        stateDelegate.setLineWidth(lineWidth)
 
-        graphics.stroke = state.stroke
-    }
-
-    override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
-        graphics.color = state.strokeColor
-        graphics.drawRect(x.toInt(), y.toInt(), w.toInt(), h.toInt())
-    }
-
-    override fun strokeText(text: String, x: Double, y: Double) {
-        paintText(text, x, y, fill = false)
-    }
-
-    override fun fillText(text: String, x: Double, y: Double) {
-        paintText(text, x, y, fill = true)
-    }
-
-    override fun scale(xy: Double) {
-        scale(xy, xy)
-    }
-
-    override fun scale(x: Double, y: Double) {
-        graphics.scale(x, y)
-        state.transform = graphics.transform
-    }
-
-    override fun rotate(angle: Double) {
-        graphics.rotate(angle)
-        state.transform = graphics.transform
-    }
-
-    override fun translate(x: Double, y: Double) {
-        graphics.translate(x, y)
-        state.transform = graphics.transform
-    }
-
-    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
-        val t = AffineTransform(sx, ry, rx, sy, tx, ty)
-
-        graphics.transform(t)
-        state.transform = graphics.transform
-    }
-
-    override fun setLineJoin(lineJoin: LineJoin) {
-        state.stroke = state.stroke.copy(
-            join = convertLineJoin(lineJoin)
-        )
-
-        graphics.stroke = state.stroke
-    }
-
-    override fun setLineCap(lineCap: LineCap) {
-        state.stroke = state.stroke.copy(
-            cap = convertLineCap(lineCap)
-        )
-
-        graphics.stroke = state.stroke
-    }
-
-    override fun setStrokeMiterLimit(miterLimit: Double) {
-        state.stroke = state.stroke.copy(
-            miterlimit = miterLimit.toFloat()
-        )
-
-        graphics.stroke = state.stroke
-    }
-
-    override fun setTextBaseline(baseline: TextBaseline) {
-        state.textBaseline = baseline
-    }
-
-    override fun setTextAlign(align: TextAlign) {
-        state.textAlign = align
-    }
-
-    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
-        graphics.transform = AffineTransform(m00, m10, m01, m11, m02, m12)
-        state.transform = graphics.transform
+        graphics.stroke = (graphics.stroke as BasicStroke).copy(width = lineWidth.toFloat())
     }
 
     override fun setLineDash(lineDash: DoubleArray) {
-        state.stroke = state.stroke.copy(
-            dash = if (lineDash.isEmpty()) null else lineDash.map(Double::toFloat).toFloatArray()
-        )
+        stateDelegate.setLineDash(lineDash)
 
-        graphics.stroke = state.stroke
+        graphics.stroke = (graphics.stroke as BasicStroke)
+            .copy(dash = if (lineDash.isEmpty()) null else lineDash.map(Double::toFloat).toFloatArray())
     }
 
     override fun setLineDashOffset(lineDashOffset: Double) {
-        state.stroke = state.stroke.copy(
-            dashPhase = lineDashOffset.toFloat()
-        )
+        stateDelegate.setLineDashOffset(lineDashOffset)
 
-        graphics.stroke = state.stroke
+        graphics.stroke = (graphics.stroke as BasicStroke)
+            .copy(dashPhase = lineDashOffset.toFloat())
     }
+
+    override fun setLineCap(lineCap: LineCap) {
+        stateDelegate.setLineCap(lineCap)
+
+        graphics.stroke = (graphics.stroke as BasicStroke).copy(
+            cap = convertLineCap(lineCap)
+        )
+    }
+
+    override fun setLineJoin(lineJoin: LineJoin) {
+        stateDelegate.setLineJoin(lineJoin)
+
+        graphics.stroke = (graphics.stroke as BasicStroke).copy(
+            join = convertLineJoin(lineJoin)
+        )
+    }
+
+    override fun setStrokeMiterLimit(miterLimit: Double) {
+        stateDelegate.setStrokeMiterLimit(miterLimit)
+
+        graphics.stroke = (graphics.stroke as BasicStroke).copy(
+            miterlimit = miterLimit.toFloat()
+        )
+    }
+
+    override fun setFont(f: Font) {
+        stateDelegate.setFont(f)
+
+        val awtFont = fontManager.getFont(f) ?: f.toAwtFont()
+
+        graphics.font = awtFont
+    }
+
+    override fun setGlobalAlpha(alpha: Double) {
+        stateDelegate.setGlobalAlpha(alpha)
+
+        graphics.composite = AlphaComposite.getInstance(SRC_OVER, alpha.toFloat())
+    }
+
+    override fun stroke() {
+        // Make ctm identity. null for degenerate case, e.g., scale(0, 0) - skip drawing.
+        val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
+
+        withStrokeGraphics { g ->
+            val path = drawPath(stateDelegate.getCurrentPath(), inverseCtmTransform)
+            g.draw(path)
+        }
+    }
+
+    override fun fill() {
+        // Make ctm identity. null for degenerate case, e.g., scale(0, 0) - skip drawing.
+        val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
+
+        withFillGraphics { g ->
+            val path = drawPath(stateDelegate.getCurrentPath(), inverseCtmTransform)
+            g.fill(path)
+        }
+    }
+
+    override fun fillEvenOdd() {
+        // Make ctm identity. null for degenerate case, e.g., scale(0, 0) - skip drawing.
+        val inverseCtmTransform = stateDelegate.getCTM().inverse() ?: return
+
+        withFillGraphics { g ->
+            val path = drawPath(stateDelegate.getCurrentPath(), inverseCtmTransform)
+            path.windingRule = Path2D.WIND_EVEN_ODD
+
+            g.fill(path)
+        }
+    }
+
+    private fun drawText(g: Graphics2D, text: String, x: Double, y: Double, fill: Boolean) {
+        val gv = g.glyphVector(text)
+        val fm = g.fontMetrics
+
+        val offsetX = when (stateDelegate.getTextAlign()) {
+            TextAlign.START -> 0.0
+            TextAlign.CENTER -> -gv.visualBounds.width / 2
+            TextAlign.END -> -gv.visualBounds.width
+        }
+
+        val offsetY = when (stateDelegate.getTextBaseline()) {
+            TextBaseline.ALPHABETIC -> 0
+            TextBaseline.BOTTOM -> -fm.descent
+            TextBaseline.MIDDLE -> (fm.leading + fm.ascent - fm.descent) / 2
+            TextBaseline.TOP -> fm.leading + fm.ascent
+        }
+
+        g.translate(x + offsetX, y + offsetY)
+
+        if (fill) {
+            g.fill(gv.outline)
+        } else {
+            g.draw(gv.outline)
+        }
+    }
+
+    override fun fillText(text: String, x: Double, y: Double) {
+        withFillGraphics { g ->
+            drawText(g, text, x, y, fill = true)
+        }
+    }
+
+    override fun strokeText(text: String, x: Double, y: Double) {
+        withStrokeGraphics { g ->
+            drawText(g, text, x, y, fill = false)
+        }
+    }
+
+    override fun fillRect(x: Double, y: Double, w: Double, h: Double) {
+        withFillGraphics { g ->
+            val rect = Rectangle2D.Double(x, y, w, h)
+            g.fill(rect)
+        }
+    }
+
+    override fun strokeRect(x: Double, y: Double, w: Double, h: Double) {
+        withStrokeGraphics { g ->
+            val rect = Rectangle2D.Double(x, y, w, h)
+            g.draw(rect)
+        }
+    }
+
+    override fun clip() {
+        stateDelegate.clip()
+
+        val clipPath = stateDelegate.getClipPath()
+        if (clipPath.isEmpty) {
+            // No clip path defined, nothing to do.
+            return
+        }
+
+        val inverseCTMTransform = stateDelegate.getCTM().inverse() ?: return
+
+        val path = drawPath(clipPath.getCommands(), inverseCTMTransform)
+        graphics.clip(path)
+    }
+
+    override fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double) {
+        stateDelegate.transform(sx, ry, rx, sy, tx, ty)
+
+        val t = AffineTransform(sx, ry, rx, sy, tx, ty)
+        graphics.transform(t)
+    }
+
+    override fun scale(xy: Double) {
+        stateDelegate.scale(xy)
+
+        graphics.scale(xy, xy)
+    }
+
+    override fun scale(x: Double, y: Double) {
+        stateDelegate.scale(x, y)
+
+        graphics.scale(x, y)
+    }
+
+    override fun rotate(angle: Double) {
+        stateDelegate.rotate(angle)
+
+        graphics.rotate(angle)
+    }
+
+    override fun translate(x: Double, y: Double) {
+        stateDelegate.translate(x, y)
+
+        graphics.translate(x, y)
+    }
+
+    override fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double) {
+        stateDelegate.setTransform(m00, m10, m01, m11, m02, m12)
+        graphics.transform = AffineTransform(m00, m10, m01, m11, m02, m12)
+    }
+
+    override fun measureText(str: String): TextMetrics {
+        val logicalBounds = graphics.glyphVector(str).logicalBounds
+        val bbox = DoubleRectangle.XYWH(
+            logicalBounds.x,
+            logicalBounds.y,
+            logicalBounds.width,
+            logicalBounds.height
+        )
+        return TextMetrics(
+            ascent = graphics.fontMetrics.ascent.toDouble(),
+            descent = graphics.fontMetrics.descent.toDouble(),
+            bbox = bbox
+        )
+    }
+
 
     override fun measureTextWidth(str: String): Double {
         return graphics.glyphVector(str).visualBounds.width
     }
 
-    override fun measureText(str: String): TextMetrics {
-        return TextMetrics(
-            ascent = graphics.fontMetrics.ascent.toDouble(),
-            descent = graphics.fontMetrics.descent.toDouble(),
-            bbox = graphics.glyphVector(str).logicalBounds.let { DoubleRectangle.XYWH(it.x, it.y, it.width, it.height) }
-        )
+    private fun withStrokeGraphics(block: (Graphics2D) -> Unit) {
+        val g = graphics.create() as Graphics2D
+        g.color = stateDelegate.getStrokeColor().toAwtColor()
+        block(g)
+        g.dispose()
+    }
+
+    private fun withFillGraphics(block: (Graphics2D) -> Unit) {
+        val g = graphics.create() as Graphics2D
+        g.color = stateDelegate.getFillColor().toAwtColor()
+        block(g)
+        g.dispose()
     }
 
     private companion object {
-
-        // path already transformed, to draw it correctly Graphics2D transform should be reset.
-        private fun Graphics2D.paintPath(path: Path2D, painter: (Graphics2D, Shape) -> Unit) {
-            val currentTransform = transform
-            transform = AffineTransform()
-            painter(this, path)
-            transform = currentTransform
+        private const val LOG_ENABLED = false
+        private fun log(str: () -> String) {
+            if (LOG_ENABLED)
+                println(str())
         }
 
-        private fun Graphics2D.fillPath(path: Path2D) {
-            paintPath(path, Graphics2D::fill)
+        fun drawPath(commands: List<PathCommand>, transform: org.jetbrains.letsPlot.commons.geometry.AffineTransform): GeneralPath {
+            if (commands.isEmpty()) {
+                return GeneralPath()
+            }
+
+            log { "drawPath: commands=${commands.joinToString { it.toString() }}, transform=${transform.repr()}" }
+
+            val path = GeneralPath()
+
+            commands
+                .asSequence()
+                .map { cmd -> cmd.transform(transform) }
+                .forEach { cmd ->
+                    when (cmd) {
+                        is MoveTo -> path.moveTo(cmd.x, cmd.y)
+                        is LineTo -> path.lineTo(cmd.x, cmd.y)
+                        is CubicCurveTo -> {
+                            cmd.controlPoints.asSequence()
+                                .windowed(size = 3, step = 3)
+                                .forEach { (cp1, cp2, cp3) ->
+                                    path.curveTo(cp1.x, cp1.y, cp2.x, cp2.y, cp3.x, cp3.y)
+                                }
+                        }
+
+                        is ClosePath -> path.closePath()
+                    }
+                }
+
+            return path
         }
+
 
         private fun Color.toAwtColor(): AwtColor {
             return AwtColor(red, green, blue, alpha)
@@ -490,7 +437,8 @@ internal class AwtContext2d(private val graphics: Graphics2D) : Context2d {
         ): BasicStroke {
             return BasicStroke(width, cap, join, maxOf(1f, miterlimit), dash, dashPhase)
         }
-
-
     }
+
+
+    private fun Graphics2D.glyphVector(str: String): GlyphVector = font.createGlyphVector(fontRenderContext, str)
 }

@@ -27,7 +27,7 @@ internal class JsonParser(
     }
 
     private fun parseArray(lexer: JsonLexer): MutableList<Any?> {
-        fun checkCurrentToken(token: Token) { require(lexer.currentToken, token, "[Arr] ") }
+        fun checkCurrentToken(token: Token) { require(token, "[Arr]", lexer) }
 
         val list = mutableListOf<Any?>()
 
@@ -49,7 +49,7 @@ internal class JsonParser(
     }
 
     private fun parseObject(lexer: JsonLexer): Map<String, Any?> {
-        fun checkCurrentToken(token: Token) { require(lexer.currentToken, token, "[Obj] ") }
+        fun checkCurrentToken(token: Token) { require(token, "[Obj]", lexer) }
 
         val map = mutableMapOf<String, Any?>()
 
@@ -79,9 +79,12 @@ internal class JsonParser(
         return map
     }
 
-    private fun require(current: Token?, expected: Token?, messagePrefix: String? = null) {
-        if (current != expected) {
-            throw JsonException(messagePrefix + "Expected token: $expected, actual: $current")
+    private fun require(expected: Token?, messagePrefix: String? = null, lexer: JsonLexer) {
+        if (lexer.currentToken != expected) {
+            val highlight = lexer.getHighlight()
+             throw JsonException("${highlight.lineNumber}:${highlight.symbolLinePos} - $messagePrefix Expected token: $expected, actual: ${lexer.currentToken}\n" +
+                     highlight.fragment + "\n" + highlight.pointer
+             )
         }
     }
 

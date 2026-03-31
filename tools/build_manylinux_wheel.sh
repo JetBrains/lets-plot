@@ -9,6 +9,13 @@ set -e -x
 working_dir="/tmp/python-package/"
 dist_dir="dist/"
 
+if [[ -n "$ABI_FLAG" ]]
+then
+  python_version_mask="${CPYTHON_VERSION}-${CPYTHON_VERSION}${ABI_FLAG}"
+else
+  python_version_mask="${CPYTHON_VERSION}-${CPYTHON_VERSION}"
+fi
+
 if [[ ${ARCH} = "arm64" ]]
 then
   wheel_arch="aarch64"
@@ -40,7 +47,7 @@ exit_with_error () {
 
 compile_wheels () {
   printf "Compile wheel..."
-  /opt/python/${CPYTHON_VERSION}-${CPYTHON_VERSION}/bin/python -m build -w -o ${dist_dir} || exit_with_error "Could not build wheels for ${CPYTHON_VERSION}."
+  /opt/python/${python_version_mask}/bin/python -m build -w -o ${dist_dir} || exit_with_error "Could not build wheels for ${CPYTHON_VERSION}."
 }
 
 audit_wheels () {

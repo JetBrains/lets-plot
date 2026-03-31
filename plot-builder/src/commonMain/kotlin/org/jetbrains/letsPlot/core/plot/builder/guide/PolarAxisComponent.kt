@@ -8,11 +8,11 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toDegrees
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
@@ -92,7 +92,7 @@ class PolarAxisComponent(
         axisTheme: AxisTheme,
         breakCoord: DoubleVector,
         center: DoubleVector
-    ): Pair<TextLabel?, SvgLineElement?> {
+    ): Pair<Label?, SvgLineElement?> {
 
         val tickMark: SvgLineElement? = if (axisTheme.showTickMarks()) {
             val tickMark = SvgLineElement()
@@ -127,7 +127,7 @@ class PolarAxisComponent(
         }
 
         val tickLabel = if (axisTheme.showLabels()) {
-            val tickLabel = TextLabel(label, axisTheme.titleStyle().markdown)
+            val tickLabel = Label(label, markdown = axisTheme.titleStyle().markdown)
             tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
             tickLabel.setFontSize(PlotLabelSpecFactory.axisTick(axisTheme).font.size.toDouble()) // Needed only for calculating correct x-shift for some LaTeX formulas
 
@@ -162,6 +162,9 @@ class PolarAxisComponent(
                 }
             }
 
+            val tickHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
+            tickLabel.setFontSize(tickHeight)
+            tickLabel.setLineHeight(tickHeight)
             tickLabel.rotate(labelAdjustments.rotationDegree)
             tickLabel
         } else {

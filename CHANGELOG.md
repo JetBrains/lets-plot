@@ -5,6 +5,263 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.9.0] - 2026-03-11
+
+### Added
+
+- Python 3.14 support.
+
+- Python 3.14 free-threading support [[#1454](https://github.com/JetBrains/lets-plot/issues/1454)].
+
+
+- Plot Annotations:
+
+  - New `labels` parameter in `geom_smooth()` designed to display statistical summaries of the fitted model directly on the plot. \
+    This parameter accepts a `smooth_labels()` object, which provides access to model-specific variables like $R^2$, the regression equation and others.
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
+
+  - **Plot tags**. A tag can be specified via `labs(tag=...)` and styled using theme parameters [[#1407](https://github.com/JetBrains/lets-plot/issues/1407)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html) and updated [plot layout scheme](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_layout_scheme.html).
+
+  - Plot tags customization parameters in `theme()`:
+    - `plot_tag` - sets the tag style via `element_text()`.
+    - `plot_tag_location` - specifies the area used for positioning the tag.
+    - `plot_tag_position` - specifies the position of the tag within the selected area.
+    - `plot_tag_prefix` - text added before the tag value.
+    - `plot_tag_suffix` - text added after the tag value.
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
+
+
+- Geometries:
+  - New `geom_bracket()`, `geom_bracket_dodge()` [[#1114](https://github.com/JetBrains/lets-plot/issues/1114)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
+
+  - `geom_imshow()`:
+    - Support for custom colormaps [[#780](https://github.com/JetBrains/lets-plot/issues/780)].
+    - New `cguide` parameter: use to customize the colorbar for grayscale images.
+
+      See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
+
+
+- Color Scales:
+  - New `palette()` method for color scales: generates a list of hex color codes that can be used with `scale_color_manual()` to maintain consistent colors across multiple plots [[#1444](https://github.com/JetBrains/lets-plot/issues/1444)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_color_palette.html).
+
+  - New `overflow` parameter in `scale_color_brewer()` / `scale_fill_brewer()`: controls how colors are generated when more colors are needed than the palette provides. \
+    Options: `'interpolate'` (`'i'`), `'cycle'` (`'c'`), `'generate'` (`'g'`).
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_brewer_overflow.html).
+
+
+- Positional Scales:
+  - New `break_width` parameter that specifies a fixed distance between axis breaks.
+
+    See examples:
+    - [datetime scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_datetime.html)
+    - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
+    - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
+
+  - Support for axis minor ticks via `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()` [[#1379](https://github.com/JetBrains/lets-plot/issues/1379)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
+
+
+- `gggrid()`: interactive pan/zoom now propagates across subplots with shared axes (`sharex`/`sharey`) [[#1413](https://github.com/JetBrains/lets-plot/issues/1413)].
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/gggrid_scale_share_zoom.html).
+
+
+### Changed
+
+- [**BREAKING**]: ColorBrewer palettes: changed default behavior when the requested number of colors exceeds the palette's maximum size. \
+  Now defaults to `'interpolate'` for sequential/diverging palettes and `'generate'` for qualitative palettes. \
+  Previously, depending on the palette type, this either resulted in duplicate colors or random additional colors. \
+  Use the new `overflow` parameter to explicitly control this behavior.
+- Reduced import overhead by nearly two orders of magnitude (from ~1.2s down to ~0.02s) [[#1469](https://github.com/JetBrains/lets-plot/issues/1469)].
+- Missing values in `geom_area_ridges()` create gaps in geometries instead of being interpolated over.
+- Discrete color scales (Brewer, Manual) now produce a `colorbar` guide when used with continuous data. \
+  Previously they produced a `legend` guide regardless of the data type.
+
+
+- Changes affecting users on the JVM platform:
+  - Upgraded the Kotlin version to 2.2.20 (was 1.9.25).
+  - New artifact for JVM Swing applications: `org.jetbrains.lets-plot:lets-plot-swing`. \
+    This artifact provides the `SwingPlotPanel` class, which can be used to display plots in Swing applications instead of the now-obsolete `DefaultPlotPanelBatik`. \
+    For details, see the [jvm-swing-app](https://github.com/alshan/lets-plot-mini-apps/tree/main/jvm-swing-app) example in the "lets-plot-mini-apps" repository.
+  - [**BREAKING**]: Removed JavaFX artifacts. \
+    The `org.jetbrains.lets-plot:lets-plot-jfx` artifact is no longer available. \
+    Replace it with new `org.jetbrains.lets-plot:lets-plot-swing` dependency and use `SwingPlotPanel` instead of `DefaultPlotPanelJfx`. \
+    For details, see the [jvm-javafx-app](https://github.com/alshan/lets-plot-mini-apps/tree/main/jvm-javafx-app) example in the "lets-plot-mini-apps" repository.
+  - [**BREAKING**]: Removed `plot-image-export` module. \
+    The `org.jetbrains.lets-plot:lets-plot-image-export` artifact is no longer available. \
+    The `PlotImageExport` utility has been moved to the `platf-awt` module. \
+    The required `org.jetbrains.lets-plot:platf-awt` dependency is likely already present in your project.
+
+
+### Fixed
+
+- Drop commons-io dependency [[#1421](https://github.com/JetBrains/lets-plot/issues/1421)].
+- Unexpected replacement of double curly brackets with a single curly bracket [[#1433](https://github.com/JetBrains/lets-plot/issues/1433)].
+- Upgrade to a newer version of ws [[#1150](https://github.com/JetBrains/lets-plot/issues/1150)].
+- geom_imshow: unclear error message when mixing transparencies [[#1088](https://github.com/JetBrains/lets-plot/issues/1088)].
+- geom_imshow and scale_y_reverse [[#1210](https://github.com/JetBrains/lets-plot/issues/1210)].
+- Nice to be able to get a list of colors from a color scale object [[#1444](https://github.com/JetBrains/lets-plot/issues/1444)].
+- Allow tooltips param to accept list [[#1455](https://github.com/JetBrains/lets-plot/issues/1455)].
+- Allow grouped tooltips for plots with multiple univariate geoms [[#1460](https://github.com/JetBrains/lets-plot/issues/1460)].
+- Fixed a regression in geom_text_repel() / geom_label_repel(): points with empty labels were incorrectly skipped \
+  before building the repel obstacle set, so they were not included in collision avoidance and labels could overlap \
+  dense point clusters.
+
+## [4.8.2] - 2026-12-19
+
+### Fixed
+- Hyperlinks support for lets-plot-compose.
+- Colab no longer rendering lets-plot with empty setup HTML [[#1436](https://github.com/JetBrains/lets-plot/issues/1436)]
+
+## [4.8.1] - 2025-12-01
+
+### Fixed
+
+- saving plots as png takes a very long time [[#1423](https://github.com/JetBrains/lets-plot/issues/1423)].
+- `stat_ecdf()` takes a very long time for even moderately sized datasets [[#1424](https://github.com/JetBrains/lets-plot/issues/1424)].
+- lets-plot plots are not displayed in plots pane [[PST-8170](https://github.com/posit-dev/positron/issues/8170)].
+- inconsistencies in theme/flavor inheritance in `gggrid()` subplots.
+
+## [4.8.0] - 2025-11-05
+
+### Added
+
+- Geometries:
+  - `geom_pointdensity()` [[#1370](https://github.com/JetBrains/lets-plot/issues/1370)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/geom_pointdensity.html).
+
+  - Geoms with 1-to-1 statistics (such as `geom_qq()`, `geom_sina()`) preserve the mapping to original data after statistical transformation.
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/stat_data_bijection.html).
+
+  - `geom_histogram()`: custom bin bounds (parameter `breaks`) [[#1382](https://github.com/JetBrains/lets-plot/issues/1382)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/geom_histogram_param_breaks.html).
+
+- Plot Layout:
+  - The legend automatically wraps to prevent overlap - up to 15 rows for vertical legends and 5 columns for horizontal ones [[#1235](https://github.com/JetBrains/lets-plot/issues/1235)].
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/legend_wrap.html).
+
+  - `gggrid()`: support for shared legends (parameter `guides`).
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/gggrid_legend_collect.html).
+
+- Plot Theme:
+  - `flavor_standard()` sets the theme's default color scheme [[#1277](https://github.com/JetBrains/lets-plot/issues/1277)]. <br>
+    Use to override other flavors or make defaults explicit.
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/flavor_standard.html).
+
+  - `theme_gray()` as an alias for `theme_grey()`.
+
+  - `legend_justification` parameter of `theme()` accepts additional string values: `'left'`, `'right'`, `'top'`, and `'bottom'`.
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/legend_justification.html).
+
+  - Support for inward axis ticks.
+
+    See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/axis_tick_direction.html).
+
+- Markdown:
+  -  Support for `target` attribute for links.
+  -  Links now open in a new tab by default [[#1397](https://github.com/JetBrains/lets-plot/issues/1397)].
+
+- `ggtb()`: `size_zoomin` and `size_basis` parameters for geometry scaling [[#1369](https://github.com/JetBrains/lets-plot/issues/1369)].
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/ggtb_size_zoomin.html).
+
+
+### Changed
+
+- [**BREAKING**] Explicit `group` aesthetic now overrides default grouping behavior instead of combining with it [[#1401](https://github.com/JetBrains/lets-plot/issues/1401)].
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/group_override_defaults.html).
+
+> [!IMPORTANT]
+> Previously, setting `group='variable'` would group by both the explicit variable AND any discrete
+> aesthetics (color, shape, etc.). \
+> Now it groups ONLY by the explicit variable, matching `ggplot2` behavior. \
+> Use `group=[var1, var2, ...]` to group by multiple variables explicitly, \
+> and `group=[]` to disable any grouping.
+
+- Missing values in `geom_line(), geom_path(), geom_ribbon()`, and `geom_area()` create gaps in geometries instead of being interpolated over [[#818](https://github.com/JetBrains/lets-plot/issues/818)], [[#1406](https://github.com/JetBrains/lets-plot/issues/1406)].
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-25e/missing_values_line_path_area_ribbon.html).
+
+- `theme`: the `exponent_format` default value changed to `'pow'` - superscript powers of 10 (was e-notation).
+
+- The multi-layer line plot now shows tooltips for each series simultaneously, in the same way that a single-layer plot with color mapped to series does.
+
+
+### Fixed
+
+- `geom_pie` on geospatioal plot with `map_join` failes to render without explicit `group` aesthetic.
+- geom_density2d: NullPointerException when weight aesthetic contains None values [[#1399](https://github.com/JetBrains/lets-plot/issues/1399)].
+- Tooltip shows duplicate lines when as_discrete is applied twice to the same var [[#1400](https://github.com/JetBrains/lets-plot/issues/1400)].
+- geom_sina: incorrect shape in legend [[#1403](https://github.com/JetBrains/lets-plot/issues/1403)].
+- geom_density2d: Incorrect processing of weighted statistics when None value occurs in the x or y column.
+- facet_wrap: indescriptive error when the specified facet variable is not present in the dataset [[#1409](https://github.com/JetBrains/lets-plot/issues/1409)].
+- Integer numbers in facet strip titles are displayed as float [[#1386](https://github.com/JetBrains/lets-plot/issues/1386)].
+- Error when using scale_identity(aesthetic="shape") [[#1212](https://github.com/JetBrains/lets-plot/issues/1212)].
+- ggsave: theme option face="italic" doesn't work [[#1391](https://github.com/JetBrains/lets-plot/issues/1391)].
+- Fail early if string format is incorrect [[#1410](https://github.com/JetBrains/lets-plot/issues/1410)].
+
+## [4.7.3] - 2025-09-12
+
+### Changed
+
+- `ggsave()`: Large plot dimensions without units now require explicit unit specification. <br>
+  When plot size exceeds 20 without specifying units (e.g., `ggsave(p, 300, 400)`), <br>
+  we ask to specify units explicitly: <br>
+  `ggsave(p, 300, 400, unit='px')` or `ggsave(p, 3, 4, unit='in')`.
+
+### Fixed
+
+- `ggtb()` support in Swing/Batik frontend.
+- Multiline support for axis labels in polar coordinates.
+- When the plot size in `ggsave()` is specified in pixels, `dpi` now affects <br>
+  only the physical size, not the pixel dimensions as before.
+- Blocking `SwingUtilities.invokeAndWait()`  call in plot image export (AWT backend)
+
+### Internal Memo
+
+Lets-Plot VL spec transformer removed—relocated to another repository
+
+
+## [4.7.2] - 2025-09-01
+
+### Added
+
+- Plot Layout:
+
+  - New `strip_spacing`, `strip_spacing_x`, and `strip_spacing_y` parameters in `theme()` to control spacing between the facet strip (title bar) and the plot panel.
+  - New `panel_spacing`, `panel_spacing_x`, and `panel_spacing_y` parameters in `theme()` to control spacing between plot panels in faceted plots, [[#1380](https://github.com/JetBrains/lets-plot/issues/1380)].
+
+  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25d/facet_spacings.ipynb).
+
+- Image resolution is saved in the metadata of PNG files created with `ggsave()`.
+
+### Changed
+
+- plot-image-export: switched from Batik to Graphics2D API
+
+### Fixed
+
+- ggsave(): memory leak when using `geom_raster()`.
+- Incorrect physical image size when exporting PDF with `ggsave()` without specifying `dpi`.
+
 ## [4.7.1] - 2025-08-13
 
 ### Added

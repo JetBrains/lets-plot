@@ -5,12 +5,16 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor
+
 internal abstract class ThemeValues(
     val values: Map<String, Any>
 ) {
     operator fun plus(other: Map<String, Any>): Map<String, Any> {
         return values.mergeWith(other)
     }
+
+    internal open fun defaultFlavor(): ThemeFlavor = ThemeFlavor.commonPalette()
 
     companion object {
         fun Map<String, Any>.mergeWith(other: Map<String, Any>): Map<String, Any> {
@@ -26,7 +30,8 @@ internal abstract class ThemeValues(
 
         internal fun forName(theme: String): ThemeValues {
             return when (theme) {
-                ThemeOption.Name.R_GREY -> ThemeValuesRGrey()
+                ThemeOption.Name.R_GREY,
+                ThemeOption.Name.R_GRAY -> ThemeValuesRGrey()
                 ThemeOption.Name.R_LIGHT -> ThemeValuesRLight()
                 ThemeOption.Name.R_CLASSIC -> ThemeValuesRClassic()
                 ThemeOption.Name.R_MINIMAL -> ThemeValuesRMinimal()

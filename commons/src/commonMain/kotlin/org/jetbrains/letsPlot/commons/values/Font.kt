@@ -13,7 +13,7 @@ class Font @JvmOverloads constructor(
     val isBold: Boolean = false,
     val isItalic: Boolean = false
 ) {
-    val isMonospased: Boolean = family.monospaced
+    val isMonospaced: Boolean = family.monospaced
 
     override fun toString(): String {
         return "$family $size ${if (isBold) "bold" else ""} ${if (isItalic) "italic" else ""}"

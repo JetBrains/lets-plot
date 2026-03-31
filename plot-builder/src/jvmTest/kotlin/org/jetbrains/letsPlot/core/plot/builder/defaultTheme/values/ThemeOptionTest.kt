@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.*
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem.COLOR
@@ -17,7 +18,6 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.elemWithFontOptions
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.numericOptions
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ForTest.themeNames
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import kotlin.test.Test
 
 internal class ThemeOptionTest {
@@ -106,6 +106,8 @@ internal class ThemeOptionTest {
             }
 
             ThemeOption.AXIS_TICKS_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickKey
+            ThemeOption.AXIS_MINOR_TICKS_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).minorTickKey
+            ThemeOption.AXIS_MINOR_TICKS_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).minorTickKey
             ThemeOption.AXIS_LINE_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).lineKey
             ThemeOption.AXIS_TOOLTIP_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tooltipKey
             ThemeOption.AXIS_TITLE_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).titleKey
@@ -136,6 +138,7 @@ internal class ThemeOptionTest {
             ThemeOption.PLOT_TITLE -> (theme.plot() as DefaultPlotTheme).titleKey
             ThemeOption.PLOT_SUBTITLE -> (theme.plot() as DefaultPlotTheme).subtitleKey
             ThemeOption.PLOT_CAPTION -> (theme.plot() as DefaultPlotTheme).captionKey
+            ThemeOption.PLOT_TAG -> (theme.plot() as DefaultPlotTheme).tagKey
             ThemeOption.LEGEND_KEY_RECT -> (theme.legend() as DefaultLegendTheme).keyRectKey
             ThemeOption.LEGEND_BKGR_RECT -> (theme.legend() as DefaultLegendTheme).backgroundKey
             ThemeOption.LEGEND_TEXT -> (theme.legend() as DefaultLegendTheme).textKey
@@ -150,6 +153,8 @@ internal class ThemeOptionTest {
             // Simple option
             ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
             ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
+            ThemeOption.AXIS_MINOR_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).minorTickLengthKey
+            ThemeOption.AXIS_MINOR_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).minorTickLengthKey
 
             else -> throw IllegalStateException("Unknown theme option: $option")
         }

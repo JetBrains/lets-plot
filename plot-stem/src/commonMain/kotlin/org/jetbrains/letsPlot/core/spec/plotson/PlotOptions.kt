@@ -21,6 +21,7 @@ class PlotOptions : Options(
     var scaleOptions: List<ScaleOptions>? by map(Plot.SCALES)
     var guides: Map<Aes<*>, GuideOptions>? by map(Plot.GUIDES)
     var title: TitleOptions? by map(Plot.TITLE)
+    var caption: CaptionOptions? by map(Plot.CAPTION)
     var coord: CoordOptions? by map(Plot.COORD)
     var themeOptions: ThemeOptions? by map(Plot.THEME)
     var size: Size? by map(Plot.SIZE)
@@ -42,6 +43,15 @@ class PlotOptions : Options(
     companion object {
         fun size(block: Size.() -> Unit) = Size().apply(block)
     }
+
+    operator fun List<ScaleOptions>?.plusAssign(scale: ScaleOptions) {
+        scaleOptions = (scaleOptions ?: emptyList()) + scale
+    }
+
+    operator fun List<LayerOptions>?.plusAssign(layer: LayerOptions) {
+        layerOptions = (layerOptions ?: emptyList()) + layer
+    }
 }
 
 fun plot(block: PlotOptions.() -> Unit) = PlotOptions().apply(block)
+

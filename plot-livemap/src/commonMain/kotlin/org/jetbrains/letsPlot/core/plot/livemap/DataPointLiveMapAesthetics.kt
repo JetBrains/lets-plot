@@ -120,11 +120,7 @@ internal class DataPointLiveMapAesthetics {
             MIDDLE -> 0.5
         }
     val vjust
-        get() = when (TextUtil.vAnchor(myP.vjust())) {
-            TOP -> 0.0
-            BOTTOM -> 1.0
-            CENTER -> 0.5
-        }
+        get() = 1 - TextUtil.vAnchor(myP.vjust())
 
     val fontface
         get() = when (val fontface = myP.fontface()) {

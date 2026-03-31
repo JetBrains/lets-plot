@@ -132,6 +132,11 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
         val EXPLODE: Aes<Double> =
             Aes("explode")
 
+        val ISTART: Aes<Double> = Aes("istart")
+        val IEND: Aes<Double> = Aes("iend")
+        val LENSTART: Aes<Double> = Aes("lenstart")
+        val LENEND: Aes<Double> = Aes("lenend")
+
         val SIZE_START: Aes<Double> = Aes("size_start")
         val SIZE_END: Aes<Double> = Aes("size_end")
         val STROKE_START: Aes<Double> = Aes("stroke_start")
@@ -248,10 +253,14 @@ class Aes<T> private constructor(val name: String, val isNumeric: Boolean = true
                     aes == LINEHEIGHT ||
                     aes == SLICE ||
                     aes == EXPLODE ||
+                    aes == ISTART ||
+                    aes == IEND ||
                     aes == SIZE_START ||
                     aes == SIZE_END ||
                     aes == STROKE_START ||
                     aes == STROKE_END ||
+                    aes == LENSTART ||
+                    aes == LENEND ||
                     aes == POINT_SIZE ||
                     aes == POINT_STROKE ||
                     aes == SEGMENT_SIZE ||

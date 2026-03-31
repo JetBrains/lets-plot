@@ -30,7 +30,7 @@ def test_infer_type_polars_dataframe():
 
         'enum_col': pl.Series('enum_col', ['a', 'b', 'c', 'a', 'b'], dtype=pl.Enum(['a', 'c', 'b'])),
         'categorical_col': pl.Series('categorical_col', ['a', 'b', 'c', 'a', 'b'],
-                                     dtype=pl.Categorical(['a', 'c', 'b'])),
+                                     dtype=pl.Categorical),
     })
 
     # Get type info

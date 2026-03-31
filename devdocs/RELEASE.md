@@ -6,7 +6,7 @@
  - Linux Ubuntu 20.04+
  - macOS 11.6+ (Apple Silicon processor)
  - JDK11
- - Python 3.9-3.13
+ - Python 3.9-3.14
  - `mingw-w64-x86_64-gcc` MSYS2 package (only for Windows)
 
 **Important!** Linux requires more special setup: [README.md](../tools/README.md)   
@@ -59,10 +59,10 @@ Put `local.properties` in the project root. See `local.properties.template` for 
 
  `git clone --branch vX.X.X git@github.com:JetBrains/lets-plot lets-plot-release`
 
-### 2. Prepare config file with Python paths for release script
+### 2. Prepare a config file with Python paths for the release script
 
 File must be in the YAML format and contain paths to bin and include directories for
-each Python version: from 3.9 to 3.13.
+each Python version: from 3.9 to 3.14.
 
 **Example:**
 
@@ -98,9 +98,9 @@ python .\build_release.py ..\release_pythons.yml
 ### 4. Check Python artifacts
 
 The directory `python-package/dist` must contain Python release wheels:
- - Windows: `x64` wheels for Python versions 3.9-3.13
- - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.9-3.13
- - Mac: `x64` and `arm64` wheels for 3.9-3.13
+ - Windows: `x64` wheels for Python versions 3.9-3.14
+ - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.9-3.14
+ - Mac: `x64` and `arm64` wheels for 3.9-3.14
 
 
 ## Publish artifacts
@@ -119,13 +119,12 @@ Fill `pypi` and `sonatype` sections with credentials in the `local.properties` f
  
 ### 2. JVM artifacts (Sonatype Central Repository)
 
-Build release JVM artifacts from one of build machines:
+Build release JVM artifacts from one of the build machines:
 
 ```shell
 ./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
-          publishLetsPlotJvmJfxPublicationToMavenRepository \
+          publishLetsPlotJvmSwingPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
-          publishLetsPlotImageExportPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
           publishLetsPlotCoreModulesToMavenRepository \
           publishLetsPlotIdeaPluginPublicationToMavenRepository
@@ -146,7 +145,7 @@ Check all artifacts were uploaded and verified, then push the "Publish" button.
      
  - Open the link: https://github.com/JetBrains/lets-plot/releases/new
  - Fill `Tag version` and `Release title` with the released version "vX.X.X".
- - Fill the description field - copy from the CHANGELOG.md.
+ - Fill the description field – copy from the CHANGELOG.md.
  - Add JS artifacts from the `js-package/distr` directory to the binaries box.
  - Select `This is a pre-release` checkbox if you are releasing a pre-release version.
  - Click `Publish release`.

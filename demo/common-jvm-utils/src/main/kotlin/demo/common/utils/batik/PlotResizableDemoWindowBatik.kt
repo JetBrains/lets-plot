@@ -5,7 +5,7 @@
 
 package demo.common.utils.batik
 
-import demo.common.utils.swing.PlotResizableDemoWindowBase
+import demo.common.utils.swingbase.PlotResizableDemoWindowBase
 import org.jetbrains.letsPlot.awt.plot.component.PlotComponentProvider
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
 import org.jetbrains.letsPlot.batik.plot.component.DefaultSwingContextBatik
@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.commons.registration.DisposingHub
 import org.jetbrains.letsPlot.core.plot.builder.PlotContainer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.SpecOverrideState
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import java.awt.Dimension
 import javax.swing.JComponent
@@ -51,7 +52,7 @@ class PlotResizableDemoWindowBatik(
         override fun createComponent(
             containerSize: Dimension?,
             sizingPolicy: SizingPolicy,
-            specOverrideList: List<Map<String, Any>>
+            specOverrideState: SpecOverrideState
         ): JComponent {
             @Suppress("DuplicatedCode")
             val plotSize = sizingPolicy.resize(

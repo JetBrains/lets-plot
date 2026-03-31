@@ -178,16 +178,23 @@ if system == "Linux":
                 "-Pimagemagick_lib_path=%s" % imagemagick_path
             ]
 
-            # Get current Python version in format 'cp3XX':
+            # Get current Python version in format 'cp3XX' and ABI flag:
             cpython_version = get_command_output([f"{python_paths["bin_path"]}/python",
                                                   "-c",
                                                   "import sys; print(f'cp{sys.version_info.major}{sys.version_info.minor}')"])
 
+            abi_flag = get_command_output([f"{python_paths["bin_path"]}/python",
+                                                   "-c",
+                                                   "import sys; print(f'{sys.abiflags}')"])
+
             # Run Python 'manylinux' package build:
-            build_python_packages(python_package_build_command + [architecture, cpython_version, imagemagick_path])
+            if abi_flag == "":
+                build_python_packages(python_package_build_command + [architecture, cpython_version, imagemagick_path])
+            else:
+                build_python_packages(python_package_build_command + [architecture, cpython_version, imagemagick_path, abi_flag])
 
             # And clean Python Extension artifacts before the next iteration:
-            run_command(python_extension_clean_command)
+            run_command(python_extension_clean_command + build_parameters)
 
 
 elif system == "Darwin" or system == "Windows":
@@ -223,7 +230,7 @@ elif system == "Darwin" or system == "Windows":
         build_python_packages(python_package_build_command + build_parameters)
 
         # And clean Python Extension artifacts before the next iteration:
-        run_command(python_extension_clean_command)
+        run_command(python_extension_clean_command + build_parameters)
 
 # Print final message and exit:
 print_message("Release build finished!")

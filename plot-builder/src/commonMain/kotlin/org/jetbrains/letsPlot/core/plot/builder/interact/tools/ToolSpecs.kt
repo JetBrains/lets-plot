@@ -5,26 +5,24 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
-import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec
-import org.jetbrains.letsPlot.core.interact.event.ToolInteractionSpec.ZoomBoxMode
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
+import org.jetbrains.letsPlot.core.interact.InteractionSpec.Name.*
+import org.jetbrains.letsPlot.core.interact.InteractionSpec.ZoomBoxMode.CENTER_START
+import org.jetbrains.letsPlot.core.interact.InteractionSpec.ZoomBoxMode.CORNER_START
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.res.ToolbarIcons
 
 object ToolSpecs {
-    val PAN_TOOL_NAME = "org.jetbrains.letsPlot.interact.DragPanTool"
-    val BBOX_ZOOM_TOOL_NAME = "org.jetbrains.letsPlot.interact.RubberBandZoomTool"
-    val CBOX_ZOOM_TOOL_NAME = "org.jetbrains.letsPlot.interact.CenterpointZoomTool"
+    const val PAN_TOOL_NAME = "org.jetbrains.letsPlot.interact.DragPanTool"
+    const val BBOX_ZOOM_TOOL_NAME = "org.jetbrains.letsPlot.interact.RubberBandZoomTool"
+    const val CBOX_ZOOM_TOOL_NAME = "org.jetbrains.letsPlot.interact.CenterpointZoomTool"
 
     val PAN_TOOL_SPEC = mapOf(
         "name" to PAN_TOOL_NAME,
         "label" to "Pan",
         "icon" to ToolbarIcons.PAN_TOOL,
         "interactions" to listOf(
-            mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.DRAG_PAN
-            ),
-            mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
-            )
+            InteractionSpec(DRAG_PAN),
+            InteractionSpec(WHEEL_ZOOM)
         )
     )
 
@@ -33,13 +31,8 @@ object ToolSpecs {
         "label" to "Rubber Band Zoom",
         "icon" to ToolbarIcons.ZOOM_CORNER,
         "interactions" to listOf(
-            mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM,
-                ToolInteractionSpec.ZOOM_BOX_MODE to ZoomBoxMode.CORNER_START
-            ),
-            mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
-            )
+            InteractionSpec(BOX_ZOOM, CORNER_START),
+            InteractionSpec(WHEEL_ZOOM)
         )
     )
 
@@ -48,13 +41,8 @@ object ToolSpecs {
         "label" to "Centerpoint Zoom",
         "icon" to ToolbarIcons.ZOOM_CENTER,
         "interactions" to listOf(
-            mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.BOX_ZOOM,
-                ToolInteractionSpec.ZOOM_BOX_MODE to ZoomBoxMode.CENTER_START
-            ),
-            mapOf(
-                ToolInteractionSpec.NAME to ToolInteractionSpec.WHEEL_ZOOM
-            )
+            InteractionSpec(BOX_ZOOM, CENTER_START),
+            InteractionSpec(WHEEL_ZOOM)
         )
     )
 }

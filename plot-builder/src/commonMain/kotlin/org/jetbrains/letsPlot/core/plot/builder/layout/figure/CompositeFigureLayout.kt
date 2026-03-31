@@ -7,7 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 
 interface CompositeFigureLayout {
     fun defaultSize(): DoubleVector

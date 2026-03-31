@@ -5,35 +5,27 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
-import org.jetbrains.letsPlot.commons.encoding.Png
-import org.jetbrains.letsPlot.commons.encoding.RGBEncoder
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
-import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.raster.shape.Element
-import org.jetbrains.letsPlot.raster.shape.Group
-import org.jetbrains.letsPlot.raster.shape.Image
-import org.jetbrains.letsPlot.raster.shape.Text
+import org.jetbrains.letsPlot.raster.scene.Group
+import org.jetbrains.letsPlot.raster.scene.Image
+import org.jetbrains.letsPlot.raster.scene.Node
+import org.jetbrains.letsPlot.raster.scene.Text
 
-internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFactory<SvgNode, Element> {
+internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFactory<SvgNode, Node> {
     companion object {
         private val LOG = PortableLogging.logger(SvgNodeMapperFactory::class)
     }
 
-    private val rgbEncoder: RGBEncoder = object : RGBEncoder {
-        override fun toDataUrl(bitmap: Bitmap) = Png.encodeDataImage(bitmap)
-    }
-
-
-    override fun createMapper(source: SvgNode): Mapper<out SvgNode, out Element> {
+    override fun createMapper(source: SvgNode): Mapper<out SvgNode, out Node> {
         var src = source
         val target = SvgUtils.newElement(src, peer)
 
         if (src is SvgImageElementEx) {
             //src = src.asImageElement(SkiaRGBEncoder)
-            src = src.asImageElement(rgbEncoder)
+            src = src.asImageElement()
         }
 
         return when (src) {

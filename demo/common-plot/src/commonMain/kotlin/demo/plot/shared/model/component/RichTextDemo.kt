@@ -8,8 +8,8 @@ package demo.plot.shared.model.component
 import demo.plot.common.model.SimpleDemoBase
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TextLabel
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 
 class RichTextDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
@@ -120,12 +120,12 @@ class RichTextDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             fontStyle: String = "normal",
             fontWeight: String = "normal"
         ): SvgGElement {
-            val textLabel = createTextLabel(exampleId, hAnchor, vAnchor, angle, fontFamily, fontSize, fontStyle, fontWeight).also {
+            val label = createLabel(exampleId, hAnchor, vAnchor, angle, fontFamily, fontSize, fontStyle, fontWeight).also {
                 it.moveTo(DIM.x / 2, DIM.y / 2)
             }
             val exampleSvgGElement = SvgGElement()
             exampleSvgGElement.children().add(createAxis())
-            exampleSvgGElement.children().add(textLabel.rootGroup)
+            exampleSvgGElement.children().add(label.rootGroup)
             SvgUtils.transformTranslate(exampleSvgGElement, shift.x, shift.y)
             return exampleSvgGElement
         }
@@ -149,7 +149,7 @@ class RichTextDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             return g
         }
 
-        private fun createTextLabel(
+        private fun createLabel(
             exampleId: Int,
             hAnchor: Text.HorizontalAnchor,
             vAnchor: Text.VerticalAnchor,
@@ -158,8 +158,8 @@ class RichTextDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             fontSize: Double,
             fontStyle: String,
             fontWeight: String
-        ): TextLabel {
-            val label = TextLabel("$FORMULA ($exampleId)")
+        ): Label {
+            val label = Label("$FORMULA ($exampleId)")
             label.setHorizontalAnchor(hAnchor)
             label.setVerticalAnchor(vAnchor)
             label.rotate(angle)

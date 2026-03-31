@@ -21,12 +21,13 @@ import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.stat.SimpleStatContext
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -39,7 +40,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.PointDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupingContext
 import org.jetbrains.letsPlot.core.plot.builder.data.StatInput
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
 
 class GeomLayerBuilder(
@@ -52,13 +52,13 @@ class GeomLayerBuilder(
     private var myDefaultFormatters: Map<Any, (Any) -> String> = emptyMap()
     private val myBindings = ArrayList<VarBinding>()
     private val myConstantByAes = TypedKeyHashMap()
-    private var myGroupingVarName: String? = null
+    private var explicitGroupingVarNames: List<String>? = null
     private var myPathIdVarName: String? = null
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider>()
 
     private var myDataPreprocessor: ((DataFrame, Map<Aes<*>, Transform>) -> DataFrame)? = null
     private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
-    private var myContextualMappingProvider: ContextualMappingProvider = ContextualMappingProvider.NONE
+    private var myContextualMappingProvider: ContextualMappingProvider? = null
 
     private var myIsLegendDisabled: Boolean = false
     private var myCustomLegendOptions: CustomLegendOptions? = null
@@ -80,13 +80,8 @@ class GeomLayerBuilder(
         return this
     }
 
-    fun groupingVar(v: DataFrame.Variable): GeomLayerBuilder {
-        myGroupingVarName = v.name
-        return this
-    }
-
-    fun groupingVarName(v: String): GeomLayerBuilder {
-        myGroupingVarName = v
+    fun groupingVarNames(v: List<String>): GeomLayerBuilder {
+        explicitGroupingVarNames = v
         return this
     }
 
@@ -147,7 +142,13 @@ class GeomLayerBuilder(
         useCustomColor: Boolean
     ): GeomLayerBuilder {
         myAnnotationProvider = { dataAccess, dataFrame ->
-            AnnotationProviderUtil.createAnnotation(annotationSpec, dataAccess, dataFrame, themeTextStyle, useCustomColor)
+            AnnotationProviderUtil.createAnnotation(
+                annotationSpec,
+                dataAccess,
+                dataFrame,
+                themeTextStyle,
+                useCustomColor
+            )
         }
         return this
     }
@@ -223,18 +224,11 @@ class GeomLayerBuilder(
             replacementBindings[binding.aes] = binding
         }
 
-        // (!) Positional aes scales have undefined `mapper` at this time because
-        // dimensions of plot are not yet known.
-        // Data Access shouldn't use aes mapper (!)
-//        val dataAccess = PointDataAccess(data, replacementBindings, scaleMap)
-
-        val groupingVariables = DataProcessing.defaultGroupingVariables(
-            data,
-            myBindings,
-            myPathIdVarName
-        )
-
-        val groupingContext = GroupingContext(data, groupingVariables, myGroupingVarName, handlesGroups())
+        val groupingContext = if (handlesGroups()) {
+            GroupingContext.create(data, explicitGroupingVarNames, myBindings, myPathIdVarName)
+        } else {
+            GroupingContext.singleGroup()
+        }
         return MyGeomLayer(
             data,
             geomProvider,
@@ -277,7 +271,7 @@ class GeomLayerBuilder(
         override val scaleMap: Map<Aes<*>, Scale>,
         override val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
         override val locatorLookupSpec: LookupSpec,
-        private val contextualMappingProvider: ContextualMappingProvider,
+        private val contextualMappingProvider: ContextualMappingProvider?,
         override val isLegendDisabled: Boolean,
         override val customLegendOptions: CustomLegendOptions?,
         override val isYOrientation: Boolean,
@@ -298,18 +292,19 @@ class GeomLayerBuilder(
             }
         )
         override val geomKind: GeomKind = geomProvider.geomKind
-        override val aestheticsDefaults: AestheticsDefaults = AestheticsDefaults.create(geomKind, geomTheme).let { aestheticsDefaults ->
-            // Default y must be NaN or 0 depending on the orientation to avoid drawing the midline/midpoint when it is not specified
-            if (isYOrientation && geomKind in listOf(GeomKind.CROSS_BAR, GeomKind.POINT_RANGE)) {
-                val defaultX = aestheticsDefaults.defaultValue(Aes.X)
-                val defaultY = aestheticsDefaults.defaultValue(Aes.Y)
-                aestheticsDefaults
-                    .with(Aes.Y, defaultX)
-                    .with(Aes.X, defaultY)
-            } else {
-                aestheticsDefaults
+        override val aestheticsDefaults: AestheticsDefaults =
+            AestheticsDefaults.create(geomKind, geomTheme).let { aestheticsDefaults ->
+                // Default y must be NaN or 0 depending on the orientation to avoid drawing the midline/midpoint when it is not specified
+                if (isYOrientation && geomKind in listOf(GeomKind.CROSS_BAR, GeomKind.POINT_RANGE)) {
+                    val defaultX = aestheticsDefaults.defaultValue(Aes.X)
+                    val defaultY = aestheticsDefaults.defaultValue(Aes.Y)
+                    aestheticsDefaults
+                        .with(Aes.Y, defaultX)
+                        .with(Aes.X, defaultY)
+                } else {
+                    aestheticsDefaults
+                }
             }
-        }
 
         private val myRenderedAes: List<Aes<*>> = GeomMeta.renders(
             geomProvider.geomKind,
@@ -372,9 +367,9 @@ class GeomLayerBuilder(
             }
         }
 
-        override fun createContextualMapping(): ContextualMapping {
+        override fun createContextualMapping(): ContextualMapping? {
             val dataAccess = PointDataAccess(dataFrame, varBindings, scaleMap, defaultFormatters)
-            return contextualMappingProvider.createContextualMapping(dataAccess, dataFrame)
+            return contextualMappingProvider?.createContextualMapping(dataAccess, dataFrame)
         }
 
         override fun createAnnotation(): Annotation? {
@@ -399,16 +394,11 @@ class GeomLayerBuilder(
                     Stats.IDENTITY -> transformedData
                     else -> {
                         val statCtx = SimpleStatContext(transformedData)
-                        val groupingVariables = DataProcessing.defaultGroupingVariables(
-                            data,
-                            builder.myBindings,
-                            builder.myPathIdVarName
-                        )
-                        val groupingCtx = GroupingContext(
-                            transformedData,
-                            groupingVariables,
-                            builder.myGroupingVarName,
-                            expectMultiple = true
+                        val groupingCtx = GroupingContext.create(
+                            data = transformedData,
+                            explicitGroupingVarNames = builder.explicitGroupingVarNames,
+                            varBindings = builder.myBindings,
+                            pathIdVarName = builder.myPathIdVarName
                         )
                         val statInput = StatInput(
                             transformedData,

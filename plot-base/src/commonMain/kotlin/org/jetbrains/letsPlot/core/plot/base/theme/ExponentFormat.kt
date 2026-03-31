@@ -15,6 +15,6 @@ data class ExponentFormat(
     }
 
     companion object {
-        val DEF_EXPONENT_FORMAT = ExponentFormat(NotationType.E)
+        val DEF_EXPONENT_FORMAT = ExponentFormat(NotationType.POW)
     }
 }

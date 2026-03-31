@@ -23,6 +23,9 @@ abstract class GeomBase : Geom {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = GenericLegendKeyElementFactory()
 
+    protected open val geomName: String = "unhandled_geom"
+    private var nullCounter = 0
+
     override fun build(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -31,6 +34,9 @@ abstract class GeomBase : Geom {
         ctx: GeomContext
     ) {
         buildIntern(root, aesthetics, pos, coord, ctx)
+        if (SHOW_NA_MESSAGES) {
+            ctx.consumeMessages(getMessages())
+        }
     }
 
     open fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
@@ -39,6 +45,25 @@ abstract class GeomBase : Geom {
 
     protected fun getGeomTargetCollector(ctx: GeomContext): GeomTargetCollector {
         return ctx.targetCollector
+    }
+
+    open fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+        return dataPoints
+    }
+
+    protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
+        val source = aesthetics.dataPoints()
+        val result = prepareDataPoints(source)
+        nullCounter = source.count() - result.count()
+        return result
+    }
+
+    fun addNulls(count: Int) {
+        nullCounter += count
+    }
+
+    private fun getMessages(): List<String> {
+        return if (nullCounter > 0) listOf("$geomName: removed $nullCounter data point(s)") else emptyList()
     }
 
     protected abstract fun buildIntern(
@@ -50,6 +75,8 @@ abstract class GeomBase : Geom {
     )
 
     companion object {
+        private const val SHOW_NA_MESSAGES = false
+
         fun wrap(slimGroup: SvgSlimGroup): SvgGElement {
             val g = SvgGElement()
             g.isPrebuiltSubtree = true

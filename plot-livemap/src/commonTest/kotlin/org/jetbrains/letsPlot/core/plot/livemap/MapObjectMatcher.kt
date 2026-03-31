@@ -52,7 +52,6 @@ internal class MapObjectMatcher {
             POINT -> matchPoint(mapEntity)
             POLYGON -> matchPolygon(mapEntity)
             TEXT -> matchText(mapEntity)
-            else -> throw IllegalStateException("Unknown map object layer kind: ${mapEntity.myLayerKind}" )
         }
     }
 

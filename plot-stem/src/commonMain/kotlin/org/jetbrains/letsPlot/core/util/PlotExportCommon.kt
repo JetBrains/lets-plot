@@ -4,6 +4,15 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
 object PlotExportCommon {
+    data class ExportParameters(
+        val sizingPolicy: SizingPolicy, // sizing policy to use for building the plot
+        val scaleFactor: Double, // scale factor to apply to the plot rendering
+        val sizeUnit: SizeUnit, // size unit of the plot
+        val dpi: Double // output DPI
+    )
+
+    private const val MAX_INCHES = 20.0
+
     enum class SizeUnit(val value: String, val isPhysicalUnit: Boolean) {
         PX("px", false),
         MM("mm", true),
@@ -22,16 +31,18 @@ object PlotExportCommon {
     }
 
     // Compute export parameters based on the provided plot size, DPI, unit, and scale factor.
-    // Returns a Triple containing:
-    // 1. SizingPolicy: Defines how the plot should be sized.
-    // 2. Double: The scale factor to apply to the plot rendering.
-    // 3. SizeUnit: size unit of the plotSize.
     fun computeExportParameters(
         plotSize: DoubleVector? = null,
         dpi: Number? = null,
         unit: SizeUnit? = null,
         scaleFactor: Number? = null
-    ): Triple<SizingPolicy, Double, SizeUnit> {
+    ): ExportParameters {
+        @Suppress("NAME_SHADOWING")
+        val dpi = dpi?.toDouble()?.takeIf(Double::isFinite)
+
+        @Suppress("NAME_SHADOWING")
+        val scaleFactor = scaleFactor?.toDouble()?.takeIf { it.isFinite() && it > 0.0 }
+
         val exportScale: Double
         val exportUnit: SizeUnit
 
@@ -39,37 +50,40 @@ object PlotExportCommon {
             // ggsave(png) - no size, no unit, no dpi
             // Use pixel ggsize (or default) and apply scale (default 2.0) for higher-resolution raster.
             exportUnit = SizeUnit.PX
-            exportScale = scaleFactor?.toDouble() ?: 2.0
+            exportScale = scaleFactor ?: 2.0
         } else if (plotSize == null && unit == null && dpi != null) {
             // ggsave(png, dpi=150) - only DPI is specified.
             // Use pixel ggsize (or default), treat it as 96 PPI to get a physical size, then render at the given DPI.
             exportUnit = SizeUnit.PX
-            exportScale = scaleFactor?.toDouble() ?: 1.0
+            exportScale = scaleFactor ?: 1.0
         } else if (plotSize != null && unit == null) {
             // ggsave(png, w=3, h=2) - size given without unit; assume inches.
+
+            if (plotSize.x >= MAX_INCHES || plotSize.y >= MAX_INCHES) {
+                throw IllegalArgumentException("The image size was interpreted as inches, but it seems unusually large. Please specify the size unit explicitly (px, cm, mm, in).")
+            }
             exportUnit = SizeUnit.IN
-            exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
+            exportScale = scaleFactor ?: 1.0 // Default scaling to preserve the specified size
         } else if (plotSize != null && unit != null) {
             // ggsave(png, w=3, h=2, unit=cm, dpi=150) - size + explicit unit (dpi optional).
             // user wants to save a plot with a specific size and unit
             exportUnit = unit
-            exportScale = scaleFactor?.toDouble() ?: 1.0 // Default scaling to preserve the specified size
+            exportScale = scaleFactor ?: 1.0 // Default scaling to preserve the specified size
         } else { // plotSize == null && unit != null
             // size is not given, unit alone is ineffective
             //   ggsave(png, unit = cm)           - no width/height; unit has no effect
             //   ggsave(png, unit = cm, scale=3)  - scale applies to pixel ggsize
             exportUnit = unit ?: SizeUnit.PX
-            exportScale = scaleFactor?.toDouble() ?: 1.0
+            exportScale = scaleFactor ?: 1.0
         }
 
-        val exportDpi = dpi?.toDouble() ?: when (exportUnit) {
+        val exportDpi = dpi ?: when (exportUnit) {
             SizeUnit.IN,
             SizeUnit.CM,
             SizeUnit.MM -> 300.0
 
             SizeUnit.PX -> 96.0
         }
-
 
         val sizingPolicy = when {
             plotSize == null -> SizingPolicy.keepFigureDefaultSize()
@@ -87,9 +101,11 @@ object PlotExportCommon {
             }
         }
 
-        val finalScaleFactor = exportDpi / 96.0 * exportScale
+        val finalScaleFactor = when {
+            exportUnit == SizeUnit.PX && plotSize != null -> exportScale
+            else -> (exportDpi / 96.0) * exportScale
+        }
 
-        return Triple(sizingPolicy, finalScaleFactor, exportUnit)
+        return ExportParameters(sizingPolicy, finalScaleFactor, exportUnit, exportDpi)
     }
-
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
-import org.jetbrains.letsPlot.raster.shape.Circle
+import org.jetbrains.letsPlot.raster.scene.Circle
 
 internal object SvgCircleAttrMapping : SvgShapeMapping<Circle>() {
     override fun setAttribute(target: Circle, name: String, value: Any?) {

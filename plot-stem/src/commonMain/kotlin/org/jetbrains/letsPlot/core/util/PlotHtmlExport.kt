@@ -11,6 +11,8 @@ import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
+import org.jetbrains.letsPlot.core.util.PlotHtmlHelper.getStaticHtmlPageForRawSpec
+import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import kotlin.math.floor
 
 object PlotHtmlExport {
@@ -33,7 +35,7 @@ object PlotHtmlExport {
     ): String {
 
         val fixedSizeQ = if (iFrame) {
-            // Use fixed sizing when in iframe
+            // Use fixed sizing when in an iframe
             plotSize ?: preferredPlotSizeFromRawSpec(plotSpec) ?: DEF_PLOT_SIZE
         } else {
             null
@@ -44,32 +46,46 @@ object PlotHtmlExport {
             )
         }
 
+        val sizingPolicy = when (fixedSizeQ) {
+            null -> SizingPolicy.notebookCell()
+            else -> SizingPolicy.fixed(fixedSizeQ.x, fixedSizeQ.y)
+        }
 
-        val configureHtml = PlotHtmlHelper.getStaticConfigureHtml(scriptUrl)
-        val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(
-            plotSpec,
-            size = fixedSizeQ,
-            removeComputationMessages = true,
-            logComputationMessages = true
-        )
+//        val displayHtml = PlotHtmlHelper.getStaticDisplayHtmlForRawSpec(
+//            plotSpec,
+//            size = fixedSizeQ,
+//            removeComputationMessages = true,
+//            logComputationMessages = true
+//        )
 
         val style = if (iFrame) {
             "<style> html, body { margin: 0; padding: 0; overflow: hidden; } </style>"
         } else {
             "<style> html, body { margin: 0; padding: 0; } </style>"
         }
-        val html = """
-            |<html lang="en">
-            |   <head>
-            |       <meta charset="UTF-8">
-            |       $style
-            |       $configureHtml
-            |   </head>
-            |   <body>
-            |       $displayHtml
-            |   </body>
-            |</html>
-        """.trimMargin()
+
+//        val html = """
+//            |<html lang="en">
+//            |   <head>
+//            |       <meta charset="UTF-8">
+//            |       $style
+//            |       $configureHtml
+//            |   </head>
+//            |   <body>
+//            |       $displayHtml
+//            |   </body>
+//            |</html>
+//        """.trimMargin()
+
+        val html = getStaticHtmlPageForRawSpec(
+            plotSpec,
+            scriptUrl,
+            sizingPolicy,
+            displayHtmlPolicy = DisplayHtmlPolicy.entirelyStatic(),
+            style = style,
+            removeComputationMessages = true,
+            logComputationMessages = true
+        )
 
         return if (iFrame) {
             fixedSizeQ!!

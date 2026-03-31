@@ -39,6 +39,16 @@ object GuideMappers {
         return asNotContinuous(mapper)
     }
 
+    fun <TargetT> continuousToQuantizedContinuous(
+        domain: DoubleSpan?,
+        outputValues: List<TargetT>,
+        naValue: TargetT
+    ): GuideMapper<TargetT> {
+        // quantized
+        val mapper = Mappers.quantized(domain, outputValues, naValue)
+        return asContinuous(mapper)
+    }
+
     fun discreteToContinuous(
         discreteTransform: DiscreteTransform,
         outputRange: DoubleSpan,

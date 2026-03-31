@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.reduce
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
@@ -17,21 +16,21 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONT
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
 
 class TargetCollectorHelper(
-    geomKind: GeomKind,
     private val ctx: GeomContext
 ) {
-    private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(geomKind, ctx)
+    private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(ctx)
     private val targetCollector: GeomTargetCollector = ctx.targetCollector
 
-    fun addPaths(paths: Map<Int, PathData>) {
+    fun addPaths(paths: Collection<PathData>) {
         for (path in paths) {
-            val simplifiedPath = reduce(path.value) ?: continue
+            val simplifiedPath = reduce(path) ?: continue
             addPath(simplifiedPath, TooltipParams(markerColors = colorMarkerMapper(simplifiedPath.aes)))
         }
     }
 
-    fun addVariadicPaths(paths: Map<Int, List<PathData>>) {
-        for (subPaths in paths.values) {
+    fun addVariadicPaths(paths: List<PathData>) {
+        val grouped = paths.groupBy { path -> path.aes.group() }
+        for (subPaths in grouped.values) {
             val simplifiedSubPaths = subPaths.mapNotNull(::reduce)
 
             // build a subpaths aes index so later we would fetch a proper tooltip marker.

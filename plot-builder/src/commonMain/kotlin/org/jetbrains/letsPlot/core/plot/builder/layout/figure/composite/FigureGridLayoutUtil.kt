@@ -5,13 +5,23 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.PlotFigureBuildInfo
 
 internal object FigureGridLayoutUtil {
     fun indexToRow(index: Int, ncol: Int) = index.floorDiv(ncol)
     fun indexToCol(index: Int, ncol: Int) = index.mod(ncol)
 
-    fun rowElements(
+    fun rowPlotElements(
+        row: Int,
+        figs: List<FigureBuildInfo?>,
+        ncol: Int,
+    ): List<PlotFigureBuildInfo?> {
+        @Suppress("UNCHECKED_CAST")
+        return rowElements(row, figs, ncol, inclideComposite = false) as List<PlotFigureBuildInfo?>
+    }
+
+    private fun rowElements(
         row: Int,
         figs: List<FigureBuildInfo?>,
         ncol: Int,
@@ -27,7 +37,16 @@ internal object FigureGridLayoutUtil {
         }
     }
 
-    fun colElements(
+    fun colPlotElements(
+        col: Int,
+        figs: List<FigureBuildInfo?>,
+        ncol: Int,
+    ): List<PlotFigureBuildInfo?> {
+        @Suppress("UNCHECKED_CAST")
+        return colElements(col, figs, ncol, inclideComposite = false) as List<PlotFigureBuildInfo?>
+    }
+
+    private fun colElements(
         col: Int,
         figs: List<FigureBuildInfo?>,
         ncol: Int,

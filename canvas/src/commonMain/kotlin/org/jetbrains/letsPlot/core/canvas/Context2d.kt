@@ -7,13 +7,19 @@ package org.jetbrains.letsPlot.core.canvas
 
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas.Snapshot
 import org.jetbrains.letsPlot.core.canvas.Path2d.*
 
-interface Context2d {
+interface Context2d : Disposable {
+    val contentScale: Double
+
     fun clearRect(rect: DoubleRectangle)
+    fun clearRect(x: Double, y: Double, w: Double, h: Double)
     fun drawImage(snapshot: Snapshot)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double)
@@ -29,41 +35,45 @@ interface Context2d {
         dh: Double
     )
 
+    fun setFont(f: Font)
+    fun setGlobalAlpha(alpha: Double)
+    fun setLineWidth(lineWidth: Double)
+    fun setFillStyle(color: Color?)
+    fun setStrokeStyle(color: Color?)
+    fun setLineCap(lineCap: LineCap)
+    fun setStrokeMiterLimit(miterLimit: Double)
+    fun setLineJoin(lineJoin: LineJoin)
+    fun setTextBaseline(baseline: TextBaseline)
+    fun setTextAlign(align: TextAlign)
+    fun setLineDash(lineDash: DoubleArray)
+    fun setLineDashOffset(lineDashOffset: Double)
+
+    fun drawCircle(x: Double, y: Double, radius: Double)
+    fun strokeRect(x: Double, y: Double, w: Double, h: Double)
+    fun fillRect(x: Double, y: Double, w: Double, h: Double)
+    fun strokeText(text: String, x: Double, y: Double)
+    fun fillText(text: String, x: Double, y: Double)
+
     fun beginPath()
     fun closePath()
     fun clip()
     fun stroke()
     fun fill()
     fun fillEvenOdd()
-    fun fillRect(x: Double, y: Double, w: Double, h: Double)
     fun moveTo(x: Double, y: Double)
     fun lineTo(x: Double, y: Double)
     fun arc(x: Double, y: Double, radius: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean = false)
     fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean)
+    fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double)
+
     fun save()
     fun restore()
-    fun setFillStyle(color: Color?)
-    fun setStrokeStyle(color: Color?)
-    fun setGlobalAlpha(alpha: Double)
-    fun setFont(f: Font)
-    fun setLineWidth(lineWidth: Double)
-    fun strokeRect(x: Double, y: Double, w: Double, h: Double)
-    fun strokeText(text: String, x: Double, y: Double)
-    fun fillText(text: String, x: Double, y: Double)
     fun scale(x: Double, y: Double)
     fun scale(xy: Double)
     fun rotate(angle: Double)
     fun translate(x: Double, y: Double)
     fun transform(sx: Double, ry: Double, rx: Double, sy: Double, tx: Double, ty: Double)
-    fun bezierCurveTo(cp1x: Double, cp1y: Double, cp2x: Double, cp2y: Double, x: Double, y: Double)
-    fun setLineJoin(lineJoin: LineJoin)
-    fun setLineCap(lineCap: LineCap)
-    fun setStrokeMiterLimit(miterLimit: Double)
-    fun setTextBaseline(baseline: TextBaseline)
-    fun setTextAlign(align: TextAlign)
     fun setTransform(m00: Double, m10: Double, m01: Double, m11: Double, m02: Double, m12: Double)
-    fun setLineDash(lineDash: DoubleArray)
-    fun setLineDashOffset(lineDashOffset: Double)
     fun measureTextWidth(str: String): Double
     fun measureText(str: String): TextMetrics
 
@@ -102,18 +112,8 @@ interface Context2d {
         lineTo(points.last().x, points.last().y)
     }
 
+
 }
-
-fun Context2d.affineTransform(matrix: AffineTransform) = transform(
-    sx = matrix.sx,
-    ry = matrix.ry,
-    rx = matrix.rx,
-    sy = matrix.sy,
-    tx = matrix.tx,
-    ty = matrix.ty
-)
-
-fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
 
 enum class TextBaseline {
     ALPHABETIC, BOTTOM, MIDDLE, TOP
@@ -151,4 +151,130 @@ fun Context2d.applyPath(commands: List<PathCommand>) {
             }
         }
     }
+}
+
+
+fun Context2d.translate(v: DoubleVector) {
+    translate(v.x, v.y)
+}
+
+fun Context2d.translate(v: Vector) {
+    translate(v.x.toDouble(), v.y.toDouble())
+}
+
+fun Context2d.translate(x: Int, y: Int) {
+    translate(x.toDouble(), y.toDouble())
+}
+
+fun Context2d.transform(matrix: AffineTransform) = transform(
+    sx = matrix.sx,
+    ry = matrix.ry,
+    rx = matrix.rx,
+    sy = matrix.sy,
+    tx = matrix.tx,
+    ty = matrix.ty
+)
+
+fun Context2d.setTransform(matrix: AffineTransform) = setTransform(
+    m00 = matrix.sx,
+    m10 = matrix.ry,
+    m01 = matrix.rx,
+    m11 = matrix.sy,
+    m02 = matrix.tx,
+    m12 = matrix.ty
+)
+
+fun Context2d.drawImage(snapshot: Snapshot, p: Vec<*>) = drawImage(snapshot, p.x, p.y)
+
+fun Context2d.moveTo(x: Number, y: Number) {
+    moveTo(x.toDouble(), y.toDouble())
+}
+
+fun Context2d.lineTo(x: Number, y: Number) {
+    lineTo(x.toDouble(), y.toDouble())
+}
+
+
+fun Context2d.bezierCurveTo(
+    cp1x: Number,
+    cp1y: Number,
+    cp2x: Number,
+    cp2y: Number,
+    x: Number,
+    y: Number
+) {
+    bezierCurveTo(
+        cp1x.toDouble(),
+        cp1y.toDouble(),
+        cp2x.toDouble(),
+        cp2y.toDouble(),
+        x.toDouble(),
+        y.toDouble()
+    )
+}
+
+fun Context2d.ellipse(
+    x: Number,
+    y: Number,
+    radiusX: Number,
+    radiusY: Number,
+    rotation: Number,
+    startAngle: Number,
+    endAngle: Number,
+    anticlockwise: Boolean = false
+) {
+    ellipse(
+        x.toDouble(),
+        y.toDouble(),
+        radiusX.toDouble(),
+        radiusY.toDouble(),
+        rotation.toDouble(),
+        startAngle.toDouble(),
+        endAngle.toDouble(),
+        anticlockwise
+    )
+}
+
+fun Context2d.translate(x: Number, y: Number) {
+    translate(x.toDouble(), y.toDouble())
+}
+
+fun Context2d.arc(
+    x: Number,
+    y: Number,
+    radius: Number,
+    startAngle: Number,
+    endAngle: Number,
+    anticlockwise: Boolean = false
+) {
+    arc(
+        x.toDouble(),
+        y.toDouble(),
+        radius.toDouble(),
+        startAngle.toDouble(),
+        endAngle.toDouble(),
+        anticlockwise
+    )
+}
+
+fun Context2d.transform(
+    sx: Number,
+    ry: Number,
+    rx: Number,
+    sy: Number,
+    tx: Number,
+    ty: Number
+) {
+    transform(
+        sx.toDouble(),
+        ry.toDouble(),
+        rx.toDouble(),
+        sy.toDouble(),
+        tx.toDouble(),
+        ty.toDouble()
+    )
+}
+
+fun Context2d.fillRect(x: Number, y: Number, width: Number, height: Number) {
+    fillRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
 }

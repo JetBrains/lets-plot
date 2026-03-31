@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble.geom
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 
 internal class PointDataAccess(

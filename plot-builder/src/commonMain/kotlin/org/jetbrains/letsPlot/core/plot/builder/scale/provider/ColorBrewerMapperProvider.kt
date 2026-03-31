@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette
 import org.jetbrains.letsPlot.core.commons.color.ColorPalette.Type.*
 import org.jetbrains.letsPlot.core.commons.color.ColorScheme
+import org.jetbrains.letsPlot.core.commons.color.PaletteOverflow
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil
 import org.jetbrains.letsPlot.core.commons.color.PaletteUtil.colorSchemeByIndex
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
@@ -17,23 +18,28 @@ import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 
 
 /**
  * @param paletteTypeName - One of seq (sequential), div (diverging) or qual (qualitative)
- * @param paletteNameOrIndex - If a string, will use that named palette.
- * If a number, will index into the list of palettes of appropriate type
+ * @param paletteNameOrIndex - If a string, then will use that named palette.
+ * If a number, then will index into a list of palettes of the appropriate type.
  * @param direction - Sets the order of colors in the scale. If 1, the default, colors are as output by brewer.pal.
  * If -1, the order of colors is reversed
+ * @param overflow - How to handle the case when more colors are needed than the palette provides.
+ * AUTO (default): 'generate' for qualitative palettes, 'interpolate' for sequential and diverging.
  * @param naValue
  */
 class ColorBrewerMapperProvider(
     private val paletteTypeName: String?,
     private val paletteNameOrIndex: Any?,
     private val direction: Double?,
-    naValue: Color
-) : MapperProviderBase<Color>(naValue) {
+    private val overflow: PaletteOverflow = PaletteOverflow.AUTO,
+    naValue: Color,
+) : MapperProviderBase<Color>(naValue),
+    PaletteGenerator {
 
     init {
         require(paletteNameOrIndex?.let {
@@ -49,7 +55,7 @@ class ColorBrewerMapperProvider(
 
     override fun createDiscreteMapper(discreteTransform: DiscreteTransform): ScaleMapper<Color> {
         val n = discreteTransform.effectiveDomain.size
-        val colorScheme = colorScheme(true, n)
+        val colorScheme = colorScheme(true)
         val colors = colors(colorScheme, n)
         return GuideMappers.discreteToDiscrete(discreteTransform, colors, naValue)
     }
@@ -60,18 +66,18 @@ class ColorBrewerMapperProvider(
 
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
-        return GuideMappers.continuousToDiscrete(domain, colors, naValue)
+        return GuideMappers.continuousToQuantizedContinuous(domain, colors, naValue)
     }
 
     private fun colors(colorScheme: ColorScheme, count: Int): List<Color> {
-        val colors: List<Color> = PaletteUtil.schemeColors(colorScheme, count)
+        val colors: List<Color> = PaletteUtil.schemeColors(colorScheme, count, overflow)
         return when (direction?.let { direction < 0 } ?: false) {
             true -> colors.reversed()
             false -> colors
         }
     }
 
-    private fun colorScheme(discrete: Boolean, colorCount: Int? = null): ColorScheme {
+    private fun colorScheme(discrete: Boolean): ColorScheme {
         val paletteType = when {
             paletteNameOrIndex is String -> {
                 val palType = PaletteUtil.paletteTypeByPaletteName(paletteNameOrIndex)
@@ -92,6 +98,15 @@ class ColorBrewerMapperProvider(
         }
     }
 
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        // The discrete mapper here handles palette size better.
+        return createDiscreteMapper(
+            discreteTransform = DiscreteTransform(
+                domainValues = (0 until colorCount).toList(),
+                domainLimits = emptyList()
+            )
+        )
+    }
 
     companion object {
         val DEFAULT_QUAL_COLOR_SCHEME: ColorScheme = ColorPalette.Qualitative.Set1
@@ -119,7 +134,7 @@ class ColorBrewerMapperProvider(
                 }
             } catch (ignore: IllegalArgumentException) {
                 // Enum type has no constant with the specified name error.
-                // Replace generic error message with specific one
+                // Replace a generic error message with a specific one
                 throw IllegalArgumentException(cantFindPaletteError(paletteName))
             }
         }
@@ -129,11 +144,11 @@ class ColorBrewerMapperProvider(
                 |Brewer palette '$paletteName' was not found. 
                 |Valid palette names are: 
                 |   Type 'seq' (sequential): 
-                |       ${names(ColorPalette.Sequential.values())}       
+                |       ${names(ColorPalette.Sequential.entries.toTypedArray())}       
                 |   Type 'div' (diverging): 
-                |       ${names(ColorPalette.Diverging.values())}       
+                |       ${names(ColorPalette.Diverging.entries.toTypedArray())}       
                 |   Type 'qual' (qualitative): 
-                |       ${names(ColorPalette.Qualitative.values())}       
+                |       ${names(ColorPalette.Qualitative.entries.toTypedArray())}       
             """.trimMargin()
         }
 

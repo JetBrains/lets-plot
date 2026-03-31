@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.InteractionTarget
 import org.jetbrains.letsPlot.core.interact.ToolFeedback
+import org.jetbrains.letsPlot.core.interact.event.ModifiersMatcher
 import org.jetbrains.letsPlot.core.interact.mouse.MouseDragInteraction
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
@@ -22,7 +23,14 @@ import kotlin.math.abs
 
 class DrawRectFeedback(
     private val centerStart: Boolean,
-    private val onCompleted: ((targetId: String?, dataBounds: DoubleRectangle, flipped: Boolean, SelectionMode) -> Unit)
+    private val modifiersMatcher: ModifiersMatcher,
+    private val onCompleted: (
+        targetId: String?,
+        dataBounds: DoubleRectangle,
+        flipped: Boolean,
+        SelectionMode,
+        scaleFactor: DoubleVector
+    ) -> Unit
 ) : ToolFeedback {
 
     private var selector: Selector = UnknownSelector()
@@ -39,8 +47,7 @@ class DrawRectFeedback(
     }
 
     private val selectionSvg = SvgPathElement().apply {
-        fillColor().set(Color.LIGHT_GRAY)
-        opacity().set(0.5)
+        fillColor().set(Color.LIGHT_GRAY.changeAlpha(127))
         fillRule().set(SvgPathElement.FillRule.EVEN_ODD)
     }
 
@@ -76,7 +83,7 @@ class DrawRectFeedback(
 
     override fun start(ctx: InteractionContext): Disposable {
         val decorationsLayer = ctx.decorationsLayer
-        val interaction = MouseDragInteraction(ctx)
+        val interaction = MouseDragInteraction(ctx, modifiersMatcher)
 
         interaction.loop(
             onStarted = { (target, dragFrom, dragTo, _) ->
@@ -109,8 +116,15 @@ class DrawRectFeedback(
                 val selection = selector.getSelection(dragFrom, dragTo, target)
 
                 if (selector.isAcceptable(selection)) {
+                    val currentBounds = target.dataBounds()
                     val (dataBounds, flipped) = target.applyViewport(selection, ctx)
-                    onCompleted(target.id, dataBounds, flipped, selector.mode)
+
+                    val scaleFactor = DoubleVector(
+                        currentBounds.dimension.x / dataBounds.dimension.x,
+                        currentBounds.dimension.y / dataBounds.dimension.y
+                    )
+
+                    onCompleted(target.id, dataBounds, flipped, selector.mode, scaleFactor)
                 }
 
                 selector = UnknownSelector()

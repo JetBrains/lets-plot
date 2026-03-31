@@ -336,8 +336,9 @@ class DropUnusedDataTest {
 
         assertEmptyPlotData(opts)
         checkSingleLayerData(
-            opts, 3,
-            mapOf(
+            opts,
+            expectedVarCount = 3,
+            expectedVars = mapOf(
                 "x" to 4,
                 "y" to 4,
                 "c" to 4

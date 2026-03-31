@@ -52,7 +52,7 @@ class DensityRidgesStat(
 
         val overallXRange = statCtx.overallXRange() ?: DoubleSpan(-0.5, 0.5)
         val statData = DensityStatUtil.binnedStat(
-            ys, xs, ws,
+            ys, xs, ws, xs.indices.toList(),
             trim, tailsCutoff, bandWidth, bandWidthMethod, adjust, kernel, n, fullScanMax, overallXRange, quantiles,
             binVarName = Stats.Y, valueVarName = Stats.X
         )

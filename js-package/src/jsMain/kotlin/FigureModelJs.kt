@@ -1,14 +1,18 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+
+@file:Suppress("OPT_IN_USAGE")
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.interact.event.ToolEventDispatcher
-import org.jetbrains.letsPlot.core.plot.builder.interact.FigureImplicitInteractionSpecs
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelHelper
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
+import org.jetbrains.letsPlot.core.plot.builder.interact.tools.SpecOverrideState
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil
 import org.jetbrains.letsPlot.core.util.sizing.SizingOption
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
@@ -40,7 +44,7 @@ class FigureModelJs internal constructor(
         deactivateInteractions(origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT)
         activateInteractions(
             origin = ToolEventDispatcher.ORIGIN_FIGURE_IMPLICIT,
-            interactionSpecListJs = dynamicFromAnyQ(FigureImplicitInteractionSpecs.LIST)
+            interactionSpecListJs = dynamicFromAnyQ(FIGURE_IMPLICIT_INTERACTIONS)
         )
     }
 
@@ -70,12 +74,20 @@ class FigureModelJs internal constructor(
             newSpecOverride = specOverride
         )
 
+        val activeTargetId = specOverride?.get(TARGET_ID) as? String
+        val state = SpecOverrideState(ArrayList(currSpecOverrideList), activeTargetId)
+
         val currentInteractions = toolEventDispatcher.deactivateAllSilently()
 
         figureRegistration?.dispose()
         figureRegistration = null
 
-        val plotSpec = SpecOverrideUtil.applySpecOverride(processedPlotSpec, currSpecOverrideList)
+        val plotSpec = SpecOverrideUtil.applySpecOverride(processedPlotSpec, state)
+
+        // Read back expanded overrides (non-empty only when expansion occurred).
+        if (state.expandedOverrides.isNotEmpty()) {
+            currSpecOverrideList = state.expandedOverrides
+        }
 
 //        LOG.info { "New sizing policy: $sizingPolicy" }
         val newFigureModel = buildPlotFromProcessedSpecsIntern(
@@ -100,10 +112,13 @@ class FigureModelJs internal constructor(
     }
 
     fun activateInteractions(origin: String, interactionSpecListJs: dynamic) {
-        val interactionSpecList = dynamicToAnyQ(interactionSpecListJs)
-        require(interactionSpecList is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
-        @Suppress("UNCHECKED_CAST")
-        interactionSpecList as List<Map<String, Any>>
+        val interactionSpecListRaw = dynamicToAnyQ(interactionSpecListJs)
+        require(interactionSpecListRaw is List<*>) { "Interaction spec list expected but was: $interactionSpecListJs" }
+
+        val interactionSpecList = interactionSpecListRaw.map { spec ->
+            require(spec is Map<*, *>) { "Interaction spec (Map) expected but was: $spec" }
+            InteractionSpec.fromMap(spec)
+        }
         toolEventDispatcher.activateInteractions(origin, interactionSpecList)
     }
 
@@ -117,5 +132,11 @@ class FigureModelJs internal constructor(
 
     companion object {
         private val LOG = PortableLogging.logger("FigureModelJs")
+
+        private val FIGURE_IMPLICIT_INTERACTIONS = listOf(
+            mapOf(
+                InteractionSpec.Name.PROPERTY_NAME to InteractionSpec.Name.ROLLBACK_ALL_CHANGES.value
+            )
+        )
     }
 }

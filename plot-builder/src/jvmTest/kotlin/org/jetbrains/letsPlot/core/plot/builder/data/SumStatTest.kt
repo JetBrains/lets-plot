@@ -13,7 +13,7 @@ import org.junit.Test
 class SumStatTest {
     @Test
     fun emptyDataFrame() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         val x = dataProcessor.putVariable(name = "x", values = emptyList(), mappingAes = Aes.X)
         val y = dataProcessor.putVariable(name = "y", values = emptyList(), mappingAes = Aes.Y)
 
@@ -27,7 +27,7 @@ class SumStatTest {
 
     @Test
     fun checkStatVars() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         val x = dataProcessor.putVariable(name = "x", values = listOf("0"), mappingAes = Aes.X)
         val y = dataProcessor.putVariable(name = "y", values = listOf("0"), mappingAes = Aes.Y)
 
@@ -45,7 +45,7 @@ class SumStatTest {
 
     @Test
     fun simple() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "1"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0"), mappingAes = Aes.Y)
 
@@ -57,7 +57,7 @@ class SumStatTest {
 
     @Test
     fun overlapped() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0"), mappingAes = Aes.Y)
 
@@ -69,7 +69,7 @@ class SumStatTest {
 
     @Test
     fun `nulls completely ignored`() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0", null), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0", "0"), mappingAes = Aes.Y)
 
@@ -81,26 +81,26 @@ class SumStatTest {
 
     @Test
     fun grouping() {
-        val dataProcessor = DataProcessor()
+        val dataProcessor = TestingDataProcessor()
         dataProcessor.putVariable(name = "x", values = listOf("0", "0", "1"), mappingAes = Aes.X)
         dataProcessor.putVariable(name = "y", values = listOf("0", "0", "0"), mappingAes = Aes.Y)
 
         // No grouping
-        dataProcessor.groupingVarName = null
+        dataProcessor.explicitGroupingVarNames = null
         dataProcessor.applyStat(Stats.sum()).let { statDf ->
             assertThat(statDf[Stats.N]).containsExactly(2.0, 1.0)
             assertThat(statDf[Stats.PROP]).containsExactly(0.6666666666666666, 0.3333333333333333)
         }
 
         // Group columns
-        dataProcessor.groupingVarName = "x"
+        dataProcessor.explicitGroupingVarNames = listOf("x")
         dataProcessor.applyStat(Stats.sum()).let { statDf ->
             assertThat(statDf[Stats.N]).containsExactly(2.0, 1.0)
             assertThat(statDf[Stats.PROP]).containsExactly(1.0, 1.0)
         }
 
         // Group rows
-        dataProcessor.groupingVarName = "y"
+        dataProcessor.explicitGroupingVarNames = listOf("y")
         dataProcessor.applyStat(Stats.sum()).let { statDf ->
             assertThat(statDf[Stats.N]).containsExactly(2.0, 1.0)
             assertThat(statDf[Stats.PROP]).containsExactly(0.6666666666666666, 0.3333333333333333)

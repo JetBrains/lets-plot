@@ -22,6 +22,11 @@ object PlotHtmlHelper {
     private const val SCRIPT_KIND_LIB_LOADING = "library"
     private const val SCRIPT_KIND_PLOT = "plot"
 
+    // The data attibute <body data-lets-plot-preferred-width='700'>
+    // is used in Datalore reports to control the size of the plot.
+    // This is the key to access the attribute value via JavaScript.
+    private const val DATALORE_PREFERRED_WIDTH = "letsPlotPreferredWidth"
+
     /**
      * This method is used in Lets-Plot Kotlin API.
      */
@@ -36,7 +41,7 @@ object PlotHtmlHelper {
             // - Build "dev" JS package (see js-package/README.md)
             // - Activate env containing Python.
             // $ python -m http.server 8080
-            "http://127.0.0.1:8080/js-package/build/dist/js/developmentExecutable/lets-plot.js"
+            "http://127.0.0.1:8080/js-package/build/kotlin-webpack/js/developmentExecutable/lets-plot.js"
         } else {
             // bintray: until v2.0.2
 //            "https://dl.bintray.com/jetbrains/lets-plot/lets-plot-$version.min.js"
@@ -48,7 +53,11 @@ object PlotHtmlHelper {
     }
 
     /**
-     * This method is used in Lets-Plot Kotlin API.
+     * Helper method for Lets-Plot Kotlin Notebook integration.
+     *
+     * Generates HTML that loads lets-plot.js library.
+     *
+     * Duplicate: _jupyter_notebook_ctx.py
      */
     @Suppress("unused")
     fun getDynamicConfigureHtml(scriptUrl: String, verbose: Boolean): String {
@@ -98,22 +107,37 @@ object PlotHtmlHelper {
         """.trimMargin()
     }
 
+    /**
+     * Helper method for Lets-Plot Kotlin Notebook integration.
+     *
+     * Generates HTML that renders a plot from the given raw specification.
+     */
     fun getDynamicDisplayHtmlForRawSpec(plotSpec: MutableMap<String, Any>): String {
         return getDisplayHtmlForRawSpec(
             plotSpec,
             SizingPolicy.notebookCell(),
-            dynamicScriptLoading = true,
-            forceImmediateRender = false,
-            responsive = false,
+            DisplayHtmlPolicy.jupyterNotebook(),
             removeComputationMessages = false,
             logComputationMessages = false,
         )
     }
 
+    /**
+     * Helper method for Lets-Plot Kotlin Notebook integration.
+     *
+     * TODO: Consider 'private' visibility.
+     */
     fun getStaticConfigureHtml(scriptUrl: String): String {
         return "<script type=\"text/javascript\" $ATT_SCRIPT_KIND=\"$SCRIPT_KIND_LIB_LOADING\" src=\"$scriptUrl\"></script>"
     }
 
+    /**
+     * Helper method for Lets-Plot Kotlin
+     *
+     * Generates HTML that renders a plot from the given raw specification.
+     *
+     * Looks like a legacy method, but maybe not.
+     */
     fun getStaticDisplayHtmlForRawSpec(
         plotSpec: MutableMap<String, Any>,
         size: DoubleVector? = null,
@@ -128,21 +152,51 @@ object PlotHtmlHelper {
         return getDisplayHtmlForRawSpec(
             plotSpec,
             sizingPolicy,
-            dynamicScriptLoading = false,
-            forceImmediateRender = false,
-            responsive = false,
+            displayHtmlPolicy = DisplayHtmlPolicy.entirelyStatic(),
             removeComputationMessages = removeComputationMessages,
             logComputationMessages = logComputationMessages
         )
     }
 
-    @Suppress("MemberVisibilityCanBePrivate")
+    /**
+     * Generates a complete HTML page that loads lets-plot.js library and renders a plot from the given raw specification.
+     */
+    fun getStaticHtmlPageForRawSpec(
+        plotSpec: MutableMap<String, Any>,
+        scriptUrl: String,
+        sizingPolicy: SizingPolicy = SizingPolicy.notebookCell(),
+        displayHtmlPolicy: DisplayHtmlPolicy,
+        style: String? = "<style> html, body { margin: 0; padding: 0; } </style>",
+        removeComputationMessages: Boolean = false,
+        logComputationMessages: Boolean = false
+    ): String {
+        val configureHtml = getStaticConfigureHtml(scriptUrl)
+        val displayHtml = getDisplayHtmlForRawSpec(
+            plotSpec,
+            sizingPolicy,
+            displayHtmlPolicy,
+            removeComputationMessages,
+            logComputationMessages
+        )
+
+        return """
+            |<html lang="en">
+            |   <head>
+            |       <meta charset="UTF-8">
+            |       $style
+            |       $configureHtml
+            |   </head>
+            |   <body>
+            |       $displayHtml
+            |   </body>
+            |</html>
+        """.trimMargin()
+    }
+
     fun getDisplayHtmlForRawSpec(
         plotSpec: MutableMap<String, Any>,
         sizingPolicy: SizingPolicy,
-        dynamicScriptLoading: Boolean,
-        forceImmediateRender: Boolean,
-        responsive: Boolean,
+        displayHtmlPolicy: DisplayHtmlPolicy,
         removeComputationMessages: Boolean,
         logComputationMessages: Boolean
     ): String {
@@ -163,23 +217,32 @@ object PlotHtmlHelper {
         return getDisplayHtmlForProcessedSpecs(
             plotSpecJs,
             sizingPolicy,
-            dynamicScriptLoading = dynamicScriptLoading,
-            forceImmediateRender = forceImmediateRender,
-            responsive = responsive,
+            displayHtmlPolicy,
         )
     }
 
     private fun getDisplayHtmlForProcessedSpecs(
         plotSpecAsJsObjectInitializer: String,
         sizingPolicy: SizingPolicy,
-        dynamicScriptLoading: Boolean,
-        forceImmediateRender: Boolean,
-        responsive: Boolean,
+        displayHtmlPolicy: DisplayHtmlPolicy,
     ): String {
         val outputId = randomString(6)
 
+        val (
+            dynamicScriptLoading: Boolean,
+            forceImmediateRender: Boolean,
+            responsive: Boolean,
+            height100pct: Boolean,
+        ) = displayHtmlPolicy
+
+        val style = if (height100pct) {
+            "style=\"height: 100%;\""
+        } else {
+            ""
+        }
+
         return """
-        |   <div id="$outputId"></div>
+        |   <div id="$outputId" $style></div>
         |   <script type="text/javascript" $ATT_SCRIPT_KIND="$SCRIPT_KIND_PLOT">
         |   
         |   (function() {
@@ -195,7 +258,7 @@ object PlotHtmlHelper {
         |       height: ${sizingPolicy.height} 
         |   };
         |   
-        |   const preferredWidth = document.body.dataset.letsPlotPreferredWidth;
+        |   const preferredWidth = document.body.dataset.$DATALORE_PREFERRED_WIDTH;
         |   if (preferredWidth !== undefined) {
         |       sizing = {
         |           width_mode: 'FIXED',

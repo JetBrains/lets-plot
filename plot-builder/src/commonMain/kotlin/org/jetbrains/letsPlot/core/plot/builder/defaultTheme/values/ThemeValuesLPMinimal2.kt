@@ -6,21 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values
 
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeFlavor.Companion.SymbolicColor
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_LINE_Y
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TICKS_Y
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TOOLTIP
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FACET_STRIP_BGR_RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Flavor
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.LINE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_BKGR_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.PANEL_GRID_MINOR
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
-import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
 
 internal class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
 
@@ -42,8 +35,6 @@ internal class ThemeValuesLPMinimal2 : ThemeValues(VALUES) {
                 Elem.BLANK to true,
                 Elem.FILL to SymbolicColor.GREY_2,
             ),
-
-            FLAVOR to Flavor.BASE,
         )
     }
 }

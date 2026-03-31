@@ -6,10 +6,10 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.FLAVOR
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import org.junit.Test
@@ -29,7 +29,9 @@ class ThemeColorOptionsTest(
         val message: String
     )
 
-    private val theme: Theme = ThemeConfig(themeValues, DefaultFontFamilyRegistry()).theme
+    private val theme: Theme = ThemeConfig(
+        themeOptions = themeValues, containerTheme = null, DefaultFontFamilyRegistry()
+    ).theme
 
     // The order should be as follows:
     //      named theme options
@@ -55,10 +57,17 @@ class ThemeColorOptionsTest(
             val noneTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.LP_NONE)
             val classicTheme = mapOf(Option.Meta.NAME to ThemeOption.Name.R_CLASSIC)
             val flavorOption = mapOf(FLAVOR to ThemeOption.Flavor.DARCULA)
+            val flavorStandardOption = mapOf(FLAVOR to ThemeOption.Flavor.STANDARD)
 
             return listOf(
                 test(
                     themeOptions = minimalTheme,
+                    expected = yAxisColor(null) +
+                            plotBackground(Color.WHITE) +
+                            panelBackgroundRect(null, null)
+                ),
+                test(
+                    themeOptions = minimalTheme + flavorStandardOption,
                     expected = yAxisColor(null) +
                             plotBackground(Color.WHITE) +
                             panelBackgroundRect(null, null)
@@ -184,6 +193,16 @@ class ThemeColorOptionsTest(
                 // The 'classic' theme: facet rect fill = plot background
                 test(
                     themeOptions = classicTheme,
+                    expected = yAxisColor(DARK_GREY) +
+                            panelBackgroundRect(null, null) +
+                            plotBackground(Color.WHITE) +
+                            facetStripBackgroundRect(
+                                expectedColor = DARK_GREY,
+                                expectedFill = Color.WHITE
+                            )
+                ),
+                test(
+                    themeOptions = classicTheme + flavorStandardOption,
                     expected = yAxisColor(DARK_GREY) +
                             panelBackgroundRect(null, null) +
                             plotBackground(Color.WHITE) +

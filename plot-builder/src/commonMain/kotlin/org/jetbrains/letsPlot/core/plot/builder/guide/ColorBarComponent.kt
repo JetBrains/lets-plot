@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.verticalCorrectionFactor
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
@@ -81,15 +81,16 @@ class ColorBarComponent(
             }
 
             // Label
+            val labelSpec = PlotLabelSpecFactory.legendItem(theme)
             val fontSize = theme.textStyle().size
-            val lineHeights = PlotLabelSpecFactory.legendItem(theme).heights(brLabel)
-            val label = MultilineLabel(brLabel)
+            val lineHeights = labelSpec.heights(brLabel)
+            val label = Label(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
-            label.setLineHeights(lineHeights)
             label.setFontSize(fontSize)
-            fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
-            val correction = verticalCorrectionFactor(lineHeights.first(), fontSize)
+            label.setLineHeights(lineHeights)
+            fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, labelSpec)
+            val correction = verticalCorrectionFactor(lineHeights.firstOrNull() ?: fontSize, fontSize)
             val yOffset = when (brInfo.labelVerticalAnchor) {
                 Text.VerticalAnchor.TOP -> correction(0.7)
                 Text.VerticalAnchor.BOTTOM -> -labelSize().y + correction(1.0)

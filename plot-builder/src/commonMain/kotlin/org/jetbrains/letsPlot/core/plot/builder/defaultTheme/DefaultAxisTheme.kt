@@ -25,6 +25,8 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TITLE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_MINOR_TICKS
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_MINOR_TICKS_LENGTH
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.AXIS_TEXT_SPACING
 
 internal class DefaultAxisTheme(
@@ -40,7 +42,9 @@ internal class DefaultAxisTheme(
     internal val spacingKey = listOf(AXIS_TEXT_SPACING + suffix, AXIS_TEXT_SPACING)
     internal val titleKey = listOf(AXIS_TITLE + suffix, AXIS_TITLE, TITLE, TEXT, AXIS + suffix, AXIS)
     internal val tickKey = listOf(AXIS_TICKS + suffix, AXIS_TICKS, AXIS + suffix, AXIS, LINE)
+    internal val minorTickKey = listOf(AXIS_MINOR_TICKS + suffix, AXIS_MINOR_TICKS, AXIS + suffix, AXIS, LINE)
     internal val tickLengthKey = listOf(AXIS_TICKS_LENGTH + suffix, AXIS_TICKS_LENGTH)
+    internal val minorTickLengthKey = listOf(AXIS_MINOR_TICKS_LENGTH + suffix, AXIS_MINOR_TICKS_LENGTH)
     internal val tooltipKey = listOf(AXIS_TOOLTIP + suffix, AXIS_TOOLTIP, RECT)
     internal val tooltipFillKey = tooltipKey + lineKey
     internal val tooltipTextKey = listOf(AXIS_TOOLTIP_TEXT + suffix, AXIS_TOOLTIP_TEXT, TOOLTIP_TEXT, TEXT)
@@ -58,6 +62,10 @@ internal class DefaultAxisTheme(
 
     override fun showTickMarks(): Boolean {
         return !isElemBlank(tickKey)
+    }
+
+    override fun showMinorTickMarks(): Boolean {
+        return !isElemBlank(minorTickKey)
     }
 
     override fun showLabels(): Boolean {
@@ -96,15 +104,29 @@ internal class DefaultAxisTheme(
         return getNumber(getElemValue(tickKey), Elem.SIZE)
     }
 
+    override fun minorTickMarkWidth(): Double {
+        return getNumber(getElemValue(minorTickKey), Elem.SIZE)
+    }
+
     override fun tickMarkLength(): Double {
         return getNumber(tickLengthKey)
+    }
+
+    override fun minorTickMarkLength(): Double {
+        return getNumber(minorTickLengthKey)
     }
 
     override fun tickMarkColor(): Color {
         return getColor(getElemValue(tickKey), Elem.COLOR)
     }
 
+    override fun minorTickMarkColor(): Color {
+        return getColor(getElemValue(minorTickKey), Elem.COLOR)
+    }
+
     override fun tickMarkLineType() = getLineType(getElemValue(tickKey))
+
+    override fun minorTickMarkLineType() = getLineType(getElemValue(minorTickKey))
 
     override fun tickLabelMargins() = getMargins(getElemValue(textKey))
 

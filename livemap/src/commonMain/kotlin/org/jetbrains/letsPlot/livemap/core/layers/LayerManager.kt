@@ -7,12 +7,10 @@ package org.jetbrains.letsPlot.livemap.core.layers
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.minus
-import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.CanvasControl
-import org.jetbrains.letsPlot.core.canvas.SingleCanvasControl
-import org.jetbrains.letsPlot.core.canvas.drawImage
+import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.core.layers.LayerKind.UI
 
@@ -30,7 +28,7 @@ abstract class LayerManager {
     protected fun add(kind: LayerKind, layer: CanvasLayer) {
         children.getOrPut(kind, ::ArrayList).add(layer)
         layers.clear()
-        layers.addAll(LayerKind.values().flatMap { children[it] ?: emptyList() })
+        layers.addAll(LayerKind.entries.flatMap { children[it] ?: emptyList() })
     }
 
     protected fun remove(layer: CanvasLayer) {
@@ -38,6 +36,71 @@ abstract class LayerManager {
         layers.remove(layer)
     }
 }
+
+class OffscreenCanvasLayerManager(val canvasPeer: CanvasPeer, val size: Vector) : LayerManager() {
+    private val canvas: Canvas = canvasPeer.createCanvas(size)
+    private val rect: DoubleRectangle = DoubleRectangle.WH(size.toDoubleVector())
+    private val myBackingStore = mutableMapOf<CanvasLayer, Canvas.Snapshot>()
+    private val myPanningOffsets = mutableMapOf<CanvasLayer, Vec<Client>>()
+
+    override fun pan(offset: Vec<Client>, dirtyLayers: List<CanvasLayer>) {
+        canvas.context2d.clearRect(rect)
+
+        layers.forEach { layer ->
+            when (layer.panningPolicy) {
+                PanningPolicy.COPY -> panLayer(layer, offset)
+                PanningPolicy.REPAINT -> {
+                    if (layer in dirtyLayers) {
+                        repaintLayer(layer, offset)
+                    }
+                    panLayer(layer, offset)
+                }
+            }
+        }
+    }
+
+    override fun repaint(dirtyLayers: List<CanvasLayer>) {
+        if (dirtyLayers.isEmpty()) return
+
+        dirtyLayers.forEach(::repaintLayer)
+
+        canvas.context2d.clearRect(rect)
+        layers.forEach {
+            myBackingStore[it]?.let { s ->
+                canvas.context2d.drawImage(s, 0.0, 0.0, rect.width, rect.height)
+            }
+        }
+    }
+
+    private fun panLayer(layer: CanvasLayer, offset: Vec<Client>) {
+        when (layer.kind) {
+            UI -> Client.ZERO_VEC
+            else -> offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC)
+        }.let { p ->
+            myBackingStore[layer]?.let { snapshot ->
+                canvas.context2d.drawImage(snapshot, p.x, p.y, rect.width, rect.height)
+            }
+        }
+    }
+
+    override fun repaintLayer(layer: CanvasLayer, offset: Vec<Client>) {
+        layer.clear()
+        layer.render()
+        myBackingStore[layer] = layer.snapshot()
+        myPanningOffsets[layer] = offset
+    }
+
+    override fun addLayer(name: String, layerKind: LayerKind): CanvasLayerComponent {
+        val canvasLayer = CanvasLayer(canvasPeer.createCanvas(size), name, layerKind)
+        add(layerKind, canvasLayer)
+        return CanvasLayerComponent(canvasLayer)
+    }
+
+    override fun removeLayer(canvasLayer: CanvasLayer) {
+        remove(canvasLayer)
+    }
+}
+
 
 class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
     private val singleCanvasControl: SingleCanvasControl = SingleCanvasControl(canvasControl)
@@ -68,7 +131,9 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
 
         singleCanvasControl.context.clearRect(rect)
         layers.forEach {
-            myBackingStore[it]?.let(singleCanvasControl.context::drawImage)
+            myBackingStore[it]?.let { s ->
+                singleCanvasControl.context.drawImage(s, 0.0, 0.0, rect.width, rect.height)
+            }
         }
     }
 
@@ -78,7 +143,7 @@ class OffscreenLayerManager(canvasControl: CanvasControl) : LayerManager() {
             else -> offset - (myPanningOffsets[layer] ?: Client.ZERO_VEC)
         }.let { p ->
             myBackingStore[layer]?.let { snapshot ->
-                singleCanvasControl.context.drawImage(snapshot, p)
+                singleCanvasControl.context.drawImage(snapshot, p.x, p.y, rect.width, rect.height)
             }
         }
     }

@@ -7,12 +7,12 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.builder.FigureBuildInfo
+import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToCol
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.indexToRow
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.FigureGridLayoutUtil.toCellOrigin
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.ScaleSharePolicy.*
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.ScaleSharePolicy.NONE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.DEF_PLOT_SIZE
 import kotlin.math.max
 
@@ -101,49 +101,10 @@ abstract class CompositeFigureGridLayoutBase(
     fun hasSharedAxis(): Boolean = !(scaleShareX == NONE && scaleShareY == NONE)
 
     fun indicesWithSharedXAxis(elementCount: Int): List<List<Int>> {
-        return indicesWithSharedAxis(scaleShareX, elementCount, ncols)
+        return GridScaleShareUtil.allGroups(scaleShareX, elementCount, ncols)
     }
 
     fun indicesWithSharedYAxis(elementCount: Int): List<List<Int>> {
-        return indicesWithSharedAxis(scaleShareY, elementCount, ncols)
-    }
-
-
-    private companion object {
-        private fun indicesWithSharedAxis(
-            sharePolicy: ScaleSharePolicy,
-            elementCount: Int,
-            ncols: Int
-        ): List<List<Int>> {
-
-            return when (sharePolicy) {
-                NONE -> listOf(emptyList())
-                ALL -> listOf(List(elementCount) { it })
-                ROW -> {
-                    val indexByRow = (0 until elementCount).map {
-                        indexToRow(it, ncols) to it
-                    }
-
-                    groupByFirst(indexByRow)
-                }
-
-                COL -> {
-                    val indexByCol = (0 until elementCount).map {
-                        indexToCol(it, ncols) to it
-                    }
-                    groupByFirst(indexByCol)
-                }
-            }
-        }
-
-        private fun groupByFirst(pairs: List<Pair<Int, Int>>): List<List<Int>> {
-            val numGroups = pairs.distinctBy { it.first }.size
-            val groupsList = List(numGroups) { ArrayList<Int>() }
-            for ((group, value) in pairs) {
-                groupsList[group].add(value)
-            }
-
-            return groupsList
-        }
+        return GridScaleShareUtil.allGroups(scaleShareY, elementCount, ncols)
     }
 }

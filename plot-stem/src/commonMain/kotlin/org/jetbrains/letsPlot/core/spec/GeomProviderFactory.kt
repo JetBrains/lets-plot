@@ -5,11 +5,9 @@
 
 package org.jetbrains.letsPlot.core.spec
 
-import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.geom.repel.LabelForceLayout
@@ -33,7 +31,6 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.LINE] = GeomProvider.line()
         PROVIDER[GeomKind.SMOOTH] = GeomProvider.smooth()
         PROVIDER[GeomKind.BAR] = GeomProvider.bar()
-        PROVIDER[GeomKind.HISTOGRAM] = GeomProvider.histogram()
         PROVIDER[GeomKind.RIBBON] = GeomProvider.ribbon()
         PROVIDER[GeomKind.LINE_RANGE] = GeomProvider.lineRange()
         PROVIDER[GeomKind.BIN_2D] = GeomProvider.bin2d()
@@ -46,6 +43,7 @@ internal object GeomProviderFactory {
         PROVIDER[GeomKind.V_LINE] = GeomProvider.vline()
         PROVIDER[GeomKind.DENSITY2D] = GeomProvider.density2d()
         PROVIDER[GeomKind.DENSITY2DF] = GeomProvider.density2df()
+        PROVIDER[GeomKind.POINT_DENSITY] = GeomProvider.pointDensity()
         PROVIDER[GeomKind.JITTER] = GeomProvider.jitter()
         PROVIDER[GeomKind.Q_Q] = GeomProvider.qq()
         PROVIDER[GeomKind.Q_Q_2] = GeomProvider.qq2()
@@ -65,6 +63,14 @@ internal object GeomProviderFactory {
         tz: TimeZone?,
     ): GeomProvider {
         return when (geomKind) {
+            GeomKind.HISTOGRAM -> GeomProvider.histogram {
+                val geom = HistogramGeom()
+                if (layerConfig.hasOwn(Option.Geom.Histogram.BREAKS)) {
+                    geom.setBreaks(layerConfig.getDoubleList(Option.Geom.Histogram.BREAKS))
+                }
+                geom
+            }
+
             GeomKind.AREA -> GeomProvider.area {
                 val geom = AreaGeom()
 
@@ -373,16 +379,6 @@ internal object GeomProviderFactory {
                 }
                 ImageGeom(
                     imageUrl = layerConfig.getString(Option.Geom.Image.HREF)!!,
-                    bbox = DoubleRectangle.span(
-                        DoubleVector(
-                            layerConfig.getDoubleSafe(Option.Geom.Image.XMIN),
-                            layerConfig.getDoubleSafe(Option.Geom.Image.YMIN)
-                        ),
-                        DoubleVector(
-                            layerConfig.getDoubleSafe(Option.Geom.Image.XMAX),
-                            layerConfig.getDoubleSafe(Option.Geom.Image.YMAX)
-                        ),
-                    )
                 )
             }
 
@@ -455,6 +451,36 @@ internal object GeomProviderFactory {
                 geom
             }
 
+            GeomKind.BRACKET -> GeomProvider.bracket {
+                val geom = BracketGeom()
+                applyTextOptions(layerConfig, geom, expFormat, tz)
+                if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
+                    geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.TIPLENGTH_UNIT)) {
+                    geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIPLENGTH_UNIT) ?: BracketGeom.DEF_TIPLENGTH_UNIT
+                }
+                geom
+            }
+
+            GeomKind.BRACKET_DODGE -> GeomProvider.bracketDodge {
+                val geom = BracketDodgeGeom()
+                applyTextOptions(layerConfig, geom, expFormat, tz)
+                if (layerConfig.hasOwn(Option.Geom.BracketDodge.DODGE_WIDTH)) {
+                    geom.dodgeWidth = layerConfig.getDouble(Option.Geom.BracketDodge.DODGE_WIDTH)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.BracketDodge.NGROUP)) {
+                    geom.groupCount = layerConfig.getInteger(Option.Geom.BracketDodge.NGROUP)
+                }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
+                    geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
+                }
+                if (layerConfig.hasOwn(Option.Geom.Bracket.TIPLENGTH_UNIT)) {
+                    geom.tipLengthUnit = dimensionUnit(layerConfig, Option.Geom.Bracket.TIPLENGTH_UNIT) ?: BracketGeom.DEF_TIPLENGTH_UNIT
+                }
+                geom
+            }
+
             else -> {
                 require(PROVIDER.containsKey(geomKind)) { "Provider doesn't support geom kind: '$geomKind'" }
                 PROVIDER.getValue(geomKind)
@@ -464,7 +490,7 @@ internal object GeomProviderFactory {
 
     private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: ExponentFormat, tz: TimeZone?) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
-            geom.formatter = StringFormat.forOneArg(
+            geom.formatter = FormatterUtil.byPattern(
                 it,
                 expFormat = PlotAssembler.extractExponentFormat(expFormat),
                 tz = tz
@@ -541,7 +567,7 @@ internal object GeomProviderFactory {
                 "px" -> DimensionUnit.PIXEL
                 else -> throw IllegalArgumentException(
                     "Unsupported value for $option parameter: '$it'. " +
-                            "Use one of: res, identity, size, px."
+                    "Use one of: res, identity, size, px."
                 )
             }
         }

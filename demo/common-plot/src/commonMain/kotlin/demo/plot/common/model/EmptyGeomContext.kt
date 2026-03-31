@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
  */
 class EmptyGeomContext : GeomContext {
     override val flipped: Boolean = false
-    override val targetCollector: GeomTargetCollector = NullGeomTargetCollector()
+    override val targetCollector: GeomTargetCollector = NullGeomTargetCollector
     override val annotation: Annotation? = null
     override val backgroundColor: Color = Color.WHITE
     override val plotContext: PlotContext = NullPlotContext
@@ -33,11 +33,6 @@ class EmptyGeomContext : GeomContext {
     override fun getAesBounds(): DoubleRectangle {
         throw IllegalStateException("Not available in an empty geom context")
     }
-
-    override fun withTargetCollector(targetCollector: GeomTargetCollector): GeomContext {
-        throw IllegalStateException("Not available in an empty geom context")
-    }
-
 
     override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
         throw IllegalStateException("Not available in an empty geom context")
@@ -55,7 +50,20 @@ class EmptyGeomContext : GeomContext {
         throw IllegalStateException("Not available in an empty geom context")
     }
 
+    override fun getScaleFactor(): Double {
+        return 1.0
+    }
+
+    override fun consumeMessages(messages: List<String>) {
+        throw IllegalStateException("Not available in an empty geom context")
+    }
+
+    override fun geomKind(): GeomKind {
+        throw IllegalStateException("Not available in an empty geom context")
+    }
+
     override fun isMappedAes(aes: Aes<*>): Boolean = false
+
     override fun estimateTextSize(
         text: String,
         family: String,

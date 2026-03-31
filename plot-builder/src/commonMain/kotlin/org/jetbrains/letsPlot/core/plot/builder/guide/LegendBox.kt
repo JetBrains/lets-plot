@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
-import org.jetbrains.letsPlot.core.plot.base.render.svg.MultilineLabel
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
@@ -127,23 +127,23 @@ abstract class LegendBox : SvgComponent() {
         boundRect: DoubleRectangle,
         titleSize: DoubleVector,
         justification: TextJustification
-    ): MultilineLabel {
+    ): Label {
         val labelSpec = PlotLabelSpecFactory.legendTitle(theme)
         val lineHeights = labelSpec.heights(title)
-
-        val label = MultilineLabel(title)
         val fontSize = labelSpec.font.size.toDouble()
+
+        val label = Label(title)
         val (pos, hAnchor) = applyJustification(
             boundRect,
             fontSize = fontSize,
             textSize = titleSize,
-            lineHeights.firstOrNull() ?: fontSize,
+            firstLineHeight = lineHeights.firstOrNull() ?: fontSize,
             justification
         )
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
+        label.setFontSize(fontSize)
         label.setLineHeights(lineHeights)
-        label.setFontSize(fontSize) // Needed only for calculating correct x-shift for some LaTeX formulas
         label.moveTo(pos)
         return label
     }

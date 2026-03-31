@@ -9,7 +9,7 @@ import demo.plot.common.model.plotConfig.LinkLabel
 
 fun main() {
     with(LinkLabel()) {
-        PlotConfigBrowserDemoUtil.show(
+        PlotConfigBrowserDemoUtil.showJs(
             "Link Label",
             plotSpecList(),
         )

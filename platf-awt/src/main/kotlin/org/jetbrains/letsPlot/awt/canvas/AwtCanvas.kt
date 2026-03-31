@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.awt.BitmapUtil
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.core.canvas.ScaledContext2d
 import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
@@ -20,17 +19,27 @@ import kotlin.math.roundToInt
 class AwtCanvas private constructor(
     val image: BufferedImage,
     override val size: Vector,
-    pixelDensity: Double,
+    private val fontManager: FontManager,
+    contentScale: Double,
 ) : Canvas {
-    override val context2d: Context2d = ScaledContext2d.wrap(AwtContext2d(image.createGraphics() as Graphics2D), pixelDensity)
+    override val context2d: Context2d = AwtContext2d(image.createGraphics() as Graphics2D, contentScale, fontManager = fontManager)
 
     companion object {
-        fun create(size: Vector, pixelDensity: Double): AwtCanvas {
+        fun create(size: Vector, pixelDensity: Double, fontManager: FontManager = FontManager.DEFAULT): AwtCanvas {
             val s = if (size == Vector.ZERO) {
                 Vector(1, 1)
             } else size
 
-            return AwtCanvas(BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR), s, pixelDensity)
+            return AwtCanvas(
+                image = BufferedImage((s.x * pixelDensity).roundToInt(), (s.y * pixelDensity).roundToInt(), TYPE_4BYTE_ABGR),
+                size = s,
+                fontManager = fontManager,
+                contentScale = pixelDensity,
+            ).also {
+                if (pixelDensity != 1.0) {
+                    it.context2d.scale(pixelDensity, pixelDensity)
+                }
+            }
         }
     }
 
@@ -48,6 +57,10 @@ class AwtCanvas private constructor(
             g.drawImage(image, 0, 0, null)
             g.dispose()
             return AwtSnapshot(b)
+        }
+
+        override fun dispose() {
+            // No resources to dispose
         }
 
         companion object {

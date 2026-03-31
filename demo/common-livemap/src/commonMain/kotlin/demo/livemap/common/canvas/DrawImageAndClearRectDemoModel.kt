@@ -9,35 +9,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.core.canvas.Canvas
 
-const val dataUrl = "data:image/png;base64,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"
+const val dataUrl =
+    """data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABmJLR0QA/wD/AP+gvaeTAAAE5klEQVR4nO2cW4hNURjHxyWXJ5SSPE1KKRM1PMrcijyMzCYvePAiJZQXkcKTpCnMqxoeNINklEsawhMPLjUSUYzMiIhchhkM/8/+jtlznHPm7H32Wmuvtb5//Zp5mJp91n//1p69Zu9VVWVpgr61k8Bc0ABqwQww3vRxeRkaeFADjoEn4DpYD6aZPjYvg4GfDnaCN2AYDIGrYAmYYPr4vAoNOFgMLoLv4BeX0ge2U1mmj9GrsB3bQC+XMQAGwVfQxWWJJToSsaOLC6AyesBrLqeXyxJLdKSAHfT1MLjEBYklulLAjtzg14MdeSWJJapTxI5t9S0d7UWKEktUpYQdi+vqzvyuazr9vFBZYomiFLODivhbCBBLNGVMO3KIJXpSjh1iiaaUbYdYoidx7BBLFCe2HWKJ2iSxQyxRlMR2FLfkRRDezc8E40x/PutSiR15lpwHX8BncAXUgcmmP59VqdiO0ZZsCcL/KNLyfD/YB+aIJTGShh0RSxaBTvCJTekGTWJJmUnNjtGlbAaPxZIESdMOsaTCqLBDLKkgKuwQSxJGpR1iSYKotEMsiRkddoglMaLDjhKWXAMrwBTT45CJ6LQjUsom8DAIn3p8C1pBtVhSpdeOSCHzQBt4x1PXXbAaTDU9HkZjwo5IKau5iEEu5oj3lpiwI1JINZcgllBM2iGWFIhJO8SSvGTBDrEkkizYIZZwsmRHCUva+E9j918gzZIdeZa08k3id75ppJtHt18gzaIdkVJo+YSWUWg5hZZVaHmFllncfWwoi3ZECqEFRlpo7OepixYgNztrSZbtiJRCS/HdXliSZTu8s8QGO7yyxAY7vLHEJju8sMQmO0pYQo+i0iOpdr/OYKMdkVLooWx6OPszm3I+sP11BhvtyNG49STdqdPrCy8CF176sdmOiCXuvPRjsx3/cOXVOBfscMoSJ+xwxRKX7HDCEqfssN0SF+2w2hIn7bDVEpftsNISp+2wzRIf7LDKEi/ssMUSn+ywwhKv7Mi6JT7akWlLvLQjq5b4bEcmLfHajuKWmNkkTez4zxKzm6SJHf9ZYm6TNLGjoCXmtuwQO4qWon/LDrEjY5aIHRmyROwoqxB9logdZZei3hKxI1Yh6rd/Ejtil6Ju+yexI1Eh6rZ/EjsSl5L+lh1iR0WFpL9lh9hRcSnpWSJ2pFJIepaIHamVUrklYkeqhVRuidiReinJt38SO5QUknz7J7FDWSnxt38SO5QWEn/LDrFDeSnlb9khdmgppHxLxA5tpYxtidihtZCxLRE7tJdS2hK244LYoa2Q0pbgm93gVdSO+pWdN0wfuEvUt3S0N2w4tZ/A+M4GLeAmC0CPoJ5jMSZSIXfAEN9F3gLrwEKwQBE1oBYsBY2ssA7o5qw5CJcyWjSwBmwMwgewd/GJT+wBB4PwRpGmrJ/gNTgAZlEh78FvLqSHp6yzCqGz4TK4De6B+xp4wJ/tGXiuCXoa/iUP9psgXDqJ8iEIp6zhIJyd6DiXUSFPuaUf4Fswci1RyTf+fbr4yQwbIPe7Cx3PL/4ZEqIPrKJC6Cr/EQxoKiM3b5KZ+WeNKugMpTOVzlg6c3VZQkaSmWRoIXMfBSMWHQfzqRCaW49yMSqnqhynwQlwCOwNRuZWldAcTnM5zek0t+u4htC1qpnHt9h1bTn/bEBlgMl/ALtgE+8p1GZLAAAAAElFTkSuQmCC"""
 
 class DrawImageAndClearRectDemoModel(
     canvas: Canvas,

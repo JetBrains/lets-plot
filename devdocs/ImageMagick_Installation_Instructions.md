@@ -34,7 +34,10 @@ sudo apt update && sudo apt install -y automake libtool gperf gettext autopoint 
 
 ### Windows
 
-#### 1. Install [MSYS2](https://www.msys2.org)
+#### 1. Install [MSYS2](https://www.msys2.org) [2025-02-21](https://github.com/msys2/msys2-installer/releases/tag/2025-02-21):
+
+https://github.com/msys2/msys2-installer/releases/download/2025-02-21/msys2-x86_64-20250221.exe
+
 
 #### 2. Add MSYS2 directories to the `PATH` environment variable (example):
 ```

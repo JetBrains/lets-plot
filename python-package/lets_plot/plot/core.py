@@ -5,12 +5,14 @@
 import io
 import json
 import os
-from typing import Union
+from typing import Union, List
 
 __all__ = ['aes', 'layer']
 
+from lets_plot._type_utils import LazyModule
 from lets_plot._global_settings import get_global_bool, has_global_value, FRAGMENTS_ENABLED
 
+geopandas = LazyModule('geopandas')
 
 def aes(x=None, y=None, **kwargs):
     """
@@ -19,8 +21,12 @@ def aes(x=None, y=None, **kwargs):
     Parameters
     ----------
     x, y, ... :
-        List of name value pairs giving aesthetics to map to variables.
+        Aesthetic mappings. Name-value pairs specifying which data variables to use for each aesthetic.
         The names for x and y aesthetics are typically omitted because they are so common; all other aesthetics must be named.
+        The specific list of supported aesthetics differs by geometry type.
+    group : str or list, optional
+        Data grouping control (not a true aesthetic). Use a variable name to group by that variable,
+        a list of variables to group by their interaction, or an empty list to disable all grouping.
 
     Returns
     -------
@@ -33,10 +39,24 @@ def aes(x=None, y=None, **kwargs):
     (aesthetics) of geometries. This function also standardizes aesthetic names by, for example, converting
     colour to color.
 
-    Aesthetic mappings are not to be confused with aesthetic settings; the latter are used to set aesthetics to
-    some constant values, e.g. make all points red in the plot. If one wants to make the color of a point
+    Aesthetic mappings are not to be confused with aesthetic settings; the latter is used to set aesthetics to
+    some constant values, e.g., make all points red in the plot. If one wants to make the color of a point
     depend on the value of a variable, he/she should project this variable to the color aesthetic via
     aesthetic mapping.
+
+    **Data Grouping**
+
+    The ``group`` parameter is not a true aesthetic but controls how data is grouped for visualization:
+
+    Default Grouping Behavior:
+        Lets-Plot automatically groups data by discrete variables mapped to aesthetics like ``color``, ``shape``,
+        ``linetype``, etc. This creates separate visual elements (lines, paths, polygons) for each unique
+        combination of these variables.
+
+    Explicit Group Control:
+        - Use ``group='variable_name'`` to group only by that specific variable, overriding default grouping
+        - Use ``group=['var1', 'var2', ...]`` to group by the interaction of multiple variables
+        - Use ``group=[]`` to disable all the grouping completely
 
     Examples
     --------
@@ -66,6 +86,35 @@ def aes(x=None, y=None, **kwargs):
         LetsPlot.setup_html()
         ggplot() + geom_polygon(aes(x=[0, 1, 2], y=[2, 1, 4]), \\
                                 color='black', alpha=.5, size=1)
+
+    |
+
+    .. jupyter-execute::
+        :linenos:
+        :emphasize-lines: 12,16,18,20
+
+        import numpy as np
+        from lets_plot import *
+        LetsPlot.setup_html()
+        n = 50
+        np.random.seed(42)
+        data = {
+            'val': np.concatenate([np.random.normal(loc=-2, size=n),
+                                   np.random.normal(loc=2, size=n)]),
+            'group': ['g1'] * n + ['g2'] * n,
+            'cat': np.random.choice(['A', 'B', 'C'], size=2*n),
+        }
+        g = ggplot(data, aes(x='val', fill='cat'))
+        gggrid([
+            g + geom_density(alpha=.25) + \\
+                ggtitle("Default grouping"),
+            g + geom_density(aes(group='group'), alpha=.25) + \\
+                ggtitle("group='group'"),
+            g + geom_density(aes(group=['cat', 'group']), alpha=.25) + \\
+                ggtitle("group=['cat', 'group']"),
+            g + geom_density(aes(group=[]), alpha=.25) + \\
+                ggtitle("group=[]"),
+        ], ncol=2)
 
     """
 
@@ -352,9 +401,8 @@ class PlotSpec(FeatureSpec):
                 if other.props()['geom'] == 'livemap':
                     plot.__is_livemap = True
 
-                from lets_plot.plot.util import is_geo_data_frame  # local import to break circular reference
-                if is_geo_data_frame(other.props().get('data')) \
-                        or is_geo_data_frame(other.props().get('map')):
+                if geopandas.lazy_is_instance(other.props().get('data'), 'GeoDataFrame') \
+                        or geopandas.lazy_is_instance(other.props().get('map'), 'GeoDataFrame'):
                     if plot.__crs_initialized:
                         if plot.__crs != other.props().get('use_crs'):
                             raise ValueError(
@@ -477,12 +525,14 @@ class PlotSpec(FeatureSpec):
         """
         Export the plot in SVG format.
 
+        Plots containing ``geom_livemap()`` are not supported.
+
         Parameters
         ----------
         self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object, default=None
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
@@ -503,18 +553,20 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
             import numpy as np
             import io
             from lets_plot import *
             from IPython import display
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
             p.to_svg(file_like)
             display.SVG(file_like.getvalue())
+
         """
         return _to_svg(self, path, w=w, h=h, unit=unit)
 
@@ -527,7 +579,7 @@ class PlotSpec(FeatureSpec):
         self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object, default=None
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
             If None is provided, the result will be returned as a string.
@@ -544,16 +596,20 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 8
+            :emphasize-lines: 10
 
-            import numpy as np
             import io
+            from IPython.display import HTML
+            import numpy as np
             from lets_plot import *
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
             p.to_html(file_like)
+            HTML(file_like.getvalue().decode('utf-8'))
+
         """
         return _to_html(self, path, iframe)
 
@@ -561,28 +617,26 @@ class PlotSpec(FeatureSpec):
         """
         Export a plot to a file or to a file-like object in PNG format.
 
+        Plots containing ``geom_livemap()`` are not supported.
+
         Parameters
         ----------
         self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
         w : float, default=None
             Width of the output image in units.
-            Only applicable when exporting to PNG or PDF.
         h : float, default=None
             Height of the output image in units.
-            Only applicable when exporting to PNG or PDF.
         unit : {'in', 'cm', 'mm', 'px'}, default='in'
             Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
-            Only applicable when exporting to PNG or PDF.
         dpi : int, default=300
             Resolution in dots per inch.
-            Only applicable when exporting to PNG or PDF.
             The default value depends on the unit:
 
             - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
@@ -622,13 +676,14 @@ class PlotSpec(FeatureSpec):
         --------
         .. jupyter-execute::
             :linenos:
-            :emphasize-lines: 9
+            :emphasize-lines: 10
 
             import numpy as np
             import io
             from lets_plot import *
             from IPython import display
             LetsPlot.setup_html()
+            np.random.seed(42)
             x = np.random.randint(10, size=100)
             p = ggplot({'x': x}, aes(x='x')) + geom_bar()
             file_like = io.BytesIO()
@@ -642,28 +697,26 @@ class PlotSpec(FeatureSpec):
         """
         Export a plot to a file or to a file-like object in PDF format.
 
+        Plots containing ``geom_livemap()`` are not supported.
+
         Parameters
         ----------
         self : ``PlotSpec``
             Plot specification to export.
         path : str, file-like object
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
         scale : float
             Scaling factor for raster output. Default value is 2.0.
         w : float, default=None
             Width of the output image in units.
-            Only applicable when exporting to PNG or PDF.
         h : float, default=None
             Height of the output image in units.
-            Only applicable when exporting to PNG or PDF.
         unit : {'in', 'cm', 'mm', 'px'}, default='in'
             Unit of the output image. One of: 'in', 'cm', 'mm' or 'px'.
-            Only applicable when exporting to PNG or PDF.
         dpi : int, default=300
             Resolution in dots per inch.
-            Only applicable when exporting to PNG or PDF.
             The default value depends on the unit:
 
             - for 'px' it is 96 (output image will have the same pixel size as ``w`` and ``h`` values)
@@ -746,7 +799,7 @@ class LayerSpec(FeatureSpec):
         super().__init__('layer', name=None, **kwargs)
 
     def before_append(self, is_livemap):
-        from .util import normalize_map_join, is_geo_data_frame, auto_join_geo_names, geo_data_frame_to_crs, \
+        from .util import normalize_map_join, auto_join_geo_names, geo_data_frame_to_crs, \
             get_geo_data_frame_meta
         from lets_plot.geo_data_internals.utils import is_geocoder
 
@@ -776,7 +829,7 @@ class LayerSpec(FeatureSpec):
                 else:
                     raise ValueError("Geocoding doesn't provide geometries for geom_{}".format(name))
 
-        if is_geo_data_frame(map):
+        if geopandas.lazy_is_instance(map, 'GeoDataFrame'):
             # map = geo_data_frame_to_crs(map, self.props().get('use_crs'))
             use_crs = self.props().get('use_crs')
             if use_crs != "provided":
@@ -875,6 +928,45 @@ class DummySpec(FeatureSpec):
         return other
 
 
+class ColorScaleFeatureSpec(FeatureSpec):
+    """
+    A scale specification for color aesthetics with palette generation support.
+    """
+
+    def palette(self, n) -> List[str]:
+        """
+        Generate a list of hex color codes from a color scale specification.
+
+        Parameters
+        ----------
+        n : int
+            Number of colors to generate.
+
+        Returns
+        -------
+        List of hex color codes.
+
+        Notes
+        -----
+        For ColorBrewer palettes, if the requested number of colors exceeds the palette's
+        maximum size, colors will be interpolated to generate the required number of unique colors.
+
+        Examples
+        --------
+        .. jupyter-execute::
+            :linenos:
+            :emphasize-lines: 3
+
+            from lets_plot import *
+            LetsPlot.setup_html()
+            scale_color_viridis().palette(5)
+
+        """
+
+        from .. import _kbridge
+        return _kbridge._generate_palette_from_color_scale_spec(self.as_dict(), n)
+
+
 def _generate_data(size):
     """ For testing reasons only """
     # return FeatureSpec('dummy', name=None, data='x' * size)
@@ -904,7 +996,7 @@ def _theme_dicts_merge(x, y):
 def _to_svg(spec, path, w=None, h=None, unit=None) -> Union[str, None]:
     from .. import _kbridge as kbr
 
-    svg = kbr._generate_svg(spec.as_dict(), w, h, unit, use_css_pixelated_image_rendering=True)
+    svg = kbr._generate_svg(spec.as_dict(), w, h, unit)
 
     if path is None:
         return svg
@@ -937,7 +1029,8 @@ def _to_html(spec, path, iframe: bool) -> Union[str, None]:
         return None
 
 
-def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=None, unit=None, dpi=None) -> Union[
+    str, None]:
     import base64
     from .. import _kbridge
 
@@ -971,20 +1064,35 @@ def _export_as_raster(spec, path, scale: float, export_format: str, w=None, h=No
                   "For more details visit: https://python-pillow.github.io/\n", file=sys.stderr)
             return None
 
-
         with Image.open(io.BytesIO(png)) as img:
             if img.mode == 'RGBA':
                 img = img.convert('RGB')
 
-            dpi = dpi if dpi is not None else 96  # Default DPI if not specified
             if file_path is not None:
-                img.save(file_path, "PDF", dpi=(dpi, dpi))
+                img.save(file_path, "PDF", dpi=img.info.get("dpi"))
                 return file_path
             else:
-                img.save(file_like_object, "PDF", dpi=(dpi, dpi))
+                img.save(file_like_object, "PDF", dpi=img.info.get("dpi"))
                 return None
     else:
         raise ValueError("Unknown export format: {}".format(export_format))
+
+
+def _to_mvg(spec, path, scale: float, w=None, h=None, unit=None, dpi=None) -> Union[str, None]:
+    from .. import _kbridge
+
+    mvg = _kbridge._generate_mvg(spec.as_dict(), w, h, unit, dpi, scale)
+
+    if path is None:
+        return mvg
+    elif isinstance(path, str):
+        abspath = _makedirs(path)
+        with io.open(abspath, mode="w", encoding="utf-8") as f:
+            f.write(mvg)
+            return abspath
+    else:
+        path.write(mvg.encode())
+        return None
 
 
 def _makedirs(path: str) -> str:

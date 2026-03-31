@@ -111,7 +111,7 @@ internal object BreakLabelsLayoutUtil {
         orientation: Orientation
     ): DoubleRectangle {
         val origin = alignToLabelMargin(bounds, tickLength, margins, spacing, orientation).let {
-            val offset = when (orientation){
+            val offset = when (orientation) {
                 TOP -> DoubleVector(0.0, margins.top)
                 BOTTOM -> DoubleVector(0.0, margins.top + spacing)
                 LEFT -> DoubleVector(margins.left, 0.0)
@@ -151,7 +151,12 @@ internal object BreakLabelsLayoutUtil {
         return bounds.add(offsetVector)
     }
 
-    fun textBounds(elementRect: DoubleRectangle, margins: Thickness, spacing: Double, orientation: Orientation): DoubleRectangle? {
+    fun textBounds(
+        elementRect: DoubleRectangle,
+        margins: Thickness,
+        spacing: Double,
+        orientation: Orientation
+    ): DoubleRectangle? {
         if (elementRect.width == 0.0 || elementRect.height == 0.0) {
             return null
         }
@@ -159,7 +164,7 @@ internal object BreakLabelsLayoutUtil {
             LEFT -> Thickness(0.0, spacing, 0.0, 0.0)
             RIGHT -> Thickness(0.0, 0.0, 0.0, spacing)
             TOP -> Thickness(0.0, 0.0, spacing, 0.0)
-            BOTTOM -> Thickness(spacing,0.0, 0.0, 0.0)
+            BOTTOM -> Thickness(spacing, 0.0, 0.0, 0.0)
         }
 
         return when {

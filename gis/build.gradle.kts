@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
+/*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
@@ -7,18 +16,32 @@ plugins {
     kotlin("multiplatform")
 }
 
+val os: org.gradle.internal.os.OperatingSystem = org.gradle.internal.os.OperatingSystem.current()
+val arch = rootProject.project.extra["architecture"]
 
-val ktorVersion = project.extra["ktor_version"] as String
+val ktorVersion = project.extra["ktor.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val hamcrestVersion = project.extra["hamcrest_version"] as String
-val mockitoVersion = project.extra["mockito_version"] as String
-val assertjVersion = project.extra["assertj_version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val hamcrestVersion = project.extra["hamcrest.version"] as String
+val mockitoVersion = project.extra["mockito.version"] as String
+val assertjVersion = project.extra["assertj.version"] as String
 
 kotlin {
     jvm()
-    js() {
+    js {
         browser {}
+    }
+    wasmJs {
+        browser()
+    }
+
+    when {
+        os.isMacOsX && arch == "arm64" -> macosArm64()
+        os.isMacOsX && arch == "x86_64" -> macosX64()
+        os.isLinux && arch == "arm64" -> linuxArm64()
+        os.isLinux && arch == "x86_64" -> linuxX64()
+        os.isWindows -> mingwX64()
+        else -> throw Exception("Unsupported platform! Check project settings.")
     }
 
     sourceSets {
@@ -32,6 +55,17 @@ kotlin {
         jvmMain {
             dependencies {
                 compileOnly("io.ktor:ktor-client-cio:$ktorVersion")
+            }
+        }
+
+        nativeMain {
+            dependencies {
+                if (os.isMacOsX) {
+                    implementation("io.ktor:ktor-client-darwin:${ktorVersion}")
+                } else {
+                    // Uses CIO for Linux and Windows
+                    implementation("io.ktor:ktor-client-cio:${ktorVersion}")
+                }
             }
         }
 
@@ -59,12 +93,12 @@ kotlin {
             }
         }
 
-        // Fix for 'Could not find "io.github.microutils:kotlin-logging"...' and
+        // Fix for 'Could not find "io.github.oshai:kotlin-logging"...' and
         // 'Could not find "io.ktor:ktor-client-js"...'build errors (Kotlin 1.9.xx versions):
         named("jsTest") {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

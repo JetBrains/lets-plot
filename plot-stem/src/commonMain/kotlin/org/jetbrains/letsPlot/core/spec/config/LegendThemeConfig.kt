@@ -61,13 +61,17 @@ internal object LegendThemeConfig {
     }
 
     private fun toJustification(value: Any): LegendJustification {
-        // "center" or two-element numeric vector
+        // a string or a two-element numeric vector
         return when (value) {
             is String -> {
                 when (value) {
                     Theme.Legend.JUSTIFICATION_CENTER -> LegendJustification.CENTER
+                    Theme.Legend.JUSTIFICATION_LEFT -> LegendJustification.LEFT
+                    Theme.Legend.JUSTIFICATION_RIGHT -> LegendJustification.RIGHT
+                    Theme.Legend.JUSTIFICATION_TOP -> LegendJustification.TOP
+                    Theme.Legend.JUSTIFICATION_BOTTOM -> LegendJustification.BOTTOM
                     else -> throw IllegalArgumentException(
-                        "Illegal value '$value', $LEGEND_JUSTIFICATION expected values are: 'center' or two-element numeric list."
+                        "Illegal value '$value', $LEGEND_JUSTIFICATION expected values are: 'center', 'left', 'right', 'top', 'bottom', or a two-element numeric list."
                     )
                 }
             }
@@ -79,7 +83,7 @@ internal object LegendThemeConfig {
                 value
             }
             else -> throw IllegalArgumentException(
-                "Illegal value type: ${value::class.simpleName}, $LEGEND_JUSTIFICATION expected values are: 'center' or two-element numeric list."
+                "Illegal value type: ${value::class.simpleName}, $LEGEND_JUSTIFICATION expected values are: 'center', 'left', 'right', 'top', 'bottom', or a two-element numeric list."
             )
         }
     }

@@ -24,10 +24,10 @@ object AwtEventUtil {
         )
     }
 
-    fun translate(e: AwtMouseWheelEvent): MouseWheelEvent {
+    fun translate(e: AwtMouseWheelEvent, offset: Vector = Vector.ZERO): MouseWheelEvent {
         return MouseWheelEvent(
-            e.x,
-            e.y,
+            e.x - offset.x,
+            e.y - offset.y,
             getButton(e),
             getModifiers(e),
             e.preciseWheelRotation,

@@ -5,16 +5,9 @@
 
 plugins {
     kotlin("jvm")
-    id ("org.openjfx.javafxplugin")
 }
 
-val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
-val jfxVersion = extra["jfx_version"] as String
-
-javafx {
-    version = jfxVersion
-    modules = listOf("javafx.controls", "javafx.swing")
-}
+val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
@@ -29,5 +22,4 @@ dependencies {
     implementation(project(":plot-raster"))
     implementation(project(":platf-awt"))
     implementation(project(":platf-batik"))
-    implementation(project(":platf-jfx-swing"))
 }

@@ -7,9 +7,10 @@ package org.jetbrains.letsPlot.core.plot.builder.annotation
 
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PositionedAnnotation
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccess
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.LinePattern
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
 object AnnotationProviderUtil {
@@ -27,6 +28,22 @@ object AnnotationProviderUtil {
         )
         if (mappedLines.isEmpty()) {
             return null
+        }
+
+        if (spec is PositionedAnnotationSpecification) {
+            return PositionedAnnotation(
+                mappedLines,
+                textStyle = TextStyle(
+                    themeTextStyle.family.name,
+                    themeTextStyle.face,
+                    spec.textSize ?: themeTextStyle.size,
+                    themeTextStyle.color
+                ),
+                useCustomColor,
+                useLayerColor = spec.useLayerColor,
+                horizontalPlacements = spec.horizontalPlacements,
+                verticalPlacements = spec.verticalPlacements
+            )
         }
 
         return Annotation(

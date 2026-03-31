@@ -12,12 +12,10 @@ object MultiLineTooltipBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(MultiLineTooltip()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Overlaid bars plot",
-                plotSpecList(),
-//                demoComponentSize
-            ))
+                plotSpecList()
+            )
         }
     }
 }

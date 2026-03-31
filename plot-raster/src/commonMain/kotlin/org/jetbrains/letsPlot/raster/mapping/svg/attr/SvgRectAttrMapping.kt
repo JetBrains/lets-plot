@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
-import org.jetbrains.letsPlot.raster.shape.Rectangle
+import org.jetbrains.letsPlot.raster.scene.Rectangle
 
 internal object SvgRectAttrMapping : SvgShapeMapping<Rectangle>() {
     override fun setAttribute(target: Rectangle, name: String, value: Any?) {

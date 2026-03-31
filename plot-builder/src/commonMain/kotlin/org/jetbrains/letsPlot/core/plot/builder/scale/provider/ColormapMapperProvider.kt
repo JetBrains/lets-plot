@@ -7,13 +7,16 @@ package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.GradientUtil.createGradient
 import org.jetbrains.letsPlot.core.commons.colormap.ColorMaps
 import org.jetbrains.letsPlot.core.commons.colormap.ColorMaps.VIRIDIS
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
 
 
@@ -42,7 +45,8 @@ class ColormapMapperProvider(
     end: Double?,
     private val direction: Double?,
     naValue: Color
-) : MapperProviderBase<Color>(naValue) {
+) : MapperProviderBase<Color>(naValue),
+    PaletteGenerator {
 
     private val cmapName = cmapName ?: VIRIDIS
     private val alpha = alpha ?: 1.0
@@ -67,8 +71,7 @@ class ColormapMapperProvider(
 
         @Suppress("NAME_SHADOWING")
         val domain = MapperUtil.rangeWithLimitsAfterTransform(domain, trans)
-//        return GuideMappers.continuousToDiscrete(domain, colors, naValue)
-        val gradient = ColorGradientnMapperProvider.createGradient(domain, colors, naValue, alpha)
+        val gradient = createGradient(domain, colors, naValue, alpha)
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
     }
 
@@ -78,5 +81,10 @@ class ColormapMapperProvider(
             true -> colors.reversed()
             false -> colors
         }
+    }
+
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
+        return createContinuousMapper(domain, Transforms.IDENTITY)
     }
 }

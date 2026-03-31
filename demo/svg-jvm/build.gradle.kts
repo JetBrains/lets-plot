@@ -5,17 +5,10 @@
 
 plugins {
     kotlin("jvm")
-    id ("org.openjfx.javafxplugin")
 }
 
-val batikVersion = project.extra["batik_version"] as String
-val commonsIOVersion = project.extra["commons-io.version"] as String
-val jfxVersion = extra["jfx_version"] as String
-
-javafx {
-    version = jfxVersion
-    modules = listOf("javafx.controls", "javafx.swing")
-}
+val batikVersion = project.extra["batik.version"] as String
+//val commonsIOVersion = project.extra["commons-io.version"] as String
 
 dependencies {
     implementation(kotlin("stdlib-common"))
@@ -32,8 +25,5 @@ dependencies {
     implementation(project(":platf-awt"))
     implementation(project(":platf-batik"))
     implementation("org.apache.xmlgraphics:batik-codec:${batikVersion}")
-    implementation("commons-io:commons-io:${commonsIOVersion}")  // commons-io: a newer version than the one in Batik transitive dependency.
-
-    // JFX
-    implementation(project(":platf-jfx-swing"))
+//    implementation("commons-io:commons-io:${commonsIOVersion}")  // commons-io: a newer version than the one in Batik transitive dependency.
 }

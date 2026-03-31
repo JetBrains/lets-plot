@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil.variables
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
@@ -22,9 +22,8 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption.Companion.mergeWith
 import org.jetbrains.letsPlot.core.plot.builder.sampling.Sampling
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipSpecification
-import org.jetbrains.letsPlot.core.spec.*
-import org.jetbrains.letsPlot.core.spec.Option.Geom.Choropleth.GEO_POSITIONS
+import org.jetbrains.letsPlot.core.spec.GeomProto
+import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Layer
 import org.jetbrains.letsPlot.core.spec.Option.Layer.ANNOTATIONS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.DEFAULT_LEGEND_GROUP_NAME
@@ -40,10 +39,15 @@ import org.jetbrains.letsPlot.core.spec.Option.Layer.POS
 import org.jetbrains.letsPlot.core.spec.Option.Layer.SHOW_LEGEND
 import org.jetbrains.letsPlot.core.spec.Option.Layer.STAT
 import org.jetbrains.letsPlot.core.spec.Option.Layer.TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.KIND
+import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Kind.SMOOTH_STAT_SUMMARY_ANNOTATION
+import org.jetbrains.letsPlot.core.spec.Option.Mapping
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
+import org.jetbrains.letsPlot.core.spec.PosProto
+import org.jetbrains.letsPlot.core.spec.StatProto
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.combinedDiscreteMapping
 import org.jetbrains.letsPlot.core.spec.config.DataConfigUtil.layerMappingsAndCombinedData
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
@@ -52,19 +56,20 @@ class LayerConfig constructor(
     layerOptions: Map<String, Any>,
     plotData: DataFrame,
     plotMappings: Map<String, String>,
+    plotExplicitGroupingVars: List<String>?,
     plotDataMeta: Map<*, *>,
     plotOrderOptions: List<OrderOption>,
     val geomProto: GeomProto,
     val aopConversion: AesOptionConversion,
     private val clientSide: Boolean,
-    isMapPlot: Boolean,
-    public val tz: TimeZone?,
+    val tz: TimeZone?,
 ) : OptionsAccessor(
     layerOptions,
     initLayerDefaultOptions(layerOptions, geomProto)
 ) {
 
-    val dtypesByVarName: Map<String, DataType>
+    val geoMappings: Map<Aes<*>, DataFrame.Variable>
+    val dtypeByVarName: Map<String, DataType>
     val statKind: StatKind = StatKind.safeValueOf(getStringSafe(STAT))
     val stat: Stat = StatProto.createStat(statKind, options = this)
     val labelFormat: String? = getString(Option.Geom.Text.LABEL_FORMAT)
@@ -76,16 +81,16 @@ class LayerConfig constructor(
 
     val isLiveMap: Boolean = geomProto.geomKind == GeomKind.LIVE_MAP
 
-    private val explicitConstantAes = Option.Mapping.REAL_AES_OPTION_NAMES
+    private val explicitConstantAes = Mapping.REAL_AES_OPTION_NAMES
         .filter(::hasOwn)
-        .map(Option.Mapping::toAes)
+        .map(Mapping::toAes)
 
     // Color aesthetics
     val colorByAes: Aes<Color> = getPaintAes(Aes.COLOR, explicitConstantAes)
     val fillByAes: Aes<Color> = getPaintAes(Aes.FILL, explicitConstantAes)
     val renderedAes: List<Aes<*>> = GeomMeta.renders(geomProto.geomKind, colorByAes, fillByAes)
     val isLegendDisabled: Boolean
-        get() = when (hasOwn(SHOW_LEGEND)) {
+        get() = when (has(SHOW_LEGEND)) {
             true -> !getBoolean(SHOW_LEGEND, true)
             else -> false
         }
@@ -157,13 +162,15 @@ class LayerConfig constructor(
     var orderOptions: List<OrderOption>
         private set
 
-    val explicitGroupingVarName: String?
+    val explicitGroupingVarNames: List<String>?
 
     val varBindings: List<VarBinding>
     val constantsMap: Map<Aes<*>, Any>
 
     val tooltips: TooltipSpecification
     val annotations: AnnotationSpecification
+
+    private val combinedDiscreteMappings: Map<String, String>
 
     internal var ownData: DataFrame
         private set
@@ -179,14 +186,33 @@ class LayerConfig constructor(
     init {
         ownData = ConfigUtil.createDataFrame(get(DATA))
 
+        // Explicit grouping.
+        explicitGroupingVarNames = run {
+            @Suppress("NAME_SHADOWING")
+            val plotExplicitGroupingVars = when (getBoolean(INHERIT_AES, true)) {
+                true -> plotExplicitGroupingVars
+                else -> null
+            }
+            val layerGroupingVars = OptionsAccessor
+                .over(getMap(MAPPING))
+                .getAsStringListQ(Mapping.GROUP)
+            when {
+                plotExplicitGroupingVars == null -> layerGroupingVars
+                layerGroupingVars == null -> plotExplicitGroupingVars
+                else -> plotExplicitGroupingVars + layerGroupingVars
+            }?.distinct()
+        }
+
         @Suppress("NAME_SHADOWING")
         val plotMappings = when (getBoolean(INHERIT_AES, true)) {
             true -> plotMappings
             else -> emptyMap()
         }
-        val layerMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String }
+        val layerMappings = getMap(MAPPING)
+            .filterNot { (aes, _) -> aes == Mapping.GROUP }
+            .mapValues { (_, variable) -> variable as String }
 
-        val combinedDiscreteMappings = combinedDiscreteMapping(
+        combinedDiscreteMappings = combinedDiscreteMapping(
             commonMappings = plotMappings,
             ownMappings = layerMappings,
             commonDiscreteAes = DataMetaUtil.getAsDiscreteAesSet(plotDataMeta),
@@ -202,20 +228,19 @@ class LayerConfig constructor(
             }
         }.afterOrientation(isYOrientation)
 
-        // Combine plot + layer mappings.
+        // Combine plot and layer mappings.
         // Only keep those mappings which can be consumed by this layer.
         val consumedAesMappings = (plotMappings + layerMappings).filterKeys { aesName ->
             when (aesName) {
-                Option.Mapping.GROUP -> true
+                Mapping.GROUP -> throw IllegalStateException("'${Mapping.GROUP}' is not an aesthetic")
                 else -> {
-                    val aes = Option.Mapping.toAes(aesName)
+                    val aes = Mapping.toAes(aesName)
                     consumedAesSet.contains(aes)
                 }
             }
         }
 
-        val (aesMappings: Map<Aes<*>, DataFrame.Variable>,
-            rawCombinedData: DataFrame) = layerMappingsAndCombinedData(
+        val (aesMappings, geoMappings, rawCombinedData) = layerMappingsAndCombinedData(
             layerOptions = layerOptions,
             geomKind = geomProto.geomKind,
             stat = stat,
@@ -225,10 +250,10 @@ class LayerConfig constructor(
             consumedAesMappings = consumedAesMappings,
             explicitConstantAes = explicitConstantAes,
             isYOrientation = isYOrientation,
-            clientSide = clientSide,
-            isMapPlot = isMapPlot
+            clientSide = clientSide
         )
 
+        this.geoMappings = geoMappings
         val baseDTypes = DataMetaUtil.getDTypesByVarName(plotDataMeta) +
                 DataMetaUtil.getDTypesByVarName(getMap(DATA_META))
 
@@ -241,7 +266,7 @@ class LayerConfig constructor(
             emptyMap()
         }
 
-        dtypesByVarName = baseDTypes + discreteVarsDTypes
+        dtypeByVarName = baseDTypes + discreteVarsDTypes
 
 
         // init AES constants excluding mapped AES
@@ -250,9 +275,6 @@ class LayerConfig constructor(
             consumedAesSet = consumedAesSet - aesMappings.keys,
             aopConversion = aopConversion
         )
-
-        // grouping
-        explicitGroupingVarName = initGroupingVarName(rawCombinedData, consumedAesMappings)
 
         varBindings = LayerConfigUtil.createBindings(
             rawCombinedData,
@@ -266,7 +288,7 @@ class LayerConfig constructor(
             initTooltipsSpec(
                 tooltipOptions = getSafe(TOOLTIPS),
                 varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
-                constantsMap, explicitGroupingVarName
+                constantsMap, explicitGroupingVarNames
             )
         } else {
             TooltipSpecification.defaultTooltip()
@@ -276,7 +298,7 @@ class LayerConfig constructor(
             initAnnotationSpec(
                 annotationOptions = getSafe(ANNOTATIONS),
                 varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
-                constantsMap, explicitGroupingVarName
+                constantsMap, explicitGroupingVarNames
             )
         } else {
             AnnotationSpecification.NONE
@@ -374,6 +396,13 @@ class LayerConfig constructor(
                 isYOrientedByAes(setOf(Aes.YMIN, Aes.LOWER, Aes.MIDDLE, Aes.UPPER, Aes.YMAX))
             }
 
+            geomProto.geomKind == GeomKind.BRACKET -> {
+                isYOrientedByAes(setOf(Aes.XMIN, Aes.XMAX))
+            }
+            geomProto.geomKind == GeomKind.BRACKET_DODGE -> {
+                !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
+            }
+
             geomProto.geomKind in listOf(
                 GeomKind.CROSS_BAR,
                 GeomKind.ERROR_BAR,
@@ -390,22 +419,6 @@ class LayerConfig constructor(
             setOrientationY()
         }
         return isYOriented
-    }
-
-    private fun initGroupingVarName(data: DataFrame, mappingOptions: Map<*, *>): String? {
-        var fieldName: String? = when (val groupBy = mappingOptions[Option.Mapping.GROUP]) {
-            is String -> groupBy
-            else -> null
-        }
-
-        if (fieldName == null && has(GEO_POSITIONS)) {
-            // 'default' group is important for 'geom_map'
-            val groupVar = variables(data)["group"]
-            if (groupVar != null) {
-                fieldName = groupVar.name
-            }
-        }
-        return fieldName
     }
 
     fun hasVarBinding(varName: String): Boolean {
@@ -432,16 +445,18 @@ class LayerConfig constructor(
         update(ORIENTATION, "y")
     }
 
-    fun hasExplicitGrouping(): Boolean {
-        return explicitGroupingVarName != null
-    }
-
     fun isExplicitGrouping(varName: String): Boolean {
-        return explicitGroupingVarName != null && explicitGroupingVarName == varName
+        return explicitGroupingVarNames != null && varName in explicitGroupingVarNames
     }
 
     fun getVariableForAes(aes: Aes<*>): DataFrame.Variable? {
         return varBindings.find { it.aes == aes }?.variable
+    }
+
+    // Returns the original variable name for meta-variables
+    // (e.g., "category" instead of "color.category" for color=as_discrete("category") mapping).
+    fun getOriginalVariableName(aes: Aes<*>): String? {
+        return combinedDiscreteMappings[aes.name] ?: getVariableForAes(aes)?.name
     }
 
     fun getMapJoin(): Pair<List<*>, List<*>>? {
@@ -473,13 +488,13 @@ class LayerConfig constructor(
             in explicitConstantAes -> aes
             else -> {
                 val optionName = when (aes) {
-                    Aes.COLOR -> Option.Layer.COLOR_BY
-                    Aes.FILL -> Option.Layer.FILL_BY
+                    Aes.COLOR -> Layer.COLOR_BY
+                    Aes.FILL -> Layer.FILL_BY
                     else -> aes.name
                 }
 
                 val colorBy: Aes<Color>? = getString(optionName)?.let { aesName ->
-                    val aesByName = Option.Mapping.toAes(aesName)
+                    val aesByName = Mapping.toAes(aesName)
                     require(Aes.isColor(aesByName)) { "'$optionName' should be an aesthetic related to color" }
                     @Suppress("UNCHECKED_CAST")
                     aesByName as Aes<Color>
@@ -528,7 +543,7 @@ class LayerConfig constructor(
             tooltipOptions: Any,  // An options map or just string "none"
             varBindings: List<VarBinding>,
             constantsMap: Map<Aes<*>, Any>,
-            explicitGroupingVarName: String?
+            explicitGroupingVarNames: List<String>?
         ): TooltipSpecification {
             return when (tooltipOptions) {
                 is Map<*, *> -> {
@@ -536,19 +551,14 @@ class LayerConfig constructor(
                     TooltipConfig(
                         opts = tooltipOptions as Map<String, Any>,
                         constantsMap = constantsMap,
-                        groupingVarName = explicitGroupingVarName,
+                        groupingVarNames = explicitGroupingVarNames,
                         varBindings = varBindings
                     ).createTooltips()
                 }
 
-                NONE -> {
-                    // not show tooltips
-                    TooltipSpecification.withoutTooltip()
-                }
+                NONE -> TooltipSpecification.NONE
 
-                else -> {
-                    error("Incorrect tooltips specification")
-                }
+                else -> error("Incorrect tooltips specification")
             }
         }
 
@@ -556,16 +566,27 @@ class LayerConfig constructor(
             annotationOptions: Any,  // An options map or just string "none"
             varBindings: List<VarBinding>,
             constantsMap: Map<Aes<*>, Any>,
-            explicitGroupingVarName: String?
+            explicitGroupingVarNames: List<String>?
         ): AnnotationSpecification {
             return when (annotationOptions) {
                 is Map<*, *> -> {
-                    @Suppress("UNCHECKED_CAST")
-                    AnnotationConfig(
-                        opts = annotationOptions as Map<String, Any>,
-                        varBindings = varBindings,
-                        constantsMap, explicitGroupingVarName
-                    ).createAnnotations()
+                    if (annotationOptions[KIND] == SMOOTH_STAT_SUMMARY_ANNOTATION) {
+                        @Suppress("UNCHECKED_CAST")
+                        SmoothStatSummaryAnnotationConfig(
+                            opts = annotationOptions as Map<String, Any>,
+                            varBindings = varBindings,
+                            constantsMap = constantsMap,
+                            groupingVarNames = explicitGroupingVarNames
+                        ).createAnnotations()
+                    } else {
+                        @Suppress("UNCHECKED_CAST")
+                        AnnotationConfig(
+                            opts = annotationOptions as Map<String, Any>,
+                            varBindings = varBindings,
+                            constantsMap = constantsMap,
+                            groupingVarNames = explicitGroupingVarNames
+                        ).createAnnotations()
+                    }
                 }
 
                 NONE -> {

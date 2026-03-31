@@ -19,6 +19,7 @@ abstract class TimeZoneAwareInterval : TimeInterval {
             throw RuntimeException("Duration must be positive")
         }
 
+        @Suppress("NAME_SHADOWING")
         val tz = tz ?: TimeZone.UTC
 
         val startDateTime = DateTime.ofEpochMilliseconds(start, tz)

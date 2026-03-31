@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -37,21 +37,20 @@ class PlotAssembler constructor(
     private val xAxisPosition: AxisPosition,
     private val yAxisPosition: AxisPosition,
     private val theme: Theme,
-    title: String? = null,
-    subtitle: String? = null,
-    caption: String? = null,
+    private val title: String? = null,
+    private val subtitle: String? = null,
+    private val caption: String? = null,
+    private val tag: String? = null,
     guideOptionsMap: Map<GuideKey, GuideOptionsList> = HashMap(),
     private val plotSpecId: String?,
     private val tz: TimeZone?,
+    scaleFactor: Double = 1.0,
+    private val detachedLegendsCollector: DetachedLegendsCollector?,
+    private val messageConsumer: (String) -> Unit = {},
 ) {
 
     val containsLiveMap: Boolean = geomTiles.containsLiveMap
 
-    private val plotTitle = title?.takeIf { theme.plot().showTitle() }
-    private val plotSubtitle = subtitle?.takeIf { theme.plot().showSubtitle() }
-    private val plotCaption = caption?.takeIf { theme.plot().showCaption() }
-
-    private var legendsEnabled = true
     private var interactionsEnabled = true
 
     private val frameProviderByTile: List<FrameOfReferenceProvider>
@@ -59,24 +58,52 @@ class PlotAssembler constructor(
     private val plotContext: PlotContext
     private val layouter: PlotFigureLayouter
 
+    // Legends that can be detached from this plot and collected by a composite figure.
+    // Contains legends with fixed positions (LEFT, RIGHT, TOP, BOTTOM) and optionally
+    // overlay legends.
+    // Each legend includes its position and justification information.
+    val detachedLegends: List<LegendBoxInfo>
+
     init {
         plotContext = PlotAssemblerPlotContext(
             geomTiles,
             expFormat = extractExponentFormat(theme.exponentFormat),
-            tz = tz
+            tz = tz,
+            scaleFactor,
+            messageConsumer
         )
 
-        val legendBoxInfos: List<LegendBoxInfo> = when {
-            legendsEnabled -> PlotAssemblerUtil.createLegends(
-                plotContext,
-                geomTiles,
-                geomTiles.mappersNP,
-                guideOptionsMap,
-                theme.legend(),
-                theme.panel()
-            )
+        val legendTheme = theme.legend()
+        val legendPosition = legendTheme.position()
 
-            else -> emptyList()
+        val legendBoxInfos: List<LegendBoxInfo> = when (legendTheme.position().isHidden) {
+            true -> emptyList()
+            else -> {
+                PlotAssemblerUtil.createLegends(
+                    plotContext,
+                    geomTiles,
+                    geomTiles.mappersNP,
+                    guideOptionsMap,
+                    legendTheme,
+                    theme.panel()
+                )
+            }
+        }
+
+        val shouldDetachLegends = detachedLegendsCollector != null &&
+                (legendPosition.isFixed || (legendPosition.isOverlay && detachedLegendsCollector.detachOverlayLegends))
+
+        detachedLegends = if (shouldDetachLegends) {
+            detachedLegendsCollector.collect(legendBoxInfos)
+            legendBoxInfos
+        } else {
+            emptyList()
+        }
+
+        val legendBoxInfosForLayout = if (shouldDetachLegends) {
+            emptyList()  // Detached legends should not be laidout by this plot
+        } else {
+            legendBoxInfos
         }
 
         val flipAxis = geomTiles.coordProvider.flipped
@@ -120,10 +147,11 @@ class PlotAssembler constructor(
             coordProvider = geomTiles.coordProvider,
             containsLiveMap = geomTiles.containsLiveMap,
             theme = theme,
-            legendBoxInfos = legendBoxInfos,
-            title = plotTitle,
-            subtitle = plotSubtitle,
-            caption = plotCaption
+            legendBoxInfos = legendBoxInfosForLayout,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag
         )
     }
 
@@ -151,9 +179,10 @@ class PlotAssembler constructor(
         plotContext: PlotContext
     ): PlotSvgComponent {
         return PlotSvgComponent(
-            title = plotTitle,
-            subtitle = plotSubtitle,
-            caption = plotCaption,
+            title = title,
+            subtitle = subtitle,
+            caption = caption,
+            tag = tag,
             coreLayersByTile = geomTiles.coreLayersByTile(),
             marginalLayersByTile = geomTiles.marginalLayersByTile(),
             figureLayoutInfo = figureLayoutInfo,
@@ -165,10 +194,6 @@ class PlotAssembler constructor(
             styleSheet = styleSheet,
             plotContext = plotContext
         )
-    }
-
-    fun disableLegends() {
-        legendsEnabled = false
     }
 
     fun disableInteractions() {
@@ -190,7 +215,8 @@ class PlotAssembler constructor(
                 yAxisPosition = yAxisPosition,
                 theme = theme,
                 plotSpecId = null,
-                tz = null
+                tz = null,
+                detachedLegendsCollector = null,
             )
         }
 

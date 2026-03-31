@@ -10,29 +10,34 @@ import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
 import org.jetbrains.letsPlot.core.plot.builder.scale.MapperProvider
 import org.jetbrains.letsPlot.core.plot.builder.scale.ScaleProvider
-import org.jetbrains.letsPlot.core.spec.*
+import org.jetbrains.letsPlot.core.spec.FigKind
+import org.jetbrains.letsPlot.core.spec.GeomProto
+import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Mapping
 import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.FACET
 import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
+import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.conversion.AesOptionConversion
 import org.jetbrains.letsPlot.core.spec.conversion.ColorOptionConverter
-import org.jetbrains.letsPlot.core.spec.vegalite.VegaConfig
 
 abstract class PlotConfig(
     opts: Map<String, Any>,
@@ -58,21 +63,28 @@ abstract class PlotConfig(
         get() = getMap(TITLE)[SUBTITLE_TEXT] as String?
     val caption: String?
         get() = getMap(CAPTION)[CAPTION_TEXT] as String?
+    val tag: String?
+        get() = getMap(TAG)[TAG_TEXT] as String?
+
+    val fullTag: String?
+        get() {
+            val text = tag ?: return null
+            return theme.plot().tagPrefix() + text + theme.plot().tagSuffix()
+        }
 
     val containsLiveMap: Boolean
         get() = layerConfigs.any(LayerConfig::isLiveMap)
 
-    public val tz: TimeZone? = DataMetaUtil.determineTimeZoneID(opts)?.let { TimeZone(it) }
-    public val dataTypeByAes: (aes: Aes<*>) -> DataType
+    val tz: TimeZone? = DataMetaUtil.determineTimeZoneID(opts)?.let { TimeZone(it) }
+    val dataTypeByAes: (aes: Aes<*>) -> DataType
 
     init {
         val fontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
-        val ownTheme = ThemeConfig(getMap(Option.Plot.THEME), fontFamilyRegistry).theme
-        theme = if (containerTheme == null || hasOwn(Option.Plot.THEME)) {
-            ownTheme
-        } else {
-            ownTheme.toInherited(containerTheme)
-        }
+        theme = ThemeConfig(
+            themeOptions = getMap(THEME),
+            containerTheme = containerTheme,
+            fontFamilyRegistry
+        ).theme
 
         aopConversion = AesOptionConversion(
             ColorOptionConverter(
@@ -115,7 +127,15 @@ abstract class PlotConfig(
 
         facets = if (has(FACET)) {
             val facetOptions = getMap(FACET)
-            val facetConfig = FacetConfig(facetOptions, theme.exponentFormat, tz = tz)
+            val dtypeByVarName: Map<String, DataType> = layerConfigs
+                .flatMap { it.dtypeByVarName.entries }
+                .associate { it.key to it.value }
+            val facetConfig = FacetConfig(
+                facetOptions,
+                expFormat = theme.exponentFormat,
+                tz = tz,
+                dtypeByVarName = dtypeByVarName
+            )
             val dataByLayer = ArrayList<DataFrame>()
             for (layerConfig in layerConfigs) {
                 dataByLayer.add(layerConfig.combinedData)
@@ -131,24 +151,21 @@ abstract class PlotConfig(
         val layerConfigs = ArrayList<LayerConfig>()
         val layerOptionsList = getList(LAYERS)
 
-        val isMapPlot = layerOptionsList
-            .mapNotNull { layerOptions -> (layerOptions as? Map<*, *>)?.getString(Option.Layer.GEOM) }
-            .map(Option.GeomName::toGeomKind)
-            .any { it in listOf(GeomKind.LIVE_MAP, GeomKind.MAP) }
-
         for (layerOptions in layerOptionsList) {
             require(layerOptions is Map<*, *>) { "Layer options: expected Map but was ${layerOptions!!::class.simpleName}" }
             @Suppress("UNCHECKED_CAST")
             layerOptions as Map<String, Any>
 
+            val aesMapping = getMap(MAPPING).filterNot { (aes, _) -> aes == Mapping.GROUP }
+            val groupingVars = over(getMap(MAPPING)).getAsStringListQ(Mapping.GROUP)
             val layerConfig = createLayerConfig(
                 layerOptions,
                 sharedData,
-                plotMappings = getMap(MAPPING).mapValues { (_, variable) -> variable as String },
+                plotMappings = aesMapping.mapValues { (_, variable) -> variable as String },
+                plotExplicitGroupingVars = groupingVars,
                 plotDataMeta = getMap(DATA_META),
                 plotOrderOptions = DataMetaUtil.getOrderOptions(this.toMap(), getMap(MAPPING), isClientSide),
-                isClientSide,
-                isMapPlot
+                isClientSide
             )
             layerConfigs.add(layerConfig)
         }
@@ -159,10 +176,10 @@ abstract class PlotConfig(
         layerOptions: Map<String, Any>,
         sharedData: DataFrame,
         plotMappings: Map<String, String>,
+        plotExplicitGroupingVars: List<String>?,
         plotDataMeta: Map<String, Any>,
         plotOrderOptions: List<OrderOptionUtil.OrderOption>,
-        isClientSide: Boolean,
-        isMapPlot: Boolean
+        isClientSide: Boolean
     ): LayerConfig {
         val geomName = layerOptions[Option.Layer.GEOM] as String
         val geomKind = Option.GeomName.toGeomKind(geomName)
@@ -172,12 +189,12 @@ abstract class PlotConfig(
             layerOptions,
             sharedData,
             plotMappings,
+            plotExplicitGroupingVars,
             plotDataMeta,
             plotOrderOptions,
             geomProto,
             aopConversion = aopConversion,
             clientSide = isClientSide,
-            isMapPlot,
             tz,
         )
     }
@@ -205,9 +222,6 @@ abstract class PlotConfig(
         }
 
         private fun assertFigSpec(opts: Map<String, Any>) {
-            if (VegaConfig.isVegaLiteSpec(opts))
-                return // prevent figSpecKind() invocation - vega lite not handled in it and will cause an exception
-
             // Will throw an IllegalArgumentException is something is wrong.
             figSpecKind(opts)
         }
@@ -237,7 +251,7 @@ abstract class PlotConfig(
                 .mapValues { (_, bindings) -> bindings.singleOrNull { binding -> aes == binding.aes }?.variable?.name }
                 .filterNotNullValues()
 
-            val dTypes = aesBindingByLayer.entries.mapNotNull { (layer, varName) -> layer.dtypesByVarName[varName] }
+            val dTypes = aesBindingByLayer.entries.mapNotNull { (layer, varName) -> layer.dtypeByVarName[varName] }
 
             // Multiple layers with different data types for the same aes.
             // Don't use any (e.g., INTEGER) - may crash if another layer uses a different incompatible data type.

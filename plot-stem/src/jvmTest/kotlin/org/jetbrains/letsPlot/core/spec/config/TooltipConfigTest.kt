@@ -8,10 +8,10 @@ package org.jetbrains.letsPlot.core.spec.config
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.LineSpec.DataPoint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec.Line
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.spec.TooltipSpec.Line
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Layer.DISABLE_SPLITTING
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
@@ -491,10 +491,8 @@ class TooltipConfigTest {
         )
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
 
-        assertEquals(
-            "Wrong number of arguments in pattern '{.2f} {.2f}' to format 'color'. Expected 1 argument instead of 2",
-            kotlin.runCatching { getGeneralTooltipStrings(geomLayer) }.exceptionOrNull()!!.message
-        )
+        val tooltip = getGeneralTooltipStrings(geomLayer).single()
+        assertEquals("cty: 15.00 {.2f}", tooltip)
     }
 
     private fun assertFailTooltipSpec(
@@ -1020,7 +1018,7 @@ class TooltipConfigTest {
             Aes.YMIN to "0.019",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping()!!.getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1051,7 +1049,7 @@ class TooltipConfigTest {
             Aes.XMIN to "0.019",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping()!!.getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1081,7 +1079,7 @@ class TooltipConfigTest {
             Aes.XMIN to "0.019",
         )
         val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping().getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
+        geomLayer.createContextualMapping()!!.getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
             assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
         }
     }
@@ -1152,7 +1150,7 @@ class TooltipConfigTest {
     companion object {
         private fun getTitleString(geomLayer: GeomLayer): String? {
             val ctx = TestingPlotContext.create(geomLayer)
-            return geomLayer.createContextualMapping().getTitle(index = 0, ctx)
+            return geomLayer.createContextualMapping()?.getTitle(index = 0, ctx)
         }
 
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
@@ -1161,19 +1159,19 @@ class TooltipConfigTest {
 
         private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
             val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
+            val dataPoints = geomLayer.createContextualMapping()?.getDataPoints(index = 0, ctx) ?: emptyList()
             return dataPoints.filterNot(DataPoint::isSide).map { Line.withLabelAndValue(it.label, it.value) }
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
             val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
+            val dataPoints = geomLayer.createContextualMapping()?.getDataPoints(index = 0, ctx) ?: emptyList()
             return dataPoints.filter(DataPoint::isAxis)
         }
 
         private fun getSideTooltips(geomLayer: GeomLayer): Map<Aes<*>, String> {
             val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createContextualMapping().getDataPoints(index = 0, ctx)
+            val dataPoints = geomLayer.createContextualMapping()?.getDataPoints(index = 0, ctx) ?: emptyList()
             return dataPoints.filter { it.isSide && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
         }
 

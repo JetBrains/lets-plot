@@ -28,6 +28,7 @@ val SUPPORTED_LAYERS = setOf(
     GeomKind.H_LINE, GeomKind.V_LINE, GeomKind.SEGMENT, GeomKind.CURVE, GeomKind.SPOKE,
     GeomKind.RECT, GeomKind.TILE, GeomKind.BIN_2D, GeomKind.HEX,
     GeomKind.DENSITY2D, GeomKind.CONTOUR, GeomKind.PATH,
+    GeomKind.POINT_DENSITY,
     GeomKind.TEXT, GeomKind.LABEL,
     GeomKind.DENSITY2DF, GeomKind.CONTOURF, GeomKind.POLYGON, GeomKind.MAP,
     GeomKind.PIE

@@ -13,7 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 
 class LiveMapGeom : Geom {
-    private lateinit var myMapProvider: LiveMapProvider
+    private var liveMapProvider: LiveMapProvider? = null
+    private var liveMapData: LiveMapProvider.LiveMapData? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = GenericLegendKeyElementFactory()
@@ -29,11 +30,13 @@ class LiveMapGeom : Geom {
     }
 
     fun setLiveMapProvider(liveMapProvider: LiveMapProvider) {
-        myMapProvider = liveMapProvider
+        this.liveMapProvider = liveMapProvider
     }
 
     fun createCanvasFigure(bounds: DoubleRectangle): LiveMapProvider.LiveMapData {
-        return myMapProvider.createLiveMap(bounds)
+        val liveMapProvider = liveMapProvider ?: error("LiveMapProvider not initialized")
+        liveMapData = liveMapProvider.createLiveMap(bounds)
+        return liveMapData!!
     }
 
     companion object {

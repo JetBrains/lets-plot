@@ -21,13 +21,13 @@ import org.jetbrains.letsPlot.core.interact.feedback.WheelZoomFeedback
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
+import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseDragSelectionStrategy
 import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseWheelSelectionStrategy
 import org.jetbrains.letsPlot.core.plot.builder.interact.context.NoneSelectionStrategy
 import org.jetbrains.letsPlot.core.plot.builder.interact.context.PlotTilesInteractionContext
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipRenderer
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 

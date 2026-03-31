@@ -6,7 +6,7 @@
 package demo.plot.batik.customErrorComponent
 
 import org.jetbrains.letsPlot.awt.plot.component.ApplicationContext
-import org.jetbrains.letsPlot.awt.plot.component.DefaultPlotContentPane
+import org.jetbrains.letsPlot.awt.plot.util.PlotContentPaneBase
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
 import org.jetbrains.letsPlot.batik.plot.component.PlotViewerWindowBatik
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
@@ -29,7 +29,7 @@ class MyViewerWindowBatik(
 
     override fun createWindowContent(preferredSizeFromPlot: Boolean): JComponent {
         val processedSpec = MonolithicCommon.processRawSpecs(rawSpec)
-        return object : DefaultPlotContentPane(
+        return object : PlotContentPaneBase(
             processedSpec = processedSpec,
             preferredSizeFromPlot = preferredSizeFromPlot,
             repaintDelay = repaintDelay,

@@ -7,9 +7,9 @@ package org.jetbrains.letsPlot.core.util.sizing
 
 enum class SizingMode {
     FIT,            // assume the container dimension
-    MIN,            // assume plot own dimention or the container dimension whichever is smaller
+    MIN,            // assume plot own dimension or the container dimension whichever is smaller
     SCALED,         // the dimension is computed so that plot preserves its aspect ratio
-    FIXED;          // assume the plot own dimention (not a responsive mode)
+    FIXED;          // assume the plot own dimension (not a responsive mode)
 
     companion object {
         fun byNameIgnoreCase(s: String): SizingMode? {

@@ -5,10 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
+import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedSvgElement
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.fillTextTermGaps
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_START
@@ -20,8 +20,7 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 
 internal class Latex(
-    private val font: Font,
-    private val widthCalculator: (String, Font) -> Double
+    private val font: Font
 ) {
     internal fun parse(text: String): List<RichTextNode> {
         val formulas = extractFormulas(text).map { (formula, range) ->
@@ -52,18 +51,18 @@ internal class Latex(
     }
 
     private fun parse(tokens: Sequence<Token>): LatexNode {
-        return parseGroup(tokens.iterator(), level = 0, emptyList())
+        return parseGroup(tokens.iterator(), level = 0)
     }
 
-    private fun parseGroup(iterator: Iterator<Token>, level: Int, previousLatexNodes: List<LatexNode>): GroupNode {
+    private fun parseGroup(iterator: Iterator<Token>, level: Int): GroupNode {
         val nodes = mutableListOf<LatexNode>()
         while (iterator.hasNext()) {
             when (val token = iterator.next()) {
-                is Token.Command -> nodes.add(parseCommand(token, iterator, level, previousLatexNodes + nodes.toList()))
-                is Token.OpenBrace -> nodes.add(parseGroup(iterator, level, previousLatexNodes + nodes.toList()))
+                is Token.Command -> nodes.add(parseCommand(token, iterator, level))
+                is Token.OpenBrace -> nodes.add(parseGroup(iterator, level))
                 is Token.CloseBrace -> break
-                is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1, previousLatexNodes + nodes.toList()), level))
-                is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1, previousLatexNodes + nodes.toList()), level))
+                is Token.Superscript -> nodes.add(SuperscriptNode(parseSupOrSub(iterator, level + 1), level))
+                is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1), level))
                 is Token.Text -> nodes.add(TextNode(token.content, level))
                 is Token.Space -> continue
                 is Token.ExplicitSpace -> nodes.add(TextNode(token.space, level))
@@ -72,16 +71,16 @@ internal class Latex(
         return GroupNode(nodes, level)
     }
 
-    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int, previousLatexNodes: List<LatexNode>): LatexNode {
+    private fun parseSupOrSub(iterator: Iterator<Token>, level: Int): LatexNode {
         return when (val nextToken = iterator.next()) {
-            is Token.OpenBrace -> parseGroup(iterator, level, previousLatexNodes)
+            is Token.OpenBrace -> parseGroup(iterator, level)
             is Token.Text -> TextNode(nextToken.content, level)
-            is Token.Command -> parseCommand(nextToken, iterator, level, previousLatexNodes)
+            is Token.Command -> parseCommand(nextToken, iterator, level)
             else -> throw IllegalArgumentException("Unexpected token after superscript or subscript")
         }
     }
 
-    private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int, previousLatexNodes: List<LatexNode>): LatexNode {
+    private fun parseCommand(token: Token.Command, iterator: Iterator<Token>, level: Int): LatexNode {
         fun parseNArgs(n: Int): List<LatexNode> {
             val args = mutableListOf<LatexNode>()
             repeat(n) {
@@ -89,7 +88,7 @@ internal class Latex(
                 if (!iterator.hasNext()) {
                     throw IllegalArgumentException("Expected $n arguments for command '${token.name}'")
                 }
-                val arg = parseGroup(iterator, level, previousLatexNodes + args)
+                val arg = parseGroup(iterator, level)
                 args.add(arg)
             }
             return args
@@ -105,7 +104,7 @@ internal class Latex(
         }
     }
 
-    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
+    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
         val (shift, backShift) = if (isSuperior) {
             "-" to ""
         } else {
@@ -123,7 +122,7 @@ internal class Latex(
             setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
             setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
         }).wrap()
-        val indexTSpanElements = content.render(ctx, prefix).map { wrappedElement ->
+        val indexTSpanElements = content.render(ctx, prefixWidth).map { wrappedElement ->
             wrappedElement.svg.apply {
                 if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
                     setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
@@ -257,7 +256,8 @@ internal class Latex(
     }
 
     internal abstract inner class LatexNode(val children: List<LatexNode>, protected val level: Int) : RichTextNode.RichSpan() {
-        protected abstract fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double
+        protected abstract fun estimateNodeWidth(font: Font): Double
+        abstract override fun estimateHeight(font: Font): Double
 
         fun flatListOfAllDescendants(): List<LatexNode> {
             fun childrenWithGrandchildren(nodes: List<LatexNode>): List<LatexNode> {
@@ -266,55 +266,59 @@ internal class Latex(
             return childrenWithGrandchildren(listOf(this))
         }
 
-        final override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double {
+        final override fun estimateWidth(font: Font): Double {
             val formulaFont = this@Latex.font
             val nodeFontSize = max(1, (formulaFont.size * INDEX_SIZE_FACTOR.pow(level)).roundToInt())
             val nodeFont = Font(formulaFont.family, nodeFontSize, formulaFont.isBold, formulaFont.isItalic)
-            return estimateNodeWidth(nodeFont, widthCalculator)
+            return estimateNodeWidth(nodeFont)
         }
     }
 
     internal inner class LatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = node.visualCharCount
 
-        override fun estimateWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
-            node.estimateWidth(font, widthCalculator)
+        override fun estimateWidth(font: Font): Double =
+            node.estimateWidth(font)
 
         override fun estimateHeight(font: Font): Double =
             node.estimateHeight(font)
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
-            return node.render(context, prefix)
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            return node.render(context, prefixWidth)
         }
     }
 
     private inner class TextNode(val content: String, level: Int) : LatexNode(emptyList(), level) {
         override val visualCharCount: Int = content.length
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
-            widthCalculator(content, font)
+        override fun estimateNodeWidth(font: Font): Double {
+            return widthCalculator(content, font)
+        }
 
-        override fun estimateHeight(font: Font): Double =
-            font.size.toDouble()
+        override fun estimateHeight(font: Font): Double {
+            return font.size.toDouble()
+        }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return listOf(context.apply(SvgTSpanElement(content)).wrap())
         }
     }
 
     private inner class GroupNode(children: List<LatexNode>, level: Int) : LatexNode(children, level) {
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
-            children.sumOf { it.estimateWidth(font, widthCalculator) }
+        override fun estimateNodeWidth(font: Font): Double {
+            return children.sumOf { it.estimateWidth(font) }
+        }
 
-        override fun estimateHeight(font: Font): Double =
-            children.maxOf { it.estimateHeight(font) }
+        override fun estimateHeight(font: Font): Double {
+            return children.maxOf { it.estimateHeight(font) }
+        }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             val wrappedElements = mutableListOf<WrappedSvgElement<SvgElement>>()
-            val previousLatexNodes = mutableListOf<LatexNode>()
+            var previousLatexNodesWidth = 0.0
             for (child in children) {
-                wrappedElements.addAll(child.render(context, prefix + previousLatexNodes.toList()))
-                previousLatexNodes.add(child)
+                wrappedElements.addAll(child.render(context, prefixWidth + previousLatexNodesWidth))
+                previousLatexNodesWidth += child.estimateWidth(font)
             }
             return wrappedElements
         }
@@ -322,27 +326,31 @@ internal class Latex(
 
     private inner class SuperscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
         override val visualCharCount: Int = content.visualCharCount
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
-            content.estimateWidth(font, widthCalculator)
+        override fun estimateNodeWidth(font: Font): Double {
+            return content.estimateWidth(font)
+        }
 
-        override fun estimateHeight(font: Font): Double =
-            content.estimateHeight(font)
+        override fun estimateHeight(font: Font): Double {
+            return content.estimateHeight(font)
+        }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
-            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefix = prefix)
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefixWidth = prefixWidth)
         }
     }
 
     private inner class SubscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
         override val visualCharCount: Int = content.visualCharCount
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
-            content.estimateWidth(font, widthCalculator)
+        override fun estimateNodeWidth(font: Font): Double {
+            return content.estimateWidth(font)
+        }
 
-        override fun estimateHeight(font: Font): Double =
-            content.estimateHeight(font)
+        override fun estimateHeight(font: Font): Double {
+            return content.estimateHeight(font)
+        }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
-            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefix = prefix)
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefixWidth = prefixWidth)
         }
     }
 
@@ -352,19 +360,20 @@ internal class Latex(
         level: Int
     ) : LatexNode(listOf(numerator, denominator), level) {
         override val visualCharCount: Int = max(numerator.visualCharCount, denominator.visualCharCount)
-        override fun estimateNodeWidth(font: Font, widthCalculator: (String, Font) -> Double): Double =
-            max(numerator.estimateWidth(font, widthCalculator), denominator.estimateWidth(font, widthCalculator))
+        override fun estimateNodeWidth(font: Font): Double {
+            return max(numerator.estimateWidth(font), denominator.estimateWidth(font))
+        }
 
-        override fun estimateHeight(font: Font): Double =
-            numerator.estimateHeight(font) + denominator.estimateHeight(font)
+        override fun estimateHeight(font: Font): Double {
+            return numerator.estimateHeight(font) + denominator.estimateHeight(font)
+        }
 
-        override fun render(context: RenderState, prefix: List<RichTextNode.RichSpan>): List<WrappedSvgElement<SvgElement>> {
-            val prefixWidth = prefix.sumOf { it.estimateWidth(font, widthCalculator) }
-            val fractionWidth = estimateWidth(font, widthCalculator)
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            val fractionWidth = estimateWidth(font)
             val fractionCenter = prefixWidth + fractionWidth / 2.0
-            val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font, widthCalculator)
+            val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font)
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
-            val numeratorTSpanElements = numerator.render(context, prefix).mapIndexed { i, wrappedElement ->
+            val numeratorTSpanElements = numerator.render(context, prefixWidth).mapIndexed { i, wrappedElement ->
                 wrappedElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
@@ -372,7 +381,7 @@ internal class Latex(
                     }
                 }.wrap(if (i == 0) { fractionCenter } else { wrappedElement.x })
             }
-            val denominatorTSpanElements = denominator.render(context, prefix).mapIndexed { i, wrappedElement ->
+            val denominatorTSpanElements = denominator.render(context, prefixWidth).mapIndexed { i, wrappedElement ->
                 wrappedElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
@@ -390,6 +399,33 @@ internal class Latex(
             return numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
         }
     }
+
+    internal fun fillTextTermGaps(
+        text: String,
+        specialTerms: List<Pair<RichTextNode.RichSpan, IntRange>>
+    ): List<RichTextNode.RichSpan> {
+        fun subtractRange(range: IntRange, toSubtract: List<IntRange>): List<IntRange> {
+            if (toSubtract.isEmpty()) {
+                return listOf(range)
+            }
+
+            val sortedToSubtract = toSubtract.sortedBy(IntRange::first)
+            val firstRange = IntRange(range.first, sortedToSubtract.first().first - 1)
+            val intermediateRanges = sortedToSubtract.windowed(2).map { (prevRange, nextRange) ->
+                IntRange(prevRange.last + 1, nextRange.first - 1)
+            }
+            val lastRange = IntRange(sortedToSubtract.last().last + 1, range.last)
+
+            return (listOf(firstRange) + intermediateRanges + listOf(lastRange)).filterNot(IntRange::isEmpty)
+        }
+
+        val textTerms = subtractRange(text.indices, specialTerms.map { (_, termLocation) -> termLocation })
+            .map { pos -> RichTextNode.Text(text.substring(pos)) to pos }
+        return (specialTerms + textTerms)
+            .sortedBy { (_, termLocation) -> termLocation.first }
+            .map { (term, _) -> term }
+    }
+
 
     companion object {
         private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"

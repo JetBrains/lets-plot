@@ -1,19 +1,21 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.livemap.mapengine.basemap.raster
 
+import org.jetbrains.letsPlot.commons.formatting.string.wrap
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.async.Async
 import org.jetbrains.letsPlot.commons.intern.async.Asyncs
 import org.jetbrains.letsPlot.commons.intern.spatial.projectOrigin
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Untyped
-import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.livemap.config.TILE_PIXEL_SIZE
+import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
 import org.jetbrains.letsPlot.livemap.core.ecs.*
 import org.jetbrains.letsPlot.livemap.core.layers.ParentLayerComponent
 import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskUtil
@@ -21,6 +23,7 @@ import org.jetbrains.letsPlot.livemap.core.multitasking.setMicroThread
 import org.jetbrains.letsPlot.livemap.mapengine.LiveMapContext
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.*
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.CellKey
+import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -66,18 +69,24 @@ class RasterTileLoadingSystem(
             val microThreads = getTileLayerEntities(cellKey).toList()
                 .map { httpTileEntity ->
                     MicroTaskUtil.create {
-                        when (response.errorCode) {
+                        when (val errorCode = response.errorCode) {
                             null -> drawImageTile(imageData, context)
-                            else -> drawErrorTile(response.errorCode, context)
-                        }.onSuccess { snapshot ->
+                            else -> drawErrorTile(errorCode, context)
+                        }.onResult(
+                            successHandler = { tile ->
                             runLaterBySystem(httpTileEntity) { theEntity ->
-                                theEntity.get<BasemapTileComponent>().apply {
-                                    nonCacheable = response.errorCode != null
-                                    tile = Tile.SnapshotTile(snapshot)
+                                theEntity.remove<BusyStateComponent>()
+                                theEntity.get<BasemapTileComponent>().also {
+                                    it.nonCacheable = response.errorCode != null
+                                    it.tile = tile
                                 }
                                 ParentLayerComponent.tagDirtyParentLayer(theEntity)
                             }
-                        }
+                        },
+                            failureHandler = { t ->
+                                println(t)
+                            }
+                        )
                     }
                 }
 
@@ -89,7 +98,7 @@ class RasterTileLoadingSystem(
         downloadedEntities.forEach { it.remove<HttpTileResponseComponent>() }
     }
 
-    private fun drawImageTile(imageData: ByteArray, context: LiveMapContext): Async<Canvas.Snapshot> {
+    private fun drawImageTile(imageData: ByteArray, context: LiveMapContext): Async<Tile> {
         return context.mapRenderContext.canvasProvider
             .decodePng(imageData)
             .map { imageSnapshot ->
@@ -106,26 +115,43 @@ class RasterTileLoadingSystem(
                     dh = TILE_PIXEL_SIZE
                 )
 
-                tileCanvas.takeSnapshot()
+                Tile.SnapshotTile(tileCanvas.takeSnapshot(), context.mapRenderContext.pixelDensity)
             }
     }
 
     private fun drawErrorTile(
-        errorCode: Throwable?,
+        errorCode: Throwable,
         context: LiveMapContext
-    ): Async<Canvas.Snapshot> {
-        val errorText = errorCode!!.message ?: "Unknown error"
+    ): Async<Tile> {
+
         val tileCanvas = context.mapRenderContext.canvasProvider.createCanvas(TILE_PIXEL_DIMENSION)
         val tileCtx = tileCanvas.context2d
-        val textDim = tileCtx.measureTextWidth(errorText)
-        val x = if (textDim < TILE_PIXEL_SIZE) {
-            TILE_PIXEL_SIZE / 2 - textDim / 2
+        val font = Font(fontSize = 12.0, fontFamily = "sans-serif")
+        tileCtx.setFont(font)
+        tileCtx.setFillStyle(Color.RED)
+        tileCtx.setStrokeStyle(Color.BLACK)
+
+        val errorTitle = listOf((errorCode::class.simpleName ?: "Unknown class") + ":")
+        val errorText = errorCode.message ?: "Unknown error"
+        val textWidth = tileCtx.measureTextWidth(errorText)
+        val lineHeight = font.fontSize + 2.0
+
+
+        val lines = if (textWidth < TILE_PIXEL_SIZE) {
+            errorTitle + errorText
         } else {
-            4.0
+            val linesCount = ceil(textWidth / TILE_PIXEL_SIZE).toInt()
+            // Make line shorter by 10% to prevent overflow for non-monospace fonts
+            val approxLineCharLength = (errorText.length / linesCount * 0.9).roundToInt()
+            errorTitle + wrap(errorText, approxLineCharLength).split('\n')
         }
-        tileCtx.setFont(Font())
-        tileCtx.fillText(errorText, x, TILE_PIXEL_SIZE / 2)
-        return Asyncs.constant(tileCanvas.takeSnapshot())
+
+        val y = (TILE_PIXEL_SIZE - lines.size * lineHeight) / 2.0
+        lines.forEachIndexed { index, line ->
+            tileCtx.fillText(line, 4.0, y + index * lineHeight)
+        }
+
+        return Asyncs.constant(Tile.SnapshotTile(tileCanvas.takeSnapshot(), context.mapRenderContext.pixelDensity))
     }
 
     private fun getTileLayerEntities(cellKey: CellKey): Sequence<EcsEntity> {

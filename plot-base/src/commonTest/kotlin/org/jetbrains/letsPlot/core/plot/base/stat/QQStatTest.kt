@@ -5,7 +5,13 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import demoAndTestShared.assertArrayEquals
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.IdentityTransform
+import org.jetbrains.letsPlot.core.plot.builder.VarBinding
+import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import kotlin.test.Test
 
 class QQStatTest : BaseStatTest() {
@@ -55,6 +61,31 @@ class QQStatTest : BaseStatTest() {
             quantileFunction(0.25),
             quantileFunction(0.75),
         ))
+    }
+
+    @Test
+    fun withIndices() {
+        val df = dataFrame(mapOf(
+            TransformVar.SAMPLE to listOf(0.0, 1.0, 1.0, 2.0, null, 2.0, 2.0, 1.0, 1.0, 0.0),
+            TransformVar.COLOR to listOf(0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0)
+        ))
+        val bindings = listOf(
+            VarBinding(TransformVar.SAMPLE, Aes.SAMPLE),
+            VarBinding(TransformVar.COLOR, Aes.COLOR)
+        )
+        val transformByAes: Map<Aes<*>, Transform> = mapOf(
+            Aes.X to IdentityTransform(),
+            Aes.Y to IdentityTransform(),
+            Aes.COLOR to IdentityTransform()
+        )
+        val statDf = DataProcessing.applyStatTest(
+            data = df,
+            stat = Stats.qq(),
+            bindings = bindings,
+            transformByAes = transformByAes,
+            statCtx = statContext(df)
+        )
+        assertArrayEquals(arrayOf(0.0, 9.0, 1.0, 2.0, 7.0, 8.0, 3.0, 5.0, 6.0), statDf.getNumeric(TransformVar.COLOR).toTypedArray())
     }
 
     @Test

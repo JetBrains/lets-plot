@@ -13,7 +13,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.testing.doubleRectangleComparator
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.scale.TransformedDomainBreaksGenerator
 import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.coord.FixedRatioCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayout
@@ -21,7 +23,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutQuad
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProviderFactory
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.spec.config.ThemeConfig
 import kotlin.test.Test
 
@@ -134,16 +135,19 @@ class TopDownTileLayoutTest {
         marginLayout: GeomMarginsLayout = GeomMarginsLayout(0.0, 0.0, 0.0, 0.0),
         coordFixed: Boolean = true,
     ): TileLayoutInfo {
-        val theme = ThemeConfig(fontFamilyRegistry = DefaultFontFamilyRegistry()).theme
+        val theme = ThemeConfig(
+            themeOptions = emptyMap(),
+            containerTheme = null,
+            fontFamilyRegistry = DefaultFontFamilyRegistry()
+        ).theme
 
         val breaksProviderFactory: AxisBreaksProviderFactory =
             AxisBreaksProviderFactory.AdaptableBreaksProviderFactory(
-                Transforms.createBreaksGeneratorForTransformedDomain(
+                TransformedDomainBreaksGenerator.forTransform(
                     Transforms.IDENTITY,
                     providedFormatter = null,
                     expFormat = StringFormat.ExponentFormat(ExponentNotationType.E)
                 )
-
             )
 
         val left = AxisLayout(

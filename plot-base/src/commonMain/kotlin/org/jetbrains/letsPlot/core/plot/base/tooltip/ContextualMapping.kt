@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec
 
 // `open` for Mockito tests
 open class ContextualMapping(

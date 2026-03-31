@@ -55,6 +55,12 @@ def _get_geom2d_layer(geom_kind, binwidth2d, bins2d, color, color_by, size, alph
             color=color, size=size, alpha=alpha,
             show_legend=show_legend
         )
+    if geom_kind == 'pointdensity':
+        return geom_pointdensity(
+            aes(color=('..density..' if color_by is None else color_by)),
+            color=color, size=size, alpha=alpha,
+            show_legend=show_legend
+        )
     if geom_kind == 'none':
         return None
     raise Exception("Unknown geom '{0}'".format(geom_kind))

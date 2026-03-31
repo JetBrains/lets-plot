@@ -34,7 +34,7 @@ class ErrorBarGeom : GeomBase(), WithWidth {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(GeomKind.ERROR_BAR, ctx)
+        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
         val tooltipHelper = RectangleTooltipHelper(
             pos = pos,
             coord = coord,

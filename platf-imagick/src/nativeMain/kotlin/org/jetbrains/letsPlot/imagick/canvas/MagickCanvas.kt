@@ -5,58 +5,54 @@
 
 package org.jetbrains.letsPlot.imagick.canvas
 
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.toKString
 import org.jetbrains.letsPlot.commons.geometry.Vector
-import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.core.canvas.Canvas
-import org.jetbrains.letsPlot.core.canvas.Context2d
-import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.cloneMagickWand
-import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyMagickWand
+import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.checkError
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.destroyPixelWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newMagickWand
 import org.jetbrains.letsPlot.imagick.canvas.MagickUtil.newPixelWand
 
 class MagickCanvas(
-    private val _img: CPointer<ImageMagick.MagickWand>,
     override val size: Vector,
-    pixelDensity: Double,
-    private val fontManager: MagickFontManager,
-) : Canvas, Disposable {
-    private val magickContext2d = MagickContext2d(_img, pixelDensity, fontManager)
-    override val context2d: Context2d = magickContext2d
+    private val pixelDensity: Double,
+    fontManager: MagickFontManager,
+    private val antialiasing: Boolean,
+) : Canvas {
+    private val magickContext2d = MagickContext2d(pixelDensity, fontManager)
+    override val context2d: MagickContext2d = magickContext2d
 
     override fun takeSnapshot(): MagickSnapshot {
-        val wand = (context2d as MagickContext2d).wand
+        val background = newPixelWand("MagickCanvas.takeSnapshot.background")
+        ImageMagick.PixelSetColor(background, "none")
 
-        if (false) {
-            val v = ImageMagick.DrawGetVectorGraphics(wand)
-            println(v!!.toKString())
+        val img = newMagickWand("MagickCanvas.takeSnapshot.img")
+
+        ImageMagick.MagickNewImage(img, (size.x * pixelDensity.toFloat()).toULong(), (size.y * pixelDensity.toFloat()).toULong(), background)
+        ImageMagick.MagickSetImageAlphaChannel(img, ImageMagick.AlphaChannelOption.SetAlphaChannel)
+
+        if (antialiasing) {
+            ImageMagick.MagickSetAntialias(img, ImageMagick.MagickTrue)
+        } else {
+            ImageMagick.MagickSetAntialias(img, ImageMagick.MagickFalse)
         }
 
-        ImageMagick.MagickDrawImage(_img, wand)
-        return MagickSnapshot(cloneMagickWand(_img))
-    }
+        destroyPixelWand(background)
 
-    override fun dispose() {
-        destroyMagickWand(_img)
-        magickContext2d.dispose()
+        img.checkError()
+        context2d.wand.checkError()
+
+        ImageMagick.MagickDrawImage(img, context2d.wand)
+
+        return MagickSnapshot(img)
     }
 
     companion object {
-        fun create(width: Number, height: Number, pixelDensity: Number, fontManager: MagickFontManager): MagickCanvas {
-            return create(Vector(width.toInt(), height.toInt()), pixelDensity, fontManager)
+        fun create(width: Number, height: Number, pixelDensity: Number, fontManager: MagickFontManager, antialiasing: Boolean = true): MagickCanvas {
+            return create(Vector(width.toInt(), height.toInt()), pixelDensity, fontManager, antialiasing)
         }
 
-        fun create(size: Vector, pixelDensity: Number, fontManager: MagickFontManager): MagickCanvas {
-            val wand = newMagickWand()
-            ImageMagick.MagickSetImageAlphaChannel(wand, ImageMagick.AlphaChannelOption.OnAlphaChannel)
-            val background = newPixelWand()
-            ImageMagick.PixelSetColor(background, "transparent")
-            ImageMagick.MagickNewImage(wand, (size.x * pixelDensity.toFloat()).toULong(), (size.y * pixelDensity.toFloat()).toULong(), background)
-            destroyPixelWand(background)
-            return MagickCanvas(wand, size, pixelDensity = pixelDensity.toDouble(), fontManager = fontManager)
+        fun create(size: Vector, pixelDensity: Number, fontManager: MagickFontManager, antialiasing: Boolean = true): MagickCanvas {
+            return MagickCanvas(size, pixelDensity.toDouble(), fontManager, antialiasing)
         }
     }
-
 }

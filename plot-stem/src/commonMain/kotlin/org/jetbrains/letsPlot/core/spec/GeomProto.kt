@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.intern.spatial.projections.identity
 import org.jetbrains.letsPlot.commons.intern.spatial.projections.mercator
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
+import org.jetbrains.letsPlot.core.plot.base.StatKind
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.DefaultSampling
 import org.jetbrains.letsPlot.core.plot.builder.assemble.geom.GeomProvider
@@ -97,6 +98,7 @@ class GeomProto(val geomKind: GeomKind) {
             DENSITY -> DefaultSampling.DENSITY
             DENSITY2D -> DefaultSampling.DENSITY2D
             DENSITY2DF -> DefaultSampling.DENSITY2DF
+            POINT_DENSITY -> DefaultSampling.POINT_DENSITY
             JITTER -> DefaultSampling.JITTER
             Q_Q -> DefaultSampling.Q_Q
             Q_Q_2 -> DefaultSampling.Q_Q
@@ -111,6 +113,8 @@ class GeomProto(val geomKind: GeomKind) {
             TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> DefaultSampling.TEXT
             PIE -> DefaultSampling.PIE
             LOLLIPOP -> DefaultSampling.LOLLIPOP
+            BRACKET -> DefaultSampling.BRACKET
+            BRACKET_DODGE -> DefaultSampling.BRACKET
             LIVE_MAP,
             RASTER,
             IMAGE,
@@ -146,7 +150,7 @@ class GeomProto(val geomKind: GeomKind) {
                 )
             }
 
-            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
+            TEXT, LABEL, TEXT_REPEL, LABEL_REPEL, BRACKET, BRACKET_DODGE -> if (layerOptions.hasOwn(Geom.Text.NUDGE_X) || layerOptions.hasOwn(
                     Geom.Text.NUDGE_Y
                 )
             ) {
@@ -210,6 +214,7 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[DENSITY] = densityDefaults()
             DEFAULTS[DENSITY2D] = density2dDefaults()
             DEFAULTS[DENSITY2DF] = density2dfDefaults()
+            DEFAULTS[POINT_DENSITY] = pointDensityDefaults()
             DEFAULTS[Q_Q] = qqDefaults()
             DEFAULTS[Q_Q_2] = qq2Defaults()
             DEFAULTS[Q_Q_LINE] = qqLineDefaults()
@@ -218,6 +223,8 @@ class GeomProto(val geomKind: GeomKind) {
             DEFAULTS[BIN_2D] = bin2dDefaults()
             DEFAULTS[HEX] = hexDefaults()
             DEFAULTS[PIE] = pieDefaults()
+            DEFAULTS[BRACKET] = bracketDefaults()
+            DEFAULTS[BRACKET_DODGE] = bracketDefaults()
         }
 
         private fun commonDefaults(): Map<String, Any> {
@@ -342,6 +349,12 @@ class GeomProto(val geomKind: GeomKind) {
             return defaults
         }
 
+        private fun pointDensityDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "pointdensity"
+            return defaults
+        }
+
         private fun qqDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "qq"
@@ -389,6 +402,14 @@ class GeomProto(val geomKind: GeomKind) {
                 Layer.STAT to "count2d",
                 Geom.Pie.SPACER_COLOR to "paper"
             )
+        }
+
+        private fun bracketDefaults(): Map<String, Any> {
+            val defaults = HashMap<String, Any>()
+            defaults[Layer.STAT] = "identity"
+            defaults[Layer.SHOW_LEGEND] = false
+            defaults[Layer.INHERIT_AES] = false
+            return defaults
         }
     }
 }

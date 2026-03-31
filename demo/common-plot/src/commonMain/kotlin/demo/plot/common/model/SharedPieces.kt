@@ -64,7 +64,7 @@ object SharedPieces {
 
     fun sampleImageDataUrl3x3(): String {
         // 3 x 3 square with alpha
-        return "data:image/png;base64," + "iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAALUlEQVQYV2MU0nb+L28fxaDiHsnAKKTj3CNvF8WgCuKIaLpLytsGMci7xzAAAKIrB5V5IK5KAAAAAElFTkSuQmCC"
+        return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAAAL0lEQVR42mMQ0nb+b5g193/oxm//GbgkVHukrcJ69BPbexiYWNglWbn4JTkEJSQBFXkLBg3U00oAAAAASUVORK5CYII="
     }
 
     fun samplePolygons(): Map<String, List<*>> {

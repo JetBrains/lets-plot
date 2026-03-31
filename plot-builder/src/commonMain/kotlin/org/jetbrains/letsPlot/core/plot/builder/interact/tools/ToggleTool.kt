@@ -5,6 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact.tools
 
+import org.jetbrains.letsPlot.core.interact.InteractionSpec
+
 class ToggleTool(
     val spec: Map<String, Any>
 ) {
@@ -12,7 +14,7 @@ class ToggleTool(
     val label = spec.getValue("label") as String
 
     @Suppress("UNCHECKED_CAST")
-    val interactionSpecList = spec.getValue("interactions") as List<Map<String, Any>>
+    val interactionSpecList: List<InteractionSpec> = spec.getValue("interactions") as List<InteractionSpec>
 
     var active: Boolean = false
 }

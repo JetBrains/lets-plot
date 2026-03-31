@@ -43,11 +43,27 @@ class ECDFStat(
             )
         }
 
-        val ecdf: (Double) -> Double = { t -> xValues.count { x -> x <= t }.toDouble() / xValues.size }
+        val sortedXValues = xValues.sorted()
+        val ecdf: (Double) -> Double = { t ->
+            val searchResult = sortedXValues.binarySearch { x ->
+                if (x <= t) -1 else 1  // To skip equal values and get insertion point after them, we return -1 for x == t
+            }
+            // As a result, t is always "not found", and we get insertion point.
+            //
+            // Small toy example:
+            // sortedXValues = [1.0, 2.0, 2.0, 4.0]
+            // indices           0    1    2    3
+            // For t = 2.0 insertion point is after the last 2.0:
+            //
+            // [1.0, 2.0, 2.0, 4.0]
+            //            ────^
+            val insertionIndex = searchResult.inv() // Invert to get insertion point, that is, index of the first element > t
+            insertionIndex.toDouble() / sortedXValues.size
+        }
         val statX = if (n == null) {
             xValues.distinct()
         } else {
-            linspace(xValues.min(), xValues.max(), n)
+            linspace(sortedXValues.first(), sortedXValues.last(), n)
         }
         val statY = statX.map { ecdf(it) }
         val padX = if (padded) {

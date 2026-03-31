@@ -7,24 +7,24 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
+import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendJustification
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendPosition
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendArrangement
-import org.jetbrains.letsPlot.core.plot.base.guide.LegendBoxJustification
 
 internal object LegendBoxesLayoutUtil {
     fun arrangeLegendBoxes(
         infos: List<LegendBoxInfo>,
         theme: LegendTheme
-    ): LegendsBlockInfo {
+    ): List<LegendBoxesLayout.BoxWithLocation> {
         val legendArrangement = theme.boxArrangement()
         val legendBoxJustification = legendBoxJustification(theme.boxJustification(), legendArrangement)
         val boxWithLocationList = when (legendArrangement) {
             LegendArrangement.VERTICAL -> verticalStack(infos, theme.spacing().y, legendBoxJustification)
             LegendArrangement.HORIZONTAL -> horizontalStack(infos, theme.spacing().x, legendBoxJustification)
         }
-        return LegendsBlockInfo(boxWithLocationList)
+        return boxWithLocationList
     }
 
     private fun legendBoxJustification(
@@ -126,17 +126,29 @@ internal object LegendBoxesLayoutUtil {
 
         return when (legendPosition) {
             LegendPosition.LEFT, LegendPosition.RIGHT -> {
-                val y = innerBounds.top + (innerBounds.height - legendSize.y) * ( 1 - legendJustification.y)
-                val x = if (legendPosition == LegendPosition.LEFT) outerBounds.left else outerBounds.right - legendSize.x
+                val y = innerBounds.top + (innerBounds.height - legendSize.y) * (1 - legendJustification.y)
+                val x = if (legendPosition == LegendPosition.LEFT) {
+                    outerBounds.left
+                } else {
+                    outerBounds.right - legendSize.x
+                }
                 DoubleVector(x, y)
             }
+
             LegendPosition.TOP, LegendPosition.BOTTOM -> {
                 val x = innerBounds.left + (innerBounds.width - legendSize.x) * legendJustification.x
-                val y = if (legendPosition == LegendPosition.TOP) outerBounds.top else outerBounds.bottom - legendSize.y
+                val y = if (legendPosition == LegendPosition.TOP) {
+                    outerBounds.top
+                } else {
+                    outerBounds.bottom - legendSize.y
+                }
                 DoubleVector(x, y)
             }
-            else -> throw IllegalArgumentException("Expect fixed legend position, " +
-                    "but was inside via numeric vector: ${legendPosition.x}, ${legendPosition.y}")
+
+            else -> throw IllegalArgumentException(
+                "Expect fixed legend position, " +
+                        "but was inside via numeric vector: ${legendPosition.x}, ${legendPosition.y}"
+            )
         }
     }
 }

@@ -9,11 +9,12 @@ import demo.plot.common.model.plotConfig.BackgroundBlank
 
 fun main() {
     with(BackgroundBlank()) {
-        @Suppress("UNCHECKED_CAST")
-        (PlotConfigBrowserDemoUtil.show(
+        PlotConfigBrowserDemoUtil.showJs(
             "Plot background - blank (in a pink window)",
             plotSpecList(),
             backgroundColor = "pink"
-        ))
+        )
+        @Suppress("UNCHECKED_CAST")
+        (Unit)
     }
 }

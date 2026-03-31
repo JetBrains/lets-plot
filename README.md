@@ -7,7 +7,7 @@
 
 **Lets-Plot** is a multiplatform plotting library built on the principles of the Grammar of Graphics. 
 
-The library' design is heavily influenced by Leland Wilkinson work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
+The library design is heavily influenced by Leland Wilkinson's work [The Grammar of Graphics](https://www.goodreads.com/book/show/2549408.The_Grammar_of_Graphics) describing the deep features that underlie all statistical graphics.
 
 > This grammar [...] is made up of a set of independent components that can be composed in many different ways. This makes [it] very powerful because you are not limited to a set of pre-specified graphics, but you can create new graphics that are precisely tailored for your problem.
 > - Hadley Wickham, "[ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html)"
@@ -16,7 +16,7 @@ The library' design is heavily influenced by Leland Wilkinson work [The Grammar 
 ## Grammar of Graphics for Python [![Latest Release](https://badge.fury.io/py/lets-plot.svg)](https://pypi.org/project/lets-plot)
 
 A bridge between R (ggplot2) and Python data visualization. \
-To learn more see the documentation site at **[lets-plot.org](https://lets-plot.org)**.          
+To learn more, see the documentation site at **[lets-plot.org/python](https://lets-plot.org/python)**.          
 
 
 ## Grammar of Graphics for Kotlin [![Latest Release](https://img.shields.io/github/v/release/JetBrains/lets-plot-kotlin)](https://github.com/JetBrains/lets-plot-kotlin/releases/latest)
@@ -25,15 +25,19 @@ To learn more see the documentation site at **[lets-plot.org](https://lets-plot.
 Create plots in [Kotlin Notebook](https://plugins.jetbrains.com/plugin/16340-kotlin-notebook),
 [Datalore](https://datalore.jetbrains.com/report/static/HZqq77cegYd.E7get_WnChZ/aTA9lQnPkRwdCzT6uy95GZ), [Jupyter with Kotlin Kernel](https://github.com/Kotlin/kotlin-jupyter#readme) \
 or any other notebook that supports `Kotlin Kernel`. \
-To learn more see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
+To learn more, see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
 
 ### Compose Multiplatform
 Embed Lets-Plot charts in [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) applications. \
-To learn more see the **[Lets-Plot Skia Frontend](https://github.com/JetBrains/lets-plot-skia)** project at GitHub.
+To learn more, see the **[Lets-Plot Compose Frontend](https://github.com/JetBrains/lets-plot-compose)** project at GitHub.
 
 ### JVM and Kotlin/JS
 Embed Lets-Plot charts in JVM (Swing, JavaFX) and Kotlin/JS applications. <br>
-To learn more see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
+To learn more, see the **[Lets-Plot Kotlin API](https://github.com/JetBrains/lets-plot-kotlin)** project at GitHub.
+        
+### Documentation
+
+Kotlin API documentation site: [lets-plot.org/kotlin](https://lets-plot.org/kotlin).
 
 ## "Lets-Plot in SciView" plugin
 
@@ -54,63 +58,67 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.7.0
+## What is new in 4.9.0
 
-- #### Time Series Plotting
-  - Support for Python `time` and `date` objects.
-  - Support for timezone-aware `datetime` objects and Pandas/Polars `Series`.
+- #### Statistical Summaries Directly on `geom_smooth()` Plot Layer
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/time_date_datetime.png" alt="f-25b/images/time_date_datetime.png" width="400" height="237">
+  The `geom_smooth()` layer now includes a `labels` parameter designed to display statistical summaries of the fitted model directly on the plot. \
+  This parameter accepts a `smooth_labels()` object, which provides access to model-specific variables like $R^2$ and the regression equation.
   
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/time_date_datetime.ipynb).
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/smooth_summary.png" alt="f-26a/images/smooth_summary.png" width="400" height="265">
 
-- #### Native support for PNG and PDF exports
-  Exporting to PNG and PDF formats now uses the `ImageMagick` library bundled with Lets-Plot Python wheels and available out-of-the-box. <br>
-  This replaces the previous dependency on the `CairoSVG` library and comes with improved support for LaTeX labels rasterization. <br>
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
+                         
+- #### Plot Tags
+  Plot tags are short labels attached to a plot.
 
-- #### `geom_sina()` Geometry
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/plot_tags.png" alt="f-26a/images/plot_tags.png" width="600" height="185">
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/geom_sina.png" alt="f-25b/images/geom_sina.png" width="400" height="276">
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/geom_sina.ipynb).
+- #### New `geom_bracket()` and `geom_bracket_dodge()` Geometries
+  New geometries designed primarily for significance bars (*p-values*) annotations in categorical plots.
 
-- #### `geom_text_repel()` and `geom_label_repel()` Geometries
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/geom_bracket.png" alt="f-26a/images/geom_bracket.png" width="400" height="261">
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/geom_repel.png" alt="f-25b/images/geom_repel.png" width="400" height="232">
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
 
-  See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/ggrepel.ipynb).
+- #### Custom Color Palettes in `geom_imshow()`
+  The `cmap` parameter now allows you to specify a list of hex color codes for visualizing grayscale images. \
+  Also, the new `cguide` parameter lets you customize the colorbar for grayscale images.
 
-- #### `waterfall_plot()` Chart
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/image_custom_cmap.png" alt="f-26a/images/image_custom_cmap.png" width="400" height="248">
 
-  - Annotations support via `relative_labels` and `absolute_labels` parameters. <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/waterfall_plot_annotations.png" alt="f-25b/images/waterfall_plot_annotations.png" width="400" height="253">
+  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
-    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_annotations.ipynb).
-                                   
-  - Support for combining waterfall bars with other geometry layers. <br>
-    <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/waterfall_plot_layers.png" alt="f-25b/images/waterfall_plot_layers.png" width="400" height="227">
+- #### New `palette()` Method in Color Scales
+  Generates a list of hex color codes that can be used with `scale_color_manual()` to maintain consistent colors across multiple plots.
 
-    See [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/waterfall_plot_layers.ipynb).
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_color_palette.html).
 
-- #### Continuous Data on Discrete Scales
+- #### New `overflow` parameter in `scale_color_brewer()`, `scale_fill_brewer()`
+  Controls how colors are generated when more colors are needed than the palette provides. \
+  Options: `'interpolate'` (`'i'`), `'cycle'` (`'c'`), `'generate'` (`'g'`).
 
-  Continuous data when used with discrete positional scales is no longer transformed to discrete data. <br>
-  Instead, it remains continuous, allowing for precise positioning of continuous elements relative to discrete ones. <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/combo_discrete_continuous.png" alt="f-25b/images/combo_discrete_continuous.png" width="400" height="151">
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_brewer_overflow.html).
 
-  See: [example notebook](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/numeric_data_on_discrete_scale.ipynb).
+- #### New `break_width` Parameter in Positional Scales
+  Specifies a fixed distance between axis breaks.
 
-> [!TIP]
-> New way of handling continuous data on discrete scales could potentially break existing plots.
-> If you want to restore a broken plot to its original form, you can use the [`as_discrete()`](https://lets-plot.org/python/pages/api/lets_plot.mapping.as_discrete.html) function to annotate continuous data as discrete.
+  See examples:
+  - [datetime scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_datetime.html)
+  - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
+  - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
 
+- #### Axis Minor Ticks Customization
+  The `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()`.
 
-- #### Plot Layout
-  The default plot layout has been improved to better accommodate axis labels and titles. <br>
-  Also, new `theme()` options `axis_text_spacing`, `axis_text_spacing_x`, and `axis_text_spacing_y` control spacing between axis ticks and labels. <br>
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25b/images/plot_layout_diagram.png" alt="f-25b/images/plot_layout_diagram.png" width="400" height="175">
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
 
-  See the [plot layout diagram](https://nbviewer.org/github/JetBrains/lets-plot/blob/master/docs/f-25b/plot_layout_scheme.ipynb) showing various layout options and their effects on plot appearance.
+- #### Pan/Zoom in `gggrid()` with Shared Axes
+  Pan/Zoom now propagates across subplots with shared axes (`sharex`/`sharey`).
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/gggrid_scale_share_zoom.html).
 
 
 - #### And More
@@ -120,28 +128,31 @@ Also read:
 
 ## Recent Updates in the [Gallery](https://lets-plot.org/python/pages/gallery.html)
 
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/raincloud.ipynb">
+  <a href="https://lets-plot.org/examples/demo/cities_density.html">
+    <img src="https://github.com/JetBrains/lets-plot-docs/blob/bcc63703214b5b02a8a374668d8bba7a451a9152/source/_static/images/changelog/4.8.0/square-cities_density.png?raw=true" alt="images/changelog/4.8.0/square-cities_density.png" width="128" height="128">
+  </a>
+  <a href="https://lets-plot.org/examples/demo/raincloud.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-raincloud.png?raw=true" alt="images/changelog/4.7.0/square-raincloud.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/europe_capitals.ipynb">
+  <a href="https://lets-plot.org/examples/demo/europe_capitals.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-europe_capitals.png?raw=true" alt="images/changelog/4.7.0/square-europe_capitals.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/trading_chart.ipynb">
+  <a href="https://lets-plot.org/examples/demo/trading_chart.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-trading_chart.png?raw=true" alt="images/changelog/4.7.0/square-trading_chart.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/magnifier_inset.ipynb">
+  <a href="https://lets-plot.org/examples/demo/magnifier_inset.html">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/magnifier_inset.png" alt="f-25a/images/magnifier_inset.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/ggbunch_indonesia.ipynb">
+  <a href="https://lets-plot.org/examples/demo/ggbunch_indonesia.html">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-25a/images/ggbunch_indonesia.png" alt="f-25a/images/ggbunch_indonesia.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/lets_plot_in_2024.ipynb">
+  <a href="https://lets-plot.org/examples/demo/lets_plot_in_2024.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-lets_plot_in_2024.png?raw=true" alt="images/changelog/4.7.0/square-lets_plot_in_2024.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/plot_layout_scheme.ipynb">
+  <a href="https://lets-plot.org/examples/demo/plot_layout_scheme.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/41d87786905efdd5995f66e6a2734255548f00dc/source/_static/images/changelog/4.7.0/square-plot_layout_scheme.png?raw=true" alt="images/changelog/4.7.0/square-plot_layout_scheme.png" width="128" height="128">
   </a>
-  <a href="https://nbviewer.org/github/JetBrains/lets-plot-docs/blob/master/source/examples/demo/theme_legend_scheme.ipynb">
+  <a href="https://lets-plot.org/examples/demo/theme_legend_scheme.html">
     <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-24g/images/theme_legend_scheme.png" alt="f-24g/images/theme_legend_scheme.png" width="128" height="128">
   </a>
 

@@ -71,6 +71,53 @@ class LookupStrategyOnMultilayerPlotTest {
         assertLookup_NearestXY(layers.first())
     }
 
+    @Test
+    fun `multiple layers with same geom - should keep original lookup strategy`() {
+        val plotSpec = """
+            |{ 
+            |  "kind": "plot", 
+            |  "layers": [
+            |    {
+            |      "geom": "line", 
+            |      "data": {
+            |        "x": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ], 
+            |        "y": [ 3.0, 4.0, 8.0, 6.0, 9.0, 2.0, 3.0 ]
+            |      }, 
+            |      "mapping": { "x": "x", "y": "y" }, 
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "int", "column": "x" }, 
+            |          { "type": "int", "column": "y" }
+            |        ]
+            |      }, 
+            |      "color": "red"
+            |    }, 
+            |    {
+            |      "geom": "line", 
+            |      "data": {
+            |        "x": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 ], 
+            |        "y": [ 9.0, 5.0, 5.0, 1.0, 3.0, 1.0, 4.0 ]
+            |      }, 
+            |      "mapping": { "x": "x", "y": "y" }, 
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "int", "column": "x" }, 
+            |          { "type": "int", "column": "y" }
+            |        ]
+            |      }, 
+            |      "color": "blue"
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        val layers = createSingleTileGeomLayers(parsePlotSpec(plotSpec))
+        assertEquals(2, layers.size)
+        layers.forEach {
+            assertLookup_HoverX(it)
+        }
+    }
+
     companion object {
         fun assertLookup_HoverX(layer: GeomLayer) {
             assertEquals(LookupSpace.X, layer.locatorLookupSpec.lookupSpace)

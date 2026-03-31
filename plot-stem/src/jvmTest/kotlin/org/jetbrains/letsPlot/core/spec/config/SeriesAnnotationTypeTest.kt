@@ -7,8 +7,7 @@ package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.parsePlotSpec
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.encoding.UnsupportedRGBEncoder
-import org.jetbrains.letsPlot.core.util.PlotSvgExportCommon
+import org.jetbrains.letsPlot.core.util.PlotSvgExport
 import org.junit.Test
 
 class SeriesAnnotationTypeTest {
@@ -54,11 +53,7 @@ class SeriesAnnotationTypeTest {
         """.trimMargin()
 
 
-        PlotSvgExportCommon.buildSvgImageFromRawSpecs(
-            plotSpec = parsePlotSpec(spec),
-            rgbEncoder = UnsupportedRGBEncoder,
-            useCssPixelatedImageRendering = false
-        ).let { svg ->
+        PlotSvgExport.buildSvgImageFromRawSpecs(plotSpec = parsePlotSpec(spec)).let { svg ->
             assertThat(svg).contains("<tspan>54,321.1</tspan>")
             assertThat(svg).contains("<tspan>12,345.1</tspan>")
             assertThat(svg).contains("<tspan>2024-01-01T11:34:56</tspan>")
@@ -100,11 +95,7 @@ class SeriesAnnotationTypeTest {
         """.trimMargin()
 
 
-        PlotSvgExportCommon.buildSvgImageFromRawSpecs(
-            plotSpec = parsePlotSpec(spec),
-            rgbEncoder = UnsupportedRGBEncoder,
-            useCssPixelatedImageRendering = false
-        ).let { svg ->
+        PlotSvgExport.buildSvgImageFromRawSpecs(parsePlotSpec(spec), null, null).let { svg ->
             assertThat(svg).contains("<tspan>54,321.1</tspan>")
             assertThat(svg).contains("<tspan>12,345.1</tspan>")
             assertThat(svg).contains("<tspan>2024-01-01T11:34:56</tspan>")

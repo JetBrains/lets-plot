@@ -20,12 +20,15 @@ class PlotFigureLayoutInfo constructor(
      */
     val plotAreaOrigin: DoubleVector, // Inner bounds - all without titles and legends.
     /**
-     * Plot withot axis and facet labels.
-     * Relative to the figure origin (see `figureLayoutedBounds`)
+     * Plot without:
+     * - titles and legends
+     * - axis and facet labels
+     *
+     * Relative to the entire figure origin
      */
-    geomAreaBounds: DoubleRectangle,
+    val geomAreaBounds: DoubleRectangle,
     figurePreferredSize: DoubleVector,
     val plotLayoutInfo: PlotLayoutInfo,
-    val legendsBlockInfo: LegendsBlockInfo,
+    val legendsBlockInfo: LegendsBlockInfo?,
 
-    ) : FigureLayoutInfo(figurePreferredSize, geomAreaBounds)
+    ) : FigureLayoutInfo(figurePreferredSize)

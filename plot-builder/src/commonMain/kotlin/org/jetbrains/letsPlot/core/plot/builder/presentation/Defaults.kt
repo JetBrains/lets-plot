@@ -25,6 +25,8 @@ object Defaults {
     val DEF_PLOT_SIZE = DoubleVector(DEF_PLOT_WIDTH, DEF_PLOT_WIDTH / ASPECT_RATIO)
     val DEF_LARGE_PLOT_SIZE = DoubleVector(DEF_LARGE_PLOT_WIDTH, DEF_LARGE_PLOT_WIDTH / ASPECT_RATIO)
 
+    const val TOOLBAR_HEIGHT = 33
+
     // HEX colors only (because of using of parseHex())
     const val DARK_GRAY = "#3d3d3d"
     val GRAY = Color.GRAY.toHexColor()
@@ -51,6 +53,11 @@ object Defaults {
 
         object Caption {
             const val FONT_SIZE = FONT_SMALL
+            const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
+        }
+
+        object Tag {
+            const val FONT_SIZE = FONT_LARGE
             const val FONT_SIZE_CSS = "" + FONT_SIZE + "px"
         }
 
@@ -119,6 +126,7 @@ object Defaults {
         Style.PLOT_TITLE to createTextStyle(size = Common.Title.FONT_SIZE, face = FontFace.BOLD),
         Style.PLOT_SUBTITLE to createTextStyle(size = Common.Subtitle.FONT_SIZE),
         Style.PLOT_CAPTION to createTextStyle(size = Common.Caption.FONT_SIZE),
+        Style.PLOT_TAG to createTextStyle(size = Common.Tag.FONT_SIZE),
         Style.LEGEND_TITLE to createTextStyle(size = Common.Legend.TITLE_FONT_SIZE),
         Style.LEGEND_ITEM to createTextStyle(size = Common.Legend.ITEM_FONT_SIZE),
         Style.TOOLTIP_TEXT to createTextStyle(size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE),

@@ -5,20 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
-import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 
 open class LineGeom : PathGeom() {
+    override val geomName: String = "line"
 
-    override fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.ordered_X(super.dataPoints(aesthetics))
+    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+        val data = GeomUtil.with_X(dataPoints)
+        return GeomUtil.ordered_X(data)
     }
 
     companion object {
-//        val RENDERS = PathGeom.RENDERS
-
-        const val HANDLES_GROUPS =
-            PathGeom.HANDLES_GROUPS
+        const val HANDLES_GROUPS = PathGeom.HANDLES_GROUPS
     }
 }

@@ -67,7 +67,7 @@ class SupPlotsSpec(FeatureSpec):
                 supplots = supplots.__add__(spec)
             return supplots
 
-        elif isinstance(other, FeatureSpec) and other.kind in ["ggsize", "theme", "ggtitle", "caption", "ggtoolbar"]:
+        elif isinstance(other, FeatureSpec) and other.kind in ["ggsize", "theme", "ggtitle", "caption", "tag", "ggtoolbar"]:
 
             supplots = SupPlotsSpec.duplicate(self)
             # ToDo: duplication!
@@ -218,7 +218,7 @@ class SupPlotsSpec(FeatureSpec):
         self : ``SupPlotsSpec``
             Subplots specification to export.
         path : str, file-like object
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
         scale : float
@@ -277,7 +277,7 @@ class SupPlotsSpec(FeatureSpec):
         self : ``SupPlotsSpec``
             Subplots specification to export.
         path : str, file-like object
-            Сan be either a string specifying a file path or a file-like object.
+            Can be either a string specifying a file path or a file-like object.
             If a string is provided, the result will be exported to the file at that path.
             If a file-like object is provided, the result will be exported to that object.
         scale : float

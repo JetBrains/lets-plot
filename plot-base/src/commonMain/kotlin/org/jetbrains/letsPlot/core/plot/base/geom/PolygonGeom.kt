@@ -13,8 +13,8 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 open class PolygonGeom : GeomBase() {
 
-    protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        return GeomUtil.with_X_Y(aesthetics.dataPoints())
+    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+        return GeomUtil.with_X_Y(dataPoints)
     }
 
     override fun buildIntern(
@@ -28,7 +28,7 @@ open class PolygonGeom : GeomBase() {
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(coord.isPolar)
 
-        val targetCollectorHelper = TargetCollectorHelper(GeomKind.POLYGON, ctx)
+        val targetCollectorHelper = TargetCollectorHelper(ctx)
 
         linesHelper.createPolygon(dataPoints, GeomUtil.TO_LOCATION_X_Y).forEach { (svg, polygonData) ->
             targetCollectorHelper.addPolygons(polygonData)

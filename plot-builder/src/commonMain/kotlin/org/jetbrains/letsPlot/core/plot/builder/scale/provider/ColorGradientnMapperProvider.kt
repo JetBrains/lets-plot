@@ -8,21 +8,22 @@ package org.jetbrains.letsPlot.core.plot.builder.scale.provider
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan.Companion.encloseAllQ
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.commons.color.GradientUtil.createGradient
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.ensureApplicableRange
 import org.jetbrains.letsPlot.core.plot.base.ContinuousTransform
 import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.scale.MapperUtil
+import org.jetbrains.letsPlot.core.plot.base.scale.transform.Transforms
 import org.jetbrains.letsPlot.core.plot.builder.scale.GuideMapper
-import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.ColorMapper
+import org.jetbrains.letsPlot.core.plot.builder.scale.PaletteGenerator
 import org.jetbrains.letsPlot.core.plot.builder.scale.mapper.GuideMappers
-import kotlin.math.abs
-import kotlin.math.min
 
 class ColorGradientnMapperProvider(
     private val colors: List<Color>,
     naValue: Color
-) : MapperProviderBase<Color>(naValue) {
+) : MapperProviderBase<Color>(naValue),
+    PaletteGenerator {
 
     init {
         require(colors.size > 1) { "gradient requires colors list with two or more elements" }
@@ -42,43 +43,8 @@ class ColorGradientnMapperProvider(
         return GuideMappers.asContinuous(ScaleMapper.wrap(gradient))
     }
 
-
-    companion object {
-        internal fun createGradient(
-            domain: DoubleSpan,
-            colors: List<Color>,
-            naColor: Color,
-            alpha: Double = 1.0
-        ): (Double?) -> Color {
-            val subdomainsCount = colors.size - 1
-            val subdomainLength = domain.length / subdomainsCount
-
-            val subdomainEnds = (0 until subdomainsCount)
-                .map { domain.lowerEnd + subdomainLength * it } +
-                    listOf(domain.upperEnd) // The last "end" should be exact.
-            val mappers = subdomainEnds.zip(colors)
-                .windowed(2)
-                .map { (low, high) ->
-                    val (lowValue, lowColor) = low
-                    val (highValue, highColor) = high
-                    val subdomain = DoubleSpan(lowValue, highValue)
-                    ColorMapper.gradient(subdomain, lowColor, highColor, naColor, alpha)
-                }
-
-            return { value ->
-                when {
-                    value == null || !value.isFinite() -> naColor
-                    value < subdomainEnds.first() || value > subdomainEnds.last() -> naColor
-                    else -> {
-                        val i = subdomainEnds.binarySearch(value)
-                        val subdomainIndex = when {
-                            i < 0 -> abs(i + 1) - 1
-                            else -> min(i, mappers.lastIndex)
-                        }
-                        mappers[subdomainIndex](value)
-                    }
-                }
-            }
-        }
+    override fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color> {
+        val domain = DoubleSpan(0.0, (colorCount - 1).toDouble())
+        return createContinuousMapper(domain, Transforms.IDENTITY)
     }
 }

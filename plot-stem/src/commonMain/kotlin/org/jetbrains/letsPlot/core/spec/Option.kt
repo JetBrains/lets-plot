@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.StatKind
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions
 
@@ -108,6 +109,18 @@ object Option {
         }
     }
 
+    object GGToolbar {
+        const val SIZE_BASIS = "size_basis"
+        const val SIZE_ZOOMIN = "size_zoomin"
+
+        object SizeBasis {
+            const val X = "x"
+            const val Y = "y"
+            const val MIN = "min"
+            const val MAX = "max"
+        }
+    }
+
     // Unlisted supported features:
     // - Plot.SIZE (a.k.a. "ggsize")
     // - Plot.THEME
@@ -123,6 +136,9 @@ object Option {
             const val NAME = Meta.NAME
             const val SUBPLOTS_GRID = "grid"
             const val SUBPLOTS_FREE = "free"
+            const val SUBPLOTS_DECK = "deck"
+
+            const val GUIDES = "guides"
         }
 
         object Grid {
@@ -146,10 +162,30 @@ object Option {
         }
 
         /**
+         * Deck (overlay) layout (`ggdeck`)
+         */
+        object Deck {
+            const val SCALE_SHARE = "scale_share" // x, y, all, none
+
+            object ScaleShare {
+                const val X = "x"
+                const val Y = "y"
+                const val ALL = "all"
+                const val NONE = "none"
+            }
+        }
+
+        /**
          * Free positioning layout (`ggbunch`)
          */
         object Free {
             const val REGIONS = "regions" // array of 4 numbers [x, y, width, height] in relative units
+        }
+
+        object Guides {
+            const val AUTO = "auto" // The default: allow upper level to collect, otherwise keep in supplots.
+            const val COLLECT = "collect" // Collect legends from subplots.
+            const val KEEP = "keep" // Keep legends in subplots.
         }
     }
 
@@ -167,6 +203,8 @@ object Option {
         const val SUBTITLE_TEXT = "subtitle"
         const val CAPTION = "caption"
         const val CAPTION_TEXT = "text"
+        const val TAG = "tag"
+        const val TAG_TEXT = "text"
         const val COORD = "coord"
         const val FACET = "facet"
         const val THEME = "theme"
@@ -207,6 +245,8 @@ object Option {
         const val COLOR_BY = "color_by"
         const val FILL_BY = "fill_by"
 
+        const val SCALE_FACTOR = "scale_factor"
+
         object Marginal {
             const val SIZE = "margin_size"
             const val SIZE_DEFAULT = 0.1
@@ -231,17 +271,37 @@ object Option {
     }
 
     object LinesSpec {
+        const val KIND = "kind"
         const val LINES = "lines"
         const val FORMATS = "formats"
         const val VARIABLES = "variables"
         const val TITLE = "title"
+        const val OPTIONS = "options"
 
         object Format {
             const val FIELD = "field"
             const val FORMAT = "format"
         }
+
+        object Kind {
+            const val SMOOTH_STAT_SUMMARY_ANNOTATION = "smooth_stat_summary_annotation"
+        }
     }
 
+    object SmoothOptions {
+        const val EQ = "eq"
+        const val LABEL_X = "label_x"
+        const val LABEL_Y = "label_y"
+
+        object Eq {
+            const val LHS = "lhs"
+            const val RHS = "rhs"
+            const val FORMAT = "format"
+            const val THRESHOLD = "threshold"
+        }
+    }
+
+    // todo: investigate if we can unify options with LinesSpec
     object AnnotationSpec {
         const val LINES = "lines"
         const val FORMATS = "formats"
@@ -250,6 +310,10 @@ object Option {
     }
 
     object Geom {
+
+        object Histogram {
+            const val BREAKS = "breaks"
+        }
 
         object Density {
             const val QUANTILE_LINES = "quantile_lines"
@@ -275,6 +339,7 @@ object Option {
 
         object Choropleth {
             const val GEO_POSITIONS = "map"
+            const val POLYGON_GROUP = "group"
         }
 
         object ErrorBar {
@@ -366,7 +431,7 @@ object Option {
             const val HREF = "href"
 
             // Parameters in GeomImage.
-            // It's "rendered" aesthetics at the same time but "geom image" doesn't use aes to actually render image.
+            // It's "rendered" aesthetics at the same time, but "geom image" doesn't use aes to actually render image.
             // The constants are used to compute limits on x/y-axis and the image bbox.
             val XMIN = Aes.XMIN.name
             val XMAX = Aes.XMAX.name
@@ -423,6 +488,16 @@ object Option {
         object Spoke {
             const val ARROW = "arrow"
             const val PIVOT = "pivot"
+        }
+
+        object Bracket {
+            const val BRACKET_SHORTEN = "bracket_shorten"
+            const val TIPLENGTH_UNIT = "tiplength_unit"
+        }
+
+        object BracketDodge {
+            const val DODGE_WIDTH = "dodge_width"
+            const val NGROUP = "ngroup"
         }
 
         object LiveMap {
@@ -482,6 +557,7 @@ object Option {
             const val METHOD = "method"
             const val CENTER = "center"
             const val BOUNDARY = "boundary"
+            const val BREAKS = "breaks"
         }
 
         object Bin2d {
@@ -537,6 +613,10 @@ object Option {
             const val IS_CONTOUR = "contour"
             const val BINS = "bins"
             const val BINWIDTH = "binwidth"
+        }
+
+        object PointDensity {
+            const val METHOD = "method"
         }
 
         object DensityRidges {
@@ -645,6 +725,7 @@ object Option {
         const val NAME = Meta.NAME
         const val AES = "aesthetic"
         const val BREAKS = "breaks"
+        const val BREAK_WIDTH = "break_width"
         const val LABELS = "labels"
         const val LABLIM = "lablim"
         const val EXPAND = "expand"
@@ -695,6 +776,7 @@ object Option {
         // color brewer
         const val PALETTE_TYPE = "type"
         const val PALETTE = "palette"
+        const val OVERFLOW = "overflow"
 
         // range
         const val RANGE = "range"
@@ -764,6 +846,7 @@ object Option {
 
     object Mapping {
         const val GROUP = "group"
+
         private val AES_BY_OPTION = HashMap<String, Aes<*>>()
         val REAL_AES_OPTION_NAMES: Iterable<String> = AES_BY_OPTION.keys
 
@@ -838,11 +921,16 @@ object Option {
         const val PLOT_TITLE = ThemeOption.PLOT_TITLE
         const val PLOT_SUBTITLE = ThemeOption.PLOT_SUBTITLE
         const val PLOT_CAPTION = ThemeOption.PLOT_CAPTION
+        const val PLOT_TAG = ThemeOption.PLOT_TAG
         const val PLOT_MESSAGE = ThemeOption.PLOT_MESSAGE
         const val PLOT_MARGIN = ThemeOption.PLOT_MARGIN
         const val PLOT_INSET = ThemeOption.PLOT_INSET
         const val PLOT_TITLE_POSITION = ThemeOption.PLOT_TITLE_POSITION
         const val PLOT_CAPTION_POSITION = ThemeOption.PLOT_CAPTION_POSITION
+        const val PLOT_TAG_POSITION = ThemeOption.PLOT_TAG_POSITION
+        const val PLOT_TAG_LOCATION = ThemeOption.PLOT_TAG_LOCATION
+        const val PLOT_TAG_PREFIX = ThemeOption.PLOT_TAG_PREFIX
+        const val PLOT_TAG_SUFFIX = ThemeOption.PLOT_TAG_SUFFIX
 
         // Axis
         const val AXIS = ThemeOption.AXIS
@@ -867,9 +955,17 @@ object Option {
         const val AXIS_TICKS_X = ThemeOption.AXIS_TICKS_X
         const val AXIS_TICKS_Y = ThemeOption.AXIS_TICKS_Y
 
+        const val AXIS_MINOR_TICKS = ThemeOption.AXIS_MINOR_TICKS
+        const val AXIS_MINOR_TICKS_X = ThemeOption.AXIS_MINOR_TICKS_X
+        const val AXIS_MINOR_TICKS_Y = ThemeOption.AXIS_MINOR_TICKS_Y
+
         const val AXIS_TICKS_LENGTH = ThemeOption.AXIS_TICKS_LENGTH
         const val AXIS_TICKS_LENGTH_X = ThemeOption.AXIS_TICKS_LENGTH_X
         const val AXIS_TICKS_LENGTH_Y = ThemeOption.AXIS_TICKS_LENGTH_Y
+
+        const val AXIS_MINOR_TICKS_LENGTH = ThemeOption.AXIS_TICKS_LENGTH
+        const val AXIS_MINOR_TICKS_LENGTH_X = ThemeOption.AXIS_TICKS_LENGTH_X
+        const val AXIS_MINOR_TICKS_LENGTH_Y = ThemeOption.AXIS_TICKS_LENGTH_Y
 
         const val AXIS_LINE = ThemeOption.AXIS_LINE
         const val AXIS_LINE_X = ThemeOption.AXIS_LINE_X
@@ -908,6 +1004,12 @@ object Option {
         const val FACET_STRIP_TEXT = ThemeOption.FACET_STRIP_TEXT
         const val FACET_STRIP_TEXT_X = ThemeOption.FACET_STRIP_TEXT_X
         const val FACET_STRIP_TEXT_Y = ThemeOption.FACET_STRIP_TEXT_Y
+        const val FACET_STRIP_SPACING = ThemeOption.FACET_STRIP_SPACING
+        const val FACET_STRIP_SPACING_X = ThemeOption.FACET_STRIP_SPACING_X
+        const val FACET_STRIP_SPACING_Y = ThemeOption.FACET_STRIP_SPACING_Y
+        const val FACET_PANEL_SPACING = ThemeOption.FACET_PANEL_SPACING
+        const val FACET_PANEL_SPACING_X = ThemeOption.FACET_PANEL_SPACING_X
+        const val FACET_PANEL_SPACING_Y = ThemeOption.FACET_PANEL_SPACING_Y
 
         // Legend
         const val LEGEND_BKGR_RECT = ThemeOption.LEGEND_BKGR_RECT
@@ -968,6 +1070,7 @@ object Option {
         object Name {
             // ggplot2 themes
             const val R_GREY = ThemeOption.Name.R_GREY
+            const val R_GRAY = ThemeOption.Name.R_GRAY
             const val R_LIGHT = ThemeOption.Name.R_LIGHT
             const val R_CLASSIC = ThemeOption.Name.R_CLASSIC
             const val R_MINIMAL = ThemeOption.Name.R_MINIMAL
@@ -1004,6 +1107,7 @@ object Option {
             const val SOLARIZED_DARK = ThemeOption.Flavor.SOLARIZED_DARK
             const val HIGH_CONTRAST_LIGHT = ThemeOption.Flavor.HIGH_CONTRAST_LIGHT
             const val HIGH_CONTRAST_DARK = ThemeOption.Flavor.HIGH_CONTRAST_DARK
+            const val STANDARD = ThemeOption.Flavor.STANDARD
         }
 
         object Geom {
@@ -1047,6 +1151,7 @@ object Option {
         private const val CONTOURF = "contourf"
         private const val DENSITY2D = "density2d"
         private const val DENSITY2DF = "density2df"
+        private const val POINT_DENSITY = "pointdensity"
         const val JITTER = "jitter"
         private const val Q_Q = "qq"
         private const val Q_Q_2 = "qq2"
@@ -1066,6 +1171,8 @@ object Option {
         const val IMAGE = "image"
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
+        const val BRACKET = "bracket"
+        const val BRACKET_DODGE = "bracket_dodge"
         const val BLANK = "blank"
 
         private val GEOM_KIND_MAP: Map<String, GeomKind>
@@ -1105,6 +1212,7 @@ object Option {
             map[CONTOURF] = GeomKind.CONTOURF
             map[DENSITY2D] = GeomKind.DENSITY2D
             map[DENSITY2DF] = GeomKind.DENSITY2DF
+            map[POINT_DENSITY] = GeomKind.POINT_DENSITY
             map[JITTER] = GeomKind.JITTER
             map[Q_Q] = GeomKind.Q_Q
             map[Q_Q_2] = GeomKind.Q_Q_2
@@ -1124,6 +1232,8 @@ object Option {
             map[IMAGE] = GeomKind.IMAGE
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
+            map[BRACKET] = GeomKind.BRACKET
+            map[BRACKET_DODGE] = GeomKind.BRACKET_DODGE
             map[BLANK] = GeomKind.BLANK
 
             GEOM_KIND_MAP = map

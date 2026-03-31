@@ -49,15 +49,11 @@ class StyleSheet constructor(
         val UNDEFINED_FONT_FACE = FontFace.BOLD_ITALIC
         private const val DEFAULT_FONT_SIZE = 15.0
 
-        fun FontFace.toCSS(): String {
-            return "font-weight: ${if (bold) "bold" else "normal"};" +
-                    "\n   font-style: ${if (italic) "italic" else "normal"};"
-        }
-
         private fun TextStyle.toCSS(): String {
             val css = StringBuilder()
             css.appendLine("fill: ${color.toHexColor()};")
-            css.append(face.toCSS())
+            css.appendLine("font-weight: ${face.weight};")
+            css.appendLine("font-style: ${face.style};")
             if (!isNoneFamily) css.appendLine("font-family: $family;")
             if (!isNoneSize) css.appendLine("font-size: ${size}px;")
             return css.toString()

@@ -5,20 +5,14 @@
 
 plugins {
     kotlin("jvm")
-    id ("org.openjfx.javafxplugin")
 }
 
-val batikVersion = project.extra["batik_version"] as String
-val commonsIOVersion = project.extra["commons-io.version"] as String
-val kotlinLoggingVersion = project.extra["kotlinLogging_version"] as String
-val kotlinxHtmlVersion = project.extra["kotlinx_html_version"] as String
-val ktorVersion = project.extra["ktor_version"] as String
-val jfxVersion = extra["jfx_version"] as String
+val batikVersion = project.extra["batik.version"] as String
+//val commonsIOVersion = project.extra["commons-io.version"] as String
+val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+val kotlinxHtmlVersion = project.extra["kotlinx.html.version"] as String
+val ktorVersion = project.extra["ktor.version"] as String
 
-javafx {
-    version = jfxVersion
-    modules = listOf("javafx.controls", "javafx.swing")
-}
 
 dependencies {
     implementation(kotlin("stdlib-common"))
@@ -35,14 +29,12 @@ dependencies {
     implementation(project(":gis"))
     implementation(project(":livemap"))
     implementation(project(":plot-livemap"))
-    implementation(project(":platf-jfx-swing"))
     implementation(project(":platf-batik"))
     implementation(project(":platf-awt"))
 
     implementation("org.apache.xmlgraphics:batik-codec:${batikVersion}")
-    implementation("commons-io:commons-io:${commonsIOVersion}")  // commons-io: a newer version than the one in Batik transitive dependency.
-    implementation("org.slf4j:slf4j-simple:${project.extra["slf4j_version"]}")  // Enable logging to console
-    compileOnly("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+    implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
+    compileOnly("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
 
     implementation(project(":demo-and-test-shared"))
     implementation(project(":demo-common-jvm-utils"))
