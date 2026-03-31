@@ -151,7 +151,19 @@ object TextUtil {
 
     fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
 
+    fun decorate(label: Label, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
+        decorateLabelStyle(label, p, scale, applyAlpha)
+        label.setLineHeight(lineheight(p, scale))
+    }
+
     fun decorate(label: Label, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0, applyAlpha: Boolean = true) {
+        decorateLabelStyle(label, p, scale, applyAlpha)
+        label.setLineHeights(
+            estimatedLineHeights(label.text, p, ctx, scale).map { p.lineheight()!! * it }
+        )
+    }
+
+    private fun decorateLabelStyle(label: Label, p: DataPointAesthetics, scale: Double, applyAlpha: Boolean) {
         val color = p.color()!!
         label.textColor().set(color)
         val alpha = if (applyAlpha) {
@@ -164,9 +176,6 @@ object TextUtil {
         label.setTextOpacity(alpha)
 
         label.setFontSize(fontSize(p, scale))
-        label.setLineHeights(
-            estimatedLineHeights(label.text, p, ctx, scale).map { p.lineheight()!! * it }
-        )
 
         // family
         label.setFontFamily(fontFamily(p))
