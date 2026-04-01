@@ -93,6 +93,11 @@ class DomFontManager private constructor(
         return if (any(Char::isWhitespace)) "\"$this\"" else this
     }
 
+    fun installAllFontFaces() {
+        fontSets.values.forEach { register(it) }
+        ensureStyleInstalled()
+    }
+
     companion object {
         val DEFAULT = DomFontManager(emptyMap())
 

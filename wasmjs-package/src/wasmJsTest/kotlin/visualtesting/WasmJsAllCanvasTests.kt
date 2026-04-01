@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.platf.w3c.canvas.DomFontManager
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.canvas.AllCanvasTests
 import kotlin.js.Promise
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 @JsFun(
@@ -26,22 +25,28 @@ import kotlin.test.Test
 )
 private external fun resolveTestResourceUrl(relativePath: String): String
 
-@Ignore
+@JsFun("() => document.fonts.ready")
+private external fun documentFontsReady(): Promise<JsAny?>
+
+//@Ignore
 class WasmJsAllCanvasTests {
 
     @Test
     fun runAllCanvasTests(): Promise<JsAny?> {
         val fontManager = createEmbeddedFontsManager()
-        return WasmBitmapIO.preloadExpectedImages("canvas").then {
-            val canvasPeer = DomCanvasPeer(fontManager)
-            val bitmapIO = WasmBitmapIO(subdir = "canvas")
-            val imageComparer = ImageComparer(canvasPeer, bitmapIO, silent = true)
-            val result = runCatching {
-                AllCanvasTests.runAllTests(canvasPeer, imageComparer)
-            }
-            WasmBitmapIO.awaitPendingArtifactUploads().then {
-                result.getOrThrow()
-                null
+        fontManager.installAllFontFaces()
+        return documentFontsReady().then {
+            WasmBitmapIO.preloadExpectedImages("canvas").then {
+                val canvasPeer = DomCanvasPeer(fontManager)
+                val bitmapIO = WasmBitmapIO(subdir = "canvas")
+                val imageComparer = ImageComparer(canvasPeer, bitmapIO, silent = true)
+                val result = runCatching {
+                    AllCanvasTests.runAllTests(canvasPeer, imageComparer)
+                }
+                WasmBitmapIO.awaitPendingArtifactUploads().then {
+                    result.getOrThrow()
+                    null
+                }
             }
         }
     }
