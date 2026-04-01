@@ -84,11 +84,13 @@ internal object BackendDataProcUtil {
         return stat
     }
 
-    internal fun createSamplingMessage(samplingExpression: String, layerConfig: LayerConfig): String {
+    internal fun createLayerMessage(
+        message: String,
+        layerConfig: LayerConfig
+    ): String {
         val geomKind = layerConfig.geomProto.geomKind.name.lowercase()
         val stat = getStatName(layerConfig)
-
-        return "$samplingExpression was applied to [$geomKind/$stat] layer"
+        return "$geomKind/$stat: $message"
     }
 
     private fun createStatMessage(statInfo: String, layerConfig: LayerConfig): String {
