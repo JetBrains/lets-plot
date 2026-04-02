@@ -279,3 +279,4 @@ internal class DomContext2d(
     override fun dispose() {
         // no-op
     }
+}
