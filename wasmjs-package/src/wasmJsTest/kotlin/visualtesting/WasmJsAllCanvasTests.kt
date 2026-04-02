@@ -10,7 +10,6 @@ package visualtesting
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasPeer
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomFontManager
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
-import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 import org.jetbrains.letsPlot.visualtesting.canvas.AllCanvasTests
 import kotlin.js.Promise
 import kotlin.test.Test
@@ -44,11 +43,7 @@ class WasmJsAllCanvasTests {
                     canvasPeer,
                     bitmapIO,
                     profileAdjuster = { context ->
-                        if (context.profile == ComparisonProfile.Text) {
-                            context.profile.withBrowserAaTolerance()
-                        } else {
-                            context.profile
-                        }
+                        context.profile.withBrowserAaTolerance()
                     },
                     silent = true
                 )
