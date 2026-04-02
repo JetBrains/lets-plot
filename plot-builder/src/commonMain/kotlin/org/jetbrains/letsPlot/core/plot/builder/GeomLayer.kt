@@ -25,6 +25,8 @@ interface GeomLayer {
 
     val geomKind: GeomKind
 
+    val statName: String
+
     val geom: Geom
 
     val posProvider: PosProvider

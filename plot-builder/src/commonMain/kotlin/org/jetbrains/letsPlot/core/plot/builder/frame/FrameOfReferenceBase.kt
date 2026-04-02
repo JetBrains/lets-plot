@@ -213,7 +213,10 @@ internal abstract class FrameOfReferenceBase(
                 .scaleFactor(plotContext.getScaleFactor())
                 .naRm(layer.naRm)
                 .geomKind(layer.geomKind)
-                .messageConsumer(plotContext.getMessageConsumer())
+                .messageConsumer { msg ->
+                    val prefix = "${layer.geomKind.name.lowercase()}/${layer.statName}"
+                    plotContext.getMessageConsumer()("$prefix: $msg")
+                }
                 .build()
 
             val pos = rendererData.pos

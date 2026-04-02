@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.Transform
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.DataFrameField
+import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder.Companion.getStatName
 import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.GroupingContext
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil
@@ -76,26 +77,18 @@ internal object BackendDataProcUtil {
         ) { message -> messageHandler(createStatMessage(message, layerConfig)) }
     }
 
-    private fun getStatName(layerConfig: LayerConfig): String {
-        var stat: String = layerConfig.stat::class.simpleName!!
-        stat = stat.replace("Stat", " stat")
-        stat = stat.replace("([a-z])([A-Z]+)".toRegex(), "$1_$2").lowercase()
-
-        return stat
-    }
-
     internal fun createLayerMessage(
         message: String,
         layerConfig: LayerConfig
     ): String {
         val geomKind = layerConfig.geomProto.geomKind.name.lowercase()
-        val stat = getStatName(layerConfig)
+        val stat = getStatName(layerConfig.stat)
         return "$geomKind/$stat: $message"
     }
 
     private fun createStatMessage(statInfo: String, layerConfig: LayerConfig): String {
         val geomKind = layerConfig.geomProto.geomKind.name.lowercase()
-        val stat = getStatName(layerConfig)
+        val stat = getStatName(layerConfig.stat)
 
         return "$statInfo in [$geomKind/$stat] layer"
     }
