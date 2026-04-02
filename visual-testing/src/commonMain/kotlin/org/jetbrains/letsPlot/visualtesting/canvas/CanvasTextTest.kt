@@ -8,19 +8,23 @@ import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 
-internal class CanvasTextTest(
+class CanvasTextTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase() {
+): CanvasTestBase<CanvasTextTest>() {
+
+    override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Text
+
     init {
-        registerTest(::canvas_path_monospace)
-        registerTest(::canvas_path_monospaceItalic)
-        registerTest(::canvas_path_monospaceBold)
-        registerTest(::canvas_path_monospaceBoldItalic)
+        registerTest(CanvasTextTest::canvas_path_monospace)
+        registerTest(CanvasTextTest::canvas_path_monospaceItalic)
+        registerTest(CanvasTextTest::canvas_path_monospaceBold)
+        registerTest(CanvasTextTest::canvas_path_monospaceBoldItalic)
     }
 
-    private fun canvas_path_monospace(): Bitmap {
+    fun canvas_path_monospace(): Bitmap {
         // Test that regular monospaced font is rendered correctly
         val (canvas, ctx) = createCanvas()
 
@@ -31,7 +35,7 @@ internal class CanvasTextTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_monospaceItalic(): Bitmap {
+    fun canvas_path_monospaceItalic(): Bitmap {
         val fontSize = 16.0
 
         val (canvas, ctx) = createCanvas()
@@ -46,7 +50,7 @@ internal class CanvasTextTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_monospaceBold(): Bitmap {
+    fun canvas_path_monospaceBold(): Bitmap {
         val fontSize = 16.0
 
         val (canvas, ctx) = createCanvas()
@@ -58,7 +62,7 @@ internal class CanvasTextTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_monospaceBoldItalic(): Bitmap {
+    fun canvas_path_monospaceBoldItalic(): Bitmap {
         val fontSize = 16.0
         val (canvas, ctx) = createCanvas()
 

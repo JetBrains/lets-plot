@@ -10,6 +10,7 @@ package visualtesting
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvasPeer
 import org.jetbrains.letsPlot.platf.w3c.canvas.DomFontManager
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 import org.jetbrains.letsPlot.visualtesting.canvas.AllCanvasTests
 import kotlin.js.Promise
 import kotlin.test.Test
@@ -30,16 +31,27 @@ private external fun documentFontsReady(): Promise<JsAny?>
 
 //@Ignore
 class WasmJsAllCanvasTests {
-
     @Test
     fun runAllCanvasTests(): Promise<JsAny?> {
         val fontManager = createEmbeddedFontsManager()
         fontManager.installAllFontFaces()
+
         return documentFontsReady().then {
             WasmBitmapIO.preloadExpectedImages("canvas").then {
                 val canvasPeer = DomCanvasPeer(fontManager)
                 val bitmapIO = WasmBitmapIO(subdir = "canvas")
-                val imageComparer = ImageComparer(canvasPeer, bitmapIO, silent = true)
+                val imageComparer = ImageComparer(
+                    canvasPeer,
+                    bitmapIO,
+                    profileAdjuster = { context ->
+                        if (context.profile == ComparisonProfile.Text) {
+                            context.profile.withBrowserAaTolerance()
+                        } else {
+                            context.profile
+                        }
+                    },
+                    silent = true
+                )
                 val result = runCatching {
                     AllCanvasTests.runAllTests(canvasPeer, imageComparer)
                 }
