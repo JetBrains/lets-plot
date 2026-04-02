@@ -60,7 +60,7 @@ class ImageComparer(
     }
 
     data class ComparisonContext(
-        val testSuite: KClass<out TestSuit<*>>?,
+        val testSuite: KClass<out TestSuit>?,
         val test: KFunction<*>?,
         val profile: ComparisonProfile
     )
@@ -79,7 +79,7 @@ class ImageComparer(
         fileName: String,
         actualBitmap: Bitmap,
         profile: ComparisonProfile? = null,
-        testSuite: KClass<out TestSuit<*>>? = null,
+        testSuite: KClass<out TestSuit>? = null,
         test: KFunction<*>? = null
     ) {
         val testName = fileName.removeSuffix(".png") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""

@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.platf.w3c.canvas.DomFontManager
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 import org.jetbrains.letsPlot.visualtesting.canvas.AllCanvasTests
+import org.jetbrains.letsPlot.visualtesting.canvas.CanvasClipTest
 import kotlin.js.Promise
 import kotlin.test.Test
 
@@ -44,6 +45,7 @@ class WasmJsAllCanvasTests {
                     canvasPeer,
                     bitmapIO,
                     profileAdjuster = { context ->
+                        val b = context.test == CanvasClipTest::canvas_clip_fill
                         if (context.profile == ComparisonProfile.Text) {
                             context.profile.withBrowserAaTolerance()
                         } else {

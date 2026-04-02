@@ -17,22 +17,22 @@ import kotlin.math.PI
 class CanvasClipTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase<CanvasClipTest>() {
+): CanvasTestBase() {
 
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
 
     init {
-        registerTest(CanvasClipTest::canvas_clip_fill)
-        registerTest(CanvasClipTest::canvas_clip_path)
-        registerTest(CanvasClipTest::canva_clip_twoPolygons)
-        registerTest(CanvasClipTest::canvas_clip_restore)
-        registerTest(CanvasClipTest::canva_clip_afterTransform)
-        registerTest(CanvasClipTest::canvas_clip_beforeTransform)
-        registerTest(CanvasClipTest::canvas_clip_text, ComparisonProfile.Text)
-        registerTest(CanvasClipTest::canvas_clip_textBeforeTransform, ComparisonProfile.Text)
-        registerTest(CanvasClipTest::canvas_clip_textWithTranslatesBeforeTransform, ComparisonProfile.Text)
-        registerTest(CanvasClipTest::canvas_clip_textAfterTransform, ComparisonProfile.Text)
-        registerTest(CanvasClipTest::canvas_clip_textWithTranslatesAfterTransform, ComparisonProfile.Text)
+        registerTest(::canvas_clip_fill)
+        registerTest(::canvas_clip_path)
+        registerTest(::canva_clip_twoPolygons)
+        registerTest(::canvas_clip_restore)
+        registerTest(::canva_clip_afterTransform)
+        registerTest(::canvas_clip_beforeTransform)
+        registerTest(::canvas_clip_text, ComparisonProfile.Text)
+        registerTest(::canvas_clip_textBeforeTransform, ComparisonProfile.Text)
+        registerTest(::canvas_clip_textWithTranslatesBeforeTransform, ComparisonProfile.Text)
+        registerTest(::canvas_clip_textAfterTransform, ComparisonProfile.Text)
+        registerTest(::canvas_clip_textWithTranslatesAfterTransform, ComparisonProfile.Text)
     }
 
     private fun nwRect(ctx: Context2d) {

@@ -13,15 +13,15 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 class CanvasTextTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase<CanvasTextTest>() {
+): CanvasTestBase() {
 
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Text
 
     init {
-        registerTest(CanvasTextTest::canvas_path_monospace)
-        registerTest(CanvasTextTest::canvas_path_monospaceItalic)
-        registerTest(CanvasTextTest::canvas_path_monospaceBold)
-        registerTest(CanvasTextTest::canvas_path_monospaceBoldItalic)
+        registerTest(::canvas_path_monospace)
+        registerTest(::canvas_path_monospaceItalic)
+        registerTest(::canvas_path_monospaceBold)
+        registerTest(::canvas_path_monospaceBoldItalic)
     }
 
     fun canvas_path_monospace(): Bitmap {

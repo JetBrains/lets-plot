@@ -12,18 +12,18 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 class CanvasDrawImageTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase<CanvasDrawImageTest>() {
+): CanvasTestBase() {
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Strict
 
     init {
-        registerTest(CanvasDrawImageTest::canva_drawImage_Simple)
-        registerTest(CanvasDrawImageTest::canvas_drawImage_Transformed)
-        registerTest(CanvasDrawImageTest::canvas_drawImage_Overlay)
-        registerTest(CanvasDrawImageTest::canva_drawImage_Pixelated)
-        registerTest(CanvasDrawImageTest::canvas_drawImage_snapshotSeries)
-        registerTest(CanvasDrawImageTest::canvas_drawImage_srcToDstMatchingSizes)
-        registerTest(CanvasDrawImageTest::canvas_drawImage_cropFromSourceStretchToDest)
-        registerTest(CanvasDrawImageTest::canvas_drawImage_cropFromSourceToDest)
+        registerTest(::canva_drawImage_Simple)
+        registerTest(::canvas_drawImage_Transformed)
+        registerTest(::canvas_drawImage_Overlay)
+        registerTest(::canva_drawImage_Pixelated)
+        registerTest(::canvas_drawImage_snapshotSeries)
+        registerTest(::canvas_drawImage_srcToDstMatchingSizes)
+        registerTest(::canvas_drawImage_cropFromSourceStretchToDest)
+        registerTest(::canvas_drawImage_cropFromSourceToDest)
     }
 
     fun canvas_drawImage_cropFromSourceStretchToDest(): Bitmap {

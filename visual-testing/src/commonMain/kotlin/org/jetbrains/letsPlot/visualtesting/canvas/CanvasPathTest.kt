@@ -17,32 +17,32 @@ import kotlin.math.PI
 class CanvasPathTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase<CanvasPathTest>() {
+): CanvasTestBase() {
 
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
 
     init {
-        registerTest(CanvasPathTest::canvas_path_circleStroke)
-        registerTest(CanvasPathTest::canvas_path_circleFillStroke)
-        registerTest(CanvasPathTest::canvas_path_ellipse)
-        registerTest(CanvasPathTest::canvas_path_rotatedEllipse)
-        registerTest(CanvasPathTest::canvas_path_shearedEllipse)
-        registerTest(CanvasPathTest::canvas_path_shearedCircularArc)
-        registerTest(CanvasPathTest::canvas_path_nestedTranslates)
-        registerTest(CanvasPathTest::canvas_path_multiPathFill)
-        registerTest(CanvasPathTest::canvas_path_multiPathStroke)
-        registerTest(CanvasPathTest::canvas_path_zigZagFill)
-        registerTest(CanvasPathTest::canvas_path_zigZagStroke)
-        registerTest(CanvasPathTest::canvas_path_pathTransformOnBuild)
-        registerTest(CanvasPathTest::canvas_path_arcTransformsAfterRestore)
-        registerTest(CanvasPathTest::canvas_path_skewXTransform)
-        registerTest(CanvasPathTest::canvas_path_simpleBezierCurve)
-        registerTest(CanvasPathTest::canvas_path_bezierCurveInsidePath)
-        registerTest(CanvasPathTest::canvas_path_ellipseInsidePath)
-        registerTest(CanvasPathTest::canvas_path_roundedRectWithCurves)
-        registerTest(CanvasPathTest::canvas_path_fillRectWithTransparentColor)
-        registerTest(CanvasPathTest::canvas_path_clearRect)
-        registerTest(CanvasPathTest::canvas_path_fillTransparentRectWithTransparentColor)
+        registerTest(::canvas_path_circleStroke)
+        registerTest(::canvas_path_circleFillStroke)
+        registerTest(::canvas_path_ellipse)
+        registerTest(::canvas_path_rotatedEllipse)
+        registerTest(::canvas_path_shearedEllipse)
+        registerTest(::canvas_path_shearedCircularArc)
+        registerTest(::canvas_path_nestedTranslates)
+        registerTest(::canvas_path_multiPathFill)
+        registerTest(::canvas_path_multiPathStroke)
+        registerTest(::canvas_path_zigZagFill)
+        registerTest(::canvas_path_zigZagStroke)
+        registerTest(::canvas_path_pathTransformOnBuild)
+        registerTest(::canvas_path_arcTransformsAfterRestore)
+        registerTest(::canvas_path_skewXTransform)
+        registerTest(::canvas_path_simpleBezierCurve)
+        registerTest(::canvas_path_bezierCurveInsidePath)
+        registerTest(::canvas_path_ellipseInsidePath)
+        registerTest(::canvas_path_roundedRectWithCurves)
+        registerTest(::canvas_path_fillRectWithTransparentColor)
+        registerTest(::canvas_path_clearRect)
+        registerTest(::canvas_path_fillTransparentRectWithTransparentColor)
         //registerTest(::perf_5_000_points)
 
     }

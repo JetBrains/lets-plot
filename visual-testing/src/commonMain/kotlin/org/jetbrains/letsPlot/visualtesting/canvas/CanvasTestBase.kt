@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 import org.jetbrains.letsPlot.visualtesting.TestSuit
 
 
-abstract class CanvasTestBase<T : CanvasTestBase<T>> : TestSuit<T>() {
+abstract class CanvasTestBase : TestSuit() {
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
 
     fun createCanvas(width: Int = 100, height: Int = 100): Pair<Canvas, Context2d> {

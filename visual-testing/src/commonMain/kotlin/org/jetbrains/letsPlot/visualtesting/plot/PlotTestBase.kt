@@ -24,7 +24,7 @@ import org.jetbrains.letsPlot.raster.export.PlotRasterExport
 import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import org.jetbrains.letsPlot.visualtesting.TestSuit
 
-abstract class PlotTestBase<T : PlotTestBase<T>> : TestSuit<T>() {
+abstract class PlotTestBase : TestSuit() {
     fun createPlot(
         plotSpec: MutableMap<String, Any?>,
         width: Number? = null,

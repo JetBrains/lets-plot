@@ -15,12 +15,12 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer
 class PlotInteractivityTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-) : PlotTestBase<PlotInteractivityTest>() {
+) : PlotTestBase() {
     init {
-        registerTest(PlotInteractivityTest::plot_interactivity_facetGridTooltip)
-        registerTest(PlotInteractivityTest::plot_interactivity_panInProgressWithIncompleteBuffer)
-        registerTest(PlotInteractivityTest::plot_interactivity_compositeTooltip)
-        registerTest(PlotInteractivityTest::plot_interactivity_nestedCompositeTooltip)
+        registerTest(::plot_interactivity_facetGridTooltip)
+        registerTest(::plot_interactivity_panInProgressWithIncompleteBuffer)
+        registerTest(::plot_interactivity_compositeTooltip)
+        registerTest(::plot_interactivity_nestedCompositeTooltip)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
