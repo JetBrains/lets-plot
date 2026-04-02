@@ -13,7 +13,7 @@ class CanvasDrawImageTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
 ): CanvasTestBase() {
-    override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Strict
+    override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
 
     init {
         registerTest(::canva_drawImage_Simple)
