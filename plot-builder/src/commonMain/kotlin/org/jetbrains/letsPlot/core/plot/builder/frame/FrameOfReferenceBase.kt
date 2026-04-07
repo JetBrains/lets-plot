@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -211,18 +212,36 @@ internal abstract class FrameOfReferenceBase(
                 .coordinateSystem(coord)
                 .contentBounds(bounds)
                 .scaleFactor(plotContext.getScaleFactor())
-                .naRm(layer.naRm)
+                .droppedPointsReporter(
+                    createDroppedPointsReporter(layer, plotContext)
+                )
                 .geomKind(layer.geomKind)
-                .messageConsumer { msg ->
-                    val prefix = "${layer.geomKind.name.lowercase()}/${layer.statName}"
-                    plotContext.getMessageConsumer()("$prefix: $msg")
-                }
                 .build()
 
             val pos = rendererData.pos
             val geom = layer.geom
 
             return SvgLayerRenderer(aesthetics, geom, pos, coord, ctx)
+        }
+
+        private fun createDroppedPointsReporter(
+            layer: GeomLayer,
+            plotContext: PlotContext
+        ): DroppedPointsReporter {
+            if (layer.naRm) {
+                return DroppedPointsReporter.NONE
+            }
+            val messageConsumer = plotContext.getMessageConsumer()
+            val prefix = "[${layer.geomKind.name.lowercase()}/${layer.statName}]"
+
+            return object : DroppedPointsReporter {
+                override fun report(droppedIndices: Set<Int>) {
+                    if (droppedIndices.isEmpty()) return
+                    val n = droppedIndices.size
+                    val points = if (n == 1) "data point" else "data points"
+                    messageConsumer("$prefix Removed $n $points: missing or outside the scale limits.")
+                }
+            }
         }
     }
 }

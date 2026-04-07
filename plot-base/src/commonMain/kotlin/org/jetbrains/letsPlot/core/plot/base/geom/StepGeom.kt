@@ -57,7 +57,7 @@ class StepGeom : LineGeom() {
 
         val targetCollectorHelper = TargetCollectorHelper(ctx)
         targetCollectorHelper.addPaths(pathDataList)
-        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
+        ctx.droppedPointsReporter().report(filteredPointsIds + linesHelper.getDroppedPointsIds())
     }
 
     private fun toLocationFor(viewPort: DoubleRectangle): (DataPointAesthetics) -> DoubleVector? {

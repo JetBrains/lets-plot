@@ -50,7 +50,7 @@ class RibbonGeom : GeomBase() {
         root.appendNodes(linesHelper.createLines(dataPoints, TO_LOCATION_X_YMIN))
 
         buildHints(aesthetics, pos, coord, ctx)
-        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
+        ctx.droppedPointsReporter().report(filteredPointsIds + linesHelper.getDroppedPointsIds())
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {

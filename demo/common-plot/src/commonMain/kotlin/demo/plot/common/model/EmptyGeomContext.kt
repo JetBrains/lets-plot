@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -54,11 +55,7 @@ class EmptyGeomContext : GeomContext {
         return 1.0
     }
 
-    override fun removeNaMessages() = true
-
-    override fun consumeMessages(messages: List<String>) {
-        throw IllegalStateException("Not available in an empty geom context")
-    }
+    override fun droppedPointsReporter() = DroppedPointsReporter.NONE
 
     override fun geomKind(): GeomKind {
         throw IllegalStateException("Not available in an empty geom context")

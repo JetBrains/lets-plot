@@ -37,7 +37,7 @@ open class PolygonGeom : GeomBase() {
             targetCollectorHelper.addPolygons(polygonData)
             root.add(svg)
         }
-        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
+        ctx.droppedPointsReporter().report(filteredPointsIds + linesHelper.getDroppedPointsIds())
     }
 
     companion object {

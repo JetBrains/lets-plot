@@ -45,12 +45,6 @@ abstract class GeomBase : Geom {
         return dataPoints
     }
 
-    fun reportDroppedPoints(count: Int, ctx: GeomContext) {
-        if (!ctx.removeNaMessages() && count > 0) {
-            ctx.consumeMessages(listOf("Removed $count data point(s) containing missing values or values outside the scale range."))
-        }
-    }
-
     protected abstract fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,

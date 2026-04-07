@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
@@ -55,11 +56,7 @@ object BogusContext : GeomContext {
         return 1.0
     }
 
-    override fun removeNaMessages() = true
-
-    override fun consumeMessages(messages: List<String>) {
-        // do nothing
-    }
+    override fun droppedPointsReporter() = DroppedPointsReporter.NONE
 
     override fun geomKind(): GeomKind {
         error("Not available in a bogus geom context")

@@ -52,8 +52,7 @@ internal object PlotSampling {
                 }
             }
             val droppedCount = originalRowCount - data.rowCount()
-            val message = "Removed $droppedCount out of $originalRowCount data point(s) by $expressionText."
-
+            val message = "Removed $droppedCount data points out of $originalRowCount by $expressionText."
             samplingExpressionConsumer(message)
         }
 

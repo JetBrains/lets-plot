@@ -75,7 +75,7 @@ open class AreaGeom : GeomBase() {
                     createQuantileLines(groupDataPoints, quantilesHelper).forEach(root::add)
                 }
             }
-        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
+        ctx.droppedPointsReporter().report(filteredPointsIds + linesHelper.getDroppedPointsIds())
     }
 
     private fun createQuantileLines(

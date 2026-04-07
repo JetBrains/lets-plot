@@ -46,7 +46,7 @@ open class PathGeom : GeomBase() {
 
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
-        reportDroppedPoints((filteredPointsIds + linesHelper.getDroppedPointsIds()).size, ctx)
+        ctx.droppedPointsReporter().report(filteredPointsIds + linesHelper.getDroppedPointsIds())
     }
 
     companion object {

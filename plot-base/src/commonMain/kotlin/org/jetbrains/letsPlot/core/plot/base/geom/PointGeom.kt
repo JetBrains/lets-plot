@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -34,15 +35,22 @@ open class PointGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
 
-        val count = aesthetics.dataPointCount()
-        val slimGroup = SvgSlimElements.g(count)
-        var goodPointsCount = 0
+        val source = aesthetics.dataPoints()
+        val dataPoints = GeomUtil.withDefined(source, Aes.X, Aes.Y, Aes.SIZE)
 
-        for (i in 0 until count) {
-            val p = aesthetics.dataPointAt(i)
-            if (p.finiteOrNull(Aes.SIZE) == null) continue
-            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
-            val location = helper.toClient(point, p) ?: continue
+        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
+        val slimGroup = SvgSlimElements.g(dataPoints.count())
+        val droppedPointsIds = LinkedHashSet<Int>()
+
+        for (p in dataPoints) {
+            val point = p.finiteVectorOrNull(Aes.X, Aes.Y)!!
+            val location = helper.toClient(point, p)
+
+            if (location == null) {
+                droppedPointsIds.add(p.index())
+                continue
+            }
+
             val shape = p.shape()!!
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
@@ -56,16 +64,15 @@ open class PointGeom : GeomBase() {
             }
 
             targetCollector.addPoint(
-                i, location, (shape.size(p, scaleFactor) + shape.strokeWidth(p)) / 2,
-                GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(p)
-                )
+                p.index(),
+                location,
+                (shape.size(p, scaleFactor) + shape.strokeWidth(p)) / 2,
+                GeomTargetCollector.TooltipParams(markerColors = colorsByDataPoint(p))
             )
-            val o = PointShapeSvg.create(shape, location, p, scaleFactor)
-            o.appendTo(slimGroup)
-            goodPointsCount += 1
+            PointShapeSvg.create(shape, location, p, scaleFactor)
+                .appendTo(slimGroup)
         }
-        reportDroppedPoints(count - goodPointsCount, ctx)
+        ctx.droppedPointsReporter().report(filteredPointsIds + droppedPointsIds)
         root.add(wrap(slimGroup))
     }
 
@@ -73,4 +80,3 @@ open class PointGeom : GeomBase() {
         const val HANDLES_GROUPS = false
     }
 }
-
