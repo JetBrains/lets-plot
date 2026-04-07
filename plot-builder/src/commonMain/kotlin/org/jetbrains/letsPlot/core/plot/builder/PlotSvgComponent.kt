@@ -110,7 +110,7 @@ class PlotSvgComponent constructor(
             }
             errorLabel.textColor().set(textColor)
             errorLabel.setFontSize(12.0)
-            errorLabel.setLineHeight(16.0)
+            errorLabel.setConstantLineHeight(16.0)
             errorLabel.setFontWeight("normal")
             errorLabel.setFontStyle("normal")
             errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)

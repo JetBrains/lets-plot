@@ -26,8 +26,8 @@ internal class TextLegendKeyElementFactory :
         AestheticsUtil.updateFill(rect, p)
 
         val label = Label("a")
-        TextUtil.decorate(label, p)
-        label.setLineHeight(fontSize(p, 1.0))
+        TextUtil.decorateLabelStyle(label, p, 1.0, true)
+        label.setConstantLineHeight(fontSize(p, 1.0))
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.rotate(angle(p.angle()!!))

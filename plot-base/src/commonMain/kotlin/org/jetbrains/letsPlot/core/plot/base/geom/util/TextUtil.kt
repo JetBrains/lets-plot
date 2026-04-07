@@ -151,11 +151,6 @@ object TextUtil {
 
     fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
 
-    fun decorate(label: Label, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
-        decorateLabelStyle(label, p, scale, applyAlpha)
-        label.setLineHeight(lineheight(p, scale))
-    }
-
     fun decorate(label: Label, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0, applyAlpha: Boolean = true) {
         decorateLabelStyle(label, p, scale, applyAlpha)
         label.setLineHeights(
@@ -163,7 +158,7 @@ object TextUtil {
         )
     }
 
-    private fun decorateLabelStyle(label: Label, p: DataPointAesthetics, scale: Double, applyAlpha: Boolean) {
+    internal fun decorateLabelStyle(label: Label, p: DataPointAesthetics, scale: Double, applyAlpha: Boolean) {
         val color = p.color()!!
         label.textColor().set(color)
         val alpha = if (applyAlpha) {

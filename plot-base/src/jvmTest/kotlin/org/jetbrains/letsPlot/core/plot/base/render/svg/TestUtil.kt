@@ -40,7 +40,7 @@ object TestUtil {
         wrapLength: Int = -1,
         markdown: Boolean = false,
     ): Double {
-        return RichText.estimateWidth(
+        return RichText.estimateMaxWidth(
             text = text,
             font = font,
             wrapLength = wrapLength,

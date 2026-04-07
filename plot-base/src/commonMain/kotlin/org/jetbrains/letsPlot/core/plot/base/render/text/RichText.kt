@@ -30,7 +30,7 @@ object RichText {
         return svgLines
     }
 
-    fun estimateWidth(
+    fun estimateMaxWidth(
         text: String,
         font: Font,
         wrapLength: Int = -1,
@@ -43,16 +43,6 @@ object RichText {
         }
 
         return widths.maxOrNull() ?: 0.0
-    }
-
-    fun estimateMaxWidth(
-        text: String,
-        font: Font,
-        wrapLength: Int = -1,
-        maxLinesCount: Int = -1,
-        markdown: Boolean = false,
-    ): Double {
-        return estimateWidth(text, font, wrapLength, maxLinesCount, markdown)
     }
 
     fun estimateHeights(

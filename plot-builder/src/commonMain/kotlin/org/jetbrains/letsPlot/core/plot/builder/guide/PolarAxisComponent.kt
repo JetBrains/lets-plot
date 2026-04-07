@@ -162,9 +162,9 @@ class PolarAxisComponent(
                 }
             }
 
-            val tickHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
-            tickLabel.setFontSize(tickHeight)
-            tickLabel.setLineHeight(tickHeight)
+            val labelSpec = PlotLabelSpecFactory.axisTick(axisTheme)
+            tickLabel.setFontSize(labelSpec.font.size.toDouble())
+            tickLabel.setLineHeights(labelSpec.heights(label))
             tickLabel.rotate(labelAdjustments.rotationDegree)
             tickLabel
         } else {

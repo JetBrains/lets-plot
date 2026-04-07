@@ -15,11 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.math.roundToInt
 
 
@@ -139,13 +135,14 @@ class Label(
         verticalRepositionLines()
     }
 
-    fun setLineHeight(v: Double) {
-        setLineHeights(List(myLines.size) { v })
+    fun setConstantLineHeight(v: Double) {
+        setLineHeights(List(linesCount()) { v })
     }
 
     fun setLineHeights(values: List<Double>) {
-        require(values.isEmpty() || values.size == myLines.size) { "Line heights count must match line count." }
         myLineHeights.clear()
+        if (myLines.isEmpty()) return
+        require(values.size == linesCount()) { "Line heights count must match line count." }
         myLineHeights.addAll(values)
         verticalRepositionLines()
     }
@@ -165,6 +162,8 @@ class Label(
             else -> 0.0
         }
 
+        // TODO: Refactor
+        // Uses the fact that there is only two types of line heights: for plane text (smaller) and for fractions (larger)
         val plainTextLineHeight = myLineHeights.minOrNull() ?: return
         val fractionLineHeight = myLineHeights.maxOrNull() ?: return
         myLines.forEachIndexed { index, elem ->
