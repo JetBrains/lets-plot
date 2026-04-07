@@ -1,11 +1,11 @@
-@file:OptIn(ExperimentalWasmDsl::class)
-
-import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
-
 /*
  * Copyright (c) 2024. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     kotlin("multiplatform")
@@ -44,62 +44,59 @@ val jarJavaDocs by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
     from("$rootDir/README.md")
 }
+val jarJavaDocsFile = jarJavaDocs.flatMap { it.archiveFile }
 
-afterEvaluate {
-    tasks.filterIsInstance<Jar>().forEach {
-        if (it.name == "jvmJar") {
-            it.metaInf {
-                from("$rootDir") {
-                    include("LICENSE")
-                }
-            }
-        }
-    }
-
-    publishing {
-        publications.forEach {
-            with(it as MavenPublication) {
-                groupId = artifactGroupId
-                version = artifactVersion
-
-                if (artifactId == project.name) {
-                    artifactId = artifactBaseName
-                } else if (artifactId.startsWith(project.name)) {
-                    artifactId = artifactId.replace(project.name, artifactBaseName)
-                }
-
-                artifact(jarJavaDocs)
-
-                pom {
-                    name.set("Lets-Plot common modules")
-                    description.set("Lets-Plot JVM package without the actual rendering.")
-                    url.set("https://github.com/JetBrains/lets-plot")
-
-                    licenses {
-                        license {
-                            name.set("MIT")
-                            url.set("https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE")
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id.set("jetbrains")
-                            name.set("JetBrains")
-                            email.set("lets-plot@jetbrains.com")
-                        }
-                    }
-
-                    scm {
-                        url.set("https://github.com/JetBrains/lets-plot")
-                    }
-                }
-            }
+tasks.withType<Jar>().configureEach {
+    metaInf {
+        from("$rootDir") {
+            include("LICENSE")
         }
     }
 }
 
 publishing {
+    publications.withType<MavenPublication>().configureEach {
+        groupId = artifactGroupId
+        version = artifactVersion
+
+        if (artifactId == project.name) {
+            artifactId = artifactBaseName
+        } else if (artifactId.startsWith(project.name)) {
+            artifactId = artifactId.replace(project.name, artifactBaseName)
+        }
+
+        artifact(jarJavaDocsFile) {
+            builtBy(jarJavaDocs)
+            classifier = "javadoc"
+            extension = "jar"
+        }
+
+        pom {
+            name.set("Lets-Plot common modules")
+            description.set("Lets-Plot common modules.")
+            url.set("https://github.com/JetBrains/lets-plot")
+
+            licenses {
+                license {
+                    name.set("MIT")
+                    url.set("https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE")
+                }
+            }
+
+            developers {
+                developer {
+                    id.set("jetbrains")
+                    name.set("JetBrains")
+                    email.set("lets-plot@jetbrains.com")
+                }
+            }
+
+            scm {
+                url.set("https://github.com/JetBrains/lets-plot")
+            }
+        }
+    }
+
     repositories {
         mavenLocal {
             url = uri("$mavenLocalPath")
