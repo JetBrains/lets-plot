@@ -12,7 +12,7 @@ interface InteractionTarget {
 
     val id: String?
 
-    // Apply new viewport over the current one.
+    // Apply a new viewport over the current one.
     // Passing the geomBounds will result in the same viewport.
     // Viewport change is additive:
     // applyViewport(geomBounds.add(10, 0))
@@ -23,7 +23,8 @@ interface InteractionTarget {
     //   - coord flip flag.
     fun applyViewport(
         screenViewport: DoubleRectangle,
-        ctx: InteractionContext
+        ctx: InteractionContext,
+        repaint: Boolean = true
     ): Pair<DoubleRectangle, Boolean>
 
     fun dataBounds(): DoubleRectangle

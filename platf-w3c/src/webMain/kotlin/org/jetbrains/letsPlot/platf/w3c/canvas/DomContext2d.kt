@@ -24,7 +24,8 @@ import kotlin.math.PI
 
 internal class DomContext2d(
     private val ctx: CanvasRenderingContext2D,
-    override val contentScale: Double
+    override val contentScale: Double,
+    private val fontManager: DomFontManager
 ) : Context2d {
 
     init {
@@ -89,12 +90,14 @@ internal class DomContext2d(
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
         log { "DomContext2d.drawImage(snapshot) x=$x, y=$y, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
+        ctx.imageSmoothingEnabled = false
         ctx.drawImage(domSnapshot.canvasElement, x, y)
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
         log { "DomContext2d.drawImage(snapshot) x=$x, y=$y, dw=$dw, dh=$dh, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
+        ctx.imageSmoothingEnabled = false
         ctx.drawImage(domSnapshot.canvasElement, x, y, dw, dh)
     }
 
@@ -111,6 +114,7 @@ internal class DomContext2d(
     ) {
         log { "DomContext2d.drawImage(snapshot) sx=$sx, sy=$sy, sw=$sw, sh=$sh, dx=$dx, dy=$dy, dw=$dw, dh=$dh, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
+        ctx.imageSmoothingEnabled = false
         ctx.drawImage(domSnapshot.canvasElement, sx, sy, sw, sh, dx, dy, dw, dh)
     }
 
@@ -144,34 +148,42 @@ internal class DomContext2d(
     }
 
     override fun ellipse(x: Double, y: Double, radiusX: Double, radiusY: Double, rotation: Double, startAngle: Double, endAngle: Double, anticlockwise: Boolean) {
-        ctx.ellipse(x, y, radiusX, radiusY, 0.0, 0.0, 2 * PI)
+        ctx.ellipse(
+            x = x,
+            y = y,
+            radiusX = radiusX,
+            radiusY = radiusY,
+            rotation = rotation,
+            startAngle = startAngle,
+            endAngle = endAngle,
+            anticlockwise = anticlockwise
+        )
     }
     override fun measureText(str: String): org.jetbrains.letsPlot.core.canvas.TextMetrics {
         val metrics = ctx.measureText(str)
-        val ascent = when {
-            metrics.actualBoundingBoxAscent > 0.0 -> metrics.actualBoundingBoxAscent
-            metrics.fontBoundingBoxAscent > 0.0 -> metrics.fontBoundingBoxAscent
-            else -> metrics.emHeightAscent
-        }
-        val descent = when {
-            metrics.actualBoundingBoxDescent > 0.0 -> metrics.actualBoundingBoxDescent
-            metrics.fontBoundingBoxDescent > 0.0 -> metrics.fontBoundingBoxDescent
-            else -> metrics.emHeightDescent
-        }
-        val left = metrics.actualBoundingBoxLeft
-        val right = if (metrics.actualBoundingBoxRight > 0.0) {
-            metrics.actualBoundingBoxRight
-        } else {
-            (metrics.width - left).coerceAtLeast(0.0)
+        fun preferredMetric(actual: Double, fallback: Double): Double {
+            return when {
+                actual.isFinite() && actual >= 0.0 -> actual
+                fallback.isFinite() && fallback >= 0.0 -> fallback
+                else -> 0.0
+            }
         }
 
+        val ascent = preferredMetric(
+            actual = metrics.actualBoundingBoxAscent,
+            fallback = metrics.fontBoundingBoxAscent
+        )
+        val descent = preferredMetric(
+            actual = metrics.actualBoundingBoxDescent,
+            fallback = metrics.fontBoundingBoxDescent
+        )
         return org.jetbrains.letsPlot.core.canvas.TextMetrics(
             ascent = ascent,
             descent = descent,
             bbox = DoubleRectangle.XYWH(
-                -left,
+                0.0,
                 -ascent,
-                left + right,
+                metrics.width,
                 ascent + descent
             )
         )
@@ -206,7 +218,7 @@ internal class DomContext2d(
     }
 
     override fun setFont(f: Font) {
-        ctx.font = f.toCssString()
+        ctx.font = fontManager.resolveFont(f).toCssString()
     }
 
     override fun setLineWidth(lineWidth: Double) {

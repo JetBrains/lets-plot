@@ -28,7 +28,7 @@ internal object FigureToViewModel {
     private fun processCompositeFigure(svgRoot: CompositeFigureSvgRoot): CompositeFigureModel {
         svgRoot.ensureContentBuilt()
 
-        val compositeModel = CompositeFigureModel(svgRoot.svg)
+        val compositeModel = CompositeFigureModel(svgRoot.svg, isDeck = svgRoot.isDeck)
 
         for (childSvg in svgRoot.elements) {
             val childBounds = childSvg.bounds.add(svgRoot.bounds.origin)

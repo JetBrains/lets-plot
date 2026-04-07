@@ -10,15 +10,61 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
-import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
 
 class ImageComparer(
     private val canvasPeer: CanvasPeer,
     private val bitmapIO: BitmapIO,
-    private val tol: Int = 1,
+    private val defaultProfile: ComparisonProfile = ComparisonProfile.Strict,
+    private val profileAdjuster: (ComparisonContext) -> ComparisonProfile = { it.profile },
     private val suffix: String = "",
     private val silent: Boolean = false
 ) {
+    data class ComparisonProfile(
+        // Maximum allowed weighted RGBA distance between two pixels.
+        // Examples: 0 = exact match, 10-15 = minor AA drift, 20-25 = typical browser text drift.
+        val tol: Int,
+        // Search radius for matching a nearby pixel.
+        val maxShift: Int,
+        val allowedDiffPixelRatio: Double
+    ) {
+        fun withBrowserAaTolerance(): ComparisonProfile {
+            return copy(
+                tol = tol + 8,
+                maxShift = maxOf(maxShift, 1),
+                allowedDiffPixelRatio = allowedDiffPixelRatio + 0.01
+            )
+        }
+
+        companion object {
+            val Strict = ComparisonProfile(
+                tol = 2,
+                maxShift = 0,
+                allowedDiffPixelRatio = 0.0
+            )
+
+            val Geometries = ComparisonProfile(
+                tol = 12,
+                maxShift = 1,
+                allowedDiffPixelRatio = 0.003
+            )
+
+            val Text = ComparisonProfile(
+                tol = 24,
+                maxShift = 1,
+                allowedDiffPixelRatio = 0.02
+            )
+        }
+    }
+
+    data class ComparisonContext(
+        val testSuite: KClass<out TestSuit>?,
+        val test: KFunction<*>?,
+        val profile: ComparisonProfile
+    )
+
     private fun reportLocation(path: String): String {
         return if ("://" in path) path else "file://$path"
     }
@@ -29,7 +75,13 @@ class ImageComparer(
         }
     }
 
-    fun assertBitmapEquals(fileName: String, actualBitmap: Bitmap) {
+    fun assertBitmapEquals(
+        fileName: String,
+        actualBitmap: Bitmap,
+        profile: ComparisonProfile? = null,
+        testSuite: KClass<out TestSuit>? = null,
+        test: KFunction<*>? = null
+    ) {
         val testName = fileName.removeSuffix(".png") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
         val expectedFileName = "$testName.png"
         val actualFileName = "$testName.png"
@@ -46,7 +98,14 @@ class ImageComparer(
             error("Failed to read expected image.\n${it.message}\nActual image saved to '${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}'")
         }
 
-        val diffBitmap = createDiffImage(expectedBitmap, actualBitmap)
+        val profile = profileAdjuster(
+            ComparisonContext(
+                testSuite = testSuite,
+                test = test,
+                profile = profile ?: defaultProfile
+            )
+        )
+        val diffBitmap = createDiffImage(expectedBitmap, actualBitmap, profile)
         if (diffBitmap != null) {
             val diffFilePath = "${testName}_diff.png"
             val visualDiffBitmap = composeVisualDiff(expectedBitmap, actualBitmap, diffBitmap)
@@ -65,7 +124,11 @@ class ImageComparer(
         }
     }
 
-    private fun createDiffImage(expected: Bitmap, actual: Bitmap, tolerance: Int = tol): Bitmap? {
+    private fun createDiffImage(
+        expected: Bitmap,
+        actual: Bitmap,
+        profile: ComparisonProfile
+    ): Bitmap? {
         val diffWidth = maxOf(expected.width, actual.width)
         val diffHeight = maxOf(expected.height, actual.height)
         val diffCanvas = canvasPeer.createCanvas(diffWidth, diffHeight)
@@ -75,36 +138,61 @@ class ImageComparer(
         diffCanvas.context2d.setFillStyle(Color.RED)
 
         var diffPixelsCount = 0
+        val allowedDiffPixels = ceil(diffWidth * diffHeight * profile.allowedDiffPixelRatio).toInt()
 
         for (y in 0 until diffHeight) {
             for (x in 0 until diffWidth) {
-                val expectedPixel = expected.getPixel(x, y)
-                val actualPixel = actual.getPixel(x, y)
-
-                if (expectedPixel != null && actualPixel != null) {
-                    if (abs(expectedPixel.green - actualPixel.green) > tolerance ||
-                        abs(expectedPixel.red - actualPixel.red) > tolerance ||
-                        abs(expectedPixel.blue - actualPixel.blue) > tolerance ||
-                        abs(expectedPixel.alpha - actualPixel.alpha) > tolerance
-                    ) {
-                        diffPixelsCount++
-                        diffCanvas.context2d.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
-                    }
-                } else {
-                    // If one of the pixels is null, consider it a difference
+                if (!pixelsMatchWithNeighborhood(expected, actual, x, y, profile)) {
                     diffPixelsCount++
                     diffCanvas.context2d.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
                 }
             }
         }
 
-        if (diffPixelsCount == 0) {
+        if (diffPixelsCount <= allowedDiffPixels) {
             return null // No differences found
         }
 
         log("Total differing pixels: $diffPixelsCount")
 
         return diffCanvas.takeSnapshot().bitmap
+    }
+
+    private fun pixelsMatchWithNeighborhood(
+        expected: Bitmap,
+        actual: Bitmap,
+        x: Int,
+        y: Int,
+        profile: ComparisonProfile
+    ): Boolean {
+        val expectedPixel = expected.getPixel(x, y) ?: return actual.getPixel(x, y) == null
+
+        for (dy in -profile.maxShift..profile.maxShift) {
+            for (dx in -profile.maxShift..profile.maxShift) {
+                val actualPixel = actual.getPixel(x + dx, y + dy) ?: continue
+                if (pixelsMatch(expectedPixel, actualPixel, profile.tol)) {
+                    return true
+                }
+            }
+        }
+
+        return false
+    }
+
+    private fun pixelsMatch(expectedPixel: Color, actualPixel: Color, tolerance: Int): Boolean {
+        val dr = (expectedPixel.red - actualPixel.red).toDouble()
+        val dg = (expectedPixel.green - actualPixel.green).toDouble()
+        val db = (expectedPixel.blue - actualPixel.blue).toDouble()
+        val da = (expectedPixel.alpha - actualPixel.alpha).toDouble()
+
+        // Weighted RGB distance reduces sensitivity to tiny channel-level AA drift.
+        val perceptualDistanceSquared =
+            0.2126 * dr * dr +
+            0.7152 * dg * dg +
+            0.0722 * db * db +
+            0.5 * da * da
+
+        return perceptualDistanceSquared <= tolerance * tolerance
     }
 
     private fun composeVisualDiff(

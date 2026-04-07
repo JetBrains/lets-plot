@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
 import org.jetbrains.letsPlot.core.platf.dom.DomMouseEventMapper
+import org.jetbrains.letsPlot.platf.w3c.dom.DomDetachObserver
 import org.w3c.dom.CanvasRenderingContext2D
 import org.w3c.dom.HTMLCanvasElement
 import org.w3c.dom.Node
@@ -25,9 +26,12 @@ import kotlin.js.ExperimentalWasmJsInterop
 class DomCanvasView(
     content: CanvasDrawable? = null
 ) : Disposable {
+    private var detachCheckRegistration: Registration = Registration.EMPTY
+    private var isDisposed = false
 
     fun attachTo(parent: Node) {
         parent.appendChild(domCanvasElement)
+        ensureDetachDisposalCheck()
     }
 
     val domCanvasElement: HTMLCanvasElement =
@@ -37,7 +41,8 @@ class DomCanvasView(
 
     private val context2d = DomContext2d(
         domCanvasElement.getContext("2d") as CanvasRenderingContext2D,
-        DomCanvas.DEVICE_PIXEL_RATIO
+        DomCanvas.DEVICE_PIXEL_RATIO,
+        DomFontManager.DEFAULT
     )
 
     private val systemTime = SystemTime()
@@ -122,6 +127,8 @@ class DomCanvasView(
     }
 
     fun requestRepaint() {
+        if (isDisposed) return
+
         if (repaintRequestHandle != null) {
             return
         }
@@ -146,10 +153,25 @@ class DomCanvasView(
     }
 
     override fun dispose() {
+        if (isDisposed) return
+        isDisposed = true
+
+        detachCheckRegistration.dispose()
+        detachCheckRegistration = Registration.EMPTY
         repaintRequestHandle?.let(window::cancelAnimationFrame)
         repaintRequestHandle = null
         contentReg.dispose()
+        contentReg = Registration.EMPTY
+        content = null
         disposables.dispose()
+
+        log { "Disposed" }
+    }
+
+    private fun ensureDetachDisposalCheck() {
+        if (detachCheckRegistration !== Registration.EMPTY || isDisposed) return
+
+        detachCheckRegistration = DomDetachObserver.onDetach(domCanvasElement, ::dispose)
     }
 
     private fun log(message: () -> String) {

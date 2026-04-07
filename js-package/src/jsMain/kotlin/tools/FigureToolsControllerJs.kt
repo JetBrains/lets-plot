@@ -35,8 +35,13 @@ internal class FigureToolsControllerJs(
         }
     }
 
-    override fun updateFigureView(specOverride: Map<String, Any>?) {
-        figure()?.updateView(dynamicFromAnyQ(specOverride))
+    override fun updateSpecOverride(specOverride: Map<String, Any>?) {
+        figure()?.updateSpecOverride(specOverride)
+            ?: LOG.info { "The tools controller is unbound." }
+    }
+
+    override fun updateFigureView() {
+        figure()?.updateView()
             ?: LOG.info { "The tools controller is unbound." }
     }
 

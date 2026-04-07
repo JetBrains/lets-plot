@@ -23,18 +23,23 @@ abstract class ComponentTransientState(
     fun applyDelta(
         scaleDelta: DoubleVector,
         offsetDelta: DoubleVector,
-        ctx: InteractionContext
+        ctx: InteractionContext,
+        repaint: Boolean
     ) {
-        val offset = DoubleVector(
+        val newOffset = DoubleVector(
             offset.x + offsetDelta.x / scale.x,
             offset.y + offsetDelta.y / scale.y
         )
-        val scale = DoubleVector(
+        val newScale = DoubleVector(
             scale.x * scaleDelta.x,
             scale.y * scaleDelta.y
         )
 
-        transformView(scale, offset, ctx)
+        setScaleAndOffset(newScale, newOffset)
+        syncDataBounds(ctx)
+        if (repaint) {
+            repaint(ctx)
+        }
     }
 
     fun reset() {
@@ -42,15 +47,12 @@ abstract class ComponentTransientState(
 //        transformView(scale = DoubleVector(1.0, 1.0), offset = DoubleVector.ZERO)
     }
 
-    fun transformView(scale: DoubleVector, offset: DoubleVector, ctx: InteractionContext) {
+    fun setScaleAndOffset(scale: DoubleVector, offset: DoubleVector) {
         this.scale = scale
         this.offset = offset
-
-        syncDataBounds(ctx)
-        repaint(ctx)
     }
 
-    protected abstract fun syncDataBounds(ctx: InteractionContext)
+    internal abstract fun syncDataBounds(ctx: InteractionContext)
 
     internal abstract fun repaint(ctx: InteractionContext)
 }

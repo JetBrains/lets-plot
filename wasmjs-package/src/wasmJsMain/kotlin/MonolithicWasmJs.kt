@@ -116,7 +116,12 @@ private fun buildPlotComponent(
     }
 
     val success = buildResult as Success
-    val result = FigureToHtml(success.buildInfo, wrapperDiv).eval(isRoot = true)
+    val result = FigureToHtml(
+        buildInfo = success.buildInfo,
+        processedPlotSpec = processedPlotSpec,
+        parentElement = wrapperDiv,
+        sizingPolicy = sizingPolicy
+    ).eval()
     computationMessagesHandler(success.buildInfo.computationMessages)
     messageHandler.showComputationMessages(success.buildInfo.computationMessages)
 
@@ -165,7 +170,12 @@ internal fun buildPlotFromProcessedSpecsIntern(
     }
 
     val success = buildResult as Success
-    val result = FigureToHtml(success.buildInfo, wrapperElement).eval(isRoot = true)
+    val result = FigureToHtml(
+        buildInfo = success.buildInfo,
+        processedPlotSpec = plotSpec,
+        parentElement = wrapperElement,
+        sizingPolicy = sizingPolicy
+    ).eval()
 
     val computationMessages = success.buildInfo.computationMessages
     messageHandler.showComputationMessages(computationMessages)

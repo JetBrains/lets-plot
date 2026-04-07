@@ -35,6 +35,7 @@ class FigureModelJs internal constructor(
 ) {
     private var toolEventCallback: ((dynamic) -> Unit)? = null
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
+    private var currSpecOverrideState: SpecOverrideState = SpecOverrideState(emptyList(), null)
 
     fun onToolEvent(callback: (dynamic) -> Unit) {
         toolEventCallback = callback
@@ -48,34 +49,17 @@ class FigureModelJs internal constructor(
         )
     }
 
-    fun updateView(specOverrideJs: dynamic = null, optionsJs: dynamic = null) {
-
-        // view options update (just 'sizing' at the moment).
-        val options: Map<String, Any>? = if (optionsJs != null) {
-            dynamicObjectToMap(optionsJs)
-        } else {
-            null
-        }
-
-        val sizingOptionsUpdate = options?.get(SizingOption.KEY)
-        if (sizingOptionsUpdate is Map<*, *>) {
-            sizingPolicy = sizingPolicy.withUpdate(sizingOptionsUpdate)
-        }
-
-        // plot specs update.
-        val specOverride: Map<String, Any>? = if (specOverrideJs != null) {
-            dynamicObjectToMap(specOverrideJs)
-        } else {
-            null
-        }
-
+    internal fun updateSpecOverride(specOverride: Map<String, Any>?) {
         currSpecOverrideList = FigureModelHelper.updateSpecOverrideList(
             specOverrideList = currSpecOverrideList,
             newSpecOverride = specOverride
         )
-
         val activeTargetId = specOverride?.get(TARGET_ID) as? String
-        val state = SpecOverrideState(ArrayList(currSpecOverrideList), activeTargetId)
+        currSpecOverrideState = SpecOverrideState(ArrayList(currSpecOverrideList), activeTargetId)
+    }
+
+    private fun rebuildView() {
+        val state = currSpecOverrideState
 
         val currentInteractions = toolEventDispatcher.deactivateAllSilently()
 
@@ -109,6 +93,23 @@ class FigureModelJs internal constructor(
         currentInteractions.forEach { (origin, interactionSpec) ->
             toolEventDispatcher.activateInteractions(origin, interactionSpec)
         }
+    }
+
+    fun updateView(optionsJs: dynamic = null) {
+
+        // view options update (just 'sizing' at the moment).
+        val options: Map<String, Any>? = if (optionsJs != null) {
+            dynamicObjectToMap(optionsJs)
+        } else {
+            null
+        }
+
+        val sizingOptionsUpdate = options?.get(SizingOption.KEY)
+        if (sizingOptionsUpdate is Map<*, *>) {
+            sizingPolicy = sizingPolicy.withUpdate(sizingOptionsUpdate)
+        }
+
+        rebuildView()
     }
 
     fun activateInteractions(origin: String, interactionSpecListJs: dynamic) {

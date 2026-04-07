@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCssResource
 class CompositeFigureSvgRoot(
     private val svgComponent: CompositeFigureSvgComponent,
     bounds: DoubleRectangle,
+    val isDeck: Boolean = false,
 ) : FigureSvgRoot(bounds) {
 
     val elements: List<FigureSvgRoot>

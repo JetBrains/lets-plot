@@ -32,10 +32,11 @@ internal class PlotTilesInteractionContext(
 
             override fun applyViewport(
                 screenViewport: DoubleRectangle,
-                ctx: InteractionContext
+                ctx: InteractionContext,
+                repaint: Boolean
             ): Pair<DoubleRectangle, Boolean> {
                 val (scale, translate) = InteractionUtil.viewportToTransform(geomBounds, screenViewport)
-                tile.transientState.applyDelta(scale, translate, this@PlotTilesInteractionContext)
+                tile.transientState.applyDelta(scale, translate, this@PlotTilesInteractionContext, repaint)
                 return Pair(
                     tile.transientState.dataBounds,
                     tile.transientState.isCoordFlip,

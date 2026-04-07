@@ -15,7 +15,8 @@ interface FigureModel {
     fun activateInteractions(origin: String, interactionSpecList: List<InteractionSpec>)
     fun deactivateInteractions(origin: String)
     fun setDefaultInteractions(interactionSpecList: List<InteractionSpec>)
-    fun updateView(specOverride: Map<String, Any>? = null)
+    fun updateSpecOverride(specOverride: Map<String, Any>?)
+    fun updateView()
     fun addDisposible(disposable: Disposable)
     fun dispose()
 }

@@ -38,8 +38,12 @@ internal fun FigureModelJs.asFigureModel(): FigureModel {
         override fun setDefaultInteractions(interactionSpecList: List<InteractionSpec>) {
         }
 
-        override fun updateView(specOverride: Map<String, Any>?) {
-            this@asFigureModel.updateView(dynamicFromAnyQ(specOverride))
+        override fun updateSpecOverride(specOverride: Map<String, Any>?) {
+            this@asFigureModel.updateSpecOverride(dynamicFromAnyQ(specOverride))
+        }
+
+        override fun updateView() {
+            this@asFigureModel.updateView()
         }
 
         override fun addDisposible(disposable: Disposable) {

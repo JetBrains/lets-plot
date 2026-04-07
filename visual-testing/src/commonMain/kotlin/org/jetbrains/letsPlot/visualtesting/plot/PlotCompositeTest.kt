@@ -7,7 +7,7 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 
-internal class PlotCompositeTest(
+class PlotCompositeTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
 ) : PlotTestBase() {
@@ -16,7 +16,7 @@ internal class PlotCompositeTest(
         registerTest(::plot_composite_nested)
     }
 
-    private fun plot_composite_nested(): Bitmap {
+    fun plot_composite_nested(): Bitmap {
         return paint(parseJson(PlotSpecs.COMPOSITE_NESTED))
     }
 }

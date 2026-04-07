@@ -19,19 +19,22 @@ class PlotCanvasFigureModel(
     private val computationMessagesHandler: (List<String>) -> Unit = { _ -> },
 ) : FigureModelBase() {
     private var specOverrideList: List<Map<String, Any>> = emptyList()
+    private var currSpecOverrideState: SpecOverrideState = SpecOverrideState(emptyList(), null)
 
     init {
         toolEventDispatcher = plotDrawable.toolEventDispatcher
     }
 
-    override fun updateView(specOverride: Map<String, Any>?) {
+    override fun updateSpecOverride(specOverride: Map<String, Any>?) {
         specOverrideList = FigureModelHelper.updateSpecOverrideList(
-            specOverrideList = specOverrideList,
-            newSpecOverride = specOverride
+            specOverrideList = specOverrideList, newSpecOverride = specOverride
         )
-
         val activeTargetId = specOverride?.get(TARGET_ID) as? String
-        val state = SpecOverrideState(specOverrideList, activeTargetId)
+        currSpecOverrideState = SpecOverrideState(specOverrideList, activeTargetId)
+    }
+
+    override fun updateView() {
+        val state = currSpecOverrideState
         val plotSpec = SpecOverrideUtil.applySpecOverride(processedSpec, state)
 
         plotDrawable.update(

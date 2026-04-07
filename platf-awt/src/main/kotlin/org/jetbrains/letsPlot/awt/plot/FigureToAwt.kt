@@ -6,7 +6,9 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import org.jetbrains.letsPlot.awt.util.AwtEventUtil
+import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.event.TranslatingMouseEventSource
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
@@ -102,6 +104,7 @@ internal class FigureToAwt(
 
         val elementJComponents = ArrayList<JComponent>()
         val elementToolEventDispatchers = ArrayList<ToolEventDispatcher>()
+        val elementMouseEventPeers = ArrayList<MouseEventPeer>()
         // In Swing components actually are painted in the reverse order of how they were added,
         // Thus, reverse elements here to have subplots painted in the order we need.
         for (element in svgRoot.elements.asReversed()) {
@@ -115,15 +118,32 @@ internal class FigureToAwt(
             (comp.getClientProperty(ToolEventDispatcher::class) as? ToolEventDispatcher)?.let {
                 elementToolEventDispatchers.add(it)
             }
+            (comp.getClientProperty(MouseEventPeer::class) as? MouseEventPeer)?.let {
+                elementMouseEventPeers.add(it)
+            }
         }
 
-        val toolEventDispatcher = CompositeToolEventDispatcher(elementToolEventDispatchers)
+        val toolEventDispatcher = CompositeToolEventDispatcher(elementToolEventDispatchers, isDeck = svgRoot.isDeck)
         rootJPanel.putClientProperty(ToolEventDispatcher::class, toolEventDispatcher)
+
+        // In a deck layout, forward mouse events from the topmost plot to all siblings.
+        // Note: elements were iterated in reversed order, so index 0 in the list = topmost plot.
+        if (svgRoot.isDeck && elementMouseEventPeers.size > 1) {
+            val topmostPeer = elementMouseEventPeers.first()
+            val topmostBounds = elementJComponents.first().bounds
+            for (i in 1 until elementMouseEventPeers.size) {
+                val siblingBounds = elementJComponents[i].bounds
+                val dx = topmostBounds.x - siblingBounds.x
+                val dy = topmostBounds.y - siblingBounds.y
+                val translatedSource = TranslatingMouseEventSource(topmostPeer, dx, dy)
+                elementMouseEventPeers[i].addEventSource(translatedSource)
+            }
+        }
 
         elementJComponents.forEach {
 //            rootJPanel.add(it)   // Do not!!!
 
-            // Do not add everithing to root panel.
+            // Do not add everything to the root panel.
             // Instead, build components tree: rootPanel -> rootComp -> [subComp->[subSubComp,...], ...].
             // Otherwise JavaFX will not properly propogate mouse events.
             rootJComponent.add(it)
@@ -163,9 +183,11 @@ internal class FigureToAwt(
             val plotComponent: JComponent = svgComponentFactory(svg)
             (plotComponent as DisposingHub).registerDisposable(plotContainer)
             plotComponent.putClientProperty(ToolEventDispatcher::class, plotContainer.toolEventDispatcher)
+            plotComponent.putClientProperty(MouseEventPeer::class, plotContainer.mouseEventPeer)
             (plotComponent as DisposingHub).registerDisposable(object : Disposable {
                 override fun dispose() {
                     plotComponent.putClientProperty(ToolEventDispatcher::class, null)
+                    plotComponent.putClientProperty(MouseEventPeer::class, null)
                 }
             })
 

@@ -24,7 +24,7 @@ import org.jetbrains.letsPlot.raster.export.PlotRasterExport
 import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import org.jetbrains.letsPlot.visualtesting.TestSuit
 
-internal abstract class PlotTestBase : TestSuit() {
+abstract class PlotTestBase : TestSuit() {
     fun createPlot(
         plotSpec: MutableMap<String, Any?>,
         width: Number? = null,
@@ -47,19 +47,10 @@ internal abstract class PlotTestBase : TestSuit() {
             SizingPolicy.keepFigureDefaultSize()
         }
 
-        var specOverrideList = emptyList<Map<String, Any>>()
         val figureModel = TestingFigureModel(
-            onUpdateView = { specOverride ->
-                specOverrideList = FigureModelHelper.updateSpecOverrideList(specOverrideList, specOverride)
-
-                val specOverrideState = SpecOverrideState(specOverrideList, specOverride?.get(TARGET_ID) as? String)
-                val overriddenSpec = applySpecOverride(processedPlotSpec, specOverrideState)
-
-                plotCanvasDrawable.update(
-                    processedSpec = overriddenSpec,
-                    sizingPolicy = sizingPolicy,
-                    computationMessagesHandler = { })
-            }
+            processedPlotSpec = processedPlotSpec,
+            plotCanvasDrawable = plotCanvasDrawable,
+            sizingPolicy = sizingPolicy,
         )
 
         val controller = DefaultFigureToolsController(figureModel, errorMessageHandler = ::println)
@@ -127,11 +118,25 @@ internal abstract class PlotTestBase : TestSuit() {
     }
 
     class TestingFigureModel(
-        val onUpdateView: (Map<String, Any>?) -> Unit
+        private val processedPlotSpec: Map<String, Any>,
+        private val plotCanvasDrawable: PlotCanvasDrawable,
+        private val sizingPolicy: SizingPolicy,
     ) : FigureModelBase() {
+        private var specOverrideList = emptyList<Map<String, Any>>()
+        private var currSpecOverrideState = SpecOverrideState(emptyList(), null)
 
-        override fun updateView(specOverride: Map<String, Any>?) {
-            onUpdateView(specOverride)
+        override fun updateSpecOverride(specOverride: Map<String, Any>?) {
+            specOverrideList = FigureModelHelper.updateSpecOverrideList(specOverrideList, specOverride)
+            val activeTargetId = specOverride?.get(TARGET_ID) as? String
+            currSpecOverrideState = SpecOverrideState(specOverrideList, activeTargetId)
+        }
+
+        override fun updateView() {
+            val overriddenSpec = applySpecOverride(processedPlotSpec, currSpecOverrideState)
+            plotCanvasDrawable.update(
+                processedSpec = overriddenSpec,
+                sizingPolicy = sizingPolicy,
+                computationMessagesHandler = { })
         }
     }
 }

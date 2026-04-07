@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.raster.view.RenderingHints
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 
-internal class PlotInteractivityTest(
+class PlotInteractivityTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
 ) : PlotTestBase() {
@@ -26,7 +26,7 @@ internal class PlotInteractivityTest(
         //registerTest(::plot_interactivity_panNestedComposite)
     }
 
-    private fun plot_interactivity_facetGridTooltip(): Bitmap {
+    fun plot_interactivity_facetGridTooltip(): Bitmap {
         val spec = """
             |{
             |  "kind": "plot",
@@ -62,7 +62,7 @@ internal class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    private fun plot_interactivity_panInProgressWithIncompleteBuffer(): Bitmap {
+    fun plot_interactivity_panInProgressWithIncompleteBuffer(): Bitmap {
         val spec = """
             |{
             |  "kind": "plot",
@@ -105,7 +105,7 @@ internal class PlotInteractivityTest(
         return paint(plotCanvasDrawable)
     }
 
-    private fun plot_interactivity_compositeTooltip(): Bitmap {
+    fun plot_interactivity_compositeTooltip(): Bitmap {
         val spec = """
             |{
             |  "kind": "subplots",
@@ -177,7 +177,7 @@ internal class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    private fun plot_interactivity_nestedCompositeTooltip(): Bitmap {
+    fun plot_interactivity_nestedCompositeTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.COMPOSITE_NESTED))
 
         val cursorPos = Vector(100, 180)
@@ -186,7 +186,7 @@ internal class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    private fun plot_interactivity_panNestedComposite(): Bitmap {
+    fun plot_interactivity_panNestedComposite(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.COMPOSITE_NESTED))
 
         val dragStartPos = Vector(100, 180)

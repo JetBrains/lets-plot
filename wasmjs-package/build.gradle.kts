@@ -44,6 +44,7 @@ kotlin {
                 implementation(project(":plot-base"))
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
+                implementation(project(":plot-raster"))
                 implementation(project(":platf-w3c"))
                 implementation(project(":gis"))
                 implementation(project(":livemap"))

@@ -9,6 +9,14 @@ const fs = require('fs');
 const artifactsRoot = path.resolve(config.basePath, '../../../../wasmjs-package/build/reports');
 
 config.files.push({
+    pattern: path.resolve(__dirname, '../../../../wasmjs-package/src/wasmJsTest/resources/font-test-setup.js'),
+    watched: false,
+    included: true,
+    served: true,
+    nocache: false
+});
+
+config.files.push({
     pattern: path.resolve(__dirname, '../../../../wasmjs-package/src/wasmJsTest/resources/**/*'),
     watched: false,
     included: false,

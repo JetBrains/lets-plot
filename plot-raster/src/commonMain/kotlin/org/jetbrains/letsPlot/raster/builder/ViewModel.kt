@@ -52,14 +52,14 @@ internal class SinglePlotModel(
     override fun dispose() = registration.dispose()
 }
 
-internal class CompositeFigureModel(svg: SvgSvgElement) : ViewModel(svg) {
+internal class CompositeFigureModel(svg: SvgSvgElement, private val isDeck: Boolean = false) : ViewModel(svg) {
     private val children = ArrayList<Pair<ViewModel, Disposable>>()
     private var _toolEventDispatcher: ToolEventDispatcher? = null
 
     override val toolEventDispatcher: ToolEventDispatcher
         get() {
             if (_toolEventDispatcher == null) {
-                _toolEventDispatcher = CompositeToolEventDispatcher(children.map { (vm, _) -> vm.toolEventDispatcher })
+                _toolEventDispatcher = CompositeToolEventDispatcher(children.map { (vm, _) -> vm.toolEventDispatcher }, isDeck = isDeck)
             }
             return _toolEventDispatcher!!
         }

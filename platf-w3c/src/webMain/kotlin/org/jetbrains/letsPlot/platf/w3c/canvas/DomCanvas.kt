@@ -28,9 +28,14 @@ import kotlin.math.ceil
 internal class DomCanvas private constructor(
     val canvasElement: HTMLCanvasElement,
     override val size: Vector,
-    pixelRatio: Double
+    pixelRatio: Double,
+    fontManager: DomFontManager
 ) : Canvas {
-    override val context2d: Context2d = DomContext2d(canvasElement.getContext("2d") as CanvasRenderingContext2D, pixelRatio)
+    override val context2d: Context2d = DomContext2d(
+        canvasElement.getContext("2d") as CanvasRenderingContext2D,
+        pixelRatio,
+        fontManager
+    )
 
     override fun takeSnapshot(): Canvas.Snapshot = DomSnapshot(canvasElement, size)
 
@@ -66,9 +71,9 @@ internal class DomCanvas private constructor(
     companion object {
         val DEVICE_PIXEL_RATIO = ceil(window.devicePixelRatio) // Fix for gaps between tiles - ratio should be integer
 
-        fun create(size: Vector, pixelRatio: Double): DomCanvas {
+        fun create(size: Vector, pixelRatio: Double, fontManager: DomFontManager = DomFontManager.DEFAULT): DomCanvas {
             val nativeCanvas = createNativeCanvas(size, pixelRatio)
-            return DomCanvas(nativeCanvas, size, pixelRatio)
+            return DomCanvas(nativeCanvas, size, pixelRatio, fontManager)
         }
 
         fun createNativeCanvas(size: Vector, pixelRatio: Double,): HTMLCanvasElement {

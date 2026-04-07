@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLegendsLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureDeckLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.subPlots.CompositeFigureSvgComponent
@@ -65,7 +66,7 @@ class CompositeFigureBuildInfo constructor(
             theme = theme,
             styleSheet = Style.fromTheme(theme, flippedAxis = false),
         )
-        return CompositeFigureSvgRoot(svgComponent, bounds)
+        return CompositeFigureSvgRoot(svgComponent, bounds, isDeck = layout is CompositeFigureDeckLayout)
     }
 
     override fun withBounds(bounds: DoubleRectangle): CompositeFigureBuildInfo {

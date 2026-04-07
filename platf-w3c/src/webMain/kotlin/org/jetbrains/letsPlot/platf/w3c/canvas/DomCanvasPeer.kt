@@ -11,16 +11,18 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 
-class DomCanvasPeer : CanvasPeer {
+class DomCanvasPeer(
+    val fontManager: DomFontManager = DomFontManager.DEFAULT
+) : CanvasPeer {
     override fun createCanvas(
         size: Vector,
         contentScale: Double
     ): Canvas {
-        return DomCanvas.create(size, contentScale)
+        return DomCanvas.create(size, contentScale, fontManager)
     }
 
     override fun createCanvas(size: Vector): Canvas {
-        return DomCanvas.create(size, 1.0)
+        return DomCanvas.create(size, 1.0, fontManager)
     }
 
     override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {

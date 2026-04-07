@@ -117,7 +117,7 @@ class DrawRectFeedback(
 
                 if (selector.isAcceptable(selection)) {
                     val currentBounds = target.dataBounds()
-                    val (dataBounds, flipped) = target.applyViewport(selection, ctx)
+                    val (dataBounds, flipped) = target.applyViewport(selection, ctx, repaint = false)
 
                     val scaleFactor = DoubleVector(
                         currentBounds.dimension.x / dataBounds.dimension.x,

@@ -35,6 +35,7 @@ class FigureModelJs internal constructor(
 ) {
     private var toolEventCallback: ((JsAny?) -> Unit)? = null
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
+    private var currSpecOverrideState: SpecOverrideState = SpecOverrideState(emptyList(), null)
 
     fun onToolEvent(callback: (JsAny?) -> Unit) {
         toolEventCallback = callback
@@ -48,34 +49,26 @@ class FigureModelJs internal constructor(
         )
     }
 
-    fun updateView(specOverrideJs: JsAny? = null, optionsJs: JsAny? = null) {
+    internal fun updateSpecOverride(specOverride: Map<String, Any>?) {
+        currSpecOverrideList = FigureModelHelper.updateSpecOverrideList(
+            specOverrideList = currSpecOverrideList,
+            newSpecOverride = specOverride
+        )
+        val activeTargetId = specOverride?.get(TARGET_ID) as? String
+        currSpecOverrideState = SpecOverrideState(ArrayList(currSpecOverrideList), activeTargetId)
+    }
 
-        // view options update (just 'sizing' at the moment).
-        val options: Map<String, Any>? = if (optionsJs != null) {
-            dynamicObjectToMap(optionsJs)
-        } else {
-            null
-        }
-
-        val sizingOptionsUpdate = options?.get(SizingOption.KEY)
-        if (sizingOptionsUpdate is Map<*, *>) {
-            sizingPolicy = sizingPolicy.withUpdate(sizingOptionsUpdate)
-        }
-
-        // plot specs update.
+    internal fun updateSpecOverride(specOverrideJs: JsAny?) {
         val specOverride: Map<String, Any>? = if (specOverrideJs != null) {
             dynamicObjectToMap(specOverrideJs)
         } else {
             null
         }
+        updateSpecOverride(specOverride)
+    }
 
-        currSpecOverrideList = FigureModelHelper.updateSpecOverrideList(
-            specOverrideList = currSpecOverrideList,
-            newSpecOverride = specOverride
-        )
-
-        val activeTargetId = specOverride?.get(TARGET_ID) as? String
-        val state = SpecOverrideState(ArrayList(currSpecOverrideList), activeTargetId)
+    private fun rebuildView() {
+        val state = currSpecOverrideState
 
         val currentInteractions = toolEventDispatcher.deactivateAllSilently()
 
@@ -109,6 +102,23 @@ class FigureModelJs internal constructor(
         currentInteractions.forEach { (origin, interactionSpec) ->
             toolEventDispatcher.activateInteractions(origin, interactionSpec)
         }
+    }
+
+    fun updateView(optionsJs: JsAny? = null) {
+
+        // view options update (just 'sizing' at the moment).
+        val options: Map<String, Any>? = if (optionsJs != null) {
+            dynamicObjectToMap(optionsJs)
+        } else {
+            null
+        }
+
+        val sizingOptionsUpdate = options?.get(SizingOption.KEY)
+        if (sizingOptionsUpdate is Map<*, *>) {
+            sizingPolicy = sizingPolicy.withUpdate(sizingOptionsUpdate)
+        }
+
+        rebuildView()
     }
 
     fun activateInteractions(origin: String, interactionSpecListJs: JsAny?) {

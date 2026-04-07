@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -33,9 +33,7 @@ class Context2dDelegate(
         }
     }
 
-    override fun dispose() {
-        log("dispose")
-    }
+    override fun dispose() { log("dispose") }
 
     override fun clearRect(rect: DoubleRectangle) { log("clearRect: $rect") }
     override fun clearRect(x: Double, y: Double, w: Double, h: Double) { log("clearRect: x=$x, y=$y, w=$w, h=$h") }

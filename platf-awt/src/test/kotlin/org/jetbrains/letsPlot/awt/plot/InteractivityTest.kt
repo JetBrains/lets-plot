@@ -149,11 +149,15 @@ class InteractivityTest : VisualPlotTestBase() {
     }
 
     class TestingFigureModel(
-        val onUpdateView: (Map<String, Any>?) -> Unit
+        val onUpdateView: () -> Unit
     ) : FigureModelBase() {
 
-        override fun updateView(specOverride: Map<String, Any>?) {
-            onUpdateView(specOverride)
+        override fun updateSpecOverride(specOverride: Map<String, Any>?) {
+            // No-op in tests
+        }
+
+        override fun updateView() {
+            onUpdateView()
         }
     }
 }
