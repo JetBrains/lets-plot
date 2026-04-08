@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.livemap.core.multitasking
 
-import org.jetbrains.letsPlot.livemap.core.multitasking.MicroTaskExecutor
-
 actual class MicroTaskMultiThreadedExecutorFactory {
 
     actual companion object {

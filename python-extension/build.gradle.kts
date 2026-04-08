@@ -12,6 +12,7 @@ plugins {
 val enablePythonPackage: Boolean = (rootProject.project.extra["enable_python_package"] as String).toBoolean()
 val os: OperatingSystem = OperatingSystem.current()
 val arch = rootProject.project.extra["architecture"]
+val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
 
 // To improve the building time of the Python extension in development mode.
 val pythonExtensionDebugBuild = project.findProperty("python_extension_debug_build") == "true"
@@ -98,6 +99,7 @@ kotlin {
                     implementation(project(":demo-and-test-shared"))
                     implementation(project(":demo-common-svg"))
                     implementation(project(":visual-testing"))
+                    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
                 }
             }
     }

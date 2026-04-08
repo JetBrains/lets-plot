@@ -43,6 +43,15 @@ class PlotOptions : Options(
     companion object {
         fun size(block: Size.() -> Unit) = Size().apply(block)
     }
+
+    operator fun List<ScaleOptions>?.plusAssign(scale: ScaleOptions) {
+        scaleOptions = (scaleOptions ?: emptyList()) + scale
+    }
+
+    operator fun List<LayerOptions>?.plusAssign(layer: LayerOptions) {
+        layerOptions = (layerOptions ?: emptyList()) + layer
+    }
 }
 
 fun plot(block: PlotOptions.() -> Unit) = PlotOptions().apply(block)
+

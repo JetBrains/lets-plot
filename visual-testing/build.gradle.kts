@@ -1,9 +1,12 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     kotlin("multiplatform")
@@ -22,6 +25,9 @@ val arch = rootProject.project.extra["architecture"]
 
 kotlin {
     jvm()
+    wasmJs {
+        browser()
+    }
 
     when {
         os.isMacOsX && arch == "arm64" -> macosArm64()

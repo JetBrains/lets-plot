@@ -101,6 +101,10 @@ internal class RepaintManager(
         ctx.restore()
     }
 
+    fun remove(node: Node) {
+        nodeCache.remove(node)?.snapshot?.dispose()
+    }
+
     override fun dispose() {
         nodeCache.values.forEach { it.snapshot.dispose() }
         nodeCache.clear()

@@ -24,8 +24,12 @@ class DefaultFigureToolsController constructor(
         }
     }
 
-    override fun updateFigureView(specOverride: Map<String, Any>?) {
-        figure.updateView(specOverride)
+    override fun updateSpecOverride(specOverride: Map<String, Any>?) {
+        figure.updateSpecOverride(specOverride)
+    }
+
+    override fun updateFigureView() {
+        figure.updateView()
     }
 
     override fun showFigureError(msg: String) {

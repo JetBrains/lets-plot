@@ -5,6 +5,7 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 import kotlin.math.PI
 
 /*
@@ -13,12 +14,14 @@ import kotlin.math.PI
  */
 
 
-internal class CanvasPathTest(
+class CanvasPathTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
 ): CanvasTestBase() {
+
+    override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
+
     init {
-        registerTest(::canvas_path_circleFill)
         registerTest(::canvas_path_circleStroke)
         registerTest(::canvas_path_circleFillStroke)
         registerTest(::canvas_path_ellipse)
@@ -52,7 +55,7 @@ internal class CanvasPathTest(
     private val filledStrokeColor = "#000080"
     private val strokedFillColor = "#FFC000"
 
-    private fun canvas_path_clearRect(): Bitmap {
+    fun canvas_path_clearRect(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -63,7 +66,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_fillRectWithTransparentColor(): Bitmap {
+    fun canvas_path_fillRectWithTransparentColor(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -75,7 +78,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_fillTransparentRectWithTransparentColor(): Bitmap {
+    fun canvas_path_fillTransparentRectWithTransparentColor(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = fillColor
@@ -86,7 +89,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_shearedEllipse(): Bitmap {
+    fun canvas_path_shearedEllipse(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -110,7 +113,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_shearedCircularArc(): Bitmap {
+    fun canvas_path_shearedCircularArc(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -136,7 +139,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
     
-    private fun canvas_path_nestedTranslates(): Bitmap {
+    fun canvas_path_nestedTranslates(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -162,7 +165,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_multiPathFill(): Bitmap {
+    fun canvas_path_multiPathFill(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.fillStyle = strokedFillColor
         ctx.strokeStyle = filledStrokeColor
@@ -188,7 +191,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_multiPathStroke(): Bitmap {
+    fun canvas_path_multiPathStroke(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -210,7 +213,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_zigZagStroke(): Bitmap {
+    fun canvas_path_zigZagStroke(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.strokeStyle = strokeColor
         ctx.lineWidth = 3.0
@@ -233,7 +236,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_zigZagFill(): Bitmap {
+    fun canvas_path_zigZagFill(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.fillStyle = fillColor
         ctx.lineWidth = 1.0
@@ -258,7 +261,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_circleStroke(): Bitmap {
+    fun canvas_path_circleStroke(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.strokeStyle = strokeColor
         ctx.lineWidth = 1.0
@@ -270,7 +273,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_circleFill(): Bitmap {
+    fun canvas_path_circleFill(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.fillStyle = fillColor
         ctx.lineWidth = 1.0
@@ -284,7 +287,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_circleFillStroke(): Bitmap {
+    fun canvas_path_circleFillStroke(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.beginPath()
         ctx.arc(x = 50.0, y = 50.0, radius = 40.0, startAngle = -PI, endAngle = 0.0)
@@ -300,7 +303,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_ellipse(): Bitmap {
+    fun canvas_path_ellipse(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -322,7 +325,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_rotatedEllipse(): Bitmap {
+    fun canvas_path_rotatedEllipse(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = fillColor
@@ -344,7 +347,7 @@ internal class CanvasPathTest(
     }
 
 
-    private fun canvas_path_pathTransformOnBuild(): Bitmap {
+    fun canvas_path_pathTransformOnBuild(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.strokeStyle = strokeColor
         ctx.lineWidth = 2.0
@@ -362,7 +365,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_arcTransformsAfterRestore(): Bitmap {
+    fun canvas_path_arcTransformsAfterRestore(): Bitmap {
         val (canvas, ctx) = createCanvas()
         ctx.fillStyle = fillColor
 
@@ -378,7 +381,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_skewXTransform(): Bitmap {
+    fun canvas_path_skewXTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = strokeColor
@@ -398,7 +401,7 @@ internal class CanvasPathTest(
     }
 
 
-    private fun canvas_path_simpleBezierCurve(): Bitmap {
+    fun canvas_path_simpleBezierCurve(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -412,7 +415,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_bezierCurveInsidePath(): Bitmap {
+    fun canvas_path_bezierCurveInsidePath(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -428,7 +431,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_ellipseInsidePath(): Bitmap {
+    fun canvas_path_ellipseInsidePath(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.strokeStyle = strokeColor
@@ -454,7 +457,7 @@ internal class CanvasPathTest(
         return paint(canvas)
     }
 
-    private fun canvas_path_roundedRectWithCurves(): Bitmap {
+    fun canvas_path_roundedRectWithCurves(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.lineWidth = 2.0

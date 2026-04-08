@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -17,9 +21,8 @@ val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 
 kotlin {
     jvm()
-    js {
-        browser()
-    }
+    js().browser()
+    wasmJs().browser()
 
     sourceSets {
         commonMain {
@@ -41,7 +44,7 @@ kotlin {
 
         jvmMain {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
@@ -58,7 +61,7 @@ kotlin {
 
         named("jsMain") {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
 
@@ -66,8 +69,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-js"))
 
-                // Fix for 'Could not find "io.github.microutils:kotlin-logging"...' build error (Kotlin 1.9.xx versions):
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                // Fix for 'Could not find "io.github.oshai:kotlin-logging"...' build error (Kotlin 1.9.xx versions):
+                implementation("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

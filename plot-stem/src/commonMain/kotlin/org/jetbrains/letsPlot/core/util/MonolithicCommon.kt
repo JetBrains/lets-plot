@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.builder.buildinfo.CompositeFigureBuildIn
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.PlotFigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureDeckLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayoutBase
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option
@@ -253,19 +254,27 @@ object MonolithicCommon {
 
         val sharedXDomains: List<DoubleSpan?>?
         val sharedYDomains: List<DoubleSpan?>?
-        if (compositeFigureLayout is CompositeFigureGridLayoutBase &&
-            compositeFigureLayout.hasSharedAxis()
-        ) {
-            val sharedDomainsXY = FigureGridScaleShareUtil.getSharedDomains(
-                elementConfigs = config.elementConfigs,
-                gridLayout = compositeFigureLayout
-            )
-            sharedXDomains = sharedDomainsXY.first
-            sharedYDomains = sharedDomainsXY.second
-        } else {
-            sharedXDomains = null
-            sharedYDomains = null
+        val sharedDomainsXY = when {
+            compositeFigureLayout is CompositeFigureGridLayoutBase &&
+                    compositeFigureLayout.hasSharedAxis() -> {
+                FigureGridScaleShareUtil.getSharedDomains(
+                    elementConfigs = config.elementConfigs,
+                    gridLayout = compositeFigureLayout
+                )
+            }
+
+            compositeFigureLayout is CompositeFigureDeckLayout &&
+                    compositeFigureLayout.hasSharedAxis() -> {
+                FigureDeckScaleShareUtil.getSharedDomains(
+                    elementConfigs = config.elementConfigs,
+                    deckLayout = compositeFigureLayout
+                )
+            }
+
+            else -> null
         }
+        sharedXDomains = sharedDomainsXY?.first
+        sharedYDomains = sharedDomainsXY?.second
 
         val elements: List<FigureBuildInfo?> = config.elementConfigs.mapIndexed { index, element ->
             element?.let {

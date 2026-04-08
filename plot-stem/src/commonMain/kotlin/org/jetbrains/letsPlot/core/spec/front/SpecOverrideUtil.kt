@@ -11,11 +11,14 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOption
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.TARGET_ID
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.SpecOverrideState
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.ScaleShareUtil
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.DeckScaleShareGroups
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.GridScaleShareGroups
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.ScaleShareGroups
 import org.jetbrains.letsPlot.core.spec.FigKind
 import org.jetbrains.letsPlot.core.spec.Option.Plot
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots
-import org.jetbrains.letsPlot.core.spec.config.CompositeFigureScaleShareConfig
+import org.jetbrains.letsPlot.core.spec.config.GridScaleShareConfig
+import org.jetbrains.letsPlot.core.spec.config.DeckScaleShareConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfig
 
 object SpecOverrideUtil {
@@ -76,16 +79,16 @@ object SpecOverrideUtil {
         val specList = (plotSpec[SubPlots.FIGURES] as? List<*>)
         if (specList == null) return plotSpec
 
-        // Expand shared-axis overrides if the grid layout has scale sharing and there is an active target.
+        // Expand shared-axis overrides if the layout has scale sharing and there is an active target.
         if (state.activeTargetId != null) {
-            val shareConfig = CompositeFigureScaleShareConfig.fromCompositeFigureSpec(plotSpec)
-            if (shareConfig != null && shareConfig.hasSharing) {
+            val scaleShareGroups = scaleShareGroupsFromSpec(plotSpec)
+            if (scaleShareGroups != null && scaleShareGroups.hasSharing) {
                 val sourceIndex = specList.indexOfFirst { fig ->
                     (fig as? Map<*, *>)?.get(Plot.SPEC_ID) == state.activeTargetId
                 }
                 if (sourceIndex >= 0) {
                     state.expand { specOverrides, _ ->
-                        expandOverrides(specOverrides, specList, sourceIndex, shareConfig)
+                        expandOverrides(specOverrides, specList, sourceIndex, scaleShareGroups)
                     }
                 }
             }
@@ -120,7 +123,7 @@ object SpecOverrideUtil {
         specOverrides: List<Map<String, Any>>,
         figureSpecList: List<*>,
         sourceFigureIndex: Int,
-        shareConfig: CompositeFigureScaleShareConfig
+        scaleShareGroups: ScaleShareGroups
     ): List<Map<String, Any>> {
         // Collect SPEC_IDs from each figure, null for blank/composite entries.
         val specIds: List<String?> = figureSpecList.map { fig ->
@@ -137,10 +140,8 @@ object SpecOverrideUtil {
         }
 
         // Compute shared groups.
-        val sharedXGroup =
-            ScaleShareUtil.groupOf(sourceFigureIndex, shareConfig.shareX, specIds.size, shareConfig.ncols)
-        val sharedYGroup =
-            ScaleShareUtil.groupOf(sourceFigureIndex, shareConfig.shareY, specIds.size, shareConfig.ncols)
+        val sharedXGroup = scaleShareGroups.sharedXGroupOf(sourceFigureIndex, specIds.size)
+        val sharedYGroup = scaleShareGroups.sharedYGroupOf(sourceFigureIndex, specIds.size)
 
         // Build expanded list: start with a copy of existing overrides.
         val result = specOverrides.toMutableList()
@@ -203,7 +204,7 @@ object SpecOverrideUtil {
             else override.remove(COORD_YLIM_TRANSFORMED)
         }
 
-        // Build SCALE_RATIO: take shared-axis component from source, keep non-shared from existing.
+        // Build SCALE_RATIO: take еру shared-axis component from source, keep non-shared from existing.
         if (sourceScaleRatio != null) {
             val xRatio = if (shareX) sourceScaleRatio.getOrNull(0) else existingScaleRatio?.getOrNull(0)
             val yRatio = if (shareY) sourceScaleRatio.getOrNull(1) else existingScaleRatio?.getOrNull(1)
@@ -222,4 +223,17 @@ object SpecOverrideUtil {
         return override
     }
 
+    private fun scaleShareGroupsFromSpec(compositeSpec: Map<String, Any>): ScaleShareGroups? {
+        val gridConfig = GridScaleShareConfig.fromCompositeFigureSpec(compositeSpec)
+        if (gridConfig != null) {
+            return GridScaleShareGroups(gridConfig.shareX, gridConfig.shareY, gridConfig.ncols)
+        }
+
+        val deckConfig = DeckScaleShareConfig.fromCompositeFigureSpec(compositeSpec)
+        if (deckConfig != null) {
+            return DeckScaleShareGroups(deckConfig.shareX, deckConfig.shareY)
+        }
+
+        return null
+    }
 }

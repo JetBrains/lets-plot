@@ -236,6 +236,8 @@ object ThemeOption {
             LEGEND_KEY_RECT,
             AXIS_TICKS_X,
             AXIS_TICKS_Y,
+            AXIS_MINOR_TICKS_X,
+            AXIS_MINOR_TICKS_Y,
             AXIS_LINE_X,
             AXIS_LINE_Y,
             AXIS_TOOLTIP_X,
@@ -284,6 +286,8 @@ object ThemeOption {
         val numericOptions = listOf(
             AXIS_TICKS_LENGTH_X,
             AXIS_TICKS_LENGTH_Y,
+            AXIS_MINOR_TICKS_LENGTH_X,
+            AXIS_MINOR_TICKS_LENGTH_Y,
         )
 
         //  font_face

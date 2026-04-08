@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -7,22 +11,29 @@ plugins {
     kotlin("multiplatform")
 }
 
+val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
+val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
 val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+
 val hamcrestVersion = project.extra["hamcrest.version"] as String
 val mockitoVersion = project.extra["mockito.version"] as String
 val assertjVersion = project.extra["assertj.version"] as String
-val kotlinxCoroutinesVersion = project.extra["kotlinx.coroutines.version"] as String
-val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val slf4jVersion = project.extra["slf4j.version"] as String
 
 kotlin {
     jvm()
     js {
         browser()
     }
+    wasmJs {
+        browser()
+    }
 
     sourceSets {
         commonMain {
             dependencies {
+                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinxCoroutinesVersion}")
+
                 compileOnly(project(":commons"))
                 compileOnly(project(":canvas"))
                 compileOnly(project(":datamodel"))
@@ -43,7 +54,7 @@ kotlin {
 
         jvmMain {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingVersion")
             }
         }
 
@@ -53,12 +64,13 @@ kotlin {
                 implementation("org.hamcrest:hamcrest-library:$hamcrestVersion")
                 implementation("org.mockito:mockito-core:$mockitoVersion")
                 implementation("org.assertj:assertj-core:$assertjVersion")
+                implementation("org.slf4j:slf4j-simple:$slf4jVersion")
             }
         }
 
         named("jsMain") {
             dependencies {
-                compileOnly("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

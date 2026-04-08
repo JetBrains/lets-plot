@@ -1,9 +1,11 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 /* root package */
+
+@file:Suppress("OPT_IN_USAGE")
 
 import kotlinx.browser.document
 import messages.OverlayMessageHandler

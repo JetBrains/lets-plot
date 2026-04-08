@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -11,6 +15,7 @@ val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
 val kotlinVersion = project.extra["kotlin.version"] as String
 val ktorVersion = project.extra["ktor.version"] as String
 val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
+val kotlinxBrowserVersion = project.extra["kotlinx.browser.version"] as String
 
 kotlin {
     js {
@@ -42,7 +47,7 @@ kotlin {
 
                 implementation("io.ktor:ktor-client-websockets-js:${ktorVersion}")
                 implementation("io.ktor:ktor-client-js:${ktorVersion}")
-                implementation("io.github.microutils:kotlin-logging-js:${kotlinLoggingVersion}")
+                implementation("io.github.oshai:kotlin-logging-js:${kotlinLoggingVersion}")
             }
         }
     }

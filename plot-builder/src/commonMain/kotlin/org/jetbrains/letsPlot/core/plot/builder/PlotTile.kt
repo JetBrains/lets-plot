@@ -272,7 +272,8 @@ internal class PlotTile constructor(
             get() = coreTransientState.isCoordFlip
 
         override fun syncDataBounds(ctx: InteractionContext) {
-            // nothing is needed to sync
+            coreTransientState.setScaleAndOffset(scale, offset)
+            coreTransientState.syncDataBounds(ctx)
         }
 
         override fun repaint(ctx: InteractionContext) {
@@ -282,7 +283,7 @@ internal class PlotTile constructor(
                 .build()
 
             geomInteractionGroup.rootGroup.transform().set(transform)
-            coreTransientState.transformView(scale, offset, ctx)
+            coreTransientState.repaint(ctx)
         }
     }
 }

@@ -12,6 +12,7 @@ object ToolEventSpec {
     const val INTERACTION_UNSUPPORTED = "interaction_unsupported"
     const val SELECTION_CHANGED = "selection_changed"
     const val ROLLBACK_ALL_CHANGES = "rollback_all_changes"
+    const val UPDATE_VIEW = "update_view"
 
     // properties
     const val EVENT_NAME = "name"

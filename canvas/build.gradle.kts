@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -14,13 +18,16 @@ kotlin {
     js {
         browser {}
     }
+    wasmJs {
+        browser()
+    }
 
     sourceSets {
         commonMain {
             dependencies {
                 compileOnly(project(":commons"))
 
-                compileOnly("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                compileOnly("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 

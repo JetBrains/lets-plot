@@ -101,10 +101,10 @@ abstract class CompositeFigureGridLayoutBase(
     fun hasSharedAxis(): Boolean = !(scaleShareX == NONE && scaleShareY == NONE)
 
     fun indicesWithSharedXAxis(elementCount: Int): List<List<Int>> {
-        return ScaleShareUtil.allGroups(scaleShareX, elementCount, ncols)
+        return GridScaleShareUtil.allGroups(scaleShareX, elementCount, ncols)
     }
 
     fun indicesWithSharedYAxis(elementCount: Int): List<List<Int>> {
-        return ScaleShareUtil.allGroups(scaleShareY, elementCount, ncols)
+        return GridScaleShareUtil.allGroups(scaleShareY, elementCount, ncols)
     }
 }

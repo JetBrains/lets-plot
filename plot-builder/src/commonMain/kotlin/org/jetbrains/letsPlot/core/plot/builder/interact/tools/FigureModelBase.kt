@@ -86,7 +86,8 @@ abstract class FigureModelBase : FigureModel {
         disposables.forEach { it.dispose() }
     }
 
-    abstract override fun updateView(specOverride: Map<String, Any>?)
+    abstract override fun updateSpecOverride(specOverride: Map<String, Any>?)
+    abstract override fun updateView()
 
     companion object {
         private val FIGURE_IMPLICIT_INTERACTIONS = listOf(InteractionSpec(InteractionSpec.Name.ROLLBACK_ALL_CHANGES))

@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":demo-common-plot"))
     implementation(project(":demo-common-jvm-utils"))
 
-    compileOnly("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+    compileOnly("io.github.oshai:kotlin-logging-jvm:$kotlinLoggingVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:$kotlinxHtmlVersion")
     implementation("org.slf4j:slf4j-simple:$slf4jVersion")  // Enable logging to console
 }

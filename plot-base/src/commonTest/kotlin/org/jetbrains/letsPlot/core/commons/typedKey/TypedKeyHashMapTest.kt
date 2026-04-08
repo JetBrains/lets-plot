@@ -5,8 +5,6 @@
 
 package org.jetbrains.letsPlot.core.commons.typedKey
 
-import org.jetbrains.letsPlot.core.commons.typedKey.TypedKey
-import org.jetbrains.letsPlot.core.commons.typedKey.TypedKeyHashMap
 import kotlin.test.Test
 import kotlin.test.assertFalse
 
@@ -24,8 +22,10 @@ class TypedKeyHashMapTest {
         val stringList = listOf("a", "b")
         typedKeyMap.put(stringListTypedKey, stringList)
 
-        val integerList = typedKeyMap[integerListTypedKey]
-        val firstInteger: Any? = integerList[0]  // Class cast error if: String -> Int  (only when JVM)
+        // Redefine from List<Int> to List<Any>
+        val integerList: List<Any> = typedKeyMap[integerListTypedKey]
+        // With `integerList: List<Int>` it will be cast to Int, throwing ClassCastException
+        val firstInteger = integerList[0]  // as Any - added implicitly by compiler because of List<Any> type
         assertFalse(firstInteger is Int)
     }
 

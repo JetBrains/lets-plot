@@ -5,11 +5,6 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.interact
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import org.jetbrains.letsPlot.commons.debounce
-import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
@@ -33,6 +28,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEAC
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHANGES
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.UPDATE_VIEW
 import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback
 import org.jetbrains.letsPlot.core.interact.feedback.DrawRectFeedback.SelectionMode
 import org.jetbrains.letsPlot.core.interact.feedback.PanGeomFeedback
@@ -43,7 +39,9 @@ import org.jetbrains.letsPlot.core.plot.builder.PlotInteractor
 
 
 internal class PlotToolEventDispatcher(
-    private val plotInteractor: PlotInteractor
+    private val plotInteractor: PlotInteractor,
+    private val internalDebounce: Boolean,
+    private val showSelectionFeedback: Boolean
 ) : ToolEventDispatcher {
 
     private val interactionsByOrigin: MutableMap<
@@ -57,7 +55,14 @@ internal class PlotToolEventDispatcher(
 
     override fun initToolEventCallback(callback: (Map<String, Any>) -> Unit) {
         check(!this::toolEventCallback.isInitialized) { "Repeated initialization of 'toolEventCallback'." }
-        toolEventCallback = callback
+        toolEventCallback = { event ->
+            callback(event)
+            when (event[EVENT_NAME]) {
+                SELECTION_CHANGED, ROLLBACK_ALL_CHANGES -> {
+                    callback(mapOf(EVENT_NAME to UPDATE_VIEW))
+                }
+            }
+        }
     }
 
     override fun activateInteractions(origin: String, interactionSpecList: List<InteractionSpec>) {
@@ -90,16 +95,6 @@ internal class PlotToolEventDispatcher(
         val modifiersMatcher = ModifiersMatcher.create(interactionSpec.keyModifiers)
         val interactionName: String = interactionSpec.name.value
 
-        val fireSelectionChangedDebounced =
-            debounce<Triple<String?, DoubleRectangle, DoubleVector>>(
-                DEBOUNCE_DELAY_MS,
-                CoroutineScope(Dispatchers.Default)
-            ) { (targetId, dataBounds, scaleFactor) ->
-                val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
-                val scaleFactorList = listOf(scaleFactor.x, scaleFactor.y)
-                fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleFactorList)
-            }
-
         val feedback = when (interactionSpec.name) {
             InteractionSpec.Name.DRAG_PAN -> PanGeomFeedback(
                 modifiersMatcher = modifiersMatcher,
@@ -129,6 +124,7 @@ internal class PlotToolEventDispatcher(
                 DrawRectFeedback(
                     centerStart,
                     modifiersMatcher = modifiersMatcher,
+                    showSelectionFeedback = showSelectionFeedback,
                     onCompleted = { targetId, dataBounds, flipped, selectionMode, scaleFactor ->
                         // flip selection mode if the coord flips
                         @Suppress("NAME_SHADOWING")
@@ -153,8 +149,11 @@ internal class PlotToolEventDispatcher(
 
             InteractionSpec.Name.WHEEL_ZOOM -> WheelZoomFeedback(
                 modifiersMatcher = modifiersMatcher,
+                internalDebounce = internalDebounce,
                 onCompleted = { targetId, dataBounds, scaleFactor ->
-                    fireSelectionChangedDebounced(Triple(targetId, dataBounds, scaleFactor))
+                    val dataBoundsLTRB = listOf(dataBounds.left, dataBounds.top, dataBounds.right, dataBounds.bottom)
+                    val scaleFactorList = listOf(scaleFactor.x, scaleFactor.y)
+                    fireSelectionChanged(origin, interactionName, targetId, dataBoundsLTRB, scaleFactorList)
                 }
             )
 
@@ -319,9 +318,5 @@ internal class PlotToolEventDispatcher(
         val feedbackReg: Registration
     ) {
         val interactionName: String = interactionSpec.name.value
-    }
-
-    companion object {
-        private const val DEBOUNCE_DELAY_MS = 30L
     }
 }

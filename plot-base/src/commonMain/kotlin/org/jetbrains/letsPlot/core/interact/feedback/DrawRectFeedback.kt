@@ -21,9 +21,10 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import kotlin.math.abs
 
-class DrawRectFeedback(
+class DrawRectFeedback constructor(
     private val centerStart: Boolean,
     private val modifiersMatcher: ModifiersMatcher,
+    private val showSelectionFeedback: Boolean,
     private val onCompleted: (
         targetId: String?,
         dataBounds: DoubleRectangle,
@@ -87,27 +88,32 @@ class DrawRectFeedback(
 
         interaction.loop(
             onStarted = { (target, dragFrom, dragTo, _) ->
-                decorationsLayer.children().add(dragRectSvg)
-                decorationsLayer.children().add(selectionSvg)
-
                 val selection = selector.getSelection(dragFrom, dragTo, target)
-                drawSelection(
-                    geomBounds = target.geomBounds,
-                    selection = selection,
-                    isAcceptable = selector.isAcceptable(selection)
-                )
+                if (showSelectionFeedback) {
+                    decorationsLayer.children().add(dragRectSvg)
+                    decorationsLayer.children().add(selectionSvg)
+                    drawSelection(
+                        geomBounds = target.geomBounds,
+                        selection = selection,
+                        isAcceptable = selector.isAcceptable(selection)
+                    )
+                }
             },
             onDragged = { (target, dragFrom, dragTo, _) ->
                 val selection = selector.getSelection(dragFrom, dragTo, target)
-                drawSelection(
-                    geomBounds = target.geomBounds,
-                    selection = selection,
-                    isAcceptable = selector.isAcceptable(selection)
-                )
+                if (showSelectionFeedback) {
+                    drawSelection(
+                        geomBounds = target.geomBounds,
+                        selection = selection,
+                        isAcceptable = selector.isAcceptable(selection)
+                    )
+                }
             },
             onCompleted = {
-                decorationsLayer.children().remove(dragRectSvg)
-                decorationsLayer.children().remove(selectionSvg)
+                if (showSelectionFeedback) {
+                    decorationsLayer.children().remove(dragRectSvg)
+                    decorationsLayer.children().remove(selectionSvg)
+                }
 
                 val (target, dragFrom, dragTo, _) = it
 
@@ -117,7 +123,7 @@ class DrawRectFeedback(
 
                 if (selector.isAcceptable(selection)) {
                     val currentBounds = target.dataBounds()
-                    val (dataBounds, flipped) = target.applyViewport(selection, ctx)
+                    val (dataBounds, flipped) = target.applyViewport(selection, ctx, repaint = false)
 
                     val scaleFactor = DoubleVector(
                         currentBounds.dimension.x / dataBounds.dimension.x,
@@ -134,8 +140,10 @@ class DrawRectFeedback(
 
         return object : Disposable {
             override fun dispose() {
-                decorationsLayer.children().remove(dragRectSvg)
-                decorationsLayer.children().remove(selectionSvg)
+                if (showSelectionFeedback) {
+                    decorationsLayer.children().remove(dragRectSvg)
+                    decorationsLayer.children().remove(selectionSvg)
+                }
                 interaction.dispose()
             }
         }

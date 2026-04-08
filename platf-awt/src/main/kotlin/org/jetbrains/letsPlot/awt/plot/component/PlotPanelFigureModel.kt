@@ -25,21 +25,23 @@ internal class PlotPanelFigureModel constructor(
 ) : FigureModelBase() {
 
     private var currSpecOverrideList: List<Map<String, Any>> = emptyList()
+    private var currSpecOverrideState: SpecOverrideState = SpecOverrideState(emptyList(), null)
 
     init {
         toolEventDispatcher = toolEventDispatcherFromProvidedComponent(providedComponent)
     }
 
-    override fun updateView(specOverride: Map<String, Any>?) {
+    override fun updateSpecOverride(specOverride: Map<String, Any>?) {
         currSpecOverrideList = FigureModelHelper.updateSpecOverrideList(
             specOverrideList = currSpecOverrideList,
             newSpecOverride = specOverride
         )
-
         val activeTargetId = specOverride?.get(TARGET_ID) as? String
-        rebuildPlotComponent(
-            state = SpecOverrideState(currSpecOverrideList, activeTargetId)
-        )
+        currSpecOverrideState = SpecOverrideState(currSpecOverrideList, activeTargetId)
+    }
+
+    override fun updateView() {
+        rebuildPlotComponent(state = currSpecOverrideState)
     }
 
     internal fun rebuildPlotComponent(

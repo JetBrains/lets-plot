@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 /*
  * Copyright (c) 2023. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
@@ -11,9 +15,16 @@ plugins {
 
 val kotlinLoggingVersion = extra["kotlinLogging.version"] as String
 val assertjVersion = extra["assertj.version"] as String
+val slf4jVersion = project.extra["slf4j.version"] as String
 
 kotlin {
     jvm()
+    js {
+        browser()
+    }
+    wasmJs {
+        browser()
+    }
 
     sourceSets {
         commonMain {
@@ -24,7 +35,7 @@ kotlin {
                 compileOnly(project(":plot-base"))
                 compileOnly(project(":plot-stem"))
                 compileOnly(project(":plot-builder"))
-                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 
@@ -32,7 +43,8 @@ kotlin {
             dependencies {
                 implementation(kotlin("test"))
                 implementation("org.assertj:assertj-core:$assertjVersion")
-                implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
+                implementation("org.slf4j:slf4j-simple:${slf4jVersion}")
 
                 implementation(project(":canvas"))
                 implementation(project(":commons"))

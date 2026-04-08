@@ -72,7 +72,7 @@ kotlin {
             dependencies {
                 implementation(project(":commons"))
                 implementation(project(":canvas"))
-                implementation("io.github.microutils:kotlin-logging:${kotlinLoggingVersion}")
+                implementation("io.github.oshai:kotlin-logging:${kotlinLoggingVersion}")
             }
         }
 

@@ -1,0 +1,48 @@
+<!--
+  ~ Copyright (c) 2026. JetBrains s.r.o.
+  ~ Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+  -->
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>app-wasm-redraw</title>
+</head>
+<body>
+<main>
+    <div id="controls" hidden>
+        <div>
+            <button id="toggle-button" type="button">Run</button>
+            <button id="reset-button" type="button">Reset</button>
+        </div>
+
+        <fieldset>
+            <legend>Distribution</legend>
+            <label>
+                <input id="distribution-normal" type="radio" name="distribution" value="normal" checked>
+                Normal
+            </label>
+            <label>
+                <input id="distribution-shifted" type="radio" name="distribution" value="shifted">
+                Shifted
+            </label>
+            <label>
+                <input id="distribution-laplace" type="radio" name="distribution" value="laplace">
+                Laplace
+            </label>
+        </fieldset>
+
+        <fieldset>
+            <legend>View</legend>
+            <label for="limits-checkbox">
+                <input id="limits-checkbox" type="checkbox" checked>
+                Lock axes
+            </label>
+        </fieldset>
+    </div>
+    <section id="demo-root"></section>
+</main>
+<script src="demo-app-wasm-redraw.js"></script>
+</body>
+</html>

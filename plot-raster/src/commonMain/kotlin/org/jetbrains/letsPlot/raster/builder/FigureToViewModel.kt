@@ -28,17 +28,18 @@ internal object FigureToViewModel {
     private fun processCompositeFigure(svgRoot: CompositeFigureSvgRoot): CompositeFigureModel {
         svgRoot.ensureContentBuilt()
 
-        val compositeModel = CompositeFigureModel(svgRoot.svg)
+        val compositeModel = CompositeFigureModel(svgRoot.svg, isDeck = svgRoot.isDeck)
 
-        for (childSvg in svgRoot.elements) {
+        for ((index, childSvg) in svgRoot.elements.withIndex()) {
             val childBounds = childSvg.bounds.add(svgRoot.bounds.origin)
 
             childSvg.svg.x().set(childBounds.left)
             childSvg.svg.y().set(childBounds.top)
 
+            val isTopmost = svgRoot.isDeck && index == svgRoot.elements.lastIndex
             val childModel = when (childSvg) {
                 is CompositeFigureSvgRoot -> processCompositeFigure(childSvg)
-                is PlotSvgRoot -> processPlotFigure(childSvg)
+                is PlotSvgRoot -> processPlotFigure(childSvg, inDeck = svgRoot.isDeck, isTopmost = isTopmost)
                 else -> error("Unsupported figure: ${svgRoot::class.simpleName}")
             }
 
@@ -51,8 +52,8 @@ internal object FigureToViewModel {
         return compositeModel
     }
 
-    private fun processPlotFigure(svgRoot: PlotSvgRoot): SinglePlotModel {
-        val plotContainer = PlotContainer(svgRoot)
+    private fun processPlotFigure(svgRoot: PlotSvgRoot, inDeck: Boolean = false, isTopmost: Boolean = true): SinglePlotModel {
+        val plotContainer = PlotContainer(svgRoot, inDeck = inDeck, isTopmost = isTopmost)
 
         val plotModel = SinglePlotModel(
             svg = svgRoot.svg,

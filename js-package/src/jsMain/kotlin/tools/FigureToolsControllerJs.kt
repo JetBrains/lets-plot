@@ -1,7 +1,9 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
+
+@file:Suppress("OPT_IN_USAGE")
 
 package tools
 
@@ -33,8 +35,13 @@ internal class FigureToolsControllerJs(
         }
     }
 
-    override fun updateFigureView(specOverride: Map<String, Any>?) {
-        figure()?.updateView(dynamicFromAnyQ(specOverride))
+    override fun updateSpecOverride(specOverride: Map<String, Any>?) {
+        figure()?.updateSpecOverride(specOverride)
+            ?: LOG.info { "The tools controller is unbound." }
+    }
+
+    override fun updateFigureView() {
+        figure()?.updateView()
             ?: LOG.info { "The tools controller is unbound." }
     }
 

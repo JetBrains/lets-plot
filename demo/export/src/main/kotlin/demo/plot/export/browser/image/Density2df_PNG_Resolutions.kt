@@ -8,19 +8,15 @@ package demo.plot.export.browser.image
 import demo.plot.common.model.plotConfig.Density2df
 import org.jetbrains.letsPlot.awt.plot.PlotImageExport.Format.PNG
 
-@Suppress("ClassName")
-object Density2df_PNG_Resolutions {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(Density2df()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotImageDemoUtil.show(
-                "Density2df plot",
-                plotSpecList().first(),
-                scalingFactors = listOf(1.0, 2.0, 1.0),
-                targetDPIs = listOf(96, 96, 192),
-                formats = MutableList(3) { PNG }
-            ))
-        }
+fun main(args: Array<String>) {
+    with(Density2df()) {
+        @Suppress("UNCHECKED_CAST")
+        (PlotImageDemoUtil.show(
+            "Density2df plot",
+            plotSpecList().first(),
+            scalingFactors = listOf(1.0, 2.0, 1.0),
+            targetDPIs = listOf(96, 96, 192),
+            formats = MutableList(3) { PNG }
+        ))
     }
 }

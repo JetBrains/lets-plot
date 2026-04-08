@@ -25,34 +25,17 @@ object Diamonds {
         return sequence.map { it[column] }
     }
 
-    val carat
-        get() = Column("carat", double(0))
-    val cut
-        get() = Column("cut quality", string(1))
-    val color
-        get() = Column("diamond colour", string(2)) //from J (worst) to D (best)
-    val clarity
-        get() = Column("a measurement of how clear the diamond", string(3))
-    val depth
-        get() = Column("total depth percentage", double(4))
-    val table
-        get() = Column("width of top of diamond relative to widest point", double(5))
-    val price
-        get() = Column("price", int(6))
-    val x
-        get() = Column("length (mm)", double(7))
-    val y
-        get() = Column("width (mm)", double(8))
-    val z
-        get() = Column("depth (mm)", double(9))
-    val cutSet
-        get() = listOf(
-            "\"Fair\"",
-            "\"Good\"",
-            "\"Very Good\"",
-            "\"Premium\"",
-            "\"Ideal\""
-        )
+    val carat get() = Column("carat", double(0))
+    val cut get() = Column("cut quality", string(1))
+    val color get() = Column("diamond colour", string(2)) //from J (worst) to D (best)
+    val clarity get() = Column("a measurement of how clear the diamond", string(3))
+    val depth get() = Column("total depth percentage", double(4))
+    val table get() = Column("width of top of diamond relative to widest point", double(5))
+    val price get() = Column("price", int(6))
+    val x get() = Column("length (mm)", double(7))
+    val y get() = Column("width (mm)", double(8))
+    val z get() = Column("depth (mm)", double(9))
+    val cutSet get() = listOf("\"Fair\"", "\"Good\"", "\"Very Good\"", "\"Premium\"", "\"Ideal\"")
     val df
         get() = run {
             mapOf(

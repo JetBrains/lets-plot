@@ -11,12 +11,10 @@ object Density2dBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Density2d()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Density2d plot",
                 plotSpecList(),
-//                demoComponentSize
-            ))
+            )
         }
     }
 }

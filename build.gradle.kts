@@ -1,15 +1,18 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 // okhttp3 added for publishing to the Sonatype Central Repository:
+@file:OptIn(ExperimentalWasmDsl::class)
+
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.gradle.internal.os.OperatingSystem
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -304,7 +307,9 @@ val multiPlatformCoreModulesForPublish = listOf(
     "plot-raster",
     "plot-stem",
     "plot-livemap",
-    "visual-testing"
+    "visual-testing",
+    "platf-w3c",
+    "wasmjs-package"
 )
 
 subprojects {
@@ -361,6 +366,7 @@ subprojects {
             "platf-batik",
             "jvm",
             "js",
+            "wasmJs",
             "kotlinMultiplatform",
             "metadata"
         )
@@ -457,6 +463,46 @@ subprojects {
                     }
                 }
             }
+        }
+    }
+}
+
+// Step 1: force version and clean stale artifacts. Kept separate so publish tasks
+// can use mustRunAfter on THIS task without creating a cycle with the aggregate below.
+val cleanSnapshotFromMavenLocal by tasks.registering {
+    group = letsPlotTaskGroup
+    description = "Forces version 0.0.0-SNAPSHOT and removes its artifacts from ~/.m2."
+
+    doFirst {
+        // MavenPublication.version defaults to a lazy project.version provider,
+        // so changing it here (before publish tasks execute) is picked up in the POM.
+        allprojects { version = "0.0.0-SNAPSHOT" }
+
+        val snapshotDir = File("${System.getProperty("user.home")}/.m2/repository/org/jetbrains/lets-plot")
+        if (snapshotDir.exists()) {
+            snapshotDir.walkTopDown()
+                .filter { it.isDirectory && it.name == "0.0.0-SNAPSHOT" }
+                .forEach { dir ->
+                    println("Deleting: ${dir.absolutePath}")
+                    dir.deleteRecursively()
+                }
+        }
+    }
+}
+
+// Step 2: aggregate task — cleans first, then publishes all subprojects to ~/.m2.
+val cleanAndPublishSnapshotToMavenLocal by tasks.registering {
+    group = letsPlotTaskGroup
+    description = "Deletes 0.0.0-SNAPSHOT lets-plot artifacts from ~/.m2, then builds and publishes fresh ones."
+    dependsOn(cleanSnapshotFromMavenLocal)
+
+    val cleanTask = cleanSnapshotFromMavenLocal
+    val rootTask = this
+    subprojects {
+        tasks.matching { it.name == "publishToMavenLocal" }.configureEach {
+            rootTask.dependsOn(this)
+            // mustRunAfter the CLEAN task (not rootTask) — avoids the circular dependency
+            mustRunAfter(cleanTask)
         }
     }
 }

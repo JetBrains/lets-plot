@@ -1,0 +1,164 @@
+/*
+ * Copyright (c) 2023. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+@file:OptIn(ExperimentalWasmJsInterop::class)
+
+package org.jetbrains.letsPlot.platf.w3c.canvas
+
+import org.jetbrains.letsPlot.commons.event.MouseEvent
+import org.jetbrains.letsPlot.commons.event.MouseEventSource
+import org.jetbrains.letsPlot.commons.event.MouseEventSpec
+import org.jetbrains.letsPlot.commons.geometry.Vector
+import org.jetbrains.letsPlot.commons.intern.async.Async
+import org.jetbrains.letsPlot.commons.intern.async.SimpleAsync
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.registration.Registration
+import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
+import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationTimer
+import org.jetbrains.letsPlot.core.canvas.Canvas
+import org.jetbrains.letsPlot.core.canvas.CanvasControl
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.platf.w3c.canvas.DomCanvas.Companion.DEVICE_PIXEL_RATIO
+import org.jetbrains.letsPlot.platf.w3c.dom.css.enumerables.CssPosition
+import org.jetbrains.letsPlot.platf.w3c.dom.css.setPosition
+import org.khronos.webgl.Uint8Array
+import org.khronos.webgl.set
+import org.w3c.dom.CanvasRenderingContext2D
+import org.w3c.dom.HTMLElement
+import org.w3c.dom.Image
+import org.w3c.dom.events.Event
+import org.w3c.dom.get
+import kotlin.js.ExperimentalWasmJsInterop
+import kotlin.js.JsAny
+import kotlin.js.js
+import kotlin.js.toJsString
+
+private fun createPngObjectURL(bytes: JsAny): String =
+    js("URL.createObjectURL(new Blob([bytes], { type: 'image/png' }))")
+
+class DomCanvasControl(
+    private val myRootElement: HTMLElement,
+    override val size: Vector,
+    private val mouseEventSource: MouseEventSource,
+    override val pixelDensity: Double = DEVICE_PIXEL_RATIO
+) : CanvasControl {
+
+    override fun createAnimationTimer(eventHandler: AnimationEventHandler): AnimationTimer {
+        return object : DomAnimationTimer() {
+            override fun handle(millisTime: Long) {
+                eventHandler.onEvent(millisTime)
+            }
+        }
+    }
+
+    override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
+        return mouseEventSource.addEventHandler(eventSpec, eventHandler)
+    }
+
+    override fun createCanvas(size: Vector): Canvas {
+        val domCanvas = DomCanvas.create(size, pixelDensity)
+        domCanvas.canvasElement.style.setPosition(CssPosition.ABSOLUTE)
+        return domCanvas
+    }
+
+    override fun createSnapshot(bitmap: Bitmap): Canvas.Snapshot {
+        val domCanvas = DomCanvas.create(Vector(bitmap.width, bitmap.height), pixelDensity)
+        val ctx = domCanvas.canvasElement.getContext("2d") as CanvasRenderingContext2D
+
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                val color = bitmap.argbInts[y * bitmap.width + x]
+                // Extract ARGB components
+                val alpha = (color shr 24) and 0xFF
+                val red = (color shr 16) and 0xFF
+                val green = (color shr 8) and 0xFF
+                val blue = color and 0xFF
+
+                // Set the pixel color
+                ctx.fillStyle = "rgba($red, $green, $blue, ${alpha / 255.0})".toJsString()
+                // Draw a rectangle for the pixel
+                ctx.fillRect(x.toDouble(), y.toDouble(), 1.0, 1.0)
+            }
+        }
+
+        // Draw the bitmap onto the canvas
+        //ctx.drawImage(
+        //    Image().apply {
+        //        src = URL.createObjectURL(Blob(arrayOf(bitmap.argbInts), BlobPropertyBag("image/png")))
+        //    },
+        //    0.0,
+        //    0.0,
+        //    bitmap.width.toDouble(),
+        //    bitmap.height.toDouble()
+        //)
+
+        return domCanvas.takeSnapshot()
+    }
+
+    override fun decodeDataImageUrl(dataUrl: String): Async<Canvas.Snapshot> {
+        return decode(dataUrl)
+    }
+
+    override fun decodePng(png: ByteArray): Async<Canvas.Snapshot> {
+        val jsUint8Array = Uint8Array(png.size)
+        for (i in png.indices) {
+            jsUint8Array[i] = png[i]
+        }
+
+        val url = createPngObjectURL(jsUint8Array)
+        return decode(url)
+    }
+
+    private fun decode(dataUrl: String): Async<Canvas.Snapshot> {
+        return SimpleAsync<Canvas.Snapshot>().apply {
+            with(Image()) {
+                addEventListener("load", onLoad(this, ::success))
+
+                addEventListener("error") { _ ->
+                    failure(RuntimeException("Failed to load image from data URL: ${dataUrl.take(minOf(dataUrl.length, 40))}..."))
+                }
+
+                src = dataUrl
+            }
+        }
+    }
+
+
+    private fun onLoad(image: Image, consumer: (Canvas.Snapshot) -> Unit) = { _: Event ->
+        val imageSize = Vector(image.width, image.height)
+        val snapshot = DomCanvas.DomSnapshot(image, imageSize)
+
+        consumer(snapshot)
+    }
+
+    override val canvasPeer: CanvasPeer
+        get() = TODO("canvasPeer not implemented")
+
+    override fun addChild(canvas: Canvas) {
+        myRootElement.appendChild((canvas as DomCanvas).canvasElement)
+    }
+
+    override fun addChild(index: Int, canvas: Canvas) {
+        myRootElement.insertBefore((canvas as DomCanvas).canvasElement, myRootElement.childNodes[index])
+    }
+
+    override fun removeChild(canvas: Canvas) {
+        myRootElement.removeChild((canvas as DomCanvas).canvasElement)
+    }
+
+    override fun onResize(listener: (Vector) -> Unit): Registration {
+        println("DomCanvasControl.onResize() - NOT IMPLEMENTED")
+        return Registration.EMPTY
+    }
+
+    override fun snapshot(): Canvas.Snapshot {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T> schedule(f: () -> T) {
+        f()
+    }
+}

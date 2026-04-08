@@ -20,14 +20,26 @@ class AwtBitmapIO(
     val outputDir = if (subdir.isNotEmpty()) "$outputDir/$subdir" else outputDir
 
     override fun write(bitmap: Bitmap, fileName: String) {
-        val img = BitmapUtil.toBufferedImage(bitmap)
-        ImageIO.write(img, "png", File(getWriteFilePath(fileName)))
+        val filePath = getWriteFilePath(fileName)
+
+        try {
+            val img = BitmapUtil.toBufferedImage(bitmap)
+            ImageIO.write(img, "png", File(filePath))
+        } catch (e: Exception) {
+            throw RuntimeException("Failed to write image to $filePath", e)
+        }
     }
 
     override fun read(fileName: String): Bitmap {
-        val img = ImageIO.read(File(getReadFilePath(fileName)))
-            ?: throw RuntimeException("Failed to read image from $fileName")
-        return BitmapUtil.fromBufferedImage(img)
+        val filePath = getReadFilePath(fileName)
+
+        try {
+            val img = ImageIO.read(File(filePath))
+                ?: throw RuntimeException("Failed to read image from $filePath")
+            return BitmapUtil.fromBufferedImage(img)
+        } catch (e: Exception) {
+            throw RuntimeException("Failed to read image from $filePath", e)
+        }
     }
 
     override fun getReadFilePath(fileName: String): String {

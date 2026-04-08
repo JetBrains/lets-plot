@@ -1,4 +1,13 @@
 /*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
+/*
  * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
@@ -19,8 +28,11 @@ val assertjVersion = project.extra["assertj.version"] as String
 
 kotlin {
     jvm()
-    js() {
+    js {
         browser {}
+    }
+    wasmJs {
+        browser()
     }
 
     when {
@@ -81,12 +93,12 @@ kotlin {
             }
         }
 
-        // Fix for 'Could not find "io.github.microutils:kotlin-logging"...' and
+        // Fix for 'Could not find "io.github.oshai:kotlin-logging"...' and
         // 'Could not find "io.ktor:ktor-client-js"...'build errors (Kotlin 1.9.xx versions):
         named("jsTest") {
             dependencies {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
-                implementation("io.github.microutils:kotlin-logging-js:$kotlinLoggingVersion")
+                implementation("io.github.oshai:kotlin-logging-js:$kotlinLoggingVersion")
             }
         }
     }

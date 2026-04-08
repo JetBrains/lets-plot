@@ -11,12 +11,9 @@ object Density2dfBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(Density2df()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Density2df plot",
-                plotSpecList(),
-//                demoComponentSize
-            ))
+                plotSpecList())
         }
     }
 }

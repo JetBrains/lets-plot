@@ -11,11 +11,9 @@ object CoordLimBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(CoordLim()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "coord x/y limits",
-                plotSpecList(),
-//                demoComponentSize
-            ))
+                plotSpecList()
+            )
         }
     }}

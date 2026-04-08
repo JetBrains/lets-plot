@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 fun main() {
     with(GGBunch()) {
         val plotSpecList = plotSpecList()
-        PlotConfigBrowserDemoUtil.show(
+        PlotConfigBrowserDemoUtil.showJs(
             "ggbunch()",
             plotSpecList,
             DoubleVector(600.0, 600.0)

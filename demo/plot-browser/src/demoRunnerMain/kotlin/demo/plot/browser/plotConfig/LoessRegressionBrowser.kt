@@ -11,11 +11,10 @@ object LoessRegressionBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(LoessRegression()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Area plot",
-                plotSpecList(),
-            ))
+                plotSpecList()
+            )
         }
     }
 }

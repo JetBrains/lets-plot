@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_DEAC
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.INTERACTION_UNSUPPORTED
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.ROLLBACK_ALL_CHANGES
 import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.SELECTION_CHANGED
+import org.jetbrains.letsPlot.core.interact.event.ToolEventSpec.UPDATE_VIEW
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_XLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.COORD_YLIM_TRANSFORMED
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOptions.SCALE_RATIO
@@ -50,6 +51,7 @@ abstract class FigureToolsController {
                 deactivateFigureTool(it.tool)
             }
         }
+        updateSpecOverride(null)
         updateFigureView()
     }
 
@@ -83,7 +85,7 @@ abstract class FigureToolsController {
                     factor as List<Double>
                 } ?: listOf(1.0, 1.0)
 
-                updateFigureView(specOverride)
+                updateSpecOverride(specOverride)
             }
 
             ROLLBACK_ALL_CHANGES -> {
@@ -91,7 +93,11 @@ abstract class FigureToolsController {
                 val specOverride = targetId?.let {
                     mapOf(TARGET_ID to targetId)
                 }
-                updateFigureView(specOverride)
+                updateSpecOverride(specOverride)
+            }
+
+            UPDATE_VIEW -> {
+                updateFigureView()
             }
 
             INTERACTION_UNSUPPORTED -> {
@@ -106,7 +112,8 @@ abstract class FigureToolsController {
 
     protected abstract fun activateFigureTool(tool: ToggleTool)
     protected abstract fun deactivateFigureTool(tool: ToggleTool)
-    protected abstract fun updateFigureView(specOverride: Map<String, Any>? = null)
+    protected abstract fun updateSpecOverride(specOverride: Map<String, Any>?)
+    protected abstract fun updateFigureView()
     protected abstract fun showFigureError(msg: String)
 
     private data class ToolAndModel(

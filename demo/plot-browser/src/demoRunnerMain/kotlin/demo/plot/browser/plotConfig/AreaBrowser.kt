@@ -7,14 +7,11 @@ package demo.plot.browser.plotConfig
 
 import demo.plot.common.model.plotConfig.Area
 
-object AreaBrowser {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        with(Area()) {
-            (PlotConfigBrowserDemoUtil.show(
-                "Area plot",
-                plotSpecList(),
-            ))
-        }
+fun main(args: Array<String>) {
+    with(Area()) {
+        (PlotConfigBrowserDemoUtil.showJs(
+            "Area plot",
+            plotSpecList(),
+        ))
     }
 }

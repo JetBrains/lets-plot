@@ -12,12 +12,10 @@ object TooltipWithSamplingBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(TooltipWithSampling()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Tooltip config plot",
-                plotSpecList(),
-//                demoComponentSize
-            ))
+                plotSpecList()
+            )
         }
     }
 }

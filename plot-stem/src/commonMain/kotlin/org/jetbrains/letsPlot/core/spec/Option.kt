@@ -136,6 +136,7 @@ object Option {
             const val NAME = Meta.NAME
             const val SUBPLOTS_GRID = "grid"
             const val SUBPLOTS_FREE = "free"
+            const val SUBPLOTS_DECK = "deck"
 
             const val GUIDES = "guides"
         }
@@ -157,6 +158,20 @@ object Option {
                 const val SHARE_ALL = "all"
                 const val SHARE_ROW = "row"
                 const val SHARE_COL = "col"
+            }
+        }
+
+        /**
+         * Deck (overlay) layout (`ggdeck`)
+         */
+        object Deck {
+            const val SCALE_SHARE = "scale_share" // x, y, all, none
+
+            object ScaleShare {
+                const val X = "x"
+                const val Y = "y"
+                const val ALL = "all"
+                const val NONE = "none"
             }
         }
 
@@ -940,9 +955,17 @@ object Option {
         const val AXIS_TICKS_X = ThemeOption.AXIS_TICKS_X
         const val AXIS_TICKS_Y = ThemeOption.AXIS_TICKS_Y
 
+        const val AXIS_MINOR_TICKS = ThemeOption.AXIS_MINOR_TICKS
+        const val AXIS_MINOR_TICKS_X = ThemeOption.AXIS_MINOR_TICKS_X
+        const val AXIS_MINOR_TICKS_Y = ThemeOption.AXIS_MINOR_TICKS_Y
+
         const val AXIS_TICKS_LENGTH = ThemeOption.AXIS_TICKS_LENGTH
         const val AXIS_TICKS_LENGTH_X = ThemeOption.AXIS_TICKS_LENGTH_X
         const val AXIS_TICKS_LENGTH_Y = ThemeOption.AXIS_TICKS_LENGTH_Y
+
+        const val AXIS_MINOR_TICKS_LENGTH = ThemeOption.AXIS_TICKS_LENGTH
+        const val AXIS_MINOR_TICKS_LENGTH_X = ThemeOption.AXIS_TICKS_LENGTH_X
+        const val AXIS_MINOR_TICKS_LENGTH_Y = ThemeOption.AXIS_TICKS_LENGTH_Y
 
         const val AXIS_LINE = ThemeOption.AXIS_LINE
         const val AXIS_LINE_X = ThemeOption.AXIS_LINE_X

@@ -11,12 +11,13 @@ object BackgroundPinkBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(BackgroundPink()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Plot background - pink (in a pink window)",
                 plotSpecList(),
                 backgroundColor = "pink"
-            ))
+            )
+            @Suppress("UNCHECKED_CAST")
+            (Unit)
         }
     }
 }

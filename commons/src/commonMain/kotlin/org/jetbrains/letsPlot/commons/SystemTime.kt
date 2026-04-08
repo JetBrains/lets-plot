@@ -5,6 +5,10 @@
 
 package org.jetbrains.letsPlot.commons
 
-expect open class SystemTime() {
-    fun getTimeMs(): Long
+import kotlin.time.TimeSource
+
+open class SystemTime() {
+    open fun getTimeMs(): Long {
+        return TimeSource.Monotonic.markNow().elapsedNow().inWholeMilliseconds
+    }
 }

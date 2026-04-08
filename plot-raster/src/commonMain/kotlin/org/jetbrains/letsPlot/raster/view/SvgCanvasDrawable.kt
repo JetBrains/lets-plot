@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,6 +10,8 @@ import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
+import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
@@ -51,12 +53,10 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
 
     private val renderingHints = mutableMapOf<Any, Any>()
     private var canvasSize: Vector? = null
-    private var nodeContainer: SvgNodeContainer? = null
     private var svgCanvasPeer: SvgCanvasPeer? = null
     private var repaintManager: RepaintManager? = null
-    private var canvasNodes: MutableMap<CanvasNode, Registration> = mutableMapOf()
-
-    internal lateinit var rootMapper: SvgSvgElementMapper
+    private var svgMappingContext: SvgMappingContext? = null
+    private var redrawPending: Boolean = false
     private val repaintRequestListeners = mutableListOf<() -> Unit>()
     private var onHrefClick: ((String) -> Unit)? = null
 
@@ -75,10 +75,8 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
         mapSvgSvgElement()
         return object : Registration() {
             override fun doRemove() {
-                nodeContainer?.root()?.set(SvgSvgElement())
-                nodeContainer = null
-
-                rootMapper.detachRoot()
+                svgMappingContext?.dispose()
+                svgMappingContext = null
 
                 svgCanvasPeer?.dispose()
                 svgCanvasPeer = null
@@ -98,9 +96,8 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
             override fun onEvent(event: MouseEvent) {
                 val hrefClickHandler = onHrefClick ?: return
                 val coord = event.location.toDoubleVector()
-                val linkNode = reversedDepthFirstTraversal(
-                    rootMapper.target
-                )
+                val rootNode = svgMappingContext?.rootMapper?.target ?: return
+                val linkNode = reversedDepthFirstTraversal(rootNode)
                     .filter { it.href != null }
                     .filterNot(Node::isMouseTransparent)
                     .firstOrNull { coord in it.bBoxGlobal }
@@ -113,38 +110,17 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
 
     private fun mapSvgSvgElement() {
         val canvasPeer = svgCanvasPeer ?: return
-        nodeContainer = SvgNodeContainer(svgSvgElement)
-        nodeContainer!!.addListener(object : SvgNodeContainerListener {
-            override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = requestRedraw()
-            override fun onNodeAttached(node: SvgNode) = requestRedraw()
-            override fun onNodeDetached(node: SvgNode) = requestRedraw()
-        })
-        rootMapper = SvgSvgElementMapper(svgSvgElement, canvasPeer)
-        val ctx = MappingContext()
-        ctx.addListener(object : MappingContextListener {
-            override fun onMapperRegistered(mapper: Mapper<*, *>) {
-                val node = mapper.target
-                if (node is CanvasNode) {
-                    canvasNodes[node] = node.mouseEventPeer.addEventSource(mouseEventPeer)
-                }
-            }
-
-            override fun onMapperUnregistered(mapper: Mapper<*, *>) {
-                val node = mapper.target
-                if (node is AsyncRenderer) {
-                    val reg = canvasNodes.remove(node)
-                    reg?.remove()
-                }
-            }
-        })
-        rootMapper.attachRoot(ctx)
+        svgMappingContext?.dispose()
+        svgMappingContext = SvgMappingContext(svgSvgElement, canvasPeer)
     }
 
     override fun paint(context2d: Context2d) {
-        renderElement(rootMapper.target, context2d)
+        redrawPending = false
+        val rootNode = svgMappingContext?.rootMapper?.target ?: return
+        renderElement(rootNode, context2d)
 
         if (renderingHints[RenderingHints.KEY_DEBUG_BBOXES] == RenderingHints.VALUE_DEBUG_BBOXES_ON) {
-            drawBoundingBoxes(rootMapper.target, context2d)
+            drawBoundingBoxes(rootNode, context2d)
         }
     }
 
@@ -159,6 +135,11 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
     }
 
     private fun requestRedraw() {
+        if (redrawPending) {
+            return
+        }
+
+        redrawPending = true
         repaintRequestListeners.forEach { it() }
     }
 
@@ -229,19 +210,88 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
     }
 
     override fun isReady(): Boolean {
-        return canvasNodes.keys.all(AsyncRenderer::isReady)
+        return svgMappingContext?.isReady() ?: true
     }
 
     override fun onReady(listener: () -> Unit): Registration {
-        if (isReady()) {
-            listener()
-            return Registration.EMPTY
-        } else {
-            val notReadyRenderers = canvasNodes.keys.filterNot(AsyncRenderer::isReady).toMutableSet()
+        return svgMappingContext?.onReady(listener) ?: Registration.EMPTY
+    }
+
+    override fun onFrame(millisTime: Long) {
+        svgMappingContext?.onFrame(millisTime)
+    }
+
+    private inner class SvgMappingContext(
+        svgRoot: SvgSvgElement,
+        canvasPeer: SvgCanvasPeer,
+    ) : Disposable {
+        val canvasNodes: MutableMap<CanvasNode, Registration> = mutableMapOf()
+        val rootMapper: SvgSvgElementMapper = SvgSvgElementMapper(svgRoot, canvasPeer)
+
+        private val container = SvgNodeContainer(svgRoot)
+        private val reg: Registration
+
+        init {
+            val containerReg = container.addListener(object : SvgNodeContainerListener {
+                override fun onAttributeSet(element: SvgElement, event: SvgAttributeEvent<*>) = requestRedraw()
+                override fun onNodeAttached(node: SvgNode) = requestRedraw()
+                override fun onNodeDetached(node: SvgNode) = requestRedraw()
+            })
+
+            val ctx = MappingContext()
+            ctx.addListener(object : MappingContextListener {
+                override fun onMapperRegistered(mapper: Mapper<*, *>) {
+                    val node = mapper.target
+                    if (node is CanvasNode) {
+                        canvasNodes[node] = node.mouseEventPeer.addEventSource(mouseEventPeer)
+                    }
+                }
+
+                override fun onMapperUnregistered(mapper: Mapper<*, *>) {
+                    val node = mapper.target as Node
+                    if (node is CanvasNode) {
+                        canvasNodes.remove(node)?.remove()
+                    }
+                    repaintManager?.remove(node)
+                }
+            })
+            rootMapper.attachRoot(ctx)
+
+            reg = CompositeRegistration(
+                containerReg,
+                Registration.onRemove {
+                    canvasNodes.values.forEach(Registration::dispose)
+                    canvasNodes.clear()
+                },
+                Registration.onRemove {
+                    container.root().set(SvgSvgElement())
+                },
+                Registration.onRemove {
+                    rootMapper.detachRoot()
+                }
+            )
+        }
+
+        override fun dispose() {
+            reg.dispose()
+        }
+
+        fun isReady(): Boolean {
+            return canvasNodes.keys.all(AsyncRenderer::isReady)
+        }
+
+        fun onReady(listener: () -> Unit): Registration {
+            if (isReady()) {
+                listener()
+                return Registration.EMPTY
+            }
+
+            val notReadyRenderers = canvasNodes.keys.filterNot(AsyncRenderer::isReady)
+            var remaining = notReadyRenderers.size
             val regs = notReadyRenderers.map { renderer ->
                 renderer.onReady {
-                    notReadyRenderers.remove(renderer)
-                    if (notReadyRenderers.isEmpty()) {
+                    remaining--
+                    if (remaining == 0) {
                         listener()
                     }
                 }
@@ -249,9 +299,9 @@ class SvgCanvasDrawable(svg: SvgSvgElement = SvgSvgElement()) : CanvasDrawable {
 
             return Registration.from(*regs.toTypedArray())
         }
-    }
 
-    override fun onFrame(millisTime: Long) {
-        canvasNodes.forEach { (canvasNode, _) -> canvasNode.onFrame(millisTime) }
+        fun onFrame(millisTime: Long) {
+            canvasNodes.forEach { (canvasNode, _) -> canvasNode.onFrame(millisTime) }
+        }
     }
 }

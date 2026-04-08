@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     kotlin("multiplatform")
 }
@@ -5,6 +14,11 @@ plugins {
 kotlin {
     jvm("demoRunner")
     js {
+        browser()
+        binaries.executable()
+    }
+
+    wasmJs {
         browser()
         binaries.executable()
     }
@@ -43,7 +57,7 @@ kotlin {
                 implementation(project(":plot-livemap"))
                 implementation(project(":gis"))
 
-                implementation("io.github.microutils:kotlin-logging-jvm:${kotlinLoggingVersion}")
+                implementation("io.github.oshai:kotlin-logging-jvm:${kotlinLoggingVersion}")
                 implementation("io.ktor:ktor-client-cio:${ktorVersion}")
                 implementation("org.slf4j:slf4j-simple:${project.extra["slf4j.version"]}")  // Enable logging to console
                 implementation(project(":platf-awt"))
@@ -51,6 +65,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:${kotlinxHtmlVersion}")
             }
         }
+
         jsMain {
             languageSettings.optIn("kotlin.js.ExperimentalJsExport")
             dependencies {
@@ -61,5 +76,19 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
+
+    }
+}
+
+tasks.named("demoRunnerMainClasses") {
+    // Check if "dev" property is passed via -Pdev or if DEV env var is set
+    val isDev = project.hasProperty("dev") || System.getenv("DEV") != null
+
+    if (isDev) {
+        dependsOn(":js-package:jsBrowserDevelopmentWebpack")
+        dependsOn(":wasmjs-package:wasmJsBrowserDevelopmentWebpack")
+    } else {
+        dependsOn(":js-package:jsBrowserProductionWebpack")
+        dependsOn(":wasmjs-package:wasmJsBrowserProductionWebpack")
     }
 }

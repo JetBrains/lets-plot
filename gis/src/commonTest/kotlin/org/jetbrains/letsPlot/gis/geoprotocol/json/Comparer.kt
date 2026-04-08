@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.gis.geoprotocol.json
 
 import org.jetbrains.letsPlot.commons.intern.json.*
-import org.jetbrains.letsPlot.commons.intern.json.*
 
 
 internal object Comparer {
@@ -35,8 +34,8 @@ internal object Comparer {
     }
 
     private fun areNull(left: Any?, right: Any?, ctx: Context) {
-        val leftValue = left.toString().replace("\"", String())
-        val rightValue = right.toString().replace("\"", String())
+        val leftValue = left.toString().replace("\"", "")
+        val rightValue = right.toString().replace("\"", "")
 
         if (leftValue != rightValue) {
             ctx.fail("null equality failed: $leftValue != $rightValue")

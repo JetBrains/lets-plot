@@ -9,9 +9,9 @@ import demo.plot.common.model.plotConfig.BarPlot
 
 fun main() {
     with(BarPlot()) {
-        (PlotConfigBrowserDemoUtil.show(
+        PlotConfigBrowserDemoUtil.showJs(
             "Bar plot",
             plotSpecList(),
-        ))
+        )
     }
 }

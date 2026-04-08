@@ -11,12 +11,11 @@ object GGToolbarRejectBrowser {
     @JvmStatic
     fun main(args: Array<String>) {
         with(GGToolbar()) {
-            @Suppress("UNCHECKED_CAST")
-            (PlotConfigBrowserDemoUtil.show(
+            PlotConfigBrowserDemoUtil.showJs(
                 "Plot Toolbar Reject",
                 plotSpecRejectList(),
                 backgroundColor = "white"
-            ))
+            )
         }
     }
 }

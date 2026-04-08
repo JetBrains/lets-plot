@@ -5,8 +5,8 @@
 
 package demo.livemap.component
 
+import demo.common.utils.browser.BrowserDemoUtil
 import demo.livemap.LiveMapBrowserDemoUtil
-import demo.livemap.LiveMapBrowserDemoUtil.mapperDemoHtml
 
 
 // To run:
@@ -16,7 +16,14 @@ import demo.livemap.LiveMapBrowserDemoUtil.mapperDemoHtml
 
 fun runComponentDemo(name: String, title: String) {
     val callFun = "demo.livemap.component.$name"
-    LiveMapBrowserDemoUtil.openInBrowser {
-        mapperDemoHtml(callFun, title)
+    BrowserDemoUtil.openInBrowserJs(LiveMapBrowserDemoUtil.DEMO_PROJECT_PATH) {
+        BrowserDemoUtil.mapperDemoHtml(
+            demoProjectPath = LiveMapBrowserDemoUtil.DEMO_PROJECT_PATH,
+            demoProject = LiveMapBrowserDemoUtil.DEMO_PROJECT,
+            callFun = callFun,
+            title = title,
+            projectDeps = emptyList(),
+            target = BrowserDemoUtil.Target.JS
+        )
     }
 }

@@ -106,6 +106,8 @@ internal class ThemeOptionTest {
             }
 
             ThemeOption.AXIS_TICKS_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickKey
+            ThemeOption.AXIS_MINOR_TICKS_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).minorTickKey
+            ThemeOption.AXIS_MINOR_TICKS_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).minorTickKey
             ThemeOption.AXIS_LINE_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).lineKey
             ThemeOption.AXIS_TOOLTIP_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tooltipKey
             ThemeOption.AXIS_TITLE_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).titleKey
@@ -151,6 +153,8 @@ internal class ThemeOptionTest {
             // Simple option
             ThemeOption.AXIS_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
             ThemeOption.AXIS_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).tickLengthKey
+            ThemeOption.AXIS_MINOR_TICKS_LENGTH_X -> (theme.horizontalAxis(flipAxis = false) as DefaultAxisTheme).minorTickLengthKey
+            ThemeOption.AXIS_MINOR_TICKS_LENGTH_Y -> (theme.verticalAxis(flipAxis = false) as DefaultAxisTheme).minorTickLengthKey
 
             else -> throw IllegalStateException("Unknown theme option: $option")
         }

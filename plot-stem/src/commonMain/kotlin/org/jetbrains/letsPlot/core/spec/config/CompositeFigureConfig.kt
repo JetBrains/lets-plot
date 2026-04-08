@@ -10,11 +10,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureFreeLayout
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridAlignmentLayout
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.CompositeFigureGridLayout
-import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.ScaleSharePolicy
+import org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite.*
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_HSPACE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.SubplotsGrid.DEF_VSPACE
 import org.jetbrains.letsPlot.core.spec.FigKind
@@ -22,9 +20,9 @@ import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Meta.Kind.GG_TOOLBAR
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG_TEXT
-import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
@@ -41,6 +39,7 @@ import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout.NAME
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.util.PlotSizeHelper
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK_SHORTHAND as BLANK
 
 class CompositeFigureConfig constructor(
     opts: Map<String, Any>,
@@ -81,7 +80,9 @@ class CompositeFigureConfig constructor(
         @Suppress("UNCHECKED_CAST")
         val figuresSpecs = getList(Option.SubPlots.FIGURES) as List<Any>
         val computationMessages = ArrayList<String>()
-        elementConfigs = figuresSpecs.map { spec ->
+
+        // Propagate toolbar options to sub-figures in case the composite figure has a toolbar.
+        val figureSpecsWithToolbarOptions: List<Map<String, Any>?> = figuresSpecs.map { spec ->
             if (spec is Map<*, *>) {
                 @Suppress("UNCHECKED_CAST")
                 spec as Map<String, Any>
@@ -93,23 +94,9 @@ class CompositeFigureConfig constructor(
                 // todo: Need refactor. Use CompositeFigureLayout to pass parameters to MonolithicCommon.
 
                 // Add the 'ggtoolbar' option to each subfigure:
-                val extendedSpec = opts[GG_TOOLBAR]?.let { ggToolbar ->
+                opts[GG_TOOLBAR]?.let { ggToolbar ->
                     spec + (GG_TOOLBAR to ggToolbar)
                 } ?: spec
-
-                when (PlotConfig.figSpecKind(extendedSpec)) {
-                    FigKind.PLOT_SPEC -> PlotConfigFrontend.create(
-                        plotSpec = extendedSpec,
-                        containerTheme = theme
-                    ) { computationMessages.addAll(it) }
-
-                    FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(
-                        opts = extendedSpec,
-                        containerTheme = theme
-                    ) { computationMessages.addAll(it) }
-
-                    FigKind.GG_BUNCH_SPEC -> throw IllegalArgumentException("SubPlots can't contain GGBunch.")
-                }
             } else {
                 null
             }
@@ -117,16 +104,50 @@ class CompositeFigureConfig constructor(
 
         val layoutOptions = OptionsAccessor(getMap(Option.SubPlots.LAYOUT))
         val layoutKind = layoutOptions.getStringSafe(NAME)
+
+        // The "deck" layout: apply the "deck" overlay theme to all sub-figures except the first one.
+        val figureSpecsFinal = if (layoutKind == Layout.SUBPLOTS_DECK) {
+            val deckShareConfig = DeckScaleShareConfig(layoutOptions)
+            figureSpecsWithToolbarOptions.mapIndexed { index, spec ->
+                when (index) {
+                    0 -> spec  // The "base" figure.
+                    else -> spec?.let { applyDeckOverlayTheme(spec, deckShareConfig.shareX, deckShareConfig.shareY) }
+                }
+            }
+        } else {
+            figureSpecsWithToolbarOptions
+        }
+
+        // Create configs for all sub-figures.
+        elementConfigs = figureSpecsFinal.map { spec ->
+            spec?.let {
+                when (PlotConfig.figSpecKind(spec)) {
+                    FigKind.PLOT_SPEC -> PlotConfigFrontend.create(
+                        plotSpec = spec,
+                        containerTheme = theme
+                    ) { computationMessages.addAll(it) }
+
+                    FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(
+                        opts = spec,
+                        containerTheme = theme
+                    ) { computationMessages.addAll(it) }
+
+                    FigKind.GG_BUNCH_SPEC -> throw IllegalArgumentException("SubPlots can't contain GGBunch.")
+                }
+            }
+        }
+
         layout = when (layoutKind) {
             Layout.SUBPLOTS_GRID -> createGridLayout(layoutOptions)
             Layout.SUBPLOTS_FREE -> createFreeLayout(layoutOptions, elementConfigs.size)
+            Layout.SUBPLOTS_DECK -> createDeckLayout(layoutOptions)
             else -> throw IllegalArgumentException("Unsupported composite figure layout: $layoutKind")
         }
 
-        guidesSharing = if (layoutKind == Layout.SUBPLOTS_GRID) {
-            GuidesSharingMode.fromOption(layoutOptions.getString(Layout.GUIDES))
-        } else {
-            GuidesSharingMode.KEEP
+        guidesSharing = when (layoutKind) {
+            Layout.SUBPLOTS_DECK -> GuidesSharingMode.COLLECT
+            Layout.SUBPLOTS_GRID -> GuidesSharingMode.fromOption(layoutOptions.getString(Layout.GUIDES))
+            else -> GuidesSharingMode.KEEP
         }
         computationMessagesHandler(computationMessages)
     }
@@ -140,7 +161,7 @@ class CompositeFigureConfig constructor(
         val rowHeights = layoutOptions.getDoubleList(ROW_HEIGHTS)
         val fitCellAspectRatio = layoutOptions.getBoolean(FIT_CELL_ASPECT_RATIO, true)
         val innerAlignment = layoutOptions.getBoolean(INNER_ALIGNMENT, false)
-        val shareConfig = CompositeFigureScaleShareConfig(layoutOptions)
+        val shareConfig = GridScaleShareConfig(layoutOptions)
         val scaleShareX: ScaleSharePolicy = shareConfig.shareX
         val scaleShareY: ScaleSharePolicy = shareConfig.shareY
 
@@ -218,6 +239,50 @@ class CompositeFigureConfig constructor(
         }.unzip()
 
         return CompositeFigureFreeLayout(regions, offsets, elementsCount)
+    }
+
+    private fun createDeckLayout(layoutOptions: OptionsAccessor): CompositeFigureLayout {
+        val deckShareConfig = DeckScaleShareConfig(layoutOptions)
+        return CompositeFigureDeckLayout(shareX = deckShareConfig.shareX, shareY = deckShareConfig.shareY)
+    }
+
+    companion object {
+        private val DECK_OVERLAY_THEME_BASE = mapOf(
+            ThemeOption.PLOT_BKGR_RECT to BLANK,
+            ThemeOption.PANEL_BKGR_RECT to BLANK,
+            ThemeOption.PANEL_BORDER_RECT to BLANK,
+            ThemeOption.PANEL_GRID to BLANK,
+        )
+
+        private val DECK_OVERLAY_THEME_BLANK_X = mapOf(
+            ThemeOption.AXIS_LINE_X to BLANK,
+            ThemeOption.AXIS_TICKS_X to BLANK,
+            ThemeOption.AXIS_TEXT_X to BLANK,
+            ThemeOption.AXIS_TITLE_X to BLANK,
+            ThemeOption.AXIS_TOOLTIP_X to BLANK,
+        )
+
+        private val DECK_OVERLAY_THEME_BLANK_Y = mapOf(
+            ThemeOption.AXIS_LINE_Y to BLANK,
+            ThemeOption.AXIS_TICKS_Y to BLANK,
+            ThemeOption.AXIS_TEXT_Y to BLANK,
+            ThemeOption.AXIS_TITLE_Y to BLANK,
+            ThemeOption.AXIS_TOOLTIP_Y to BLANK,
+        )
+
+        private fun applyDeckOverlayTheme(spec: Map<String, Any>, shareX: Boolean, shareY: Boolean): Map<String, Any> {
+            val blankSharedAxes = when {
+                shareX && shareY -> DECK_OVERLAY_THEME_BLANK_X + DECK_OVERLAY_THEME_BLANK_Y
+                shareX -> DECK_OVERLAY_THEME_BLANK_X
+                shareY -> DECK_OVERLAY_THEME_BLANK_Y
+                else -> emptyMap()
+            }
+            val overlayTheme = DECK_OVERLAY_THEME_BASE + blankSharedAxes
+
+            @Suppress("UNCHECKED_CAST")
+            val existingTheme = (spec[THEME] as? Map<String, Any>) ?: emptyMap()
+            return spec + (THEME to overlayTheme + existingTheme)
+        }
     }
 
     enum class GuidesSharingMode(val id: String) {

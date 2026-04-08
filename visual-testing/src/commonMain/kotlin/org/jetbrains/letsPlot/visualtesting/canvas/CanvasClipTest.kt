@@ -10,13 +10,17 @@ package org.jetbrains.letsPlot.visualtesting.canvas
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.*
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 import kotlin.math.PI
 
 
-internal class CanvasClipTest(
+class CanvasClipTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
 ): CanvasTestBase() {
+
+    override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
+
     init {
         registerTest(::canvas_clip_fill)
         registerTest(::canvas_clip_path)
@@ -24,11 +28,11 @@ internal class CanvasClipTest(
         registerTest(::canvas_clip_restore)
         registerTest(::canva_clip_afterTransform)
         registerTest(::canvas_clip_beforeTransform)
-        registerTest(::canvas_clip_text)
-        registerTest(::canvas_clip_textBeforeTransform)
-        registerTest(::canvas_clip_textWithTranslatesBeforeTransform)
-        registerTest(::canvas_clip_textAfterTransform)
-        registerTest(::canvas_clip_textWithTranslatesAfterTransform)
+        registerTest(::canvas_clip_text, ComparisonProfile.Text)
+        registerTest(::canvas_clip_textBeforeTransform, ComparisonProfile.Text)
+        registerTest(::canvas_clip_textWithTranslatesBeforeTransform, ComparisonProfile.Text)
+        registerTest(::canvas_clip_textAfterTransform, ComparisonProfile.Text)
+        registerTest(::canvas_clip_textWithTranslatesAfterTransform, ComparisonProfile.Text)
     }
 
     private fun nwRect(ctx: Context2d) {
@@ -57,7 +61,7 @@ internal class CanvasClipTest(
         ctx.lineTo(50, 100)
     }
 
-    private fun canvas_clip_fill(): Bitmap {
+    fun canvas_clip_fill(): Bitmap {
         // Clip and fill without rebuilding a path
         val (canvas, ctx) = createCanvas()
 
@@ -72,7 +76,7 @@ internal class CanvasClipTest(
         return paint(canvas)
     }
 
-    private fun canvas_clip_path(): Bitmap {
+    fun canvas_clip_path(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -88,7 +92,7 @@ internal class CanvasClipTest(
         return paint(canvas)
     }
 
-    private fun canva_clip_twoPolygons(): Bitmap {
+    fun canva_clip_twoPolygons(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -109,7 +113,7 @@ internal class CanvasClipTest(
         return paint(canvas)
     }
 
-    private fun canvas_clip_restore(): Bitmap {
+    fun canvas_clip_restore(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)"
@@ -137,7 +141,7 @@ internal class CanvasClipTest(
         return paint(canvas)
     }
 
-    private fun canva_clip_afterTransform(): Bitmap {
+    fun canva_clip_afterTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -155,7 +159,7 @@ internal class CanvasClipTest(
         return paint(canvas)
     }
 
-    private fun canvas_clip_beforeTransform(): Bitmap {
+    fun canvas_clip_beforeTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -174,7 +178,7 @@ internal class CanvasClipTest(
         return paint(canvas)
     }
 
-    private fun canvas_clip_text(): Bitmap {
+    fun canvas_clip_text(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -191,7 +195,7 @@ internal class CanvasClipTest(
         return paint(canvas)
     }
 
-    private fun canvas_clip_textBeforeTransform(): Bitmap {
+    fun canvas_clip_textBeforeTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -212,7 +216,7 @@ internal class CanvasClipTest(
     }
 
 
-    private fun canvas_clip_textWithTranslatesBeforeTransform(): Bitmap {
+    fun canvas_clip_textWithTranslatesBeforeTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -232,7 +236,7 @@ internal class CanvasClipTest(
         return paint(canvas)
     }
 
-    private fun canvas_clip_textAfterTransform(): Bitmap {
+    fun canvas_clip_textAfterTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"
@@ -253,7 +257,7 @@ internal class CanvasClipTest(
     }
 
 
-    private fun canvas_clip_textWithTranslatesAfterTransform(): Bitmap {
+    fun canvas_clip_textWithTranslatesAfterTransform(): Bitmap {
         val (canvas, ctx) = createCanvas()
 
         ctx.fillStyle = "black"

@@ -5,11 +5,19 @@
 
 package demo.livemap.canvas
 
+import demo.common.utils.browser.BrowserDemoUtil
 import demo.livemap.LiveMapBrowserDemoUtil
 
 fun runCanvasDemo(name: String, title: String) {
     val callFun = "demo.livemap.canvas.$name"
-    LiveMapBrowserDemoUtil.openInBrowser {
-        LiveMapBrowserDemoUtil.mapperDemoHtml(callFun, title)
+    BrowserDemoUtil.openInBrowserJs(LiveMapBrowserDemoUtil.DEMO_PROJECT_PATH) {
+        BrowserDemoUtil.mapperDemoHtml(
+            demoProjectPath = LiveMapBrowserDemoUtil.DEMO_PROJECT_PATH,
+            demoProject = LiveMapBrowserDemoUtil.DEMO_PROJECT,
+            callFun = callFun,
+            title = title,
+            projectDeps = emptyList(),
+            target = BrowserDemoUtil.Target.JS
+        )
     }
 }
