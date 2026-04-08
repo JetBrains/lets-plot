@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.builder.tooltip.component
+package org.jetbrains.letsPlot.core.plot.base.tooltip.render
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility.HI
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility.VISIBLE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 
-class CrosshairComponent : SvgComponent() {
+class SvgCrosshair : SvgComponent() {
     private val hLine = SvgLineElement()
     private val hOutline = SvgLineElement()
 
@@ -59,11 +59,13 @@ class CrosshairComponent : SvgComponent() {
 
         when (isVertical) {
             true -> {
-                update(vLine); update(vOutline)
+                update(vLine)
+                update(vOutline)
             }
 
             false -> {
-                update(hLine); update(hOutline)
+                update(hLine)
+                update(hOutline)
             }
         }
     }

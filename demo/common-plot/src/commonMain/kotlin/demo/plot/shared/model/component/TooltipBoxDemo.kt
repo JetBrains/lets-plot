@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -12,11 +12,11 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.SvgTooltipBox
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.TooltipCss.AXIS_TOOLTIP_TEXT
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.TooltipCss.TOOLTIP_LABEL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.TooltipCss.TOOLTIP_TITLE
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_LABEL
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 
 class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
@@ -47,13 +47,13 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
     private fun tooltip(spec: MyTooltipSpec): Pair<GroupComponent, () -> Unit> {
         val groupComponent = GroupComponent()
-        val tooltipBox = TooltipBox(Style.default())
+        val tooltipBox = SvgTooltipBox(Style.default())
         groupComponent.add(tooltipBox.rootGroup)
         return groupComponent to with(tooltipBox, spec)
     }
 
     private fun with(
-        tooltipBox: TooltipBox,
+        tooltipBox: SvgTooltipBox,
         spec: MyTooltipSpec,
     ): () -> Unit = {
         with(spec) {
@@ -102,7 +102,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val tooltipMinWidth: Double? = null,
             val borderRadius: Double = 4.0,
             val markerColors: List<Color> = emptyList(),
-            val orientation: TooltipBox.Orientation = TooltipBox.Orientation.VERTICAL,
+            val orientation: SvgTooltipBox.Orientation = SvgTooltipBox.Orientation.VERTICAL,
             val pointerCoord: DoubleVector? = null,
         )
 
@@ -133,7 +133,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 lines = listOf(WITH_LABEL, STATIC_TEXT),
                 markerColors = listOf(Color.LIGHT_PINK, Color.DARK_BLUE),
                 pointerCoord = DoubleVector(200.0, 20.0),
-                orientation = TooltipBox.Orientation.HORIZONTAL
+                orientation = SvgTooltipBox.Orientation.HORIZONTAL
             ),
             // with title
             MyTooltipSpec(
@@ -148,7 +148,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 title = "Title #1\nand\nTitle #2",
                 pointerCoord = DoubleVector(120.0, 50.0),
                 markerColors = listOf(Color.LIGHT_PINK, Color.DARK_BLUE),
-                orientation = TooltipBox.Orientation.HORIZONTAL
+                orientation = SvgTooltipBox.Orientation.HORIZONTAL
             ),
             // with empty line
             MyTooltipSpec(

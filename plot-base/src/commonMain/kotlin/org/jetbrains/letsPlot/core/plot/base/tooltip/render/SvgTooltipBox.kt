@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.builder.tooltip.component
+package org.jetbrains.letsPlot.core.plot.base.tooltip.render
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -12,31 +12,15 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_STROKE_WIDTH
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.COLOR_BAR_WIDTH
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.CONTENT_EXTENDED_PADDING
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.H_CONTENT_PADDING
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.INTERVAL_BETWEEN_SUBSTRINGS
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.LABEL_VALUE_INTERVAL
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.LINE_INTERVAL
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.LINE_SEPARATOR_WIDTH
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.MAX_POINTER_FOOTING_LENGTH
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.ROTATION_ANGLE
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.VALUE_LINE_MAX_LENGTH
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.V_CONTENT_PADDING
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_LABEL
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.HORIZONTAL
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation.VERTICAL
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.PointerDirection.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.SvgTooltipBox.Orientation.HORIZONTAL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.SvgTooltipBox.Orientation.VERTICAL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.SvgTooltipBox.PointerDirection.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import kotlin.math.max
 import kotlin.math.min
 
-class TooltipBox(
+class SvgTooltipBox(
     private val styleSheet: StyleSheet
 ) : SvgComponent() {
     enum class Orientation {
@@ -44,7 +28,7 @@ class TooltipBox(
         HORIZONTAL
     }
 
-    internal enum class PointerDirection {
+    enum class PointerDirection {
         LEFT,
         RIGHT,
         UP,
@@ -60,13 +44,13 @@ class TooltipBox(
     private val myPointerBox = PointerBox()
     private val myContentBox = ContentBox()
 
-    internal val pointerDirection get() = myPointerBox.pointerDirection // for tests
-    private var myHorizontalContentPadding = H_CONTENT_PADDING
-    private var myVerticalContentPadding = V_CONTENT_PADDING
+    val pointerDirection get() = myPointerBox.pointerDirection // for tests
+    private var myHorizontalContentPadding = TooltipRenderDefaults.H_CONTENT_PADDING
+    private var myVerticalContentPadding = TooltipRenderDefaults.V_CONTENT_PADDING
     private val myYPositionsBetweenLines = mutableListOf<Double>()
 
     // draw tooltip content rectangles in DEBUG_DRAWING mode
-    private val myDebugRectangles = RetainableComponents(
+    private val myDebugRectangles = ComponentPool(
         itemFactory = Companion::RectangleComponent,
         parent = this.rootGroup
     )
@@ -91,8 +75,16 @@ class TooltipBox(
         pointMarkerStrokeColor: Color = borderColor
     ) {
         val totalLines = lines.size + if (title != null) 1 else 0
-        myHorizontalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else H_CONTENT_PADDING
-        myVerticalContentPadding = if (totalLines > 1) CONTENT_EXTENDED_PADDING else V_CONTENT_PADDING
+        myHorizontalContentPadding = if (totalLines > 1) {
+            TooltipRenderDefaults.CONTENT_EXTENDED_PADDING
+        } else {
+            TooltipRenderDefaults.H_CONTENT_PADDING
+        }
+        myVerticalContentPadding = if (totalLines > 1) {
+            TooltipRenderDefaults.CONTENT_EXTENDED_PADDING
+        } else {
+            TooltipRenderDefaults.V_CONTENT_PADDING
+        }
         myYPositionsBetweenLines.clear()
 
         myContentBox.update(
@@ -113,7 +105,7 @@ class TooltipBox(
         rotate: Boolean = false
     ) {
         // Rotate component
-        val rotationAngle = if (rotate) ROTATION_ANGLE else 0.0
+        val rotationAngle = if (rotate) TooltipRenderDefaults.ROTATION_ANGLE else 0.0
         rotate(rotationAngle)
 
         val p = pointerCoord
@@ -133,7 +125,7 @@ class TooltipBox(
         svgSvgElement.id().set(id)
         svgSvgElement.setStyle(object : SvgCssResource {
             override fun css(): String {
-                return Style.generateCSS(styleSheet, id, prefix)
+                return TooltipCss.generateScopedCss(styleSheet, id)
             }
         })
 
@@ -264,7 +256,12 @@ class TooltipBox(
 
             if (usePointMarker) {
                 myHighlightPoint.d().set(trianglePointer(pointerCoord).build())
-                SvgUtils.transformRotate(myHighlightPoint, -2 * ROTATION_ANGLE, pointerCoord.x, pointerCoord.y)
+                SvgUtils.transformRotate(
+                    myHighlightPoint,
+                    -2 * TooltipRenderDefaults.ROTATION_ANGLE,
+                    pointerCoord.x,
+                    pointerCoord.y
+                )
                 myHighlightPoint.visibility().set(SvgGraphicsElement.Visibility.VISIBLE)
             } else {
                 myHighlightPoint.visibility().set(SvgGraphicsElement.Visibility.HIDDEN)
@@ -272,7 +269,10 @@ class TooltipBox(
         }
 
         private fun calculatePointerFootingIndent(sideLength: Double): Double {
-            val footingLength = min(sideLength * POINTER_FOOTING_TO_SIDE_LENGTH_RATIO, MAX_POINTER_FOOTING_LENGTH)
+            val footingLength = min(
+                sideLength * TooltipRenderDefaults.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO,
+                TooltipRenderDefaults.MAX_POINTER_FOOTING_LENGTH
+            )
             return (sideLength - footingLength) / 2
         }
 
@@ -392,8 +392,8 @@ class TooltipBox(
 
         private fun colorBarsWidth(barsNum: Int): List<Double> {
             // make color bar wider if there are more than one
-            val middleBarWidth = COLOR_BAR_WIDTH.takeIf { barsNum > 0 } ?: 0.0
-            val strokeBarWidth = COLOR_BAR_STROKE_WIDTH.takeIf { barsNum > 1 } ?: 0.0
+            val middleBarWidth = TooltipRenderDefaults.COLOR_BAR_WIDTH.takeIf { barsNum > 0 } ?: 0.0
+            val strokeBarWidth = TooltipRenderDefaults.COLOR_BAR_STROKE_WIDTH.takeIf { barsNum > 1 } ?: 0.0
             return listOf(
                 strokeBarWidth,
                 middleBarWidth,
@@ -454,13 +454,13 @@ class TooltipBox(
         }
 
         private fun initTitleComponent(titleLine: String): Label {
-            val fontSize = styleSheet.getTextStyle(TOOLTIP_TITLE).size
+            val fontSize = styleSheet.getTextStyle(TooltipCss.TOOLTIP_TITLE).size
             val titleComponent = Label(titleLine)
-            titleComponent.addClassName(TOOLTIP_TITLE)
+            titleComponent.addClassName(TooltipCss.TOOLTIP_TITLE)
             titleComponent.setFontSize(fontSize)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            val lineHeight = estimateLineHeight(titleLine, TOOLTIP_TITLE) ?: 0.0
-            titleComponent.setLineHeight(lineHeight + INTERVAL_BETWEEN_SUBSTRINGS)
+            val lineHeight = estimateLineHeight(titleLine, TooltipCss.TOOLTIP_TITLE) ?: 0.0
+            titleComponent.setLineHeight(lineHeight + TooltipRenderDefaults.INTERVAL_BETWEEN_SUBSTRINGS)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
@@ -506,20 +506,20 @@ class TooltipBox(
             tooltipMinWidth: Double?,
             textClassName: String
         ): DoubleVector {
-            val labelFontSize = styleSheet.getTextStyle(TOOLTIP_LABEL).size
+            val labelFontSize = styleSheet.getTextStyle(TooltipCss.TOOLTIP_LABEL).size
             val valueFontSize = styleSheet.getTextStyle(textClassName).size
             // bBoxes
             val components: List<Pair<Label?, Label>> = lines
                 .map { line ->
                     Pair(
                         line.label?.let(::Label),
-                        Label(line.value, wrapWidth = VALUE_LINE_MAX_LENGTH)
+                        Label(line.value, wrapWidth = TooltipRenderDefaults.VALUE_LINE_MAX_LENGTH)
                     )
                 }
             // for labels
             components.onEach { (labelComponent, _) ->
                 if (labelComponent != null) {
-                    labelComponent.addClassName(TOOLTIP_LABEL)
+                    labelComponent.addClassName(TooltipCss.TOOLTIP_LABEL)
                     labelComponent.setFontSize(labelFontSize)
                     myLinesContainer.children().add(labelComponent.rootGroup)
                 }
@@ -535,7 +535,7 @@ class TooltipBox(
             // calculate heights of original value lines
             val lineHeights = lines.map { line ->
                 listOfNotNull(
-                    estimateLineHeight(line.label, TOOLTIP_LABEL),
+                    estimateLineHeight(line.label, TooltipCss.TOOLTIP_LABEL),
                     estimateLineHeight(line.value, textClassName)
                 ).maxOrNull() ?: 0.0
             }
@@ -543,8 +543,8 @@ class TooltipBox(
             // sef vertical shifts for tspan elements
             lineHeights.zip(components).onEach { (height, component) ->
                 val (labelComponent, valueComponent) = component
-                labelComponent?.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
-                valueComponent.setLineHeight(height + INTERVAL_BETWEEN_SUBSTRINGS)
+                labelComponent?.setLineHeight(height + TooltipRenderDefaults.INTERVAL_BETWEEN_SUBSTRINGS)
+                valueComponent.setLineHeight(height + TooltipRenderDefaults.INTERVAL_BETWEEN_SUBSTRINGS)
             }
 
             val rawBBoxes = components.map { (label, value) -> getBBox(label) to getBBox(value) }
@@ -571,7 +571,7 @@ class TooltipBox(
 
                     else -> {
                         // align the label width to the maximum and add interval between label and value
-                        maxLabelWidth + LABEL_VALUE_INTERVAL
+                        maxLabelWidth + TooltipRenderDefaults.LABEL_VALUE_INTERVAL
                     }
                 }
             }
@@ -630,7 +630,7 @@ class TooltipBox(
 
                             if (valueComponent.linesCount() > 1) {
                                 // Use left alignment
-                                valueComponent.setX(maxLabelWidth + LABEL_VALUE_INTERVAL)
+                                valueComponent.setX(maxLabelWidth + TooltipRenderDefaults.LABEL_VALUE_INTERVAL)
                                 valueComponent.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
                             } else {
                                 valueComponent.setX(maxLineWidth)
@@ -652,13 +652,13 @@ class TooltipBox(
                     }
 
                     val y = yPosition + max(valueBBox.height, labelBBox.height)
-                    myYPositionsBetweenLines.add(y + LINE_INTERVAL / 2)
+                    myYPositionsBetweenLines.add(y + TooltipRenderDefaults.LINE_INTERVAL / 2)
 
                     DoubleVector(
                         x = maxLineWidth,
-                        y = y + LINE_INTERVAL
+                        y = y + TooltipRenderDefaults.LINE_INTERVAL
                     )
-                }.subtract(DoubleVector(0.0, LINE_INTERVAL)) // remove LINE_INTERVAL from last line
+                }.subtract(DoubleVector(0.0, TooltipRenderDefaults.LINE_INTERVAL)) // remove LINE_INTERVAL from last line
                 .also { myYPositionsBetweenLines.removeLastOrNull() }
 
             return textSize
@@ -666,7 +666,7 @@ class TooltipBox(
 
         private fun drawLineSeparators(yTitleLinePosition: Double?, yPositionsBetweenLines: List<Double>) {
             fun drawLineSeparator(path: SvgPathElement, toSvgElem: SvgSvgElement) {
-                path.strokeWidth().set(LINE_SEPARATOR_WIDTH)
+                path.strokeWidth().set(TooltipRenderDefaults.LINE_SEPARATOR_WIDTH)
                 path.strokeOpacity().set(1.0)
                 path.strokeColor().set(Color.gray(80))
 

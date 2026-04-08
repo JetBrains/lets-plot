@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.core.plot.builder.tooltip
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
@@ -6,8 +11,8 @@ import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.SvgTooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -16,7 +21,7 @@ import kotlin.test.assertNull
 
 class TooltipBoxTest {
     private lateinit var peer: MockSvgPlatformPeer
-    private lateinit var tooltipBox: TooltipBox
+    private lateinit var tooltipBox: SvgTooltipBox
     private val root = SvgSvgElement()
 
     @Suppress("unused") // removing of this val will break all tests
@@ -32,12 +37,12 @@ class TooltipBoxTest {
             labelsBbox(word)
         }
 
-        tooltipBox = TooltipBox(Style.default()).apply {
+        tooltipBox = SvgTooltipBox(Style.default()).apply {
             root.children().add(rootGroup)
             update(
-                fillColor = Color.Companion.BLACK,
-                textColor = Color.Companion.WHITE,
-                borderColor = Color.Companion.BLACK,
+                fillColor = Color.BLACK,
+                textColor = Color.WHITE,
+                borderColor = Color.BLACK,
                 strokeWidth = 1.0,
                 lineType = NamedLineType.SOLID,
                 lines = listOf(TooltipSpec.Line.withValue(wordText)),
@@ -52,20 +57,20 @@ class TooltipBoxTest {
     @Test
     fun nullDirectionCases() {
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, wordSize.mul(0.5), TooltipBox.Orientation.HORIZONTAL)
+            setPosition(DoubleVector.ZERO, wordSize.mul(0.5), SvgTooltipBox.Orientation.HORIZONTAL)
             assertNull(pointerDirection, "Pointer inside tooltip - direction should be null")
         }
 
         tooltipBox.apply {
             setPosition(
-                DoubleVector.Companion.ZERO, p(wordSize.x / 2.0, wordSize.y + 100.0),
-                TooltipBox.Orientation.HORIZONTAL
+                DoubleVector.ZERO, p(wordSize.x / 2.0, wordSize.y + 100.0),
+                SvgTooltipBox.Orientation.HORIZONTAL
             )
             assertNull(pointerDirection, "Pointer x coord within tooltips x range - direction should be null")
         }
 
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, p(wordSize.x + 100.0, 4.0), TooltipBox.Orientation.VERTICAL)
+            setPosition(DoubleVector.ZERO, p(wordSize.x + 100.0, 4.0), SvgTooltipBox.Orientation.VERTICAL)
             assertNull(pointerDirection, "Pointer y coord within tooltips y range - direction should be null")
         }
     }
@@ -73,19 +78,19 @@ class TooltipBoxTest {
     @Test
     fun verticalDirectionCases() {
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, wordSize.add(p(0.0, 20.0)), TooltipBox.Orientation.VERTICAL)
+            setPosition(DoubleVector.ZERO, wordSize.add(p(0.0, 20.0)), SvgTooltipBox.Orientation.VERTICAL)
             assertEquals(
                 pointerDirection,
-                TooltipBox.PointerDirection.DOWN,
+                SvgTooltipBox.PointerDirection.DOWN,
                 "Pointer above tooltip - PointerDirection.DOWN"
             )
         }
 
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, p(0.0, -10.0), TooltipBox.Orientation.VERTICAL)
+            setPosition(DoubleVector.ZERO, p(0.0, -10.0), SvgTooltipBox.Orientation.VERTICAL)
             assertEquals(
                 pointerDirection,
-                TooltipBox.PointerDirection.UP,
+                SvgTooltipBox.PointerDirection.UP,
                 "Pointer under tooltip - PointerDirection.UP"
             )
         }
@@ -94,19 +99,19 @@ class TooltipBoxTest {
     @Test
     fun horizontalDirectionCases() {
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, wordSize.add(p(20.0, 0.0)), TooltipBox.Orientation.HORIZONTAL)
+            setPosition(DoubleVector.ZERO, wordSize.add(p(20.0, 0.0)), SvgTooltipBox.Orientation.HORIZONTAL)
             assertEquals(
                 pointerDirection,
-                TooltipBox.PointerDirection.RIGHT,
+                SvgTooltipBox.PointerDirection.RIGHT,
                 "Pointer right from tooltip - PointerDirection.LEFT"
             )
         }
 
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, p(-10.0, 0.0), TooltipBox.Orientation.HORIZONTAL)
+            setPosition(DoubleVector.ZERO, p(-10.0, 0.0), SvgTooltipBox.Orientation.HORIZONTAL)
             assertEquals(
                 pointerDirection,
-                TooltipBox.PointerDirection.LEFT,
+                SvgTooltipBox.PointerDirection.LEFT,
                 "Pointer left from tooltip - PointerDirection.RIGHT"
             )
         }

@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.builder.tooltip
+package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.commons.event.Button.LEFT
 import org.jetbrains.letsPlot.commons.event.MouseEvent
@@ -22,22 +22,14 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.HorizontalAlignment
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.MeasuredTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TransformedTargetLocator
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.BORDER_RADIUS
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.DARK_TEXT_COLOR
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.MARGIN_BETWEEN_TOOLTIPS
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.CrosshairComponent
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.RetainableComponents
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox.Orientation
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.SvgTooltipBox.Orientation
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -45,7 +37,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 
-internal class TooltipRenderer(
+class TooltipInteractor(
     decorationLayer: SvgNode,
     private val flippedAxis: Boolean,
     plotSize: DoubleVector,
@@ -60,29 +52,33 @@ internal class TooltipRenderer(
     private val regs = CompositeRegistration()
     private val myLayoutManager: LayoutManager
     private val myTooltipLayer: SvgGElement
-    private val measuringTooltipBox: TooltipBox
+    private val measuringTooltipBox: SvgTooltipBox
     private val myTileInfos = ArrayList<TileInfo>()
-    private val tooltipStorage: RetainableComponents<TooltipBox>
-    private val crosshairStorage: RetainableComponents<CrosshairComponent>
+    private val tooltipStorage: ComponentPool<SvgTooltipBox>
+    private val crosshairStorage: ComponentPool<SvgCrosshair>
     private val fadeEffectRect: SvgRectElement
     private var pinned = false
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
-        myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, MARGIN_BETWEEN_TOOLTIPS)
-        measuringTooltipBox = TooltipBox(styleSheet).apply {
+        myLayoutManager = LayoutManager(
+            viewport,
+            HorizontalAlignment.LEFT,
+            TooltipRenderDefaults.MARGIN_BETWEEN_TOOLTIPS
+        )
+        measuringTooltipBox = SvgTooltipBox(styleSheet).apply {
             rootGroup.visibility().set(Visibility.HIDDEN)
         }
 
         myTooltipLayer = SvgGElement().also { decorationLayer.children().add(it) }
         myTooltipLayer.children().add(measuringTooltipBox.rootGroup)
 
-        crosshairStorage = RetainableComponents(
-            itemFactory = ::CrosshairComponent,
+        crosshairStorage = ComponentPool(
+            itemFactory = ::SvgCrosshair,
             parent = SvgGElement().also { myTooltipLayer.children().add(it) }
         )
-        tooltipStorage = RetainableComponents(
-            itemFactory = { TooltipBox(styleSheet) },
+        tooltipStorage = ComponentPool(
+            itemFactory = { SvgTooltipBox(styleSheet) },
             parent = SvgGElement().also { myTooltipLayer.children().add(it) }
         )
 
@@ -332,12 +328,12 @@ internal class TooltipRenderer(
     private val TooltipSpec.style
         get() =
             when (layoutHint.kind) {
-                X_AXIS_TOOLTIP -> "${Style.AXIS_TOOLTIP_TEXT}-${xAxisTheme.axis}"
-                Y_AXIS_TOOLTIP -> "${Style.AXIS_TOOLTIP_TEXT}-${yAxisTheme.axis}"
-                VERTICAL_TOOLTIP -> Style.TOOLTIP_TEXT
-                HORIZONTAL_TOOLTIP -> Style.TOOLTIP_TEXT
-                CURSOR_TOOLTIP -> Style.TOOLTIP_TEXT
-                ROTATED_TOOLTIP -> Style.TOOLTIP_TEXT
+                X_AXIS_TOOLTIP -> TooltipCss.axisTextClass(xAxisTheme.axis)
+                Y_AXIS_TOOLTIP -> TooltipCss.axisTextClass(yAxisTheme.axis)
+                VERTICAL_TOOLTIP -> TooltipCss.TOOLTIP_TEXT
+                HORIZONTAL_TOOLTIP -> TooltipCss.TOOLTIP_TEXT
+                CURSOR_TOOLTIP -> TooltipCss.TOOLTIP_TEXT
+                ROTATED_TOOLTIP -> TooltipCss.TOOLTIP_TEXT
             }
 
     private val LayoutManager.PositionedTooltip.orientation
@@ -351,7 +347,7 @@ internal class TooltipRenderer(
                 ROTATED_TOOLTIP -> Orientation.VERTICAL
             }
 
-    private fun applySpec(tooltipBox: TooltipBox, spec: TooltipSpec) {
+    private fun applySpec(tooltipBox: SvgTooltipBox, spec: TooltipSpec) {
         val fillColor = when {
             spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
             spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipFill()
@@ -362,7 +358,11 @@ internal class TooltipRenderer(
         val borderColor = when {
             spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
             spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
-            spec.isSide -> if (fillColor.isDark()) LIGHT_TEXT_COLOR else DARK_TEXT_COLOR
+            spec.isSide -> if (fillColor.isDark()) {
+                TooltipRenderDefaults.LIGHT_TEXT_COLOR
+            } else {
+                TooltipRenderDefaults.DARK_TEXT_COLOR
+            }
             else -> tooltipsTheme.tooltipColor()
         }
 
@@ -384,7 +384,7 @@ internal class TooltipRenderer(
 
         val borderRadius = when (spec.layoutHint.kind) {
             X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> 0.0
-            else -> BORDER_RADIUS
+            else -> TooltipRenderDefaults.BORDER_RADIUS
         }
 
         tooltipBox

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.TooltipCss
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
@@ -27,10 +28,10 @@ object Style {
     const val LEGEND_TITLE = "legend-title"
     const val LEGEND_ITEM = "legend-item"
 
-    const val TOOLTIP_TEXT = "tooltip-text"
-    const val TOOLTIP_TITLE = "tooltip-title"
-    const val TOOLTIP_LABEL = "tooltip-label"
-    const val AXIS_TOOLTIP_TEXT = "axis-tooltip-text"
+    const val TOOLTIP_TEXT = TooltipCss.TOOLTIP_TEXT
+    const val TOOLTIP_TITLE = TooltipCss.TOOLTIP_TITLE
+    const val TOOLTIP_LABEL = TooltipCss.TOOLTIP_LABEL
+    const val AXIS_TOOLTIP_TEXT = TooltipCss.AXIS_TOOLTIP_TEXT
 
     const val FACET_STRIP_TEXT = "facet-strip-text"
 
@@ -51,15 +52,7 @@ object Style {
         val css = StringBuilder(CSS)
         css.append('\n')
         styleSheet.getClasses().forEach { className ->
-            val id = when (className) {
-                TOOLTIP_TEXT,
-                TOOLTIP_TITLE,
-                TOOLTIP_LABEL,
-                "$AXIS_TOOLTIP_TEXT-x",
-                "$AXIS_TOOLTIP_TEXT-y" -> decorationLayerId
-
-                else -> plotId
-            }
+            val id = if (TooltipCss.isTooltipTextClass(className)) decorationLayerId else plotId
             css.append(styleSheet.toCSS(className, id))
         }
         return css.toString()

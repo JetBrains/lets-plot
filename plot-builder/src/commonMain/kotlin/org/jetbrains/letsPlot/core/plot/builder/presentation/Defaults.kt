@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.core.plot.base.tooltip.render.TooltipRenderDefaults
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Plot.Axis
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
@@ -73,28 +74,28 @@ object Defaults {
         }
 
         object Tooltip {
-            const val MAX_POINTER_FOOTING_LENGTH = 12.0
-            const val POINTER_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
+            const val MAX_POINTER_FOOTING_LENGTH = TooltipRenderDefaults.MAX_POINTER_FOOTING_LENGTH
+            const val POINTER_FOOTING_TO_SIDE_LENGTH_RATIO = TooltipRenderDefaults.POINTER_FOOTING_TO_SIDE_LENGTH_RATIO
 
-            const val MARGIN_BETWEEN_TOOLTIPS = 5.0
+            const val MARGIN_BETWEEN_TOOLTIPS = TooltipRenderDefaults.MARGIN_BETWEEN_TOOLTIPS
             const val DATA_TOOLTIP_FONT_SIZE = FONT_SMALL
-            const val LINE_INTERVAL = 6.0
-            const val INTERVAL_BETWEEN_SUBSTRINGS = 3.0
-            const val H_CONTENT_PADDING = 6.0
-            const val V_CONTENT_PADDING = 6.0
-            const val CONTENT_EXTENDED_PADDING = 10.0
+            const val LINE_INTERVAL = TooltipRenderDefaults.LINE_INTERVAL
+            const val INTERVAL_BETWEEN_SUBSTRINGS = TooltipRenderDefaults.INTERVAL_BETWEEN_SUBSTRINGS
+            const val H_CONTENT_PADDING = TooltipRenderDefaults.H_CONTENT_PADDING
+            const val V_CONTENT_PADDING = TooltipRenderDefaults.V_CONTENT_PADDING
+            const val CONTENT_EXTENDED_PADDING = TooltipRenderDefaults.CONTENT_EXTENDED_PADDING
 
-            const val LABEL_VALUE_INTERVAL = 8.0
-            const val VALUE_LINE_MAX_LENGTH = 30
+            const val LABEL_VALUE_INTERVAL = TooltipRenderDefaults.LABEL_VALUE_INTERVAL
+            const val VALUE_LINE_MAX_LENGTH = TooltipRenderDefaults.VALUE_LINE_MAX_LENGTH
 
-            const val LINE_SEPARATOR_WIDTH = 0.7
+            const val LINE_SEPARATOR_WIDTH = TooltipRenderDefaults.LINE_SEPARATOR_WIDTH
 
-            const val BORDER_RADIUS = 4.0
-            const val COLOR_BAR_WIDTH = 4.0
-            const val COLOR_BAR_STROKE_WIDTH = 1.5
+            const val BORDER_RADIUS = TooltipRenderDefaults.BORDER_RADIUS
+            const val COLOR_BAR_WIDTH = TooltipRenderDefaults.COLOR_BAR_WIDTH
+            const val COLOR_BAR_STROKE_WIDTH = TooltipRenderDefaults.COLOR_BAR_STROKE_WIDTH
 
-            val DARK_TEXT_COLOR = Color.BLACK
-            val LIGHT_TEXT_COLOR = Color.WHITE
+            val DARK_TEXT_COLOR = TooltipRenderDefaults.DARK_TEXT_COLOR
+            val LIGHT_TEXT_COLOR = TooltipRenderDefaults.LIGHT_TEXT_COLOR
 
             const val AXIS_TOOLTIP_FONT_SIZE = Plot.Axis.TICK_FONT_SIZE
             val AXIS_TOOLTIP_COLOR = Plot.Axis.LINE_COLOR
@@ -103,7 +104,7 @@ object Defaults {
             // was 1.5 to fix a tooltip border overlapping an axis, but now TipLayoutHint has stroke property
             const val AXIS_RADIUS = 0.0
 
-            const val ROTATION_ANGLE = 15.0
+            const val ROTATION_ANGLE = TooltipRenderDefaults.ROTATION_ANGLE
         }
     }
 
