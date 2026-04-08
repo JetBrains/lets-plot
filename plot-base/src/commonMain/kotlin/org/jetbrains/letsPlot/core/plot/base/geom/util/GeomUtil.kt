@@ -116,13 +116,13 @@ object GeomUtil {
     }
 
     @Suppress("FunctionName")
-    fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
-        return dataPoints.filter(WITH_X_Y::invoke)
+    fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+        return dataPoints.partition(WITH_X_Y::invoke)
     }
 
     @Suppress("FunctionName")
-    fun with_X(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
-        return dataPoints.filter(WITH_X::invoke)
+    fun with_X(dataPoints: Iterable<DataPointAesthetics>): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+        return dataPoints.partition(WITH_X::invoke)
     }
 
     @Suppress("FunctionName")
@@ -151,8 +151,8 @@ object GeomUtil {
         dataPoints: Iterable<DataPointAesthetics>,
         aes0: Aes<*>,
         aes1: Aes<*>
-    ): Iterable<DataPointAesthetics> {
-        return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) }
+    ): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+        return dataPoints.partition { p -> p.defined(aes0) && p.defined(aes1) }
     }
 
     fun withDefined(
@@ -160,8 +160,8 @@ object GeomUtil {
         aes0: Aes<*>,
         aes1: Aes<*>,
         aes2: Aes<*>
-    ): Iterable<DataPointAesthetics> {
-        return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) }
+    ): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+        return dataPoints.partition { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) }
     }
 
     fun withDefined(
@@ -170,8 +170,19 @@ object GeomUtil {
         aes1: Aes<*>,
         aes2: Aes<*>,
         aes3: Aes<*>
-    ): Iterable<DataPointAesthetics> {
-        return dataPoints.filter { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
+    ): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+        return dataPoints.partition { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
+    }
+
+    fun withDefined(
+        dataPoints: Iterable<DataPointAesthetics>,
+        aes0: Aes<*>,
+        aes1: Aes<*>,
+        aes2: Aes<*>,
+        aes3: Aes<*>,
+        aes4: Aes<*>
+    ): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+        return dataPoints.partition { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) && p.defined(aes4) }
     }
 
     fun createPathDataFromRectangle(

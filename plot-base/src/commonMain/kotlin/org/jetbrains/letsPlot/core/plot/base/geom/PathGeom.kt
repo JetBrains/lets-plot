@@ -31,9 +31,7 @@ open class PathGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val source = aesthetics.dataPoints()
-        val dataPoints = filterDataPoints(source)
-        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(!coord.isLinear && !flat)
@@ -46,7 +44,10 @@ open class PathGeom : GeomBase() {
 
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
-        ctx.droppedPointsReporter().report(filteredPointsIds + linesHelper.getDroppedPointsIds())
+
+        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
+        val droppedPointsIds = linesHelper.getDroppedPointsIds().asSequence()
+        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
     }
 
     companion object {

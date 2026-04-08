@@ -24,6 +24,10 @@ open class PointGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
 
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y, Aes.SIZE)
+    }
+
     public override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -35,12 +39,10 @@ open class PointGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
 
-        val source = aesthetics.dataPoints()
-        val dataPoints = GeomUtil.withDefined(source, Aes.X, Aes.Y, Aes.SIZE)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 
-        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
         val slimGroup = SvgSlimElements.g(dataPoints.count())
-        val droppedPointsIds = LinkedHashSet<Int>()
+        val droppedPointsIds = mutableSetOf<Int>()
 
         for (p in dataPoints) {
             val point = p.finiteVectorOrNull(Aes.X, Aes.Y)!!
@@ -72,7 +74,8 @@ open class PointGeom : GeomBase() {
             PointShapeSvg.create(shape, location, p, scaleFactor)
                 .appendTo(slimGroup)
         }
-        ctx.droppedPointsReporter().report(filteredPointsIds + droppedPointsIds)
+        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
+        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
         root.add(wrap(slimGroup))
     }
 

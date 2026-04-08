@@ -111,7 +111,7 @@ class LinesHelperResamplingTest {
             BogusContext, DensityStat.DEF_QUANTILES
         )
 
-        val dataPoints = GeomUtil.withDefined(GeomUtil.ordered_X(aes.dataPoints()), Aes.X, Aes.Y)
+        val (dataPoints, _) = GeomUtil.withDefined(GeomUtil.ordered_X(aes.dataPoints()), Aes.X, Aes.Y)
 
         val actual = HashMap<Int?, List<DoubleVector>>()
 

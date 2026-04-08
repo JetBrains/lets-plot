@@ -26,9 +26,9 @@ open class AreaGeom : GeomBase() {
 
     override fun rangeIncludesZero(aes: Aes<*>): Boolean = (aes == Aes.Y)
 
-    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        val data = GeomUtil.with_X(dataPoints)
-        return GeomUtil.ordered_X(data)
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        val (data, invalid) = GeomUtil.with_X(dataPoints)
+        return GeomUtil.ordered_X(data) to invalid
     }
 
     override fun buildIntern(
@@ -47,9 +47,7 @@ open class AreaGeom : GeomBase() {
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles)
         val targetCollectorHelper = TargetCollectorHelper(ctx)
 
-        val source = aesthetics.dataPoints()
-        val dataPoints = filterDataPoints(source)
-        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 
         val closePath = linesHelper.meetsRadarPlotReq()
         dataPoints.sortedByDescending(DataPointAesthetics::group).groupBy(DataPointAesthetics::group)
@@ -75,7 +73,10 @@ open class AreaGeom : GeomBase() {
                     createQuantileLines(groupDataPoints, quantilesHelper).forEach(root::add)
                 }
             }
-        ctx.droppedPointsReporter().report(filteredPointsIds + linesHelper.getDroppedPointsIds())
+
+        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
+        val droppedPointsIds = linesHelper.getDroppedPointsIds().asSequence()
+        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
     }
 
     private fun createQuantileLines(

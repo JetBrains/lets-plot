@@ -58,7 +58,7 @@ internal class DataPointsConverter(
             clockwise = geom.clockwise
         )
 
-        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
+        val (definedDataPoints, _) = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
         return MultiDataPointHelper.getPoints(definedDataPoints)
             .map {
                 DataPointLiveMapAesthetics(it, MapLayerKind.PIE).apply {

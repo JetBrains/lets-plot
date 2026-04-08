@@ -41,8 +41,8 @@ abstract class GeomBase : Geom {
         return ctx.targetCollector
     }
 
-    open fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        return dataPoints
+    open fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return dataPoints to emptyList()
     }
 
     protected abstract fun buildIntern(
@@ -86,10 +86,6 @@ abstract class GeomBase : Geom {
             for (path in paths) {
                 add(path.rootGroup)
             }
-        }
-
-        fun Iterable<DataPointAesthetics>.excludedIndicesComparedTo(other: Iterable<DataPointAesthetics>): Set<Int> {
-            return mapTo(HashSet()) { it.index() } - other.mapTo(HashSet()) { it.index() }
         }
     }
 }

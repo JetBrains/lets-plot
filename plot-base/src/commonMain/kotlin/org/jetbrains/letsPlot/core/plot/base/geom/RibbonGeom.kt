@@ -21,9 +21,9 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL
 
 class RibbonGeom : GeomBase() {
 
-    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        val data = GeomUtil.with_X(dataPoints)
-        return GeomUtil.ordered_X(data)
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        val (data, invalid) = GeomUtil.with_X(dataPoints)
+        return GeomUtil.ordered_X(data) to invalid
     }
 
     override fun buildIntern(
@@ -33,9 +33,7 @@ class RibbonGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val source = aesthetics.dataPoints()
-        val dataPoints = filterDataPoints(source)
-        val filteredPointsIds = source.excludedIndicesComparedTo(dataPoints)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 
         val linesHelper = LinesHelper(pos, coord, ctx)
 
@@ -50,7 +48,10 @@ class RibbonGeom : GeomBase() {
         root.appendNodes(linesHelper.createLines(dataPoints, TO_LOCATION_X_YMIN))
 
         buildHints(aesthetics, pos, coord, ctx)
-        ctx.droppedPointsReporter().report(filteredPointsIds + linesHelper.getDroppedPointsIds())
+
+        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
+        val droppedPointsIds = linesHelper.getDroppedPointsIds().asSequence()
+        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
