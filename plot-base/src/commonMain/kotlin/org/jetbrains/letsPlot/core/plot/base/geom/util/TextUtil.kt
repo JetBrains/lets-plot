@@ -277,8 +277,11 @@ object TextUtil {
             ?: fontSize
 
         val yPosition = vAnchor(p, location, boundsCenter).let { vjust ->
-            val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
-            location.y + (vjust - 1) * textSize.y + correction(1.0 - 0.3 * vjust)
+            // totalShift is selected by eye to look good with both normal height lines and double height lines (fractions).
+            val basicShift = (fontSize + firstLineHeight) / 2
+            val shiftCorrectionRange = fontSize / 4
+            val totalShift = basicShift - vjust * shiftCorrectionRange
+            location.y + (vjust - 1) * textSize.y + totalShift
         }
 
         val textLocation = DoubleVector(location.x, yPosition)
