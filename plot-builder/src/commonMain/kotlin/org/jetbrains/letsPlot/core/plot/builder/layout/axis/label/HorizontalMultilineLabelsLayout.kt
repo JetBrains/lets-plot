@@ -87,6 +87,9 @@ internal class HorizontalMultilineLabelsLayout(
                 else -> offsets.map { DoubleVector(it.x, -it.y) }
             }
         }
+        val adjustedLabelBoundsList = boundsList.mapIndexed { i, labelBounds ->
+            labelBounds.add(labelAdditionalOffsets[i])
+        }
 
         val labelBounds = applyLabelMargins(bounds)
         val verticalAnchor = when (orientation) {
@@ -100,6 +103,7 @@ internal class HorizontalMultilineLabelsLayout(
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(verticalAnchor)
+            .labelBoundsList(adjustedLabelBoundsList.map(::alignToLabelMargin))
             .build()
     }
 
