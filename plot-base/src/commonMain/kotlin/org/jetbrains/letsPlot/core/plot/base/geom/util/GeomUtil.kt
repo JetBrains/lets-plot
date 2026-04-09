@@ -116,18 +116,18 @@ object GeomUtil {
     }
 
     @Suppress("FunctionName")
-    fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+    fun with_X_Y(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         return dataPoints.partition(WITH_X_Y::invoke)
     }
 
     @Suppress("FunctionName")
-    fun with_X(dataPoints: Iterable<DataPointAesthetics>): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+    fun with_X(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         return dataPoints.partition(WITH_X::invoke)
     }
 
     @Suppress("FunctionName")
-    fun with_Y(dataPoints: Iterable<DataPointAesthetics>): List<DataPointAesthetics> {
-        return dataPoints.filter(WITH_Y::invoke)
+    fun with_Y(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return dataPoints.partition(WITH_Y::invoke)
     }
 
     @Suppress("FunctionName")
@@ -151,7 +151,7 @@ object GeomUtil {
         dataPoints: Iterable<DataPointAesthetics>,
         aes0: Aes<*>,
         aes1: Aes<*>
-    ): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+    ): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         return dataPoints.partition { p -> p.defined(aes0) && p.defined(aes1) }
     }
 
@@ -160,7 +160,7 @@ object GeomUtil {
         aes0: Aes<*>,
         aes1: Aes<*>,
         aes2: Aes<*>
-    ): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+    ): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         return dataPoints.partition { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) }
     }
 
@@ -170,7 +170,7 @@ object GeomUtil {
         aes1: Aes<*>,
         aes2: Aes<*>,
         aes3: Aes<*>
-    ): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+    ): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         return dataPoints.partition { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) }
     }
 
@@ -181,7 +181,7 @@ object GeomUtil {
         aes2: Aes<*>,
         aes3: Aes<*>,
         aes4: Aes<*>
-    ): Pair<List<DataPointAesthetics>, List<DataPointAesthetics>> {
+    ): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         return dataPoints.partition { p -> p.defined(aes0) && p.defined(aes1) && p.defined(aes2) && p.defined(aes3) && p.defined(aes4) }
     }
 
