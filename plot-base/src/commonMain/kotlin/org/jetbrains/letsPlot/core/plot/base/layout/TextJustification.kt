@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.base.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import kotlin.math.pow
 
 class TextJustification(val x: Double, val y: Double) {
 
@@ -39,10 +38,12 @@ class TextJustification(val x: Double, val y: Double) {
             return position to hAnchor
         }
 
-        fun verticalCorrectionFactor(lineHeight: Double, fontSize: Double): (Double) -> Double {
-            return { correctionCoefficient ->
+        fun verticalCorrectionFactor(firstLineHeight: Double, fontSize: Double): (Double) -> Double {
+            return { vjust ->
                 // It's selected by eye to look good with both normal height lines and double height lines (fractions).
-                lineHeight * correctionCoefficient.pow(lineHeight / fontSize)
+                val basicCorrection = (fontSize + firstLineHeight) / 2
+                val vjustCorrectionCoefficient = fontSize / 4
+                basicCorrection - vjust * vjustCorrectionCoefficient
             }
         }
 
