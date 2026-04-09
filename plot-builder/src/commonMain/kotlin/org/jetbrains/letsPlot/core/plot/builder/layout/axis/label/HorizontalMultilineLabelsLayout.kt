@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.BOTTOM
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.TOP
-import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 
 internal class HorizontalMultilineLabelsLayout(
     orientation: Orientation,
@@ -72,16 +71,16 @@ internal class HorizontalMultilineLabelsLayout(
         }
 
         var dy = 0.0
-        for ((i, shelfBounds) in boundsByShelfIndex.withIndex()) {
+        for (shelfBounds in boundsByShelfIndex) {
             bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, dy)))
-            dy += (i + 1) * shelfBounds.height * LINE_HEIGHT
+            dy += shelfBounds.height * LINE_HEIGHT
         }
 
         val linesCount = boundsByShelfIndex.size
         val labelAdditionalOffsets = labelAdditionalOffsets(
-            labelSpec,
             breaks,
-            shelfIndexForTickIndex
+            shelfIndexForTickIndex,
+            boundsByShelfIndex
         ).let { offsets ->
             when (orientation) {
                 BOTTOM -> offsets
@@ -115,14 +114,21 @@ internal class HorizontalMultilineLabelsLayout(
         private const val MIN_DISTANCE = 60
 
         private fun labelAdditionalOffsets(
-            labelSpec: LabelSpec,
             breaks: ScaleBreaks,
-            shelfIndexForTickIndex: List<Int>
+            shelfIndexForTickIndex: List<Int>,
+            shelfBounds: List<DoubleRectangle>
         ): List<DoubleVector> {
-            val heights = breaks.labels.map { (labelSpec.heights(it).maxOrNull() ?: labelSpec.regularLineHeight()) * LINE_HEIGHT }
+            // Cumulative shelf offsets: offset[k] = sum of heights of shelves 0..k-1
+            val shelfOffsets = ArrayList<Double>()
+            var cumulative = 0.0
+            for (bounds in shelfBounds) {
+                shelfOffsets.add(cumulative)
+                cumulative += bounds.height * LINE_HEIGHT
+            }
+
             val result = ArrayList<DoubleVector>()
             for (i in 0 until breaks.size) {
-                result.add(DoubleVector(0.0, shelfIndexForTickIndex[i] * heights[i]))
+                result.add(DoubleVector(0.0, shelfOffsets[shelfIndexForTickIndex[i]]))
             }
             return result
         }
