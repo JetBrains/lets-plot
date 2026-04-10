@@ -41,6 +41,7 @@ class TextJustification(val x: Double, val y: Double) {
         fun verticalCorrectionFactor(firstLineHeight: Double, fontSize: Double): (Double) -> Double {
             return { vjust ->
                 // It's selected by eye to look good with both normal height lines and double height lines (fractions).
+                // It centers text at vjust = 0.5, though callers usually nudge it slightly upward for better visuals.
                 val basicCorrection = (fontSize + firstLineHeight) / 2
                 val vjustCorrectionCoefficient = fontSize / 4
                 basicCorrection - vjust * vjustCorrectionCoefficient
