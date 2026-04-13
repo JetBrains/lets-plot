@@ -153,8 +153,9 @@ object TextUtil {
 
     fun decorate(label: Label, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0, applyAlpha: Boolean = true) {
         decorateLabelStyle(label, p, scale, applyAlpha)
+        val lineInterval = (p.lineheight()!! - 1) * fontSize(p, scale)
         label.setLineHeights(
-            estimatedLineHeights(label.text, p, ctx, scale).map { p.lineheight()!! * it }
+            estimatedLineHeights(label.text, p, ctx, scale).map { it + lineInterval }
         )
     }
 
@@ -273,7 +274,6 @@ object TextUtil {
         val textSize = measure(text, p, ctx, sizeUnitRatio)
         val firstLineHeight = estimatedLineHeights(text, p, ctx, sizeUnitRatio)
             .firstOrNull()
-            ?.let { p.lineheight()!! * it }
             ?: fontSize
 
         val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
@@ -331,7 +331,6 @@ object TextUtil {
         }
         val firstLineHeight = estimatedLineHeights(text, p, ctx, sizeUnitRatio)
             .firstOrNull()
-            ?.let { p.lineheight()!! * it }
             ?: fontSize
         val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
         val textPosition = DoubleVector(
