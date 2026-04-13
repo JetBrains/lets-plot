@@ -50,6 +50,10 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             get() = this == INNER || this == BOTH
     }
 
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y, Aes.SLICE)
+    }
+
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PieLegendKeyElementFactory()
 
@@ -61,7 +65,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
+        val (validDataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
+        validDataPoints
             .groupBy { p -> DoubleVector(p.x()!!, p.y()!!) }
             .forEach { (point, dataPoints) ->
                 val sizeUnitRatio = AesScaling.sizeUnitRatio(point, coord, sizeUnit, AesScaling.PIE_UNIT_SIZE)
@@ -81,6 +86,8 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
 
                 ctx.annotation?.let { PieAnnotation.build(root, pieSectors, ctx) }
             }
+
+        ctx.droppedPointsReporter().report(invalidDataPoints)
     }
 
     private fun SvgPathDataBuilder.svgOuterArc(sector: Sector) {

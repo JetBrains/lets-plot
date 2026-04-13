@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.FacetedPlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.assemble.tiles.SimplePlotGeomTiles
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
+import org.jetbrains.letsPlot.core.spec.Option.Layer.NA_RM
 import org.jetbrains.letsPlot.core.spec.PlotConfigUtil
 import org.jetbrains.letsPlot.core.spec.config.LayerConfig
 import org.jetbrains.letsPlot.core.spec.config.PlotConfigTransforms
@@ -104,7 +105,8 @@ internal object PlotTilesConfig {
             layerBuilder.build(
                 layerConfigs[layerIndex].combinedData,
                 scalesByLayerBeforeFacets[layerIndex],
-                mappersNP
+                mappersNP,
+                layerConfigs[layerIndex].getBoolean(NA_RM)
             )
         }
 
@@ -184,6 +186,7 @@ internal object PlotTilesConfig {
                     layerData,
                     tileLayerScales,
                     mappersByAesNP,
+                    layerConfigs[layerIndex].getBoolean(NA_RM)
                 )
             }
 

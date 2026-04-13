@@ -7,8 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.ordered_X
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.with_X_Y
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection.HintConfigFactory
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -21,6 +19,11 @@ class SmoothGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        val (data, invalid) = GeomUtil.with_X_Y(dataPoints)
+        return GeomUtil.ordered_X(data) to invalid
+    }
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -28,20 +31,22 @@ class SmoothGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = ordered_X(with_X_Y(aesthetics.dataPoints()))
-        val helper = LinesHelper(pos, coord, ctx)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
+        val linesHelper = LinesHelper(pos, coord, ctx)
 
-        helper.setAlphaEnabled(false)
+        linesHelper.setAlphaEnabled(false)
 
         // Confidence interval
-        val bands = helper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
+        val bands = linesHelper.createBands(dataPoints, GeomUtil.TO_LOCATION_X_YMAX, GeomUtil.TO_LOCATION_X_YMIN)
         root.appendNodes(bands)
 
         // Regression line
-        val regressionLines = helper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
+        val regressionLines = linesHelper.createLines(dataPoints, GeomUtil.TO_LOCATION_X_Y)
         root.appendNodes(regressionLines)
 
         buildHints(dataPoints, pos, coord, ctx)
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     private fun buildHints(

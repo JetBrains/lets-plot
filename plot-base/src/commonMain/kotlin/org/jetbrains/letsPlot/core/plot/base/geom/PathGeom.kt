@@ -21,8 +21,6 @@ open class PathGeom : GeomBase() {
     var flat: Boolean = false
     var geodesic: Boolean = false
 
-    override val geomName: String = "path"
-
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = HLineGeom.LEGEND_KEY_ELEMENT_FACTORY
 
@@ -33,8 +31,9 @@ open class PathGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
-        val linesHelper = LinesHelper(pos, coord, ctx, ::addNulls)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
+
+        val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(!coord.isLinear && !flat)
 
         val closePath = linesHelper.meetsRadarPlotReq()
@@ -45,6 +44,8 @@ open class PathGeom : GeomBase() {
 
         val svgPath = linesHelper.renderPaths(pathData, filled = false)
         root.appendNodes(svgPath)
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     companion object {

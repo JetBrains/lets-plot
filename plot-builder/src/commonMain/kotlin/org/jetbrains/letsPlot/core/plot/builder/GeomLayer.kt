@@ -25,6 +25,8 @@ interface GeomLayer {
 
     val geomKind: GeomKind
 
+    val statName: String
+
     val geom: Geom
 
     val posProvider: PosProvider
@@ -60,6 +62,8 @@ interface GeomLayer {
     val fillByAes: Aes<Color>
 
     val defaultFormatters: Map<Any, (Any) -> String>
+
+    val naRm: Boolean
 
     fun renderedAes(considerOrientation: Boolean = false): List<Aes<*>>
 

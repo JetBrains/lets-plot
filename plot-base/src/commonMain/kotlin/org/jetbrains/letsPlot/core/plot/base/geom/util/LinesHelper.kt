@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.splitBy
+import org.jetbrains.letsPlot.commons.intern.splitByNull
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.util.VectorAdapter
@@ -17,17 +18,16 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPathDataFromRectangle
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPaths
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 
 open class LinesHelper(
     pos: PositionAdjustment,
     coord: CoordinateSystem,
-    ctx: GeomContext,
-    private val counter: (Int) -> Unit = {} // todo: remove default counter
+    ctx: GeomContext
 ) : GeomHelper(pos, coord, ctx) {
 
+    private val myDroppedPoints = mutableSetOf<DataPointAesthetics>()
     private var myAlphaEnabled = true
     protected var myResamplingEnabled = false
     protected var myResamplingPrecision = PIXEL_PRECISION
@@ -83,7 +83,7 @@ open class LinesHelper(
     ): List<PathData> {
         val domainData = createPaths(
             dataPoints,
-            locationTransform, sorted = true, closePath = closePath, nullsCounter = counter)
+            locationTransform, sorted = true, closePath = closePath)
         return toClientPaths(domainData)
     }
 
@@ -91,7 +91,7 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         locationTransform: (DataPointAesthetics) -> DoubleVector? = GeomUtil.TO_LOCATION_X_Y,
     ): List<Pair<SvgNode, PolygonData>> {
-        val domainPathData = createPaths(dataPoints, locationTransform, sorted = true, closePath = false, nullsCounter = counter)
+        val domainPathData = createPaths(dataPoints, locationTransform, sorted = true, closePath = false)
 
         return createPolygon(domainPathData)
     }
@@ -103,6 +103,10 @@ open class LinesHelper(
         val domainPathData = createPathDataFromRectangle(dataPoints, locationTransform)
 
         return createPolygon(domainPathData)
+    }
+
+    fun getDroppedPoints(): Set<DataPointAesthetics> {
+        return myDroppedPoints
     }
 
     private fun createPolygon(domainPathData: Collection<PathData>): List<Pair<SvgNode, PolygonData>> {
@@ -180,7 +184,59 @@ open class LinesHelper(
         dataPoints: Iterable<DataPointAesthetics>,
         toLocation: (DataPointAesthetics) -> DoubleVector?
     ): List<PathData> {
-        return createPaths(dataPoints, toClientLocation(toLocation), sorted = true, closePath = false, nullsCounter = counter)
+        return createPaths(dataPoints, toClientLocation(toLocation), sorted = true, closePath = false)
+    }
+
+    // Builds a list of PathData splitting by group and null points.
+    fun createPaths(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pointTransform: ((DataPointAesthetics) -> DoubleVector?),
+        sorted: Boolean,
+        closePath: Boolean = false,
+    ): List<PathData> {
+        val groups = createGroups(dataPoints, sorted).let { groups ->
+            if (closePath) {
+                groups.mapValues { (_, group) -> group + group.first() }
+            } else {
+                groups
+            }
+        }
+
+        val result = groups.values
+            .map { aesthetics -> toPathPoints(aesthetics, pointTransform) }
+            .flatMap { pathPoints -> pathPoints.splitByNull() }
+            .mapNotNull {
+                if (it.size == 1) myDroppedPoints.add(it[0].aes)
+                PathData.create(it)
+            }
+
+        return result
+    }
+
+    private fun createGroups(
+        dataPoints: Iterable<DataPointAesthetics>,
+        sorted: Boolean = false
+    ): Map<Int, List<DataPointAesthetics>> {
+        val map = dataPoints.groupBy { it.group()!! }
+        return when {
+            sorted -> map.toList().sortedBy { (g, _) -> g }.toMap()
+            else -> map
+        }
+    }
+
+    private fun toPathPoints(
+        dataPoints: Iterable<DataPointAesthetics>,
+        pointTransform: ((DataPointAesthetics) -> DoubleVector?)
+    ): List<PathPoint?> {
+        return dataPoints.map { aes ->
+            val p = pointTransform(aes)
+            if (p == null) {
+                myDroppedPoints.add(aes)
+                null
+            } else {
+                PathPoint(aes, p)
+            }
+        }
     }
 
     fun createSteps(paths: Collection<PathData>, horizontalThenVertical: Boolean): List<LinePath> {
@@ -228,8 +284,8 @@ open class LinesHelper(
         simplifyBorders: Boolean,
         closePath: Boolean
     ): List<LinePath> {
-        val domainUpperPathData = createPaths(dataPoints, toLocationUpper, sorted = true, closePath, nullsCounter = counter)
-        val domainLowerPathData = createPaths(dataPoints, toLocationLower, sorted = true, closePath, nullsCounter = counter)
+        val domainUpperPathData = createPaths(dataPoints, toLocationUpper, sorted = true, closePath)
+        val domainLowerPathData = createPaths(dataPoints, toLocationLower, sorted = true, closePath)
 
         if (domainUpperPathData.isEmpty() || domainLowerPathData.isEmpty()) {
             return emptyList()

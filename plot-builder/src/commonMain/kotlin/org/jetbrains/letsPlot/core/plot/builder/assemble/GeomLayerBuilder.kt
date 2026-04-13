@@ -178,6 +178,7 @@ class GeomLayerBuilder(
         data: DataFrame,
         scaleMap: Map<Aes<*>, Scale>,
         scaleMapppersNP: Map<Aes<*>, ScaleMapper<*>>,
+        naRm: Boolean = false,
     ): GeomLayer {
         val transformByAes: Map<Aes<*>, Transform> = scaleMap.keys.associateWith {
             scaleMap.getValue(it).transform
@@ -232,6 +233,7 @@ class GeomLayerBuilder(
         return MyGeomLayer(
             data,
             geomProvider,
+            getStatName(stat),
             myGeomTheme,
             posProvider,
             groupingContext.groupMapper,
@@ -252,6 +254,7 @@ class GeomLayerBuilder(
             fillByAes = fillByAes,
             annotationProvider = myAnnotationProvider,
             defaultFormatters = myDefaultFormatters,
+            naRm = naRm,
         )
     }
 
@@ -263,6 +266,7 @@ class GeomLayerBuilder(
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
+        override val statName: String,
         geomTheme: GeomTheme,
         override val posProvider: PosProvider,
         override val group: (Int) -> Int,
@@ -282,7 +286,8 @@ class GeomLayerBuilder(
         override val colorByAes: Aes<Color>,
         override val fillByAes: Aes<Color>,
         private val annotationProvider: ((MappedDataAccess, DataFrame) -> Annotation?)?,
-        override val defaultFormatters: Map<Any, (Any) -> String>
+        override val defaultFormatters: Map<Any, (Any) -> String>,
+        override val naRm: Boolean
     ) : GeomLayer {
 
         override val geom: Geom = geomProvider.createGeom(
@@ -381,6 +386,13 @@ class GeomLayerBuilder(
     }
 
     companion object {
+
+        fun getStatName(stat: Stat): String {
+            return stat::class.simpleName!!
+                .replace("Stat", "")
+                .replace("([a-z])([A-Z]+)".toRegex(), "$1_$2")
+                .lowercase()
+        }
 
         fun demoAndTest(
             geomProvider: GeomProvider,

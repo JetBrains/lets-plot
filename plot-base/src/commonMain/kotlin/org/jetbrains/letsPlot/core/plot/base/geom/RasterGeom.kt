@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.with_X_Y
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
@@ -28,6 +28,10 @@ class RasterGeom : GeomBase() {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = FilledSquareLegendKeyElementFactory()
 
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return GeomUtil.with_X_Y(dataPoints)
+    }
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -35,11 +39,10 @@ class RasterGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val iter = with_X_Y(aesthetics.dataPoints()).iterator()
-        if (!iter.hasNext()) {
-            return
-        }
-        val randomP = iter.next()
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
+
+        val randomP = dataPoints.firstOrNull() ?: return
+
         val helper = GeomHelper(pos, coord, ctx)
 
         // Find size of image (row x col)
@@ -85,7 +88,7 @@ class RasterGeom : GeomBase() {
         val y0 = boundsXY.origin.y
 
         val argbValues = IntArray(cols * rows)
-        for (p in with_X_Y(aesthetics.dataPoints())) {
+        for (p in dataPoints) {
             val x = p.x()
             val y = p.y()
             val alpha = p.alpha()
@@ -112,6 +115,8 @@ class RasterGeom : GeomBase() {
             bitmap
         )
         root.add(svgImageElement)
+
+        ctx.droppedPointsReporter().report(invalidDataPoints)
     }
 
     companion object {

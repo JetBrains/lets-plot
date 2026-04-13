@@ -9,11 +9,10 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 
 open class LineGeom : PathGeom() {
-    override val geomName: String = "line"
 
-    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        val data = GeomUtil.with_X(dataPoints)
-        return GeomUtil.ordered_X(data)
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        val (data, invalid) = GeomUtil.with_X(dataPoints)
+        return GeomUtil.ordered_X(data) to invalid
     }
 
     companion object {

@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.GenericLegendKeyElementFactory
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimElements
 import org.jetbrains.letsPlot.datamodel.svg.dom.slim.SvgSlimGroup
@@ -23,9 +23,6 @@ abstract class GeomBase : Geom {
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = GenericLegendKeyElementFactory()
 
-    protected open val geomName: String = "unhandled_geom"
-    private var nullCounter = 0
-
     override fun build(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -34,9 +31,6 @@ abstract class GeomBase : Geom {
         ctx: GeomContext
     ) {
         buildIntern(root, aesthetics, pos, coord, ctx)
-        if (SHOW_NA_MESSAGES) {
-            ctx.consumeMessages(getMessages())
-        }
     }
 
     open fun preferableNullDomain(aes: Aes<*>): DoubleSpan {
@@ -47,23 +41,8 @@ abstract class GeomBase : Geom {
         return ctx.targetCollector
     }
 
-    open fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        return dataPoints
-    }
-
-    protected fun dataPoints(aesthetics: Aesthetics): Iterable<DataPointAesthetics> {
-        val source = aesthetics.dataPoints()
-        val result = prepareDataPoints(source)
-        nullCounter = source.count() - result.count()
-        return result
-    }
-
-    fun addNulls(count: Int) {
-        nullCounter += count
-    }
-
-    private fun getMessages(): List<String> {
-        return if (nullCounter > 0) listOf("$geomName: removed $nullCounter data point(s)") else emptyList()
+    open fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return dataPoints to emptyList()
     }
 
     protected abstract fun buildIntern(
@@ -75,8 +54,6 @@ abstract class GeomBase : Geom {
     )
 
     companion object {
-        private const val SHOW_NA_MESSAGES = false
-
         fun wrap(slimGroup: SvgSlimGroup): SvgGElement {
             val g = SvgGElement()
             g.isPrebuiltSubtree = true

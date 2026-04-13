@@ -21,9 +21,9 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL
 
 class RibbonGeom : GeomBase() {
 
-    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
-        val data = GeomUtil.with_X(dataPoints)
-        return GeomUtil.ordered_X(data)
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        val (data, invalid) = GeomUtil.with_X(dataPoints)
+        return GeomUtil.ordered_X(data) to invalid
     }
 
     override fun buildIntern(
@@ -33,20 +33,23 @@ class RibbonGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
-        val helper = LinesHelper(pos, coord, ctx)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 
-        val paths = helper.createBands(dataPoints, TO_LOCATION_X_YMAX_WITH_FINITE_YMIN, TO_LOCATION_X_YMIN_WITH_FINITE_YMAX)
+        val linesHelper = LinesHelper(pos, coord, ctx)
+
+        val paths = linesHelper.createBands(dataPoints, TO_LOCATION_X_YMAX_WITH_FINITE_YMIN, TO_LOCATION_X_YMIN_WITH_FINITE_YMAX)
         root.appendNodes(paths)
 
         //if you want to retain the side edges of ribbon:
         //comment out the following codes, and switch decorate method in LinesHelper.createBands
-        helper.setAlphaEnabled(false)
+        linesHelper.setAlphaEnabled(false)
 
-        root.appendNodes(helper.createLines(dataPoints, TO_LOCATION_X_YMAX))
-        root.appendNodes(helper.createLines(dataPoints, TO_LOCATION_X_YMIN))
+        root.appendNodes(linesHelper.createLines(dataPoints, TO_LOCATION_X_YMAX))
+        root.appendNodes(linesHelper.createLines(dataPoints, TO_LOCATION_X_YMIN))
 
         buildHints(aesthetics, pos, coord, ctx)
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {

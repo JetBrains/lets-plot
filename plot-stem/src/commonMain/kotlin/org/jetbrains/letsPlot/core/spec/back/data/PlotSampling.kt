@@ -22,6 +22,7 @@ internal object PlotSampling {
 
         @Suppress("NAME_SHADOWING")
         var data = data
+        val originalRowCount = data.rowCount()
 
         val applied = ArrayList<Sampling>()
         for (sampling in samplings) {
@@ -43,9 +44,16 @@ internal object PlotSampling {
             }
         }
 
-        if (!applied.isEmpty()) {
-            val expressionText = applied.map { it.expressionText }.joinToString("+")
-            samplingExpressionConsumer(expressionText)
+        if (applied.isNotEmpty()) {
+            val expressionText = applied.map { it.expressionText }.let { texts ->
+                when (texts.size) {
+                    1 -> texts[0]
+                    else -> texts.dropLast(1).joinToString(", ") + " and " + texts.last()
+                }
+            }
+            val droppedCount = originalRowCount - data.rowCount()
+            val message = "Removed $droppedCount data points out of $originalRowCount by $expressionText."
+            samplingExpressionConsumer(message)
         }
 
         return data

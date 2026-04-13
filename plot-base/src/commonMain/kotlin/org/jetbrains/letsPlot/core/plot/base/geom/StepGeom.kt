@@ -21,15 +21,15 @@ class StepGeom : LineGeom() {
     fun setDirection(dir: String) {
         myDirection = Direction.toDirection(dir)
     }
-    // commit name:
-    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         // filter out points with NaN x-values but keep +/-Infinity (for 'padded' mode)
-        val data = dataPoints.filter { p: DataPointAesthetics ->
+        val (data, invalid) = dataPoints.partition { p: DataPointAesthetics ->
             val x = p.x()
             x != null && (x.isFinite() || x.isInfinite())
         }
 
-        return GeomUtil.ordered_X(data)
+        return GeomUtil.ordered_X(data) to invalid
     }
 
     override fun buildIntern(
@@ -39,7 +39,8 @@ class StepGeom : LineGeom() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
+
         val linesHelper = LinesHelper(pos, coord, ctx)
 
         val pathDataList = linesHelper.createPaths(dataPoints, toLocationFor(overallAesBounds(ctx)))
@@ -54,6 +55,8 @@ class StepGeom : LineGeom() {
 
         val targetCollectorHelper = TargetCollectorHelper(ctx)
         targetCollectorHelper.addPaths(pathDataList)
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     private fun toLocationFor(viewPort: DoubleRectangle): (DataPointAesthetics) -> DoubleVector? {

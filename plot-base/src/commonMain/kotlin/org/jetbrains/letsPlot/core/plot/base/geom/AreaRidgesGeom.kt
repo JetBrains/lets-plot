@@ -22,6 +22,10 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
     var quantiles: List<Double> = DensityRidgesStat.DEF_QUANTILES
     var quantileLines: Boolean = DEF_QUANTILE_LINES
 
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return GeomUtil.with_X_Y(dataPoints)
+    }
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -29,15 +33,20 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val definedDataPoints = GeomUtil.with_X_Y(aesthetics.dataPoints())
-        if (!definedDataPoints.any()) return
-        definedDataPoints
+        val linesHelper = LinesHelper(pos, coord, ctx)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
+
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
+        if (!dataPoints.any()) return
+        dataPoints
             .sortedByDescending(DataPointAesthetics::y)
             .groupBy(DataPointAesthetics::y)
             .map { (y, nonOrderedPoints) -> y to GeomUtil.ordered_X(nonOrderedPoints) }
             .forEach { (_, dataPoints) ->
-                splitDataPoints(dataPoints).forEach { buildRidge(root, it, pos, coord, ctx) }
+                splitDataPoints(dataPoints).forEach { buildRidge(root, it, linesHelper, quantilesHelper, ctx) }
             }
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     private fun splitDataPoints(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {
@@ -60,18 +69,17 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
     private fun buildRidge(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        linesHelper: LinesHelper,
+        quantilesHelper: QuantilesHelper,
         ctx: GeomContext
     ) {
-        val helper = LinesHelper(pos, coord, ctx)
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.Y)
+
         val boundTransform = toLocationBound(ctx)
 
         val targetCollectorHelper = TargetCollectorHelper(ctx)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.X).forEach { points ->
-            val paths = helper.createBands(
+            val paths = linesHelper.createBands(
                 points,
                 boundTransform,
                 GeomUtil.TO_LOCATION_X_Y,
@@ -79,10 +87,10 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
             )
             root.appendNodes(paths)
 
-            helper.setAlphaEnabled(false)
-            root.appendNodes(helper.createLines(points, boundTransform))
+            linesHelper.setAlphaEnabled(false)
+            root.appendNodes(linesHelper.createLines(points, boundTransform))
 
-            val pathDataList = helper.createPaths(points, boundTransform)
+            val pathDataList = linesHelper.createPaths(points, boundTransform)
             targetCollectorHelper.addPaths(pathDataList)
         }
 

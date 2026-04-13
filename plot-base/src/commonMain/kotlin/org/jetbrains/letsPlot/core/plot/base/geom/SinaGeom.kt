@@ -23,9 +23,14 @@ class SinaGeom : GeomBase() {
     var seed: Long? = null
     var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
     var showHalf: Double = DEF_SHOW_HALF
+    val droppedPoints = mutableSetOf<DataPointAesthetics>()
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
+
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y, Aes.SIZE, Aes.VIOLINWIDTH, Aes.WIDTH)
+    }
 
     override fun buildIntern(
         root: SvgRoot,
@@ -35,11 +40,14 @@ class SinaGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val rand = seed?.let { Random(seed!!) } ?: Random.Default
-        val dataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
         dataPoints
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
             .forEach { (_, dataPoints) -> buildGroup(root, dataPoints, pos, coord, ctx, rand) }
+
+        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
+        ctx.droppedPointsReporter().report(invalidDataPoints + droppedPoints)
     }
 
     private fun buildGroup(
@@ -59,10 +67,17 @@ class SinaGeom : GeomBase() {
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
             val slimGroup = SvgSlimElements.g(points.size)
             for (p in points) {
-                p.size() ?: continue
-                val shape = p.shape() ?: continue
-                val point = jitterTransform(p) ?: continue
-                val location = helper.toClient(point, p) ?: continue
+                p.size()!!
+                val shape = p.shape()!!
+                val point = jitterTransform(p)!!
+
+                val location = helper.toClient(point, p)
+
+                if (location == null) {
+                    droppedPoints.add(p)
+                    continue
+                }
+
                 targetCollector.addPoint(
                     p.index(), location, (shape.size(p) + shape.strokeWidth(p)) / 2,
                     GeomTargetCollector.TooltipParams(

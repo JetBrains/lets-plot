@@ -47,6 +47,10 @@ open class DotplotGeom : GeomBase(), WithWidth {
             super.preferableNullDomain(aes)
     }
 
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return GeomUtil.withDefined(dataPoints, Aes.BINWIDTH, Aes.STACKSIZE, Aes.X, Aes.Y)
+    }
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -54,13 +58,11 @@ open class DotplotGeom : GeomBase(), WithWidth {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val pointsWithBinWidth = GeomUtil.withDefined(
-            aesthetics.dataPoints(),
-            Aes.BINWIDTH, Aes.X, Aes.Y
-        )
-        if (!pointsWithBinWidth.any()) return
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 
-        val binWidthPx = pointsWithBinWidth.first().let {
+        if (!dataPoints.any()) return
+
+        val binWidthPx = dataPoints.first().let {
             val x = it.x()!!
             val y = it.y()!!
             val bw = it.binwidth()!!
@@ -72,11 +74,13 @@ open class DotplotGeom : GeomBase(), WithWidth {
             }
         }
 
-        GeomUtil.withDefined(pointsWithBinWidth, Aes.X, Aes.STACKSIZE)
+        dataPoints
             .groupBy(DataPointAesthetics::x)
             .forEach { (_, dataPointStack) ->
                 buildStack(root, dataPointStack, pos, coord, ctx, binWidthPx)
             }
+
+        ctx.droppedPointsReporter().report(invalidDataPoints)
     }
 
     private fun buildStack(

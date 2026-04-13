@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -19,10 +20,13 @@ open class PointGeom : GeomBase() {
 
     var animation: Any? = null
     var sizeUnit: String? = null
-    override val geomName: String = "point"
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
+
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y, Aes.SIZE)
+    }
 
     public override fun buildIntern(
         root: SvgRoot,
@@ -35,15 +39,20 @@ open class PointGeom : GeomBase() {
         val targetCollector = getGeomTargetCollector(ctx)
         val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
 
-        val count = aesthetics.dataPointCount()
-        val slimGroup = SvgSlimElements.g(count)
-        var goodPointsCount = 0
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 
-        for (i in 0 until count) {
-            val p = aesthetics.dataPointAt(i)
-            if (p.finiteOrNull(Aes.SIZE) == null) continue
-            val point = p.finiteVectorOrNull(Aes.X, Aes.Y) ?: continue
-            val location = helper.toClient(point, p) ?: continue
+        val slimGroup = SvgSlimElements.g(dataPoints.count())
+        val droppedPoints = mutableSetOf<DataPointAesthetics>()
+
+        for (p in dataPoints) {
+            val point = p.finiteVectorOrNull(Aes.X, Aes.Y)!!
+            val location = helper.toClient(point, p)
+
+            if (location == null) {
+                droppedPoints.add(p)
+                continue
+            }
+
             val shape = p.shape()!!
 
             // Adapt point size to plot 'grid step' if necessary (i.e. in correlation matrix).
@@ -57,16 +66,16 @@ open class PointGeom : GeomBase() {
             }
 
             targetCollector.addPoint(
-                i, location, (shape.size(p, scaleFactor) + shape.strokeWidth(p)) / 2,
-                GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(p)
-                )
+                p.index(),
+                location,
+                (shape.size(p, scaleFactor) + shape.strokeWidth(p)) / 2,
+                GeomTargetCollector.TooltipParams(markerColors = colorsByDataPoint(p))
             )
-            val o = PointShapeSvg.create(shape, location, p, scaleFactor)
-            o.appendTo(slimGroup)
-            goodPointsCount += 1
+            PointShapeSvg.create(shape, location, p, scaleFactor)
+                .appendTo(slimGroup)
         }
-        addNulls(count - goodPointsCount)
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + droppedPoints)
         root.add(wrap(slimGroup))
     }
 
@@ -74,4 +83,3 @@ open class PointGeom : GeomBase() {
         const val HANDLES_GROUPS = false
     }
 }
-

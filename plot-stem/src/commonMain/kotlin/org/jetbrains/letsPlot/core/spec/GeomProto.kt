@@ -191,45 +191,47 @@ class GeomProto(val geomKind: GeomKind) {
 
     private companion object {
         private val DEFAULTS = HashMap<GeomKind, Map<String, Any>>()
-        private val COMMON = commonDefaults()
 
         init {
-            for (geomKind in GeomKind.entries) {
-                DEFAULTS[geomKind] = COMMON
-            }
+            val defaultsByGeom = HashMap<GeomKind, Map<String, Any>>()
+            defaultsByGeom[SMOOTH] = smoothDefaults()
+            defaultsByGeom[BAR] = barDefaults()
+            defaultsByGeom[HISTOGRAM] = histogramDefaults()
+            defaultsByGeom[DOT_PLOT] = dotplotDefaults()
+            defaultsByGeom[CONTOUR] = contourDefaults()
+            defaultsByGeom[CONTOURF] = contourfDefaults()
+            defaultsByGeom[CROSS_BAR] = crossBarDefaults()
+            defaultsByGeom[BOX_PLOT] = boxplotDefaults()
+            defaultsByGeom[AREA_RIDGES] = areaRidgesDefaults()
+            defaultsByGeom[VIOLIN] = violinDefaults()
+            defaultsByGeom[SINA] = sinaDefaults()
+            defaultsByGeom[Y_DOT_PLOT] = yDotplotDefaults()
+            defaultsByGeom[AREA] = areaDefaults()
+            defaultsByGeom[DENSITY] = densityDefaults()
+            defaultsByGeom[DENSITY2D] = density2dDefaults()
+            defaultsByGeom[DENSITY2DF] = density2dfDefaults()
+            defaultsByGeom[POINT_DENSITY] = pointDensityDefaults()
+            defaultsByGeom[Q_Q] = qqDefaults()
+            defaultsByGeom[Q_Q_2] = qq2Defaults()
+            defaultsByGeom[Q_Q_LINE] = qqLineDefaults()
+            defaultsByGeom[Q_Q_2_LINE] = qq2LineDefaults()
+            defaultsByGeom[FREQPOLY] = freqpolyDefaults()
+            defaultsByGeom[BIN_2D] = bin2dDefaults()
+            defaultsByGeom[HEX] = hexDefaults()
+            defaultsByGeom[PIE] = pieDefaults()
+            defaultsByGeom[BRACKET] = bracketDefaults()
+            defaultsByGeom[BRACKET_DODGE] = bracketDefaults()
 
-            DEFAULTS[SMOOTH] = smoothDefaults()
-            DEFAULTS[BAR] = barDefaults()
-            DEFAULTS[HISTOGRAM] = histogramDefaults()
-            DEFAULTS[DOT_PLOT] = dotplotDefaults()
-            DEFAULTS[CONTOUR] = contourDefaults()
-            DEFAULTS[CONTOURF] = contourfDefaults()
-            DEFAULTS[CROSS_BAR] = crossBarDefaults()
-            DEFAULTS[BOX_PLOT] = boxplotDefaults()
-            DEFAULTS[AREA_RIDGES] = areaRidgesDefaults()
-            DEFAULTS[VIOLIN] = violinDefaults()
-            DEFAULTS[SINA] = sinaDefaults()
-            DEFAULTS[Y_DOT_PLOT] = yDotplotDefaults()
-            DEFAULTS[AREA] = areaDefaults()
-            DEFAULTS[DENSITY] = densityDefaults()
-            DEFAULTS[DENSITY2D] = density2dDefaults()
-            DEFAULTS[DENSITY2DF] = density2dfDefaults()
-            DEFAULTS[POINT_DENSITY] = pointDensityDefaults()
-            DEFAULTS[Q_Q] = qqDefaults()
-            DEFAULTS[Q_Q_2] = qq2Defaults()
-            DEFAULTS[Q_Q_LINE] = qqLineDefaults()
-            DEFAULTS[Q_Q_2_LINE] = qq2LineDefaults()
-            DEFAULTS[FREQPOLY] = freqpolyDefaults()
-            DEFAULTS[BIN_2D] = bin2dDefaults()
-            DEFAULTS[HEX] = hexDefaults()
-            DEFAULTS[PIE] = pieDefaults()
-            DEFAULTS[BRACKET] = bracketDefaults()
-            DEFAULTS[BRACKET_DODGE] = bracketDefaults()
+            val commonDefaults = commonDefaults()
+            for (geomKind in GeomKind.entries) {
+                DEFAULTS[geomKind] = commonDefaults + (defaultsByGeom[geomKind] ?: emptyMap())
+            }
         }
 
         private fun commonDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "identity"
+            defaults[Layer.NA_RM] = true // hide NA messages by default
             return defaults
         }
 

@@ -24,6 +24,10 @@ class ViolinGeom : GeomBase() {
     private val positiveSign: Double
         get() = if (showHalf < 0.0) 0.0 else 1.0
 
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
+        return GeomUtil.withDefined(dataPoints, Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
+    }
+
     override fun buildIntern(
         root: SvgRoot,
         aesthetics: Aesthetics,
@@ -41,37 +45,43 @@ class ViolinGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.VIOLINWIDTH, Aes.WIDTH)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
+
+        val linesHelper = LinesHelper(pos, coord, ctx)
+        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
+
+        dataPoints
             .groupBy(DataPointAesthetics::x)
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
-            .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, pos, coord, ctx) }
+            .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, linesHelper, quantilesHelper, ctx) }
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     private fun buildViolin(
         root: SvgRoot,
         dataPoints: Iterable<DataPointAesthetics>,
-        pos: PositionAdjustment,
-        coord: CoordinateSystem,
+        linesHelper: LinesHelper,
+        quantilesHelper: QuantilesHelper,
         ctx: GeomContext
     ) {
-        val helper = LinesHelper(pos, coord, ctx)
-        val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
+
         val leftBoundTransform = toLocationBound(negativeSign, ctx)
         val rightBoundTransform = toLocationBound(positiveSign, ctx)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->
-            val paths = helper.createBands(points, leftBoundTransform, rightBoundTransform)
+            val paths = linesHelper.createBands(points, leftBoundTransform, rightBoundTransform)
             root.appendNodes(paths)
 
-            helper.setAlphaEnabled(false)
-            root.appendNodes(helper.createLines(points, leftBoundTransform))
-            root.appendNodes(helper.createLines(points, rightBoundTransform))
+            linesHelper.setAlphaEnabled(false)
+            root.appendNodes(linesHelper.createLines(points, leftBoundTransform))
+            root.appendNodes(linesHelper.createLines(points, rightBoundTransform))
 
             if (showHalf <= 0.0) {
-                buildHints(points, ctx, helper, leftBoundTransform)
+                buildHints(points, ctx, linesHelper, leftBoundTransform)
             }
             if (showHalf >= 0.0) {
-                buildHints(points, ctx, helper, rightBoundTransform)
+                buildHints(points, ctx, linesHelper, rightBoundTransform)
             }
         }
 

@@ -98,11 +98,12 @@ open class PlotConfigBackend(
 
         val layerIndexWhereSamplingOccurred = HashSet<Int>()
 
-        val dataByLayerAfterStat = dataByLayerAfterStat() { layerIndex, message ->
+        val dataByLayerAfterStat = dataByLayerAfterStat { layerIndex, message ->
             layerIndexWhereSamplingOccurred.add(layerIndex)
-
             if (theme.plot().showMessage()) {
-                PlotConfigUtil.addComputationMessage(this, message)
+                val layerConfig = layerConfigs[layerIndex]
+                val fullMessage = BackendDataProcUtil.createLayerMessage(message, layerConfig)
+                PlotConfigUtil.addComputationMessage(this, fullMessage)
             }
         }
 
@@ -266,7 +267,7 @@ open class PlotConfigBackend(
                 tileDataAfterStat,
                 layerConfig.samplings,
                 groupMapperAfterStat
-            ) { message -> messageHandler(BackendDataProcUtil.createSamplingMessage(message, layerConfig)) }
+            ) { message -> messageHandler(message) }
         }
 
         // merge tiles

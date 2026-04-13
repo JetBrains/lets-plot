@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.assemble
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -41,7 +42,7 @@ interface ImmutableGeomContext : GeomContext {
 
         fun scaleFactor(scaleFactor: Double): Builder
 
-        fun messageConsumer(messageConsumer: (String) -> Unit): Builder
+        fun droppedPointsReporter(reporter: DroppedPointsReporter): Builder
 
         fun geomKind(geomKind: GeomKind): Builder
 

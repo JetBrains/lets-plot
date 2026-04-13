@@ -12,18 +12,15 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.Vec
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.explicitVec
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.Aesthetics
-import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.core.plot.base.Geom
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_Y
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_RECTANGLE
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.createPaths
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.toLocation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper.Companion.midPointsPathInterpolator
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper.Companion.splitByStyle
+import org.jetbrains.letsPlot.core.plot.base.pos.PositionAdjustments
 import org.jetbrains.letsPlot.core.plot.builder.scale.DefaultNaValue
 import org.jetbrains.letsPlot.livemap.Client
 import org.jetbrains.letsPlot.livemap.Client.Companion.px
@@ -61,7 +58,7 @@ internal class DataPointsConverter(
             clockwise = geom.clockwise
         )
 
-        val definedDataPoints = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
+        val (definedDataPoints, _) = GeomUtil.withDefined(aesthetics.dataPoints(), Aes.X, Aes.Y, Aes.SLICE)
         return MultiDataPointHelper.getPoints(definedDataPoints)
             .map {
                 DataPointLiveMapAesthetics(it, MapLayerKind.PIE).apply {
@@ -150,9 +147,11 @@ internal class DataPointsConverter(
         }
     }
 
-    private inner class MultiPathFeatureConverter(
+    private class MultiPathFeatureConverter(
         aes: Aesthetics
     ) : PathFeatureConverterBase(aes) {
+
+        private val linesHelper = LinesHelper(PositionAdjustments.identity(), BogusCoordinateSystem, BogusContext)
 
         fun path(geom: Geom): List<DataPointLiveMapAesthetics> {
             if (geom is PathGeom) {
@@ -161,7 +160,7 @@ internal class DataPointsConverter(
                 setGeodesic(geom.geodesic)
             }
 
-            val paths = createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true) {}
+            val paths = linesHelper.createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true)
 
             val interpolatedPathData = paths.flatMap {
                 splitByStyle(it).let(::midPointsPathInterpolator)
@@ -171,7 +170,7 @@ internal class DataPointsConverter(
         }
 
         fun polygon(): List<DataPointLiveMapAesthetics> {
-            val paths = createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true) {}
+            val paths = linesHelper.createPaths(aesthetics.dataPoints(), TO_LOCATION_X_Y, sorted = true)
             return process(paths = paths, isClosed = true)
         }
 
@@ -185,7 +184,7 @@ internal class DataPointsConverter(
         }
     }
 
-    private inner class SinglePathFeatureConverter(
+    private class SinglePathFeatureConverter(
         aesthetics: Aesthetics
     ) : PathFeatureConverterBase(aesthetics) {
         fun tile(): List<DataPointLiveMapAesthetics> {

@@ -248,7 +248,7 @@ object Option {
         const val COLOR_BY = "color_by"
         const val FILL_BY = "fill_by"
 
-        const val SCALE_FACTOR = "scale_factor"
+        const val NA_RM = "na_rm"
 
         object Marginal {
             const val SIZE = "margin_size"

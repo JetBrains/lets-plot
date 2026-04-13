@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
 open class PolygonGeom : GeomBase() {
 
-    override fun prepareDataPoints(dataPoints: Iterable<DataPointAesthetics>): Iterable<DataPointAesthetics> {
+    override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         return GeomUtil.with_X_Y(dataPoints)
     }
 
@@ -24,7 +24,8 @@ open class PolygonGeom : GeomBase() {
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
-        val dataPoints = dataPoints(aesthetics)
+        val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
+
         val linesHelper = LinesHelper(pos, coord, ctx)
         linesHelper.setResamplingEnabled(coord.isPolar)
 
@@ -34,6 +35,8 @@ open class PolygonGeom : GeomBase() {
             targetCollectorHelper.addPolygons(polygonData)
             root.add(svg)
         }
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     companion object {

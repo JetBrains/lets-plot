@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
@@ -31,8 +32,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var coordinateSystem: CoordinateSystem? = null
     private var contentBounds: DoubleRectangle? = null
     private var scaleFactor: Double = 1.0
+    private var droppedPointsReporter: DroppedPointsReporter = DroppedPointsReporter.NONE
     private var geomKind: GeomKind? = null
-    private var messageConsumer: (String) -> Unit = {}
 
     constructor()
 
@@ -101,8 +102,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         return this
     }
 
-    override fun messageConsumer(messageConsumer: (String) -> Unit): ImmutableGeomContext.Builder {
-        this.messageConsumer = messageConsumer
+    override fun droppedPointsReporter(reporter: DroppedPointsReporter): ImmutableGeomContext.Builder {
+        this.droppedPointsReporter = reporter
         return this
     }
 
@@ -124,7 +125,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
         val _coordinateSystem = b.coordinateSystem
         val _contentBounds = b.contentBounds
         val _scaleFactor = b.scaleFactor
-        val _messageConsumer = b.messageConsumer
+        val _droppedPointsReporter = b.droppedPointsReporter
         val _geomKind = b.geomKind
 
         override val flipped: Boolean = b.flipped
@@ -197,8 +198,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return _scaleFactor
         }
 
-        override fun consumeMessages(messages: List<String>) {
-            messages.forEach { _messageConsumer(it) }
+        override fun droppedPointsReporter(): DroppedPointsReporter {
+            return _droppedPointsReporter
         }
 
         override fun geomKind(): GeomKind {
