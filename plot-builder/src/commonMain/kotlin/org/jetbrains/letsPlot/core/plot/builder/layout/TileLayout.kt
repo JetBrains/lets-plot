@@ -9,6 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 
 interface TileLayout {
-    val insideOut: Boolean
-    fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo
+    fun doTopDownLayout(geomWithAxisSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo
+    fun doInsideOutLayout(geomContentSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo
 }

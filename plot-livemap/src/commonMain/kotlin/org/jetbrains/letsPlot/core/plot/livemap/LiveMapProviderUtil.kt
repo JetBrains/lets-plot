@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -264,9 +264,6 @@ object LiveMapProviderUtil {
                         distance = hoverObjects.maxOf { it.distance },
                         geomKind = layer.geomKind,
                         contextualMapping = contextualMapping!!,
-                        isCrosshairEnabled = contextualMapping.isCrosshairEnabled,
-                        hasGeneralTooltip = contextualMapping.hasGeneralTooltip,
-                        hasAxisTooltip = contextualMapping.hasAxisTooltip,
                         hitShapeKind = when (hoverObjects.first().kind) {
                             HoverObjectKind.POINT -> HitShape.Kind.POINT
                             HoverObjectKind.PATH -> HitShape.Kind.PATH

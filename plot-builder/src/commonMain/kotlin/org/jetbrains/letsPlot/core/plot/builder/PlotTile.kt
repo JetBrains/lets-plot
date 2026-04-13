@@ -85,6 +85,14 @@ internal class PlotTile constructor(
         geomGroup.add(geomInteractionGroup)
         add(frameOfReference.topGroup)
 
+        if (DEBUG_DRAWING) {
+            drawDebugRect(
+                r = tileLayoutInfo.geomContentBounds,
+                color = Color.GREEN,
+                strokeWidth = 2.0
+            )
+        }
+
         val geomOuterBounds = tileLayoutInfo.geomOuterBounds
 
         addFacetLabels(geomOuterBounds, theme.facets())
@@ -93,7 +101,7 @@ internal class PlotTile constructor(
 
         val liveMapGeomLayer = coreLayers.firstOrNull(GeomLayer::isLiveMap)
         if (liveMapGeomLayer != null) {
-            val realBounds = tileLayoutInfo.getAbsoluteOuterGeomBounds(tilesOrigin)
+            val realBounds = tileLayoutInfo.getAbsoluteGeomOuterBounds(tilesOrigin)
             val liveMapData = createCanvasFigure(liveMapGeomLayer, realBounds)
 
             liveMapCanvasDrawable = liveMapData.canvasDrawable

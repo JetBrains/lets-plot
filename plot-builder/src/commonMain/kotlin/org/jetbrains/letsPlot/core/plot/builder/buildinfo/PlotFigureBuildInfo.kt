@@ -67,9 +67,10 @@ class PlotFigureBuildInfo constructor(
     }
 
     override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): PlotFigureBuildInfo {
+        // `geomBounds` is the target *content* area (actual plotting area).
         val layoutInfo = plotAssembler.layoutByGeomSize(geomBounds.dimension)
         val oldCenter = geomBounds.center
-        val newCenter = layoutInfo.geomAreaBounds.center
+        val newCenter = layoutInfo.geomContentBounds.center
         val delta = newCenter.subtract(oldCenter)
         val newOrigin = this.bounds.origin.subtract(delta)
         val newSize = layoutInfo.figureLayoutedBounds.dimension

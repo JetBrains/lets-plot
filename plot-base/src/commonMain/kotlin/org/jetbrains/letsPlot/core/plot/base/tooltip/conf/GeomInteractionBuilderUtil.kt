@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ConstantField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
@@ -15,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 internal object GeomInteractionBuilderUtil {
 
     fun createTooltipLines(
-        userTooltipSpec: TooltipSpecification,
+        tooltipBehavior: TooltipBehavior,
         tooltipAes: List<Aes<*>>,
         tooltipAxisAes: List<Aes<*>>,
         sideTooltipAes: List<Aes<*>>,
@@ -23,27 +22,27 @@ internal object GeomInteractionBuilderUtil {
     ): List<LinePattern> {
 
         return when {
-            userTooltipSpec.useDefaultTooltips() -> {
+            tooltipBehavior.useDefaultTooltips() -> {
                 // No user line patterns => use default tooltips with the given formatted valueSources
                 // and move content of side tooltips to the general tooltip in 'disable_splitting' mode
                 defaultValueSourceTooltipLines(
-                    aesListForTooltip = if (userTooltipSpec.disableSplitting) {
+                    aesListForTooltip = if (tooltipBehavior.disableSplitting) {
                         (sideTooltipAes + tooltipAes).distinct()
                     } else {
                         tooltipAes
                     },
                     tooltipAxisAes,
-                    sideTooltipAes = if (userTooltipSpec.disableSplitting) {
+                    sideTooltipAes = if (tooltipBehavior.disableSplitting) {
                         emptyList()
                     } else {
                         sideTooltipAes
                     },
-                    userTooltipSpec.valueSources,
+                    tooltipBehavior.valueSources,
                     tooltipConstantAes
                 )
             }
 
-            userTooltipSpec.hideTooltips() -> {
+            tooltipBehavior.hideTooltips() -> {
                 // User list is empty => not show tooltips
                 emptyList()
             }
@@ -51,7 +50,7 @@ internal object GeomInteractionBuilderUtil {
             else -> {
                 // Form value sources: user list + axis + side tooltips
 
-                val geomSideTooltips = if (userTooltipSpec.disableSplitting) {
+                val geomSideTooltips = if (tooltipBehavior.disableSplitting) {
                     // Hide side tooltips in 'disable_splitting' mode with specified lines
                     emptyList()
                 } else {
@@ -59,18 +58,18 @@ internal object GeomInteractionBuilderUtil {
                 }.toMutableList()
 
                 // Remove side tooltip if the mappedAes is used in the general tooltip
-                userTooltipSpec.tooltipLinePatterns!!.forEach { line ->
+                tooltipBehavior.tooltipLinePatterns!!.forEach { line ->
                     val userDataAesList = line.fields.filterIsInstance<MappingField>().map(MappingField::aes)
                     geomSideTooltips.removeAll(userDataAesList)
                 }
                 val axisValueSources = tooltipAxisAes.map { aes ->
-                    getMappingValueSource(aes, isSide = true, isAxis = true, userTooltipSpec.valueSources)
+                    getMappingValueSource(aes, isSide = true, isAxis = true, tooltipBehavior.valueSources)
                 }
                 val geomSideValueSources = geomSideTooltips.map { aes ->
-                    getMappingValueSource(aes, isSide = true, isAxis = false, userTooltipSpec.valueSources)
+                    getMappingValueSource(aes, isSide = true, isAxis = false, tooltipBehavior.valueSources)
                 }
 
-                userTooltipSpec.tooltipLinePatterns +
+                tooltipBehavior.tooltipLinePatterns +
                         (axisValueSources + geomSideValueSources)
                             .map(LinePattern.Companion::defaultLineForValueSource)
             }

@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 
 /**
- * left, top, right, bottom : margin size relative to the overall geom area.
+ * left, top, right, bottom: margin size relative to the overall geom area.
  */
 internal class GeomMarginsLayout(
     private val left: Double,

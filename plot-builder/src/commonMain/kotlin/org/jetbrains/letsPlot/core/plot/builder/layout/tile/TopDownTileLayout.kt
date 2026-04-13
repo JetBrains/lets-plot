@@ -10,7 +10,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.layout.*
+import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfoQuad
+import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutQuad
+import org.jetbrains.letsPlot.core.plot.builder.layout.GeomMarginsLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.util.GeomAreaInsets
 
 internal open class TopDownTileLayout(
@@ -19,16 +22,15 @@ internal open class TopDownTileLayout(
     private val vDomain: DoubleSpan,
     private val marginsLayout: GeomMarginsLayout,
     private val panelInset: Thickness,
-) : TileLayout {
-    override val insideOut: Boolean = false
+) {
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
+    fun doLayout(geomWithAxisSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
-        val geomAreaInsets = computeAxisInfos(preferredSize, coordProvider)
+        val geomAreaInsets = computeAxisInfos(geomWithAxisSize, coordProvider)
 
-        val geomOuterBounds = geomOuterBounds(geomAreaInsets, preferredSize, coordProvider)
-        val geomContentBounds = geomContentBounds(geomAreaInsets, preferredSize, coordProvider)
-        val geomInnerBounds = getGeomInnerBounds(geomAreaInsets, preferredSize, coordProvider)
+        val geomOuterBounds = geomOuterBounds(geomAreaInsets, geomWithAxisSize, coordProvider)
+        val geomContentBounds = geomContentBounds(geomAreaInsets, geomWithAxisSize, coordProvider)
+        val geomInnerBounds = getGeomInnerBounds(geomAreaInsets, geomWithAxisSize, coordProvider)
 
         val axisInfos = geomAreaInsets.axisInfoQuad
 

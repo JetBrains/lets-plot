@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -12,11 +12,11 @@ import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_LABEL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.TOOLTIP_TITLE
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
 
 class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 

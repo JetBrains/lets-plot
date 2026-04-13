@@ -8,27 +8,35 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.tile
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.FACET_PANEL_AXIS_EXPAND
+import kotlin.math.max
 
 internal class InsideOutTileLayout(
     private val axisLayoutQuad: AxisLayoutQuad,
     private val hDomain: DoubleSpan, // transformed data ranges.
     private val vDomain: DoubleSpan,
     private val marginsLayout: GeomMarginsLayout,
-) : TileLayout {
-    override val insideOut: Boolean = true
+    private val panelInset: Thickness,
+) {
 
-    @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-    override fun doLayout(geomSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
+    fun doLayout(geomContentSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
 
-        val geomOuterBounds = DoubleRectangle(DoubleVector.ZERO, geomSize)
-        val geomInnerBounds = marginsLayout.toInnerBounds(geomOuterBounds)
+        // Input is the geom *content* dimension (actual plotting area).
+        // Compute outer dimensions by working outwardly.
+        val geomContentSizeSafe = DoubleVector(
+            max(MIN_GEOM_CONTENT_SIZE, geomContentSize.x),
+            max(MIN_GEOM_CONTENT_SIZE, geomContentSize.y)
+        )
+        val geomContentBounds = DoubleRectangle(DoubleVector.ZERO, geomContentSizeSafe)
+        val geomInnerBounds = panelInset.inflateRect(geomContentBounds)
+        val geomOuterBounds = marginsLayout.toOuterBounds(geomInnerBounds)
 
         var axisInfos = computeAxisInfos(
             axisLayoutQuad,
-            geomSize = geomInnerBounds.dimension,
+            geomSize = geomContentBounds.dimension,
             hDomain, vDomain,
         )
 
@@ -49,7 +57,7 @@ internal class InsideOutTileLayout(
             geomWithAxisBounds = geomWithAxisBounds,
             geomOuterBounds = geomOuterBounds,
             geomInnerBounds = geomInnerBounds,
-            geomContentBounds = geomInnerBounds,
+            geomContentBounds = geomContentBounds,
             axisInfos = axisInfos,
             hAxisShown = true,
             vAxisShown = true,
@@ -58,6 +66,8 @@ internal class InsideOutTileLayout(
     }
 
     companion object {
+        private const val MIN_GEOM_CONTENT_SIZE = 10.0
+
         private fun computeAxisInfos(
             axisLayoutQuad: AxisLayoutQuad,
             geomSize: DoubleVector,

@@ -20,29 +20,31 @@ import kotlin.math.abs
 
 class WheelZoomFeedback(
     private val modifiersMatcher: ModifiersMatcher,
+    private val internalDebounce: Boolean,
     private val onCompleted: (targetId: String?, dataBounds: DoubleRectangle, scaleFactor: DoubleVector) -> Unit
 ) : ToolFeedback {
     override fun start(ctx: InteractionContext): Disposable {
         val interaction = MouseWheelInteraction(ctx, modifiersMatcher)
         var initialRange: DoubleVector? = null
-        var completed = false
 
         // Accumulated state for the debounced onCompleted call.
         var lastTargetId: String? = null
         var lastDataBounds: DoubleRectangle? = null
         var lastScaleFactor: DoubleVector? = null
 
-        val fireCompletedDebounced = debounce<Unit>(
-            DEBOUNCE_DELAY_MS,
-            CoroutineScope(Dispatchers.Default)
-        ) {
-            completed = true
-            onCompleted(lastTargetId, lastDataBounds!!, lastScaleFactor!!)
+        val fireCompleted = if (internalDebounce) {
+            debounce<Unit>(
+                DEBOUNCE_DELAY_MS,
+                CoroutineScope(Dispatchers.Default)
+            ) {
+                onCompleted(lastTargetId, lastDataBounds!!, lastScaleFactor!!)
+            }
+        } else {
+            { _: Unit -> onCompleted(lastTargetId, lastDataBounds!!, lastScaleFactor!!) }
         }
 
         interaction.loop(
             onZoomed = { (target, zoomOrigin, zoomDelta) ->
-                if (completed) return@loop
 
                 val zoomStep = if (abs(zoomDelta) > 0.3) {
                     // assume this is a wheel scroll - triggered less often, so we can use a fixed step
@@ -73,7 +75,7 @@ class WheelZoomFeedback(
                     range.y / dataBounds.dimension.y
                 )
 
-                fireCompletedDebounced(Unit)
+                fireCompleted(Unit)
             }
         )
 

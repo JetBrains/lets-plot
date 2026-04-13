@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -7,8 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 
 
@@ -22,18 +21,18 @@ object GeomInteractionUtil {
         theme: Theme,
         geomKind: GeomKind,
         statKind: StatKind,
-        tooltipSpecification1: TooltipSpecification,
+        tooltipBehavior1: TooltipBehavior,
         isYOrientation: Boolean,
         constantsMap: Map<Aes<*>, Any>,
         renderedAes: List<Aes<*>>,
         getOriginalVariableName: (Aes<*>) -> String?,
     ): GeomInteractionBuilder {
-        val tooltipSetup = createGeomTooltipSetup(
+        val tooltipBehavior = createTooltipBehavior(
             geomKind = geomKind,
             statKind = statKind,
-            isCrosshairEnabled = isCrosshairEnabled(geomKind, tooltipSpecification1),
+            tooltipBehavior = tooltipBehavior1,
             isPolarCoordSystem = isPolarCoordSystem,
-            multilayerWithTooltips = multilayerWithTooltips
+            multilayerWithTooltips = multilayerWithTooltips,
         )
 
         val axisWithoutTooltip = HashSet<Aes<*>>()
@@ -44,12 +43,12 @@ object GeomInteractionUtil {
         val axisWithNoLabels = HashSet<Aes<*>>()
         if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.X)
         if (!theme.verticalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.Y)
-        val axisAesFromFunctionKind = tooltipSetup.axisAesFromFunctionKind
-        val isAxisTooltipEnabled = tooltipSetup.axisTooltipEnabled
+        val axisAesFromFunctionKind = tooltipBehavior.axisAesFromFunctionKind
+        val isAxisTooltipEnabled = tooltipBehavior.axisTooltipEnabled
         val hiddenAesList = createHiddenAesList(
             axisAesFromFunctionKind,
             geomKind,
-            tooltipSpecification1,
+            tooltipBehavior,
             renderedAes
         )
             .afterOrientation(isYOrientation) + axisWithoutTooltip
@@ -58,7 +57,6 @@ object GeomInteractionUtil {
 
         val tooltipAes: List<Aes<*>>
         val sideTooltipAes: List<Aes<*>>
-        val tooltipSpecification: TooltipSpecification
 
         if (theme.tooltips().show()) {
             val axisAesFromFunctionTypeAfterOrientation = axisAesFromFunctionKind.afterOrientation(isYOrientation)
@@ -72,43 +70,54 @@ object GeomInteractionUtil {
                 getOriginalVariableName
             )
             sideTooltipAes = createSideTooltipAesList(geomKind, isYOrientation)
-            tooltipSpecification = tooltipSpecification1
         } else {
             tooltipAes = emptyList()
             sideTooltipAes = emptyList()
+        }
+
+        val tooltipBehaviorWithVisibleLines = if (theme.tooltips().show()) {
+            tooltipBehavior
+        } else {
             // Need to keep specified formats to use for non-hidden tooltips:
-            tooltipSpecification = TooltipSpecification(
-                valueSources = tooltipSpecification1.valueSources,
+            tooltipBehavior.copy(
                 tooltipLinePatterns = null,
-                tooltipProperties = TooltipSpecification.TooltipProperties.NONE,
+                anchor = null,
+                minWidth = null,
                 tooltipTitle = null,
-                disableSplitting = false
+                disableSplitting = false,
+                tooltipGroup = tooltipBehavior.tooltipGroup,
             )
         }
 
         val builder = GeomInteractionBuilder(
-            locatorLookupSpace = tooltipSetup.locatorLookupSpace,
-            locatorLookupStrategy = tooltipSetup.locatorLookupStrategy,
+            tooltipBehavior = tooltipBehaviorWithVisibleLines,
             tooltipAes = tooltipAes,
             tooltipAxisAes = axisAes,
             sideTooltipAes = sideTooltipAes
         )
-        return builder
-            .tooltipLinesSpec(tooltipSpecification)
-            .tooltipConstants(createConstantAesList(geomKind, constantsMap))
-            .enableCrosshair(isCrosshairEnabled(geomKind, tooltipSpecification1))
+        return builder.tooltipConstants(createConstantAesList(geomKind, constantsMap))
     }
 
-    private fun createGeomTooltipSetup(
+    private fun createTooltipBehavior(
         geomKind: GeomKind,
         statKind: StatKind,
-        isCrosshairEnabled: Boolean,
+        tooltipBehavior: TooltipBehavior,
         isPolarCoordSystem: Boolean,
-        multilayerWithTooltips: Boolean
-    ): GeomTooltipSetup {
-        val tooltipSetup = createGeomTooltipSetup(geomKind, statKind, isCrosshairEnabled, isPolarCoordSystem).let {
+        multilayerWithTooltips: Boolean,
+    ): TooltipBehavior {
+        val resolvedTooltipBehavior = if (isPolarCoordSystem) {
+            // Always show axis tooltips for polar coordinate system as all geoms are area-like.
+            bivariateFunction(
+                area = true,
+                isCrosshairEnabled = tooltipBehavior.isCrosshairEnabled,
+                axisTooltipVisibilityFromConfig = true,
+                tooltipBehavior = tooltipBehavior
+            )
+        } else {
+            tooltipBehavior
+        }.let {
             var multilayerLookup = false
-            if (multilayerWithTooltips && !isCrosshairEnabled) {
+            if (multilayerWithTooltips && !it.isCrosshairEnabled) {
                 // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot,
                 // and tooltips should not be disabled in other layers.
                 // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
@@ -122,126 +131,46 @@ object GeomInteractionUtil {
             }
 
             if (multilayerLookup) {
-                it.toMultilayerLookupStrategy()
+                it.copy(lookupSpec = LookupSpec(LookupSpace.XY, LookupStrategy.NEAREST))
             } else {
                 it
             }
         }
 
-        return tooltipSetup
+        return resolvedTooltipBehavior
     }
 
-    private fun createGeomTooltipSetup(
-        geomKind: GeomKind,
-        statKind: StatKind,
+    private fun bivariateFunction(
+        area: Boolean,
         isCrosshairEnabled: Boolean,
-        isPolarCoordSystem: Boolean
-    ): GeomTooltipSetup {
-        if (isPolarCoordSystem) {
-            // Always show axis tooltips for polar coordinate system as all geoms are area-like
-            return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM, axisTooltipVisibilityFromConfig = true)
-        }
+        tooltipBehavior: TooltipBehavior,
+        axisTooltipVisibilityFromConfig: Boolean? = null,
+    ): TooltipBehavior {
+        val axisTooltipVisibilityFromFunctionKind = !area
+        val lookupStrategy = if (area) LookupStrategy.HOVER else LookupStrategy.NEAREST
+        return tooltipBehavior.copy(
+            lookupSpec = LookupSpec(LookupSpace.XY, lookupStrategy),
+            axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
+            axisTooltipEnabled = isAxisTooltipEnabled(
+                axisTooltipVisibilityFromConfig,
+                axisTooltipVisibilityFromFunctionKind
+            ),
+            isCrosshairEnabled = isCrosshairEnabled,
+            ignoreInvisibleTargets = false,
+        )
+    }
 
-        if (statKind === StatKind.SMOOTH) {
-            when (geomKind) {
-                GeomKind.POINT,
-                GeomKind.CONTOUR -> return GeomTooltipSetup.xUnivariateFunction(
-                    GeomTargetLocator.LookupStrategy.NEAREST
-                )
-
-                else -> {}
-            }
-        }
-
-        when (geomKind) {
-            GeomKind.RIBBON -> return GeomTooltipSetup.xUnivariateFunction(
-                GeomTargetLocator.LookupStrategy.NEAREST,
-                axisTooltipVisibilityFromConfig = true
-            )
-            GeomKind.DENSITY,
-            GeomKind.FREQPOLY,
-            GeomKind.HISTOGRAM,
-            GeomKind.DOT_PLOT,
-            GeomKind.LINE,
-            GeomKind.AREA,
-            GeomKind.BAR,
-            GeomKind.SEGMENT,
-            GeomKind.STEP,
-            GeomKind.POINT_RANGE,
-            GeomKind.LINE_RANGE,
-            GeomKind.ERROR_BAR -> return GeomTooltipSetup.xUnivariateFunction(
-                GeomTargetLocator.LookupStrategy.HOVER,
-                axisTooltipVisibilityFromConfig = true
-            )
-
-            GeomKind.SMOOTH -> return if (isCrosshairEnabled) {
-                GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-            } else {
-                GeomTooltipSetup.xUnivariateFunction(GeomTargetLocator.LookupStrategy.HOVER)
-            }
-
-            GeomKind.PIE,
-            GeomKind.BOX_PLOT,
-            GeomKind.CROSS_BAR,
-            GeomKind.Y_DOT_PLOT,
-            GeomKind.HEX,
-            GeomKind.BIN_2D,
-            GeomKind.TILE -> return GeomTooltipSetup.bivariateFunction(
-                GeomTooltipSetup.AREA_GEOM,
-                axisTooltipVisibilityFromConfig = true
-            )
-
-            GeomKind.TEXT,
-            GeomKind.LABEL,
-            GeomKind.TEXT_REPEL,
-            GeomKind.LABEL_REPEL,
-            GeomKind.POINT,
-            GeomKind.JITTER,
-            GeomKind.Q_Q,
-            GeomKind.Q_Q_2,
-            GeomKind.CONTOUR,
-            GeomKind.DENSITY2D,
-            GeomKind.POINT_DENSITY,
-            GeomKind.AREA_RIDGES,
-            GeomKind.VIOLIN,
-            GeomKind.SINA,
-            GeomKind.LOLLIPOP,
-            GeomKind.SPOKE,
-            GeomKind.CURVE -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
-
-            GeomKind.Q_Q_LINE,
-            GeomKind.Q_Q_2_LINE,
-            GeomKind.PATH -> {
-                return when (statKind) {
-                    StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D -> GeomTooltipSetup.bivariateFunction(
-                        GeomTooltipSetup.NON_AREA_GEOM
-                    )
-
-                    else -> {
-                        GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
-                    }
-                }
-            }
-
-            GeomKind.H_LINE,
-            GeomKind.V_LINE,
-            GeomKind.BAND,
-            GeomKind.DENSITY2DF,
-            GeomKind.CONTOURF,
-            GeomKind.POLYGON,
-            GeomKind.MAP,
-            GeomKind.RECT -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.AREA_GEOM)
-
-            GeomKind.LIVE_MAP -> return GeomTooltipSetup.bivariateFunction(GeomTooltipSetup.NON_AREA_GEOM)
-
-            else -> return GeomTooltipSetup.none()
-        }
+    private fun isAxisTooltipEnabled(
+        axisTooltipVisibilityFromConfig: Boolean?,
+        axisTooltipVisibilityFromFunctionKind: Boolean
+    ): Boolean {
+        return axisTooltipVisibilityFromConfig ?: axisTooltipVisibilityFromFunctionKind
     }
 
     private fun createHiddenAesList(
         axisAes: List<Aes<*>>,
         geomKind: GeomKind,
-        tooltipSpecification: TooltipSpecification,
+        tooltipBehavior: TooltipBehavior,
         renderedAes: List<Aes<*>>
     ): List<Aes<*>> {
         return when (geomKind) {
@@ -263,7 +192,7 @@ object GeomInteractionUtil {
             GeomKind.TEXT, GeomKind.LABEL, GeomKind.TEXT_REPEL, GeomKind.LABEL_REPEL -> {
                 // by default geom_text doesn't show tooltips,
                 // but user can enable them via tooltips config in which case the axis tooltips should also be displayed
-                if (tooltipSpecification.tooltipLinePatterns.isNullOrEmpty()) {
+                if (tooltipBehavior.tooltipLinePatterns.isNullOrEmpty()) {
                     renderedAes
                 } else {
                     renderedAes - axisAes
@@ -375,41 +304,6 @@ object GeomInteractionUtil {
         }
     }
 
-    private fun isCrosshairEnabled(geomKind: GeomKind, tooltipSpecification: TooltipSpecification): Boolean {
-        // Crosshair is enabled if the general tooltip is moved to the specified position
-        if (tooltipSpecification.tooltipProperties.anchor == null) {
-            return false
-        }
-
-        return when (geomKind) {
-            GeomKind.POINT,
-            GeomKind.JITTER,
-            GeomKind.SINA,
-            GeomKind.Q_Q,
-            GeomKind.Q_Q_2,
-            GeomKind.LINE,
-            GeomKind.AREA,
-            GeomKind.TILE,
-            GeomKind.CONTOUR,
-            GeomKind.CONTOURF,
-            GeomKind.BIN_2D,
-            GeomKind.HEX,
-            GeomKind.DENSITY,
-            GeomKind.DENSITY2D,
-            GeomKind.DENSITY2DF,
-            GeomKind.POINT_DENSITY,
-            GeomKind.FREQPOLY,
-            GeomKind.PATH,
-            GeomKind.SEGMENT,
-            GeomKind.CURVE,
-            GeomKind.SPOKE,
-            GeomKind.RIBBON,
-            GeomKind.SMOOTH,
-            GeomKind.STEP -> true
-
-            else -> false
-        }
-    }
 
     // Add a discrete variable to the tooltip only if the number of factor levels > 4
     private const val MIN_FACTORS_TO_SHOW_TOOLTIPS = 5
@@ -424,4 +318,3 @@ object GeomInteractionUtil {
     private fun isVariableContinuous(scaleMap: Map<Aes<*>, Scale>, aes: Aes<*>) =
         scaleMap[aes]?.isContinuousDomain ?: false
 }
-

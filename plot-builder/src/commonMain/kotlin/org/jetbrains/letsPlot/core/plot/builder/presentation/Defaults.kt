@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Plot.Axis
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 
@@ -71,40 +72,6 @@ object Defaults {
         object Axis {
             const val LABEL_MAX_LENGTH = 20
         }
-
-        object Tooltip {
-            const val MAX_POINTER_FOOTING_LENGTH = 12.0
-            const val POINTER_FOOTING_TO_SIDE_LENGTH_RATIO = 0.4
-
-            const val MARGIN_BETWEEN_TOOLTIPS = 5.0
-            const val DATA_TOOLTIP_FONT_SIZE = FONT_SMALL
-            const val LINE_INTERVAL = 6.0
-            const val INTERVAL_BETWEEN_SUBSTRINGS = 3.0
-            const val H_CONTENT_PADDING = 6.0
-            const val V_CONTENT_PADDING = 6.0
-            const val CONTENT_EXTENDED_PADDING = 10.0
-
-            const val LABEL_VALUE_INTERVAL = 8.0
-            const val VALUE_LINE_MAX_LENGTH = 30
-
-            const val LINE_SEPARATOR_WIDTH = 0.7
-
-            const val BORDER_RADIUS = 4.0
-            const val COLOR_BAR_WIDTH = 4.0
-            const val COLOR_BAR_STROKE_WIDTH = 1.5
-
-            val DARK_TEXT_COLOR = Color.BLACK
-            val LIGHT_TEXT_COLOR = Color.WHITE
-
-            const val AXIS_TOOLTIP_FONT_SIZE = Plot.Axis.TICK_FONT_SIZE
-            val AXIS_TOOLTIP_COLOR = Plot.Axis.LINE_COLOR
-
-            // Consider to remove.
-            // was 1.5 to fix a tooltip border overlapping an axis, but now TipLayoutHint has stroke property
-            const val AXIS_RADIUS = 0.0
-
-            const val ROTATION_ANGLE = 15.0
-        }
     }
 
     class Plot {
@@ -129,13 +96,13 @@ object Defaults {
         Style.PLOT_TAG to createTextStyle(size = Common.Tag.FONT_SIZE),
         Style.LEGEND_TITLE to createTextStyle(size = Common.Legend.TITLE_FONT_SIZE),
         Style.LEGEND_ITEM to createTextStyle(size = Common.Legend.ITEM_FONT_SIZE),
-        Style.TOOLTIP_TEXT to createTextStyle(size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE),
+        Style.TOOLTIP_TEXT to createTextStyle(size = TooltipDefaults.DATA_TOOLTIP_FONT_SIZE),
         Style.TOOLTIP_TITLE to createTextStyle(
-            size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE,
+            size = TooltipDefaults.DATA_TOOLTIP_FONT_SIZE,
             face = FontFace.BOLD
         ),
         Style.TOOLTIP_LABEL to createTextStyle(
-            size = Common.Tooltip.DATA_TOOLTIP_FONT_SIZE,
+            size = TooltipDefaults.DATA_TOOLTIP_FONT_SIZE,
             face = FontFace.BOLD
         ),
         "${Style.AXIS_TITLE}-x" to createTextStyle(size = Axis.TITLE_FONT_SIZE),
@@ -143,11 +110,11 @@ object Defaults {
         "${Style.AXIS_TEXT}-x" to createTextStyle(size = Axis.TICK_FONT_SIZE),
         "${Style.AXIS_TEXT}-y" to createTextStyle(size = Axis.TICK_FONT_SIZE),
         "${Style.AXIS_TOOLTIP_TEXT}-x" to createTextStyle(
-            size = Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
+            size = TooltipDefaults.AXIS_TOOLTIP_FONT_SIZE,
             color = Color.WHITE
         ),
         "${Style.AXIS_TOOLTIP_TEXT}-y" to createTextStyle(
-            size = Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
+            size = TooltipDefaults.AXIS_TOOLTIP_FONT_SIZE,
             color = Color.WHITE
         ),
         "${Style.FACET_STRIP_TEXT}-x" to createTextStyle(size = FONT_MEDIUM),

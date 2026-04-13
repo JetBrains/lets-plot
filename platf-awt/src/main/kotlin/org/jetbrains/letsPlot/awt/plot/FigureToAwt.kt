@@ -107,9 +107,9 @@ internal class FigureToAwt(
         val elementMouseEventPeers = ArrayList<MouseEventPeer>()
         // In Swing components actually are painted in the reverse order of how they were added,
         // Thus, reverse elements here to have subplots painted in the order we need.
-        for (element in svgRoot.elements.asReversed()) {
+        for ((index, element) in svgRoot.elements.asReversed().withIndex()) {
             val comp = if (element is PlotSvgRoot) {
-                processPlotFigure(element)
+                processPlotFigure(element, inDeck = svgRoot.isDeck, isTopmost = svgRoot.isDeck && index == 0)
             } else {
                 processCompositeFigure(element as CompositeFigureSvgRoot)
             }
@@ -154,8 +154,10 @@ internal class FigureToAwt(
 
     private fun processPlotFigure(
         svgRoot: PlotSvgRoot,
+        inDeck: Boolean = false,
+        isTopmost: Boolean = true,
     ): JComponent {
-        val plotContainer = PlotContainer(svgRoot)
+        val plotContainer = PlotContainer(svgRoot, inDeck = inDeck, isTopmost = isTopmost)
         val plotComponent = buildSinglePlotComponent(plotContainer, svgComponentFactory, executor)
 
         return if (svgRoot.isLiveMap) {

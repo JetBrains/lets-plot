@@ -263,7 +263,7 @@ class PlotSvgComponent constructor(
             }
         }
 
-        val geomAreaBounds = figureLayoutInfo.geomAreaBounds
+        val geomAreaBounds = figureLayoutInfo.geomOuterBounds
 
         val textLayout = PlotSvgComponentHelper.figureTextLayout(
             title = title,

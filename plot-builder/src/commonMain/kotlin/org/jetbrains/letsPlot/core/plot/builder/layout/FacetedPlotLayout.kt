@@ -209,7 +209,7 @@ internal class FacetedPlotLayout(
             .reduce { b0, b1 -> b0.union(b1) }
             .origin
 
-        // Normalize origin of tilesAreaBounds.
+        // Normalize the origin of tilesAreaBounds.
         val originDelta = tilesAreaOrigin.negate()
         val tilesPaddingLeftTop = insets.leftTop
 

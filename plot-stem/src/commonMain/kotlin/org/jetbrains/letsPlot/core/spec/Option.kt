@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -229,10 +229,13 @@ object Option {
         const val MANUAL_KEY = "manual_key"
         const val TOOLTIPS = "tooltips"
 
-        const val TOOLTIP_TITLE = "title"
-        const val TOOLTIP_ANCHOR = "tooltip_anchor"
-        const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
-        const val DISABLE_SPLITTING = "disable_splitting"
+        object Tooltips {
+            const val TOOLTIP_TITLE = "title"
+            const val TOOLTIP_ANCHOR = "tooltip_anchor"
+            const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
+            const val DISABLE_SPLITTING = "disable_splitting"
+            const val TOOLTIP_GROUP = "tooltip_group"
+        }
 
         const val NONE = "none"
         const val MAP_JOIN = "map_join"

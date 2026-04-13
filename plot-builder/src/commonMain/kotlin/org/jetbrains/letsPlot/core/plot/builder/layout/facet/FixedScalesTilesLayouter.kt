@@ -9,10 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil.tilesAreaSize
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutProvider
 import kotlin.math.abs
@@ -31,23 +28,18 @@ internal object FixedScalesTilesLayouter {
 
         val facetTiles = facets.tileInfos()
 
-        // rough estimate (without axis. The final size will be smaller)
-        val vAxisCount = FacetedPlotLayoutUtil.countVAxisInFirstRow(facetTiles)
-        val vAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.LEFT, vAxisTheme)
-        val geomWidth = (tilesAreaSize.x - addedHSize - vAxisCount * vAxisThickness) / facets.colCount
-        val tileWidth = geomWidth + vAxisThickness
-
-        val hAxisCount = FacetedPlotLayoutUtil.countHAxisInFirstCol(facetTiles)
-        val hAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.BOTTOM, hAxisTheme)
-        val geomHeight = (tilesAreaSize.y - addedVSize - hAxisCount * hAxisThickness) / facets.rowCount
-        val tileHeight = geomHeight + hAxisThickness
+        // Estimate per-tile panel size.
+        val geomWithAxisSizeEstimate = DoubleVector(
+            (tilesAreaSize.x - addedHSize) / facets.colCount,
+            (tilesAreaSize.y - addedVSize) / facets.rowCount
+        )
 
         // 1st iteration
 
-        // With 'fixed' scales lets layout just one tile (because all tiles are identical).
-        val tileLayout = layoutProviderByTile[0].createTopDownTileLayout()
-        val tileLayoutInfo: TileLayoutInfo = tileLayout.doLayout(
-            DoubleVector(tileWidth, tileHeight),
+        // With 'fixed' scales lay out just one tile (because all tiles are identical).
+        val tileLayout = layoutProviderByTile[0].createTileLayout()
+        val tileLayoutInfo: TileLayoutInfo = tileLayout.doTopDownLayout(
+            geomWithAxisSizeEstimate,
             coordProvider
         )
 
@@ -76,13 +68,15 @@ internal object FixedScalesTilesLayouter {
 
         // 2nd iteration
 
-        val geomWidthDelta = widthDiff / facets.colCount
-        val geomHeightDelta = heightDiff / facets.rowCount
+        val widthDelta = widthDiff / facets.colCount
+        val heightDelta = heightDiff / facets.rowCount
 
-        val tileWidth2 = tileLayoutInfo.geomOuterWidth() + geomWidthDelta + tileLayoutInfo.axisThicknessY()
-        val tileHeight2 = tileLayoutInfo.geomOuterHeight() + geomHeightDelta + tileLayoutInfo.axisThicknessX()
-        val tileLayoutInfo2 = tileLayout.doLayout(
-            DoubleVector(tileWidth2, tileHeight2),
+        val geomWithAxisSizeAdjusted = DoubleVector(
+            tileLayoutInfo.geomWithAxisBounds.width + widthDelta,
+            tileLayoutInfo.geomWithAxisBounds.height + heightDelta
+        )
+        val tileLayoutInfo2 = tileLayout.doTopDownLayout(
+            geomWithAxisSizeAdjusted,
             coordProvider
         )
 

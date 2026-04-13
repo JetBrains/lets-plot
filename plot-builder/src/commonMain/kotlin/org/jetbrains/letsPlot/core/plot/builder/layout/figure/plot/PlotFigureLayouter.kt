@@ -212,15 +212,20 @@ internal class PlotFigureLayouter(
                 )
             )
 
-        // Geom area: plot without titles, legends, axis and facet labels.
-        val geomAreaBounds = PlotLayoutUtil.overallGeomBounds(plotLayoutInfo)
+        // Geom outer bounds: plot without titles, legends, axis and facet labels.
+        val geomOuterBounds = PlotLayoutUtil.overallGeomOuterBounds(plotLayoutInfo)
+            .add(plotOrigin)
+
+        // Actual plotting area: geomOuterBounds excluding marginal layers (if any) and plot panel insets
+        val geomContentBounds = PlotLayoutUtil.overallGeomContentBounds(plotLayoutInfo)
             .add(plotOrigin)
 
         return PlotFigureLayoutInfo(
             figureLayoutedBounds = figureLayoutedBounds,
             figureBoundsWithoutTitleAndCaption = figureBoundsWithoutTitleCaptionAndMargin,
             plotAreaOrigin = plotOrigin,
-            geomAreaBounds = geomAreaBounds,
+            geomOuterBounds = geomOuterBounds,
+            geomContentBounds = geomContentBounds,
             figurePreferredSize = figurePreferredSize ?: figureLayoutedBounds.dimension,
             plotLayoutInfo = plotLayoutInfo,
             legendsBlockInfo = legendsBlockInfo

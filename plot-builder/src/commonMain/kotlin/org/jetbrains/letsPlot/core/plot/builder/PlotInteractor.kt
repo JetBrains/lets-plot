@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -22,12 +22,12 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipRenderer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseDragSelectionStrategy
 import org.jetbrains.letsPlot.core.plot.builder.interact.context.MouseWheelSelectionStrategy
 import org.jetbrains.letsPlot.core.plot.builder.interact.context.NoneSelectionStrategy
 import org.jetbrains.letsPlot.core.plot.builder.interact.context.PlotTilesInteractionContext
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.TooltipRenderer
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
@@ -87,7 +87,7 @@ internal class PlotInteractor(
     }
 
     override fun startToolFeedback(toolFeedback: ToolFeedback): Registration {
-        var dataSelectionStrategy = when (toolFeedback) {
+        val dataSelectionStrategy = when (toolFeedback) {
             is PanGeomFeedback,
             is DrawRectFeedback -> MouseDragSelectionStrategy()
 

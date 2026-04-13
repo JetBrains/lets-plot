@@ -669,7 +669,7 @@ class LayoutManager(
         internal val size: DoubleVector,
         private val strokeWidth: Double
     ) {
-        internal val hintCoord get() = tooltipSpec.layoutHint.coord!!
+        internal val hintCoord get() = tooltipSpec.layoutHint.coord
         internal val hintKind get() = tooltipSpec.layoutHint.kind
         internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius + strokeWidth / 2
         internal val stemLength get() = tooltipSpec.layoutHint.stemLength.value

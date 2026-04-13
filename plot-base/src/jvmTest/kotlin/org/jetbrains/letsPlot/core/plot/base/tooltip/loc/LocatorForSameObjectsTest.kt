@@ -54,7 +54,7 @@ class LocatorForSameObjectsTest {
         private val SECOND_TARGET = TestUtil.pointTarget(SECOND_POINT_KEY, POINT_COORD)
 
         private fun findTargets(targetLocators: List<GeomTargetLocator>): List<GeomTargetLocator.LookupResult> {
-            val targetsPicker = LocatedTargetsPicker(flippedAxis = false)
+            val targetsPicker = LocatedTargetsPicker(flippedAxis = false, POINT_COORD)
             targetLocators.forEach { locator ->
                 locator.search(POINT_COORD)?.let(targetsPicker::addLookupResult)
             }

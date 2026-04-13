@@ -3,6 +3,10 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     kotlin("multiplatform")
     `maven-publish`
@@ -11,20 +15,38 @@ plugins {
 
 kotlin {
     jvm()
-}
+    js().browser()
+    wasmJs().browser()
 
-val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
-val kotlinLoggingVersion = project.extra["kotlinLogging.version"] as String
+    sourceSets {
+        commonMain {
+            dependencies {
+                api(project(":commons"))
+                api(project(":canvas"))
+                api(project(":datamodel"))
+                api(project(":plot-base"))
+                api(project(":plot-builder"))
+                api(project(":plot-stem"))
+                api(project(":plot-raster"))
+
+                api("org.jetbrains.kotlinx:kotlinx-datetime:${project.extra["kotlinx.datetime.version"]}")
+                api("io.github.oshai:kotlin-logging:${project.extra["kotlinLogging.version"]}")
+            }
+        }
+    }
+}
 
 val artifactBaseName = "lets-plot-common"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
+val jarJavaDocs by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+    from("$rootDir/README.md")
+}
+val jarJavaDocsFile = jarJavaDocs.flatMap { it.archiveFile }
 
-val jvmJarCommon by tasks.named<Jar>("jvmJar") {
-    archiveFileName.set("$artifactBaseName-${artifactVersion}.jar")
-
-    // Add LICENSE file to the META-INF folder inside published JAR files.
+tasks.withType<Jar>().configureEach {
     metaInf {
         from("$rootDir") {
             include("LICENSE")
@@ -32,65 +54,45 @@ val jvmJarCommon by tasks.named<Jar>("jvmJar") {
     }
 }
 
-val pomDependencies = listOf(
-    // Lets-Plot core artifacts.
-    listOf(project.group, "commons-jvm", project.version),
-    listOf(project.group, "canvas-jvm", project.version),
-    listOf(project.group, "datamodel-jvm", project.version),
-    listOf(project.group, "plot-base-jvm", project.version),
-    listOf(project.group, "plot-builder-jvm", project.version),
-    listOf(project.group, "plot-stem-jvm", project.version),
-    listOf(project.group, "plot-raster-jvm", project.version),
-
-    // Libs
-    // ToDo: coroutines ?
-    listOf("org.jetbrains.kotlinx", "kotlinx-datetime-jvm", kotlinxDatetimeVersion),
-    listOf("io.github.oshai", "kotlin-logging", kotlinLoggingVersion)
-)
-
 publishing {
-    publications {
-        register("letsPlotJvmCommon", MavenPublication::class) {
-            groupId = artifactGroupId
+    publications.withType<MavenPublication>().configureEach {
+        groupId = artifactGroupId
+        version = artifactVersion
+
+        if (artifactId == project.name) {
             artifactId = artifactBaseName
-            version = artifactVersion
+        } else if (artifactId.startsWith(project.name)) {
+            artifactId = artifactId.replace(project.name, artifactBaseName)
+        }
 
-            artifact(jvmJarCommon)
+        artifact(jarJavaDocsFile) {
+            builtBy(jarJavaDocs)
+            classifier = "javadoc"
+            extension = "jar"
+        }
 
-            pom {
-                name = "Lets-Plot common modules"
-                description = "Lets-Plot JVM package without the actual rendering."
-                url = "https://github.com/JetBrains/lets-plot"
+        pom {
+            name.set("Lets-Plot common modules")
+            description.set("Lets-Plot common modules.")
+            url.set("https://github.com/JetBrains/lets-plot")
 
-                licenses {
-                    license {
-                        name = "MIT"
-                        url = "https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE"
-                    }
+            licenses {
+                license {
+                    name.set("MIT")
+                    url.set("https://raw.githubusercontent.com/JetBrains/lets-plot/master/LICENSE")
                 }
+            }
 
-                developers {
-                    developer {
-                        id = "jetbrains"
-                        name = "JetBrains"
-                        email = "lets-plot@jetbrains.com"
-                    }
+            developers {
+                developer {
+                    id.set("jetbrains")
+                    name.set("JetBrains")
+                    email.set("lets-plot@jetbrains.com")
                 }
+            }
 
-                scm {
-                    url = "https://github.com/JetBrains/lets-plot"
-                }
-
-                // Dependencies
-                withXml {
-                    val deps = asNode().appendNode("dependencies")
-                    pomDependencies.forEach() {
-                        val dep = deps.appendNode("dependency")
-                        dep.appendNode("groupId", it[0])
-                        dep.appendNode("artifactId", it[1])
-                        dep.appendNode("version", it[2])
-                    }
-                }
+            scm {
+                url.set("https://github.com/JetBrains/lets-plot")
             }
         }
     }
@@ -117,6 +119,6 @@ publishing {
 
 signing {
     if (!project.version.toString().contains("SNAPSHOT")) {
-        sign(publishing.publications["letsPlotJvmCommon"])
+        sign(publishing.publications)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipStyle
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
@@ -27,10 +28,10 @@ object Style {
     const val LEGEND_TITLE = "legend-title"
     const val LEGEND_ITEM = "legend-item"
 
-    const val TOOLTIP_TEXT = "tooltip-text"
-    const val TOOLTIP_TITLE = "tooltip-title"
-    const val TOOLTIP_LABEL = "tooltip-label"
-    const val AXIS_TOOLTIP_TEXT = "axis-tooltip-text"
+    const val TOOLTIP_TEXT = TooltipStyle.TOOLTIP_TEXT
+    const val TOOLTIP_TITLE = TooltipStyle.TOOLTIP_TITLE
+    const val TOOLTIP_LABEL = TooltipStyle.TOOLTIP_LABEL
+    const val AXIS_TOOLTIP_TEXT = TooltipStyle.AXIS_TOOLTIP_TEXT
 
     const val FACET_STRIP_TEXT = "facet-strip-text"
 

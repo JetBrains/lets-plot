@@ -1,4 +1,4 @@
-## Publishing SNAPSHOT versions of JVM artifacts.
+## Publishing SNAPSHOT artifacts.
 
 ### Publishing to Local Maven Repository
 
@@ -7,7 +7,7 @@
 > **Note**: make sure that **version** is set to "0.0.0-SNAPSHOT" in `build.gradle.kts`.
 
 ```shell
-./gradlew publishLetsPlotJvmCommonPublicationToMavenLocalRepository \
+./gradlew :jvm-package:jvm-publish-common:publishAllPublicationsToMavenLocalRepository \
           publishLetsPlotJvmSwingPublicationToMavenLocalRepository \
           publishLetsPlotJvmBatikPublicationToMavenLocalRepository \
           publishLetsPlotGISPublicationToMavenLocalRepository \
@@ -24,7 +24,6 @@ In the `local.properties` file:
 ```properties
 sonatype.username=<your Sonatype username>
 sonatype.password=<your Sonatype access token>
-sonatype.profileID=<your Sonatype profile ID>
 ```
 
 #### SNAPSHOT Version
@@ -34,7 +33,7 @@ Make sure the `version` in the root `build.gradle.kts` file is a SNAPSHOT versio
 #### Publish
 
 ```shell
-./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
+./gradlew :jvm-package:jvm-publish-common:publishAllPublicationsToMavenRepository \
           publishLetsPlotJvmSwingPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \

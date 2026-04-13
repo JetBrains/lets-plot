@@ -13,9 +13,21 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 
 internal class LiveMapTileLayout : TileLayout {
-    override val insideOut: Boolean = false
+    override fun doTopDownLayout(
+        geomWithAxisSize: DoubleVector,
+        coordProvider: CoordProvider
+    ): TileLayoutInfo {
+        return doLayout(geomWithAxisSize, coordProvider)
+    }
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
+    override fun doInsideOutLayout(
+        geomContentSize: DoubleVector,
+        coordProvider: CoordProvider
+    ): TileLayoutInfo {
+        return doLayout(geomContentSize, coordProvider)
+    }
+
+    private fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
         val geomBounds = DoubleRectangle(DoubleVector.ZERO, preferredSize)
         return TileLayoutInfo(
             offset = DoubleVector.ZERO,

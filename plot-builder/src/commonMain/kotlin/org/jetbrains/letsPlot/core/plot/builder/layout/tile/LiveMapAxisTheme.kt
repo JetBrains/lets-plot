@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
 
 internal class LiveMapAxisTheme : AxisTheme {
@@ -89,9 +90,9 @@ internal class LiveMapAxisTheme : AxisTheme {
 
     override fun labelSpacing() = 2.0
 
-    override fun tooltipFill() = Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
+    override fun tooltipFill() = TooltipDefaults.AXIS_TOOLTIP_COLOR
 
-    override fun tooltipColor() = Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
+    override fun tooltipColor() = TooltipDefaults.LIGHT_TEXT_COLOR
 
     override fun tooltipStrokeWidth() = 1.0
 
@@ -100,8 +101,8 @@ internal class LiveMapAxisTheme : AxisTheme {
     override fun tooltipTextStyle(): ThemeTextStyle = ThemeTextStyle(
         family = FontFamily.SERIF,
         face = FontFace.NORMAL,
-        size = Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
-        color = Defaults.Common.Tooltip.LIGHT_TEXT_COLOR,
+        size = TooltipDefaults.AXIS_TOOLTIP_FONT_SIZE,
+        color = TooltipDefaults.LIGHT_TEXT_COLOR,
         markdown = false
     )
 }

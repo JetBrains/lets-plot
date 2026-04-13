@@ -6,7 +6,5 @@
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
 interface TileLayoutProvider {
-    fun createTopDownTileLayout(): TileLayout
-
-    fun createInsideOutTileLayout(): TileLayout
+    fun createTileLayout(): TileLayout
 }

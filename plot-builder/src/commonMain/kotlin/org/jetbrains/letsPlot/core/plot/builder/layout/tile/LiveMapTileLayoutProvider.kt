@@ -9,11 +9,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutProvider
 
 internal class LiveMapTileLayoutProvider : TileLayoutProvider {
-    override fun createTopDownTileLayout(): TileLayout {
-        return TILE_LAYOUT
-    }
-
-    override fun createInsideOutTileLayout(): TileLayout {
+    override fun createTileLayout(): TileLayout {
         return TILE_LAYOUT
     }
 

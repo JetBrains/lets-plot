@@ -51,6 +51,10 @@ class DoubleVector(val x: Double, val y: Double) {
         return sqrt(x * x + y * y)
     }
 
+    fun distanceTo(v: DoubleVector): Double {
+        return subtract(v).length()
+    }
+
     fun normalize(): DoubleVector {
         return mul(1 / length())
     }

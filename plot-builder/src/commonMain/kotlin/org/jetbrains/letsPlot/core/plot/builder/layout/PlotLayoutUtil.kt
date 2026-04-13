@@ -47,9 +47,16 @@ object PlotLayoutUtil {
         return titleThickness(title, labelSpec, margin = margins.height)
     }
 
-    internal fun overallGeomBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
+    internal fun overallGeomOuterBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
         require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
-        return plotLayoutInfo.tiles.map { it.getAbsoluteOuterGeomBounds(DoubleVector.ZERO) }.reduce { r0, r1 ->
+        return plotLayoutInfo.tiles.map { it.getAbsoluteGeomOuterBounds(DoubleVector.ZERO) }.reduce { r0, r1 ->
+            r0.union(r1)
+        }
+    }
+
+    internal fun overallGeomContentBounds(plotLayoutInfo: PlotLayoutInfo): DoubleRectangle {
+        require(plotLayoutInfo.tiles.isNotEmpty()) { "Plot is empty" }
+        return plotLayoutInfo.tiles.map { it.getAbsoluteGeomContentBounds(DoubleVector.ZERO) }.reduce { r0, r1 ->
             r0.union(r1)
         }
     }
@@ -184,7 +191,7 @@ object PlotLayoutUtil {
         tag: String?,
         plotTheme: PlotTheme
     ): Thickness {
-        if (tag == null || plotTheme.tagLocation() != TagLocation.MARGIN){
+        if (tag == null || plotTheme.tagLocation() != TagLocation.MARGIN) {
             return Thickness.ZERO
         }
 

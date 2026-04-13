@@ -15,10 +15,11 @@ class PlotFigureLayoutInfo constructor(
     val figureLayoutedBounds: DoubleRectangle,
     val figureBoundsWithoutTitleAndCaption: DoubleRectangle,
     /**
-     * Origin of the plot area: geoms, axis and facet labels (no titles, legends).
+     * Origin of the plot area: geoms, axis and facet labels.
+     * I.e., the inner bounds origin - all without titles and legends.
      * Relative to the figure origin (see `figureLayoutedBounds`)
      */
-    val plotAreaOrigin: DoubleVector, // Inner bounds - all without titles and legends.
+    val plotAreaOrigin: DoubleVector,
     /**
      * Plot without:
      * - titles and legends
@@ -26,7 +27,12 @@ class PlotFigureLayoutInfo constructor(
      *
      * Relative to the entire figure origin
      */
-    val geomAreaBounds: DoubleRectangle,
+    val geomOuterBounds: DoubleRectangle,
+    /**
+     * Actual plotting area: geomOuterBounds excluding marginal layers (if any) and plot panel insets.
+     * Relative to the entire figure origin
+     */
+    val geomContentBounds: DoubleRectangle,
     figurePreferredSize: DoubleVector,
     val plotLayoutInfo: PlotLayoutInfo,
     val legendsBlockInfo: LegendsBlockInfo?,

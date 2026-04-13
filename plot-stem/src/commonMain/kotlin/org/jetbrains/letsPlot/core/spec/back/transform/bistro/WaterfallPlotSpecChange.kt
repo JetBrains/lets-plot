@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -129,10 +129,10 @@ class WaterfallPlotSpecChange : SpecChange {
         }
         return bistroSpec.getMap(optionName)?.let { tooltipsOptions ->
             tooltips {
-                anchor = tooltipsOptions.getString(Option.Layer.TOOLTIP_ANCHOR)
-                minWidth = tooltipsOptions.getDouble(Option.Layer.TOOLTIP_MIN_WIDTH)
-                title = tooltipsOptions.getString(Option.Layer.TOOLTIP_TITLE)
-                disableSplitting = tooltipsOptions.getBool(Option.Layer.DISABLE_SPLITTING)
+                anchor = tooltipsOptions.getString(Option.Layer.Tooltips.TOOLTIP_ANCHOR)
+                minWidth = tooltipsOptions.getDouble(Option.Layer.Tooltips.TOOLTIP_MIN_WIDTH)
+                title = tooltipsOptions.getString(Option.Layer.Tooltips.TOOLTIP_TITLE)
+                disableSplitting = tooltipsOptions.getBool(Option.Layer.Tooltips.DISABLE_SPLITTING)
                 lines = tooltipsOptions.getList(Option.LinesSpec.LINES)?.typed<String>()
                 formats = tooltipsOptions.getMaps(Option.LinesSpec.FORMATS)?.map { formatOptions ->
                     format {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -15,9 +15,9 @@ import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionUtil
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
@@ -106,7 +106,7 @@ internal object PlotGeomTilesUtil {
                                 || !layer.tooltips.tooltipLinePatterns.isNullOrEmpty() }
                 }
 
-                if (layerConfig.tooltips == TooltipSpecification.NONE) {
+                if (layerConfig.tooltips == TooltipBehavior.NONE) {
                     null
                 } else {
                     GeomInteractionUtil.createGeomInteractionBuilder(

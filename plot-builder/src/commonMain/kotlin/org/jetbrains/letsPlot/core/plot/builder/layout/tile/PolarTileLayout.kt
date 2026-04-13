@@ -35,9 +35,9 @@ internal class PolarTileLayout(
     ): DoubleRectangle {
         return DoubleRectangle.LTRB(
             left = axisInfos.left?.axisBoundsAbsolute(geomOuterBounds)?.left ?: geomOuterBounds.left,
-            top = geomOuterBounds.top, // polar coord never has top axis
-            right = geomOuterBounds.right, // polar coord never has right axis
-            bottom = geomOuterBounds.bottom, // with polar coord bottom axis is as a part of geom area
+            top = geomOuterBounds.top, // polar coord never has a top axis
+            right = geomOuterBounds.right, // polar coord never has a right axis
+            bottom = geomOuterBounds.bottom, // with polar coord bottom axis is as a part of the geom area
         )
     }
 

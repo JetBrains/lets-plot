@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -13,9 +13,9 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.spec.Option
-import org.jetbrains.letsPlot.core.spec.Option.Layer.DISABLE_SPLITTING
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
 import org.jetbrains.letsPlot.core.spec.Option.Layer.TOOLTIPS
+import org.jetbrains.letsPlot.core.spec.Option.Layer.Tooltips.DISABLE_SPLITTING
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.FORMATS
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FIELD
 import org.jetbrains.letsPlot.core.spec.Option.LinesSpec.Format.FORMAT
@@ -65,6 +65,35 @@ class TooltipConfigTest {
 
         val axisTooltips = getAxisTooltips(geomLayer)
         assertEquals(2, axisTooltips.size, "Wrong number of axis tooltips")
+    }
+
+    @Test
+    fun `default tooltip groups should stack line-like geoms and separate others`() {
+        val lineLayer = buildGeomLayer(
+            geom = "line",
+            data = data,
+            mapping = mapping,
+            tooltips = null
+        )
+        val areaLayer = buildGeomLayer(
+            geom = "area",
+            data = data,
+            mapping = mapping,
+            tooltips = null
+        )
+        val pointLayer = buildGeomLayer(
+            geom = "point",
+            data = data,
+            mapping = mapping,
+            tooltips = null
+        )
+
+        val lineGroup = lineLayer.createContextualMapping()!!.tooltipGroup
+        val areaGroup = areaLayer.createContextualMapping()!!.tooltipGroup
+        val pointGroup = pointLayer.createContextualMapping()!!.tooltipGroup
+
+        assertEquals(lineGroup, areaGroup)
+        assertTrue(lineGroup != pointGroup)
     }
 
     @Test

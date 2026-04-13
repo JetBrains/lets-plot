@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.core.plot.builder.tooltip.component
+package org.jetbrains.letsPlot.core.plot.base.tooltip.component
 
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import kotlin.math.abs
 
-class RetainableComponents<T : SvgComponent>(
+class SvgComponentPool<T : SvgComponent>(
     private val itemFactory: () -> T,
     private val parent: SvgNode
 ) {

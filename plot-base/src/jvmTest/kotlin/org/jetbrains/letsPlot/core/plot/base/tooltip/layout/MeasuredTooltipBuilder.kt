@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.TooltipLayoutTestBas
 
 internal class MeasuredTooltipBuilder private constructor(
     private val myLayoutHint: Kind,
-    private val myCoord: DoubleVector?
+    private val myCoord: DoubleVector
 ) {
     private var mySize: DoubleVector? = null
     private var myObjectRadius: Double? = null
@@ -117,8 +117,8 @@ internal class MeasuredTooltipBuilder private constructor(
             return setDefaults(horizontalTooltip(targetCoord).text(key))
         }
 
-        fun cursor(key: String): MeasuredTooltipBuilder {
-            return setDefaults(cursorTooltip().text(key))
+        fun cursor(key: String, coord: DoubleVector): MeasuredTooltipBuilder {
+            return setDefaults(cursorTooltip(coord).text(key))
         }
 
         fun xAxisTip(key: String, targetCoord: DoubleVector): MeasuredTooltipBuilder {
@@ -161,8 +161,8 @@ internal class MeasuredTooltipBuilder private constructor(
             return MeasuredTooltipBuilder(Kind.HORIZONTAL_TOOLTIP, coord)
         }
 
-        private fun cursorTooltip(): MeasuredTooltipBuilder {
-            return MeasuredTooltipBuilder(Kind.CURSOR_TOOLTIP, null)
+        private fun cursorTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
+            return MeasuredTooltipBuilder(Kind.CURSOR_TOOLTIP, coord)
         }
 
         private fun xAxisTooltip(coord: DoubleVector): MeasuredTooltipBuilder {

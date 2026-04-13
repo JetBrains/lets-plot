@@ -19,6 +19,8 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.InsideOutTileLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.PolarTileLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.tile.TileLayoutComposite
+import org.jetbrains.letsPlot.core.plot.builder.layout.tile.TopDownTileLayout
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 
 internal class PolarFrameOfReferenceProvider(
@@ -92,7 +94,14 @@ internal class PolarFrameOfReferenceProvider(
         private val marginsLayout: GeomMarginsLayout,
         private val panelInset: Thickness,
     ) : TileLayoutProvider {
-        override fun createTopDownTileLayout(): TileLayout {
+        override fun createTileLayout(): TileLayout {
+            return TileLayoutComposite(
+                topDownTileLayout = createTopDownTileLayout(),
+                insideOutTileLayout = createInsideOutTileLayout()
+            )
+        }
+
+        private fun createTopDownTileLayout(): TopDownTileLayout {
             return PolarTileLayout(
                 axisLayoutQuad,
                 hDomain = adjustedDomain.xRange(),
@@ -102,12 +111,13 @@ internal class PolarFrameOfReferenceProvider(
             )
         }
 
-        override fun createInsideOutTileLayout(): TileLayout {
+        private fun createInsideOutTileLayout(): InsideOutTileLayout {
             return InsideOutTileLayout(
                 axisLayoutQuad,
                 hDomain = adjustedDomain.xRange(),
                 vDomain = adjustedDomain.yRange(),
-                marginsLayout
+                marginsLayout,
+                panelInset
             )
         }
     }

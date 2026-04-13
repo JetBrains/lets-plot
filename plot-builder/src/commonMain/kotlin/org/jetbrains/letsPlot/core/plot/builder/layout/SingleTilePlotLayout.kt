@@ -5,13 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
-import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 
-internal class SingleTilePlotLayout(
+internal class SingleTilePlotLayout constructor(
+    private val insideOut: Boolean,
     private val tileLayout: TileLayout,
     private val plotTheme: PlotTheme
 ) : PlotLayout {
@@ -19,7 +20,7 @@ internal class SingleTilePlotLayout(
     private val insets: DoubleInsets = plotInsets(plotTheme.plotInset())
 
     override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-        return if (tileLayout.insideOut) {
+        return if (insideOut) {
             layoutByGeomSize(preferredSize, coordProvider)
         } else {
             layoutOuterSize(preferredSize, coordProvider)
@@ -28,21 +29,21 @@ internal class SingleTilePlotLayout(
 
     private fun layoutOuterSize(outerSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
         val plotLayoutMargins = plotTheme.layoutMargins()
-        val tilePreferredSize = outerSize
+        val geomWithAxisSize = outerSize
             .subtract(insets.leftTop)
             .subtract(insets.rightBottom)
             .subtract(DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height))
 
         val tileInfo = tileLayout
-            .doLayout(tilePreferredSize, coordProvider)
+            .doTopDownLayout(geomWithAxisSize, coordProvider)
             .withOffset(insets.leftTop)
 
         return tileInfoToPlotInfo(tileInfo)
     }
 
-    private fun layoutByGeomSize(geomSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+    private fun layoutByGeomSize(geomContentSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
         val tileInfo = tileLayout
-            .doLayout(geomSize, coordProvider)
+            .doInsideOutLayout(geomContentSize, coordProvider)
             .withOffset(insets.leftTop)
             .withNormalizedOrigin()
 

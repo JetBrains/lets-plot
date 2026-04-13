@@ -52,7 +52,7 @@ class LocatedTargetsPickerFilterTargetsTest {
         val lineLookupResult = lineTargetLocator.search(cursorCoord)!!
         val pointLookupResult = pointTargetLocator.search(cursorCoord)!!
 
-        LocatedTargetsPicker(flippedAxis = false, myCursorCoord = cursorCoord).apply {
+        LocatedTargetsPicker(flippedAxis = false, cursorCoord).apply {
                 addLookupResult(lineLookupResult)
                 addLookupResult(pointLookupResult)
             }.chooseBestResult().let { picked ->

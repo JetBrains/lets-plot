@@ -154,7 +154,7 @@ class TooltipSpecFactory(
             return when (axis) {
                 Aes.X -> {
                     TipLayoutHint.xAxisTooltip(
-                        coord = DoubleVector(tipLayoutHint().coord!!.x, axisOrigin.y),
+                        coord = DoubleVector(tipLayoutHint().coord.x, axisOrigin.y),
                         axisRadius = xAxisTheme.lineWidth() / 2,
                         fillColor = xAxisTheme.tooltipFill()
                     )
@@ -162,7 +162,7 @@ class TooltipSpecFactory(
 
                 Aes.Y -> {
                     TipLayoutHint.yAxisTooltip(
-                        coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord!!.y),
+                        coord = DoubleVector(axisOrigin.x, tipLayoutHint().coord.y),
                         axisRadius = yAxisTheme.lineWidth() / 2,
                         fillColor = yAxisTheme.tooltipFill()
                     )

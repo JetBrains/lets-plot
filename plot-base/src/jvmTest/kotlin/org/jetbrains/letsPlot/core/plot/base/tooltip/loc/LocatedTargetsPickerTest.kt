@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
+import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.`when`
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -85,11 +85,43 @@ class LocatedTargetsPickerTest {
     }
 
     @Test
-    fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ButWithTwoVars_ShouldSelectSecond() {
+    fun whenBothTargetsHaveZeroDistance_AndHaveSameGeomKind_ButWithTwoVars_ShouldSelectBoth() {
         firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.POINT)
         secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.POINT)
 
-        assertTargetFrom(secondLookupResultConfig)
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
+    }
+
+    @Test
+    fun `tooltipGroup for line and point`() {
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.LINE).tooltipGroup("sameGroup")
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.POINT).tooltipGroup("sameGroup")
+
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
+    }
+
+    @Test
+    fun `tooltipGroup for line and point with distance`() {
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.LINE).tooltipGroup("sameGroup")
+        secondLookupResultConfig!!.distanceToTarget(5.0).geomKind(GeomKind.POINT).tooltipGroup("sameGroup")
+
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
+    }
+
+    @Test
+    fun `tooltipGroup for line and smooth`() {
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.LINE).tooltipGroup("sameGroup")
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.SMOOTH).tooltipGroup("sameGroup")
+
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
+    }
+
+    @Test
+    fun `tooltipGroup for line and smooth with distance`() {
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.LINE).tooltipGroup("sameGroup")
+        secondLookupResultConfig!!.distanceToTarget(5.0).geomKind(GeomKind.SMOOTH).tooltipGroup("sameGroup")
+
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
     }
 
     @Test
@@ -117,6 +149,92 @@ class LocatedTargetsPickerTest {
     }
 
     @Test
+    fun shouldIgnoreLabelTooltipsIfOtherTooltipsArePresent() {
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.POINT)
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.LABEL)
+
+        assertTargetFrom(firstLookupResultConfig)
+    }
+
+    @Test
+    fun whenThreeStackableLayersHaveSameDistance_ShouldSelectAll() {
+        val thirdLookupResultConfig = LookupResultConfig()
+            .distanceToTarget(0.0)
+            .geomKind(GeomKind.LINE)
+
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.LINE)
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.LINE)
+
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!, thirdLookupResultConfig) {
+            addLookupResult(firstLookupResultConfig.build()!!)
+            addLookupResult(secondLookupResultConfig!!.build()!!)
+            addLookupResult(thirdLookupResultConfig.build()!!)
+        }
+    }
+
+    @Test
+    fun whenTextIsBetweenStackableLayers_ShouldIgnoreTextAndKeepStacking() {
+        val thirdLookupResultConfig = LookupResultConfig()
+            .distanceToTarget(0.0)
+            .geomKind(GeomKind.LINE)
+
+        firstLookupResultConfig.distanceToTarget(0.0).geomKind(GeomKind.LINE)
+        secondLookupResultConfig!!.distanceToTarget(0.0).geomKind(GeomKind.TEXT)
+
+        assertTargetFrom(firstLookupResultConfig, thirdLookupResultConfig) {
+            addLookupResult(firstLookupResultConfig.build()!!)
+            addLookupResult(secondLookupResultConfig!!.build()!!)
+            addLookupResult(thirdLookupResultConfig.build()!!)
+        }
+    }
+
+    @Test
+    fun whenClosestHasGeneralAndAxisTooltips_ShouldNotFallbackToOtherLayers() {
+        firstLookupResultConfig
+            .distanceToTarget(0.0)
+            .generalTooltip(true)
+            .axisTooltip(true)
+        secondLookupResultConfig!!
+            .distanceToTarget(FAKE_DISTANCE)
+            .generalTooltip(true)
+
+        assertTargetFrom(firstLookupResultConfig)
+    }
+
+    @Test
+    fun whenClosestLayersSplitGeneralAndAxisTooltips_ShouldSelectBoth() {
+        firstLookupResultConfig
+            .distanceToTarget(0.0)
+            .generalTooltip(true)
+        secondLookupResultConfig!!
+            .distanceToTarget(0.0)
+            .axisTooltip(true)
+
+        assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
+    }
+
+    @Test
+    fun whenFartherLayerHasGeneralAndAxisTooltips_ShouldReplaceClosestSplitTooltips() {
+        firstLookupResultConfig
+            .distanceToTarget(0.0)
+            .generalTooltip(true)
+        secondLookupResultConfig!!
+            .distanceToTarget(0.0)
+            .axisTooltip(true)
+        val thirdLookupResultConfig = LookupResultConfig()
+            .distanceToTarget(FAKE_DISTANCE)
+            .geomKind(GeomKind.POINT)
+            .generalTooltip(true)
+            .axisTooltip(true)
+
+        assertTargetFrom(thirdLookupResultConfig) {
+            addLookupResult(firstLookupResultConfig.build()!!)
+            addLookupResult(secondLookupResultConfig!!.build()!!)
+            addLookupResult(thirdLookupResultConfig.build()!!)
+        }
+    }
+
+    @Test
     fun withOneLayer_WhenOutOfDistance_ShouldSelectNone() {
         firstLookupResultConfig.distanceToTarget(CUTOFF_DISTANCE * 1.5)
         secondLookupResultConfig = null
@@ -133,10 +251,15 @@ class LocatedTargetsPickerTest {
     }
 
     private fun assertTargetFrom(vararg expected: LookupResultConfig?) {
+        assertTargetFrom(*expected) {
+            listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
+                .forEach(::addLookupResult)
+        }
+    }
 
-        val targetsPicker = LocatedTargetsPicker(flippedAxis = false)
-        listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
-            .forEach(targetsPicker::addLookupResult)
+    private fun assertTargetFrom(vararg expected: LookupResultConfig?, addResults: LocatedTargetsPicker.() -> Unit) {
+        val targetsPicker = LocatedTargetsPicker(flippedAxis = false, DoubleVector.ZERO)
+        targetsPicker.addResults()
 
         val lookupResults = targetsPicker.chooseBestResult()
 
@@ -145,9 +268,19 @@ class LocatedTargetsPickerTest {
         } else {
             assertThat<LookupResult>(lookupResults).hasSameSizeAs(expected)
             lookupResults.zip(expected).forEach { pair ->
-                assertThat(pair.first).isEqualTo(pair.second!!.myResult)
+                assertLookupResult(pair.first, pair.second!!)
             }
         }
+    }
+
+    private fun assertLookupResult(actual: LookupResult, expected: LookupResultConfig) {
+        val expectedResult = expected.build()!!
+        assertThat(actual.geomKind).isEqualTo(expectedResult.geomKind)
+        assertThat(actual.distance).isEqualTo(expectedResult.distance)
+        assertThat(actual.hasGeneralTooltip).isEqualTo(expectedResult.hasGeneralTooltip)
+        assertThat(actual.hasAxisTooltip).isEqualTo(expectedResult.hasAxisTooltip)
+        assertThat(actual.isCrosshairEnabled).isEqualTo(expectedResult.isCrosshairEnabled)
+        assertThat(actual.hitShapeKind).isEqualTo(expectedResult.hitShapeKind)
     }
 
     private fun lookupResult(lookupResultConfig: LookupResultConfig?): LookupResult? {
@@ -155,10 +288,15 @@ class LocatedTargetsPickerTest {
     }
 
     internal class LookupResultConfig {
-        internal var myResult: LookupResult? = mock(LookupResult::class.java)
+        internal var myResult: LookupResult? = null
         private var myGeomKind: GeomKind? = null
         private var myDistance: Double = 0.toDouble()
-        private val myContextualMapping = mock(ContextualMapping::class.java)
+        private var myHasTarget: Boolean = true
+        private var myHasGeneralTooltip: Boolean = false
+        private var myHasAxisTooltip: Boolean = false
+        private var myIsCrosshairEnabled: Boolean = false
+        private var myHitShapeKind: HitShape.Kind = HitShape.Kind.RECT
+        private var myTooltipGroup: String? = null
 
         fun distanceToTarget(v: Double): LookupResultConfig {
             myDistance = v
@@ -171,20 +309,82 @@ class LocatedTargetsPickerTest {
         }
 
         fun withoutTarget(): LookupResultConfig {
+            myHasTarget = false
             myResult = null
             return this
         }
 
+        fun generalTooltip(v: Boolean): LookupResultConfig {
+            myHasGeneralTooltip = v
+            return this
+        }
+
+        fun axisTooltip(v: Boolean): LookupResultConfig {
+            myHasAxisTooltip = v
+            return this
+        }
+
+        fun crosshair(v: Boolean): LookupResultConfig {
+            myIsCrosshairEnabled = v
+            return this
+        }
+
+        fun hitShapeKind(v: HitShape.Kind): LookupResultConfig {
+            myHitShapeKind = v
+            return this
+        }
+
+        fun tooltipGroup(v: String?): LookupResultConfig {
+            myTooltipGroup = v
+            return this
+        }
+
         fun build(): LookupResult? {
-            if (myResult != null) {
-                `when`<GeomKind>(myResult!!.geomKind)
-                    .thenReturn(myGeomKind)
-                `when`<Double>(myResult!!.distance)
-                    .thenReturn(myDistance)
-                `when`(myResult!!.contextualMapping)
-                    .thenReturn(myContextualMapping)
+            if (!myHasTarget) {
+                return null
+            }
+            if (myResult == null) {
+                val contextualMapping = ContextualMapping(
+                    tooltipLines = emptyList(),
+                    tooltipAnchor = null,
+                    tooltipMinWidth = null,
+                    ignoreInvisibleTargets = false,
+                    hasGeneralTooltip = myHasGeneralTooltip,
+                    hasAxisTooltip = myHasAxisTooltip,
+                    isCrosshairEnabled = myIsCrosshairEnabled,
+                    tooltipGroup = myTooltipGroup ?: defaultTooltipGroup(requireNotNull(myGeomKind)),
+                    tooltipTitle = null
+                )
+                myResult = LookupResult(
+                    targets = emptyList(),
+                    distance = myDistance,
+                    geomKind = requireNotNull(myGeomKind),
+                    contextualMapping = contextualMapping,
+                    hitShapeKind = myHitShapeKind
+                )
             }
             return myResult
+        }
+
+        private fun defaultTooltipGroup(geomKind: GeomKind): String {
+            return when (geomKind) {
+                in LINE_LIKE_GEOMS -> "line-like"
+                else -> "geom:${geomKind.name.lowercase()}"
+            }
+        }
+
+        companion object {
+            private val LINE_LIKE_GEOMS = setOf(
+                GeomKind.LINE,
+                GeomKind.AREA,
+                GeomKind.SMOOTH,
+                GeomKind.STEP,
+                GeomKind.DENSITY,
+                GeomKind.FREQPOLY,
+                GeomKind.RIBBON,
+                GeomKind.SEGMENT,
+                GeomKind.SPOKE
+            )
         }
     }
 }

@@ -9,13 +9,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 class TileLayoutInfo constructor(
-    val offset: DoubleVector,  // A value to take in account when translating relative tile bounds to absolute ones.
+    val offset: DoubleVector,  // A value to take into account when translating relative tile bounds to absolute ones.
 
     // Relative bounds.
     val geomWithAxisBounds: DoubleRectangle,    // Tile geom area, axis, axis ticks/labels.
-    val geomOuterBounds: DoubleRectangle,  // Tile geom area including margins (geomWithAxisBounds excluding axis)
-    val geomInnerBounds: DoubleRectangle,  // Tile main geom area (geomOuterBounds excluding margins)
-    val geomContentBounds: DoubleRectangle,  // actual plotting area (geomInnerBounds excluding margins and padding)
+    val geomOuterBounds: DoubleRectangle,  // geomWithAxisBounds excluding axis
+    val geomInnerBounds: DoubleRectangle,  // geomOuterBounds excluding marginal layers (if any)
+    val geomContentBounds: DoubleRectangle,  // actual plotting area: geomInnerBounds excluding plot panel insets
 
     val axisInfos: AxisLayoutInfoQuad,
 
@@ -36,9 +36,14 @@ class TileLayoutInfo constructor(
         return geomWithAxisBounds.add(offset)
     }
 
-    fun getAbsoluteOuterGeomBounds(tilesOrigin: DoubleVector): DoubleRectangle {
+    fun getAbsoluteGeomOuterBounds(tilesOrigin: DoubleVector): DoubleRectangle {
         val offset = tilesOrigin.add(this.offset)
         return geomOuterBounds.add(offset)
+    }
+
+    fun getAbsoluteGeomContentBounds(tilesOrigin: DoubleVector): DoubleRectangle {
+        val offset = tilesOrigin.add(this.offset)
+        return geomContentBounds.add(offset)
     }
 
     fun axisThicknessX(): Double {

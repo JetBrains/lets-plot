@@ -9,9 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotFacets
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
-import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotAxisLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutProvider
 import kotlin.math.abs
@@ -30,29 +28,30 @@ internal object FreeScalesTilesLayouter {
 
         val facetTiles = facets.tileInfos()
 
-        // rough estimate (without axis. The final size will be smaller)
-        val vAxisCount = FacetedPlotLayoutUtil.countVAxisInFirstRow(facetTiles)
-        val vAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.LEFT, vAxisTheme)
-        val geomWidth = (tilesAreaSize.x - addedHSize - vAxisCount * vAxisThickness) / facets.colCount
-
-        val hAxisCount = FacetedPlotLayoutUtil.countHAxisInFirstCol(facetTiles)
-        val hAxisThickness = PlotAxisLayoutUtil.initialThickness(Orientation.BOTTOM, hAxisTheme)
-        val geomHeight = (tilesAreaSize.y - addedVSize - hAxisCount * hAxisThickness) / facets.rowCount
-
-        // 1st iteration
-
         val layoutByTile = layoutProviderByTile.map {
-            it.createInsideOutTileLayout()
+            it.createTileLayout()
         }
-
 
         val facetTileAndLayout = facetTiles.map {
             Pair(it, layoutByTile[it.trueIndex])
         }
 
+        // Estimate per-tile panel size.
+        val geomWithAxisSizeEstimate = DoubleVector(
+            (tilesAreaSize.x - addedHSize) / facets.colCount,
+            (tilesAreaSize.y - addedVSize) / facets.rowCount
+        )
+
+        // Estimate geom content size.
+        val geomContentSizeEstimate = layoutByTile[0]
+            .doTopDownLayout(geomWithAxisSizeEstimate, coordProvider)
+            .geomContentBounds.dimension
+
+        // 1st iteration
+
         val layoutInfos = facetTileAndLayout.map { (facetTile, tileLayout) ->
-            tileLayout.doLayout(
-                DoubleVector(geomWidth, geomHeight),
+            tileLayout.doInsideOutLayout(
+                geomContentSizeEstimate,
                 coordProvider
             ).withAxisShown(
                 facetTile.hasHAxis,
@@ -76,16 +75,16 @@ internal object FreeScalesTilesLayouter {
             return layoutInfos
         }
 
-        // 2nd iteration
+        // 2nd iteration: adjust geom content.
 
-        val geomWidthDelta = widthDiff / facets.colCount
-        val geomHeightDelta = heightDiff / facets.rowCount
+        val geomContentSizeAdjusted = DoubleVector(
+            geomContentSizeEstimate.x + widthDiff / facets.colCount,
+            geomContentSizeEstimate.y + heightDiff / facets.rowCount
+        )
 
-        val geomWidth2 = geomWidth + geomWidthDelta
-        val geomHeight2 = geomHeight + geomHeightDelta
         val layoutInfos2 = facetTileAndLayout.map { (facetTile, tileLayout) ->
-            tileLayout.doLayout(
-                DoubleVector(geomWidth2, geomHeight2),
+            tileLayout.doInsideOutLayout(
+                geomContentSizeAdjusted,
                 coordProvider
             ).withAxisShown(
                 facetTile.hasHAxis,

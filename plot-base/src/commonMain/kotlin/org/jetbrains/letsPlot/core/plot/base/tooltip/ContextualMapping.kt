@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -17,6 +17,7 @@ open class ContextualMapping(
     val hasGeneralTooltip: Boolean,
     val hasAxisTooltip: Boolean,
     val isCrosshairEnabled: Boolean,
+    val tooltipGroup: String?,
     private val tooltipTitle: LineSpec?
 ) {
     fun getDataPoints(index: Int, ctx: PlotContext): List<LineSpec.DataPoint> {

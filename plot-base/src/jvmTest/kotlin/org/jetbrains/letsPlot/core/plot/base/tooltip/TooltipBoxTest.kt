@@ -1,14 +1,20 @@
-package org.jetbrains.letsPlot.core.plot.builder.tooltip
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.tooltip.component.TooltipBox
+import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,12 +38,12 @@ class TooltipBoxTest {
             labelsBbox(word)
         }
 
-        tooltipBox = TooltipBox(Style.default()).apply {
+        tooltipBox = TooltipBox(styleSheet()).apply {
             root.children().add(rootGroup)
             update(
-                fillColor = Color.Companion.BLACK,
-                textColor = Color.Companion.WHITE,
-                borderColor = Color.Companion.BLACK,
+                fillColor = Color.BLACK,
+                textColor = Color.WHITE,
+                borderColor = Color.BLACK,
                 strokeWidth = 1.0,
                 lineType = NamedLineType.SOLID,
                 lines = listOf(TooltipSpec.Line.withValue(wordText)),
@@ -52,20 +58,20 @@ class TooltipBoxTest {
     @Test
     fun nullDirectionCases() {
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, wordSize.mul(0.5), TooltipBox.Orientation.HORIZONTAL)
+            setPosition(DoubleVector.ZERO, wordSize.mul(0.5), TooltipBox.Orientation.HORIZONTAL)
             assertNull(pointerDirection, "Pointer inside tooltip - direction should be null")
         }
 
         tooltipBox.apply {
             setPosition(
-                DoubleVector.Companion.ZERO, p(wordSize.x / 2.0, wordSize.y + 100.0),
+                DoubleVector.ZERO, p(wordSize.x / 2.0, wordSize.y + 100.0),
                 TooltipBox.Orientation.HORIZONTAL
             )
             assertNull(pointerDirection, "Pointer x coord within tooltips x range - direction should be null")
         }
 
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, p(wordSize.x + 100.0, 4.0), TooltipBox.Orientation.VERTICAL)
+            setPosition(DoubleVector.ZERO, p(wordSize.x + 100.0, 4.0), TooltipBox.Orientation.VERTICAL)
             assertNull(pointerDirection, "Pointer y coord within tooltips y range - direction should be null")
         }
     }
@@ -73,7 +79,7 @@ class TooltipBoxTest {
     @Test
     fun verticalDirectionCases() {
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, wordSize.add(p(0.0, 20.0)), TooltipBox.Orientation.VERTICAL)
+            setPosition(DoubleVector.ZERO, wordSize.add(p(0.0, 20.0)), TooltipBox.Orientation.VERTICAL)
             assertEquals(
                 pointerDirection,
                 TooltipBox.PointerDirection.DOWN,
@@ -82,7 +88,7 @@ class TooltipBoxTest {
         }
 
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, p(0.0, -10.0), TooltipBox.Orientation.VERTICAL)
+            setPosition(DoubleVector.ZERO, p(0.0, -10.0), TooltipBox.Orientation.VERTICAL)
             assertEquals(
                 pointerDirection,
                 TooltipBox.PointerDirection.UP,
@@ -94,7 +100,7 @@ class TooltipBoxTest {
     @Test
     fun horizontalDirectionCases() {
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, wordSize.add(p(20.0, 0.0)), TooltipBox.Orientation.HORIZONTAL)
+            setPosition(DoubleVector.ZERO, wordSize.add(p(20.0, 0.0)), TooltipBox.Orientation.HORIZONTAL)
             assertEquals(
                 pointerDirection,
                 TooltipBox.PointerDirection.RIGHT,
@@ -103,7 +109,7 @@ class TooltipBoxTest {
         }
 
         tooltipBox.apply {
-            setPosition(DoubleVector.Companion.ZERO, p(-10.0, 0.0), TooltipBox.Orientation.HORIZONTAL)
+            setPosition(DoubleVector.ZERO, p(-10.0, 0.0), TooltipBox.Orientation.HORIZONTAL)
             assertEquals(
                 pointerDirection,
                 TooltipBox.PointerDirection.LEFT,
@@ -114,6 +120,24 @@ class TooltipBoxTest {
 
 
     private fun p(x: Double, y: Double) = DoubleVector(x, y)
+
+    private fun styleSheet(): StyleSheet {
+        val textStyle = TextStyle(
+            family = "sans-serif",
+            face = FontFace.NORMAL,
+            size = 13.0,
+            color = Color.BLACK
+        )
+        return StyleSheet(
+            mapOf(
+                TooltipStyle.TOOLTIP_TEXT to textStyle,
+                TooltipStyle.TOOLTIP_TITLE to TextStyle("sans-serif", FontFace.BOLD, 13.0, Color.BLACK),
+                TooltipStyle.TOOLTIP_LABEL to TextStyle("sans-serif", FontFace.BOLD, 13.0, Color.BLACK),
+                "anyStyle" to textStyle
+            ),
+            defaultFamily = "sans-serif"
+        )
+    }
 
     class MockSvgPlatformPeer : SvgPlatformPeer {
         private val myLabelBboxes = mutableMapOf<String, DoubleVector>()
@@ -144,12 +168,12 @@ class TooltipBoxTest {
                     .run { (this as SvgTextNode).textContent().get() }
                     .run { myLabelBboxes[this]!! }
                     .run { DoubleRectangle(0.0, -this.y, this.x, 0.0) }
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
             }
 
             // another type
             try {
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
             }
 
             if (element is SvgElement) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpecification
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
@@ -167,7 +167,7 @@ class LayerConfig constructor(
     val varBindings: List<VarBinding>
     val constantsMap: Map<Aes<*>, Any>
 
-    val tooltips: TooltipSpecification
+    val tooltips: TooltipBehavior
     val annotations: AnnotationSpecification
 
     private val combinedDiscreteMappings: Map<String, String>
@@ -288,10 +288,16 @@ class LayerConfig constructor(
             initTooltipsSpec(
                 tooltipOptions = getSafe(TOOLTIPS),
                 varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
-                constantsMap, explicitGroupingVarNames
+                constantsMap,
+                explicitGroupingVarNames,
+                geomKind = geomProto.geomKind,
+                statKind = statKind,
             )
         } else {
-            TooltipSpecification.defaultTooltip()
+            TooltipConfig.defaultTooltip(
+                geomKind = geomProto.geomKind,
+                statKind = statKind,
+            )
         }
 
         annotations = if (has(ANNOTATIONS)) {
@@ -543,8 +549,10 @@ class LayerConfig constructor(
             tooltipOptions: Any,  // An options map or just string "none"
             varBindings: List<VarBinding>,
             constantsMap: Map<Aes<*>, Any>,
-            explicitGroupingVarNames: List<String>?
-        ): TooltipSpecification {
+            explicitGroupingVarNames: List<String>?,
+            geomKind: GeomKind,
+            statKind: StatKind,
+        ): TooltipBehavior {
             return when (tooltipOptions) {
                 is Map<*, *> -> {
                     @Suppress("UNCHECKED_CAST")
@@ -553,10 +561,13 @@ class LayerConfig constructor(
                         constantsMap = constantsMap,
                         groupingVarNames = explicitGroupingVarNames,
                         varBindings = varBindings
-                    ).createTooltips()
+                    ).createTooltips(
+                        geomKind = geomKind,
+                        statKind = statKind,
+                    )
                 }
 
-                NONE -> TooltipSpecification.NONE
+                NONE -> TooltipBehavior.NONE
 
                 else -> error("Incorrect tooltips specification")
             }

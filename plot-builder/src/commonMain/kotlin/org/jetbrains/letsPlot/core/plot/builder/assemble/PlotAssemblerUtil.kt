@@ -190,13 +190,9 @@ internal object PlotAssemblerUtil {
                 facetsTheme
             )
         } else {
-            val tileLayout = if (insideOut) {
-                layoutProviderByTile[0].createInsideOutTileLayout()
-            } else {
-                layoutProviderByTile[0].createTopDownTileLayout()
-            }
-
+            val tileLayout = layoutProviderByTile[0].createTileLayout()
             SingleTilePlotLayout(
+                insideOut,
                 tileLayout,
                 plotTheme
             )

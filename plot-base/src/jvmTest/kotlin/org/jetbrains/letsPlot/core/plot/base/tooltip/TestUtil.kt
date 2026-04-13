@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -22,9 +22,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.Tooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TargetPrototype
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.LIGHT_TEXT_COLOR
 import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -61,16 +58,15 @@ object TestUtil {
         override fun minorTickMarkLength() = TODO("Not yet implemented")
         override fun tickLabelMargins() = Thickness()
         override fun labelSpacing(): Double = TODO("Not yet implemented")
-        override fun tooltipFill() = AXIS_TOOLTIP_COLOR
-        override fun tooltipColor() = AXIS_TOOLTIP_COLOR
+        override fun tooltipFill() = TooltipDefaults.AXIS_TOOLTIP_COLOR
+        override fun tooltipColor() = TooltipDefaults.AXIS_TOOLTIP_COLOR
         override fun tooltipStrokeWidth() = 1.0
         override fun tooltipLineType() = NamedLineType.SOLID
         override fun tooltipTextStyle(): ThemeTextStyle = ThemeTextStyle(
-//            Defaults.FONT_FAMILY_NORMAL,
             FontFamily.SERIF,
             FontFace.NORMAL,
-            Defaults.Common.Tooltip.AXIS_TOOLTIP_FONT_SIZE,
-            LIGHT_TEXT_COLOR,
+            TooltipDefaults.AXIS_TOOLTIP_FONT_SIZE,
+            TooltipDefaults.LIGHT_TEXT_COLOR,
             false
         )
     }
@@ -93,7 +89,7 @@ object TestUtil {
     }
 
     private fun <T> mappedData(aes: Aes<T>, isContinuous: Boolean): MappedDataAccessMock.Mapping<T> {
-        return MappedDataAccessMock.Companion.variable().name(VARIABLE_NAME).value(VARIABLE_VALUE).isContinuous(isContinuous).mapping(aes)
+        return MappedDataAccessMock.variable().name(VARIABLE_NAME).value(VARIABLE_VALUE).isContinuous(isContinuous).mapping(aes)
     }
 
     internal fun assertText(tooltipSpecs: List<TooltipSpec>, vararg expectedTooltipText: String) {
@@ -155,7 +151,7 @@ object TestUtil {
         return LayerTargetLocator(geomKind, lookupSpec, contextualMapping, targets)
     }
 
-    fun coord(x: Double, y: Double): DoubleVector {
+    fun coord(x: Number, y: Number): DoubleVector {
         return DoubleVector(x, y)
     }
 

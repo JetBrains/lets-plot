@@ -41,10 +41,10 @@ class CompositeFigureDeckLayout(
             element?.withBounds(bounds)?.layoutedByOuterSize()
         }
 
-        // Compute the common geom area as the intersection of all plot geom bounds.
+        // Compute the common geom content area as the intersection of all plot geom content bounds.
         val plotElements = layouted.filterIsInstance<PlotFigureBuildInfo>()
-        val commonGeomBounds = plotElements
-            .map { it.layoutInfo.geomAreaBounds }
+        val commonGeomContentBounds = plotElements
+            .map { it.layoutInfo.geomContentBounds }
             .reduceOrNull { acc, r ->
                 DoubleRectangle.hvRange(
                     acc.xRange().intersection(r.xRange()),
@@ -52,11 +52,11 @@ class CompositeFigureDeckLayout(
                 )
             } ?: return layouted
 
-        // Re-layout each plot element so its geom area matches the common rect.
+        // Re-layout each plot element so its content area matches the common rect.
         return layouted.map { buildInfo ->
             when (buildInfo) {
                 null -> null
-                is PlotFigureBuildInfo -> buildInfo.layoutedByGeomBounds(commonGeomBounds)
+                is PlotFigureBuildInfo -> buildInfo.layoutedByGeomBounds(commonGeomContentBounds)
                 else -> buildInfo
             }
         }

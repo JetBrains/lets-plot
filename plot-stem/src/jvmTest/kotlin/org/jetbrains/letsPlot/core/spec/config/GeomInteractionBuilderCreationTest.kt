@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -204,7 +204,7 @@ class GeomInteractionBuilderCreationTest {
                 theme = DefaultTheme.minimal2(),
                 geomKind = layerConfig.geomProto.geomKind,
                 statKind = layerConfig.statKind,
-                tooltipSpecification1 = layerConfig.tooltips,
+                tooltipBehavior1 = layerConfig.tooltips,
                 isYOrientation = layerConfig.isYOrientation,
                 constantsMap = layerConfig.constantsMap,
                 renderedAes = layerConfig.renderedAes,

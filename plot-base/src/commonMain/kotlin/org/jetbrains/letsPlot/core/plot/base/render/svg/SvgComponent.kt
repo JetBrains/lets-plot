@@ -178,10 +178,10 @@ abstract class SvgComponent {
         myRootGroup.addClass(className)
     }
 
-    fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null) {
+    fun drawDebugRect(r: DoubleRectangle, color: Color, message: String? = null, strokeWidth: Double = 1.0) {
         val rect = SvgRectElement(r)
         rect.strokeColor().set(color)
-        rect.strokeWidth().set(1.0)
+        rect.strokeWidth().set(strokeWidth)
         rect.fillOpacity().set(0.0)
         message?.run {
             onMouseMove(rect, "$message: $r")

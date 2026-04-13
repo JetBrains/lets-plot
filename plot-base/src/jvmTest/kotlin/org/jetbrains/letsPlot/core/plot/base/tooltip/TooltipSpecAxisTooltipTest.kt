@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.X_AXIS_TOOLTIP
-import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Tooltip.AXIS_TOOLTIP_COLOR
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -26,7 +25,7 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
 
     @Test
     fun shouldNotAddLabel_WhenMappedToYAxisVar() {
-        val v = MappedDataAccessMock.Companion.variable().name("var_for_y").value("sedan")
+        val v = MappedDataAccessMock.variable().name("var_for_y").value("sedan")
 
         val fillMapping = addMappedData(v.mapping(Aes.FILL))
         val yMapping = addMappedData(v.mapping(Aes.Y))
@@ -50,7 +49,7 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
 
     @Test
     fun whenXIsMapped_AndAxisTooltipEnabled_ShouldAddTooltipSpec() {
-        val variable = MappedDataAccessMock.Companion.variable().name("some label").value("some value").isContinuous(true)
+        val variable = MappedDataAccessMock.variable().name("some label").value("some value").isContinuous(true)
         val xMapping = addMappedData(variable.mapping(Aes.X))
 
         buildTooltipSpecs()
@@ -60,14 +59,14 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
             expectedHintCoord = TARGET_X_AXIS_COORD,
             expectedObjectRadius = 0.5
         )
-        assertFill(AXIS_TOOLTIP_COLOR)
+        assertFill(TooltipDefaults.AXIS_TOOLTIP_COLOR)
         assertLines(0, xMapping.shortTooltipText())
     }
 
 
     @Test
     fun shouldNotAddLabel_When_MappedToYAxisVar_And_OneLineTooltip() {
-        val v = MappedDataAccessMock.Companion.variable().name("var_for_y").value("sedan")
+        val v = MappedDataAccessMock.variable().name("var_for_y").value("sedan")
         val yMapping = addMappedData(v.mapping(Aes.Y))
 
         buildTooltipSpecs()
@@ -76,7 +75,7 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
 
     @Test
     fun multilineTooltip_shouldAddLabels() {
-        val v = MappedDataAccessMock.Companion.variable().name("var_for_y").value("sedan")
+        val v = MappedDataAccessMock.variable().name("var_for_y").value("sedan")
         val fillMapping = addMappedData(v.mapping(Aes.FILL))
         val yMapping = addMappedData(v.mapping(Aes.Y))
 

@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.builder.MarginSide
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.InsideOutTileLayout
+import org.jetbrains.letsPlot.core.plot.builder.layout.tile.TileLayoutComposite
 import org.jetbrains.letsPlot.core.plot.builder.layout.tile.TopDownTileLayout
 import org.jetbrains.letsPlot.core.plot.builder.scale.AxisPosition
 
@@ -98,7 +99,14 @@ internal class SquareFrameOfReferenceProvider(
     ) : TileLayoutProvider {
         private val hvDomain = adjustedDomain.flipIf(flipAxis)
 
-        override fun createTopDownTileLayout(): TileLayout {
+        override fun createTileLayout(): TileLayout {
+            return TileLayoutComposite(
+                topDownTileLayout = createTopDownTileLayout(),
+                insideOutTileLayout = createInsideOutTileLayout()
+            )
+        }
+
+        private fun createTopDownTileLayout(): TopDownTileLayout {
             return TopDownTileLayout(
                 axisLayoutQuad,
                 hDomain = hvDomain.xRange(),
@@ -108,12 +116,13 @@ internal class SquareFrameOfReferenceProvider(
             )
         }
 
-        override fun createInsideOutTileLayout(): TileLayout {
+        private fun createInsideOutTileLayout(): InsideOutTileLayout {
             return InsideOutTileLayout(
                 axisLayoutQuad,
                 hDomain = hvDomain.xRange(),
                 vDomain = hvDomain.yRange(),
-                marginsLayout
+                marginsLayout,
+                panelInset
             )
         }
     }

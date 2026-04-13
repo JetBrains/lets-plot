@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -12,10 +12,10 @@ class TooltipsOptions private constructor(
 ) : Options(toSpecDelegate = toSpecDelegate) {
     constructor() : this(Options::properties)
 
-    var anchor: String? by map(Option.Layer.TOOLTIP_ANCHOR)
-    var minWidth: Double? by map(Option.Layer.TOOLTIP_MIN_WIDTH)
-    var title: String? by map(Option.Layer.TOOLTIP_TITLE)
-    var disableSplitting: Boolean? by map(Option.Layer.DISABLE_SPLITTING)
+    var anchor: String? by map(Option.Layer.Tooltips.TOOLTIP_ANCHOR)
+    var minWidth: Double? by map(Option.Layer.Tooltips.TOOLTIP_MIN_WIDTH)
+    var title: String? by map(Option.Layer.Tooltips.TOOLTIP_TITLE)
+    var disableSplitting: Boolean? by map(Option.Layer.Tooltips.DISABLE_SPLITTING)
     var formats: List<Format>? by map(Option.LinesSpec.FORMATS)
     var lines: List<String>? by map(Option.LinesSpec.LINES)
 
