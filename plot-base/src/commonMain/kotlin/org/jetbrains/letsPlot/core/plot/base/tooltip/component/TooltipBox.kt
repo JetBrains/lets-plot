@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox.Orientation.HORIZONTAL
@@ -545,11 +544,11 @@ class TooltipBox(
                 Pair(
                     line.label?.let {
                         estimateLineHeights(it, TooltipStyle.TOOLTIP_LABEL).map { height ->
-                            (height ?: labelFontSize) + INTERVAL_BETWEEN_SUBSTRINGS
+                            (height ?: labelFontSize) + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS
                         }
                     },
                     estimateLineHeights(line.value, textClassName).map { height ->
-                        (height ?: valueFontSize) + INTERVAL_BETWEEN_SUBSTRINGS
+                        (height ?: valueFontSize) + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS
                     }
                 )
             }
