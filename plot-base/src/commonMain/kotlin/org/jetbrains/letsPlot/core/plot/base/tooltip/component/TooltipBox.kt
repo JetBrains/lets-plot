@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox.Orientation.HORIZONTAL
