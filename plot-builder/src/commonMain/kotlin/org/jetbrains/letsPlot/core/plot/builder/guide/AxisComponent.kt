@@ -171,7 +171,6 @@ class AxisComponent(
         val tickLabel = Label(label)
         tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
 
-        tickLabel.moveTo(labelOffset.x, labelOffset.y)
         tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
         tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
 
@@ -179,6 +178,17 @@ class AxisComponent(
         tickLabel.setFontSize(labelSpec.font.size.toDouble())
         tickLabel.setLineHeights(labelSpec.heights(label))
         tickLabel.rotate(labelAdjustments.rotationDegree)
+
+        // TODO: Refactor
+        // Should be simplified after refactor of the Label::verticalRepositionLines()
+        val plainTextHeight = labelSpec.heights("").firstOrNull() ?: labelSpec.font.size.toDouble()
+        val firstLineHeight = labelSpec.heights(label).firstOrNull() ?: plainTextHeight
+        val extraFirstLineShift = if (orientation.isHorizontal && firstLineHeight > plainTextHeight) {
+            (firstLineHeight - plainTextHeight) / 2
+        } else {
+            0.0
+        }
+        tickLabel.moveTo(labelOffset.x, labelOffset.y + extraFirstLineShift)
 
         return tickLabel.rootGroup
     }

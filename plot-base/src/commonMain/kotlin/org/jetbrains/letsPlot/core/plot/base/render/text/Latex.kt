@@ -373,6 +373,11 @@ internal class Latex(
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font)
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
+            // The following 'tspan' element marks the current baseline before the fraction
+            val setBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+                // The baseline marker should stay at the current x instead of using the fraction center
+                setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
+            }).wrap()
             val numeratorTSpanElements = numerator.render(context, prefixWidth).mapIndexed { i, wrappedElement ->
                 wrappedElement.svg.apply {
                     if (i == 0) {
@@ -396,7 +401,7 @@ internal class Latex(
             val restoreBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
             }).wrap(prefixWidth + fractionWidth)
-            return numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
+            return listOf(setBaselineTSpan) + numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
         }
     }
 
