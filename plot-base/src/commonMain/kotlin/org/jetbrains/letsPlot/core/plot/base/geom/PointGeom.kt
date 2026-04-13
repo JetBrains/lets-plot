@@ -42,14 +42,14 @@ open class PointGeom : GeomBase() {
         val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 
         val slimGroup = SvgSlimElements.g(dataPoints.count())
-        val droppedPointsIds = mutableSetOf<Int>()
+        val droppedPoints = mutableSetOf<DataPointAesthetics>()
 
         for (p in dataPoints) {
             val point = p.finiteVectorOrNull(Aes.X, Aes.Y)!!
             val location = helper.toClient(point, p)
 
             if (location == null) {
-                droppedPointsIds.add(p.index())
+                droppedPoints.add(p)
                 continue
             }
 
@@ -74,8 +74,8 @@ open class PointGeom : GeomBase() {
             PointShapeSvg.create(shape, location, p, scaleFactor)
                 .appendTo(slimGroup)
         }
-        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
-        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
+
+        ctx.droppedPointsReporter().report(invalidDataPoints + droppedPoints)
         root.add(wrap(slimGroup))
     }
 

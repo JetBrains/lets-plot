@@ -55,9 +55,7 @@ class ViolinGeom : GeomBase() {
             .map { (x, nonOrderedPoints) -> x to GeomUtil.ordered_Y(nonOrderedPoints, false) }
             .forEach { (_, dataPoints) -> buildViolin(root, dataPoints, linesHelper, quantilesHelper, ctx) }
 
-        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
-        val droppedPointsIds = linesHelper.getDroppedPointsIds().asSequence()
-        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     private fun buildViolin(

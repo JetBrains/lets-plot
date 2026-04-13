@@ -61,8 +61,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
                     }
             }
 
-        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }.toSet()
-        ctx.droppedPointsReporter().report(filteredPointsIds)
+        ctx.droppedPointsReporter().report(invalidDataPoints)
     }
 
     private fun buildStack(

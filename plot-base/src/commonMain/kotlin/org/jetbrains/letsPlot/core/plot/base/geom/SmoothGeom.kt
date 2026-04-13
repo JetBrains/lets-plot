@@ -46,9 +46,7 @@ class SmoothGeom : GeomBase() {
 
         buildHints(dataPoints, pos, coord, ctx)
 
-        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
-        val droppedPointsIds = linesHelper.getDroppedPointsIds().asSequence()
-        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     private fun buildHints(

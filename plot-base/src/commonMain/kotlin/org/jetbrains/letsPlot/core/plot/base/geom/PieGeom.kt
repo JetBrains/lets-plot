@@ -87,8 +87,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 ctx.annotation?.let { PieAnnotation.build(root, pieSectors, ctx) }
             }
 
-        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }.toSet()
-        ctx.droppedPointsReporter().report(filteredPointsIds)
+        ctx.droppedPointsReporter().report(invalidDataPoints)
     }
 
     private fun SvgPathDataBuilder.svgOuterArc(sector: Sector) {

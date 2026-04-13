@@ -23,7 +23,7 @@ class SinaGeom : GeomBase() {
     var seed: Long? = null
     var quantiles: List<Double> = BaseYDensityStat.DEF_QUANTILES
     var showHalf: Double = DEF_SHOW_HALF
-    val droppedPointsIds = mutableSetOf<Int>()
+    val droppedPoints = mutableSetOf<DataPointAesthetics>()
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = PointLegendKeyElementFactory()
@@ -47,7 +47,7 @@ class SinaGeom : GeomBase() {
             .forEach { (_, dataPoints) -> buildGroup(root, dataPoints, pos, coord, ctx, rand) }
 
         val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
-        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
+        ctx.droppedPointsReporter().report(invalidDataPoints + droppedPoints)
     }
 
     private fun buildGroup(
@@ -74,7 +74,7 @@ class SinaGeom : GeomBase() {
                 val location = helper.toClient(point, p)
 
                 if (location == null) {
-                    droppedPointsIds.add(p.index())
+                    droppedPoints.add(p)
                     continue
                 }
 

@@ -46,9 +46,7 @@ class AreaRidgesGeom : GeomBase(), WithHeight {
                 splitDataPoints(dataPoints).forEach { buildRidge(root, it, linesHelper, quantilesHelper, ctx) }
             }
 
-        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }
-        val droppedPointsIds = linesHelper.getDroppedPointsIds().asSequence()
-        ctx.droppedPointsReporter().report((filteredPointsIds + droppedPointsIds).toSet())
+        ctx.droppedPointsReporter().report(invalidDataPoints + linesHelper.getDroppedPoints())
     }
 
     private fun splitDataPoints(dataPoints: Iterable<DataPointAesthetics>): List<Iterable<DataPointAesthetics>> {

@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
@@ -235,9 +236,12 @@ internal abstract class FrameOfReferenceBase(
             val prefix = "[${layer.geomKind.name.lowercase()}/${layer.statName}]"
 
             return object : DroppedPointsReporter {
-                override fun report(droppedIndices: Set<Int>) {
-                    if (droppedIndices.isEmpty()) return
-                    val n = droppedIndices.size
+                override fun report(droppedPoints: Iterable<DataPointAesthetics>) {
+                    if (!droppedPoints.any()) return
+
+                    val ids = droppedPoints.map { it.index() }.toSet()
+
+                    val n = ids.size
                     val points = if (n == 1) "data point" else "data points"
                     messageConsumer("$prefix Removed $n $points: missing or outside the scale limits.")
                 }

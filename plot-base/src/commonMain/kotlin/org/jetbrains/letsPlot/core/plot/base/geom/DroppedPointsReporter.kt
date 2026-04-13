@@ -5,12 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
+import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+
 interface DroppedPointsReporter {
-    fun report(droppedIndices: Set<Int>)
+    fun report(droppedPoints: Iterable<DataPointAesthetics>)
 
     companion object {
         val NONE = object : DroppedPointsReporter {
-            override fun report(droppedIndices: Set<Int>) {}
+            override fun report(droppedPoints: Iterable<DataPointAesthetics>) {}
         }
     }
 }

@@ -116,8 +116,7 @@ class RasterGeom : GeomBase() {
         )
         root.add(svgImageElement)
 
-        val filteredPointsIds = invalidDataPoints.asSequence().map { it.index() }.toSet()
-        ctx.droppedPointsReporter().report(filteredPointsIds)
+        ctx.droppedPointsReporter().report(invalidDataPoints)
     }
 
     companion object {
