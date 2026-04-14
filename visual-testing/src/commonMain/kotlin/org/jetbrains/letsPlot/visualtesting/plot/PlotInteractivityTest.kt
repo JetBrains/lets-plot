@@ -26,10 +26,12 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_panInProgressWithIncompleteBuffer)
         registerTest(::plot_interactivity_compositeTooltip)
         registerTest(::plot_interactivity_nestedCompositeTooltip)
-        registerTest(::plot_interactivity_pointAndLine_LineTooltip)
-        registerTest(::plot_interactivity_pointAndLine_PointTooltip)
-        registerTest(::plot_interactivity_pointAndPoint_PointTooltip)
 
+        registerTest(::plot_interactivity_pointAndLine_lineTooltip)
+        registerTest(::plot_interactivity_pointAndLine_pointTooltip)
+        registerTest(::plot_interactivity_pointAndPoint_pointTooltip)
+        registerTest(::plot_interactivity_pointLineSmooth_linesTooltip)
+        registerTest(::plot_interactivity_pointLineSmooth_pointTooltip)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
@@ -209,7 +211,7 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, dragEndPos)
     }
 
-    fun plot_interactivity_pointAndLine_LineTooltip(): Bitmap {
+    fun plot_interactivity_pointAndLine_lineTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_LINE))
 
         val cursorPos = Vector(465, 80)
@@ -218,7 +220,7 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    fun plot_interactivity_pointAndLine_PointTooltip(): Bitmap {
+    fun plot_interactivity_pointAndLine_pointTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_LINE))
 
         val cursorPos = Vector(460, 135)
@@ -227,7 +229,7 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    fun plot_interactivity_pointAndPoint_PointTooltip(): Bitmap {
+    fun plot_interactivity_pointAndPoint_pointTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_POINT))
 
         val cursorPos = Vector(460, 135)
@@ -236,9 +238,21 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    fun plot_interactivity_pointLineSmooth_simple(): Bitmap {
+    fun plot_interactivity_pointLineSmooth_linesTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_LINE_SMOOTH))
+
+        val cursorPos = Vector(460, 135)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
     }
 
+    fun plot_interactivity_pointLineSmooth_pointTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_LINE_SMOOTH))
 
+        val cursorPos = Vector(445, 295)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
 }

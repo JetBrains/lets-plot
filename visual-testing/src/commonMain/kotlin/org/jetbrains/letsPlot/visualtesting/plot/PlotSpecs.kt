@@ -238,5 +238,5 @@ object PlotSpecs {
         |    }
         |  ]
         |}
-    """.trimIndent()
+    """.trimMargin()
 }
