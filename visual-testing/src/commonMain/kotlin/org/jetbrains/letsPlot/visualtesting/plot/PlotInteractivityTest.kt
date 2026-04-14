@@ -32,6 +32,8 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_pointAndPoint_pointTooltip)
         registerTest(::plot_interactivity_pointLineSmooth_linesTooltip)
         registerTest(::plot_interactivity_pointLineSmooth_pointTooltip)
+        registerTest(::plot_interactivity_histogramDensity_densityTooltip)
+        registerTest(::plot_interactivity_histogramDensity_histogramTooltip)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
@@ -251,6 +253,24 @@ class PlotInteractivityTest(
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_LINE_SMOOTH))
 
         val cursorPos = Vector(445, 295)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_histogramDensity_densityTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.HISTOGRAM_DENSITY))
+
+        val cursorPos = Vector(270, 445)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_histogramDensity_histogramTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.HISTOGRAM_DENSITY))
+
+        val cursorPos = Vector(270, 75)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)
