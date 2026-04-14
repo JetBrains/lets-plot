@@ -6,20 +6,28 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 
 // `open` for Mockito tests
 open class ContextualMapping(
-    private val tooltipLines: List<LineSpec>,
+    private val tooltipLines: List<LinePattern>,
     val tooltipAnchor: TooltipAnchor?,
     val tooltipMinWidth: Double?,
     val ignoreInvisibleTargets: Boolean,
-    val hasGeneralTooltip: Boolean,
-    val hasAxisTooltip: Boolean,
     val isCrosshairEnabled: Boolean,
     val tooltipGroup: String?,
     private val tooltipTitle: LineSpec?
 ) {
+    val hasGeneralTooltip = tooltipLines.any { line ->
+        line.fields.none(ValueSource::isSide)
+    }
+
+    val hasAxisTooltip = tooltipLines.any { line ->
+        line.fields.any(ValueSource::isAxis)
+    }
+
     fun getDataPoints(index: Int, ctx: PlotContext): List<LineSpec.DataPoint> {
         return tooltipLines.mapNotNull { it.getDataPoint(index, ctx) }
     }

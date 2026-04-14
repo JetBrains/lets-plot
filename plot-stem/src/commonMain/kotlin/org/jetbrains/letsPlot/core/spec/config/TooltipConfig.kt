@@ -10,9 +10,11 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.StatKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor.HorizontalAnchor
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
-import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Layer.Tooltips
 
 class TooltipConfig(
     private val geomKind: GeomKind,
@@ -25,9 +27,9 @@ class TooltipConfig(
 
     val anchor: TooltipAnchor? = readAnchor()
     val isCrosshairEnabled = isCrosshairEnabled(geomKind, anchor)
-    val minWidth = getDouble(Option.Layer.Tooltips.TOOLTIP_MIN_WIDTH)
-    val disableSplitting = getBoolean(Option.Layer.Tooltips.DISABLE_SPLITTING, def = false)
-    val tooltipGroup = getString(Option.Layer.Tooltips.TOOLTIP_GROUP)
+    val minWidth = getDouble(Tooltips.TOOLTIP_MIN_WIDTH)
+    val disableSplitting = getBoolean(Tooltips.DISABLE_SPLITTING, def = false)
+    val tooltipGroup: String? = getString(Tooltips.TOOLTIP_GROUP) ?: "__auto_line_group__".takeIf { geomKind in LINE_LIKE_GEOMS }
 
     //val lookupSpec: LookupSpec = readLookupSpec()
 
@@ -64,38 +66,23 @@ class TooltipConfig(
     }
 
     private fun readAnchor(): TooltipAnchor? {
-        if (!has(Option.Layer.Tooltips.TOOLTIP_ANCHOR)) {
+        if (!has(Tooltips.TOOLTIP_ANCHOR)) {
             return null
         }
 
-        return when (val anchor = getString(Option.Layer.Tooltips.TOOLTIP_ANCHOR)) {
-            "top_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.LEFT)
-            "top_center" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.CENTER)
-            "top_right" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.TOP, TooltipAnchor.HorizontalAnchor.RIGHT)
-            "middle_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.MIDDLE, TooltipAnchor.HorizontalAnchor.LEFT)
-            "middle_center" -> TooltipAnchor(
-                TooltipAnchor.VerticalAnchor.MIDDLE,
-                TooltipAnchor.HorizontalAnchor.CENTER
-            )
-
-            "middle_right" -> TooltipAnchor(
-                TooltipAnchor.VerticalAnchor.MIDDLE,
-                TooltipAnchor.HorizontalAnchor.RIGHT
-            )
-
-            "bottom_left" -> TooltipAnchor(TooltipAnchor.VerticalAnchor.BOTTOM, TooltipAnchor.HorizontalAnchor.LEFT)
-            "bottom_center" -> TooltipAnchor(
-                TooltipAnchor.VerticalAnchor.BOTTOM,
-                TooltipAnchor.HorizontalAnchor.CENTER
-            )
-
-            "bottom_right" -> TooltipAnchor(
-                TooltipAnchor.VerticalAnchor.BOTTOM,
-                TooltipAnchor.HorizontalAnchor.RIGHT
-            )
+        return when (val anchor = getString(Tooltips.TOOLTIP_ANCHOR)) {
+            "top_left" -> TooltipAnchor(VerticalAnchor.TOP, HorizontalAnchor.LEFT)
+            "top_center" -> TooltipAnchor(VerticalAnchor.TOP, HorizontalAnchor.CENTER)
+            "top_right" -> TooltipAnchor(VerticalAnchor.TOP, HorizontalAnchor.RIGHT)
+            "middle_left" -> TooltipAnchor(VerticalAnchor.MIDDLE, HorizontalAnchor.LEFT)
+            "middle_center" -> TooltipAnchor(VerticalAnchor.MIDDLE, HorizontalAnchor.CENTER)
+            "middle_right" -> TooltipAnchor(VerticalAnchor.MIDDLE, HorizontalAnchor.RIGHT)
+            "bottom_left" -> TooltipAnchor(VerticalAnchor.BOTTOM, HorizontalAnchor.LEFT)
+            "bottom_center" -> TooltipAnchor(VerticalAnchor.BOTTOM, HorizontalAnchor.CENTER)
+            "bottom_right" -> TooltipAnchor(VerticalAnchor.BOTTOM, HorizontalAnchor.RIGHT)
 
             else -> throw IllegalArgumentException(
-                "Illegal value $anchor, ${Option.Layer.Tooltips.TOOLTIP_ANCHOR}, expected values are: " +
+                "Illegal value $anchor, ${Tooltips.TOOLTIP_ANCHOR}, expected values are: " +
                         "'top_left'/'top_center'/'top_right'/" +
                         "'middle_left'/'middle_center'/'middle_right'/" +
                         "'bottom_left'/'bottom_center'/'bottom_right'"
@@ -222,9 +209,7 @@ class TooltipConfig(
                 else -> noneTooltipBehavior(tooltipBehavior)
             }
 
-            return defaultTooltipBehavior.withTooltipGroup(
-                defaultTooltipBehavior.tooltipGroup ?: defaultTooltipGroup(geomKind)
-            )
+            return defaultTooltipBehavior
         }
 
         private fun xUnivariateFunction(
@@ -265,13 +250,6 @@ class TooltipConfig(
                 axisTooltipEnabled = true,
                 ignoreInvisibleTargets = false,
             )
-        }
-
-        private fun defaultTooltipGroup(geomKind: GeomKind): String {
-            return when (geomKind) {
-                in LINE_LIKE_GEOMS -> AUTO_TOOLTIP_GROUP_LINE_LIKE
-                else -> "$AUTO_TOOLTIP_GROUP_GEOM_PREFIX${geomKind.name.lowercase()}"
-            }
         }
 
         private fun isCrosshairEnabled(geomKind: GeomKind, anchor: TooltipAnchor?): Boolean {
@@ -318,8 +296,5 @@ class TooltipConfig(
             GeomKind.SEGMENT,
             GeomKind.SPOKE
         )
-
-        private const val AUTO_TOOLTIP_GROUP_LINE_LIKE = "__auto_group_line_like__"
-        private const val AUTO_TOOLTIP_GROUP_GEOM_PREFIX = "__auto_group_geom__:"
     }
 }

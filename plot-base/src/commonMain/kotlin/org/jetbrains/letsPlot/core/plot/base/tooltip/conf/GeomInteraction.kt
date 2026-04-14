@@ -31,16 +31,16 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         dataFrame: DataFrame
     ): ContextualMapping {
         return createContextualMapping(
-            tooltipLines.map(::LinePattern),  // clone tooltip lines to not share DataContext between plots when facet is used
+            tooltipTitle?.let(::LinePattern),  // clone tooltip lines to not share DataContext between plots when facet is used
             // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
+            tooltipLines.map(::LinePattern),
             dataAccess,
             dataFrame,
             tooltipBehavior.anchor,
             tooltipBehavior.minWidth,
             tooltipBehavior.ignoreInvisibleTargets,
             tooltipBehavior.isCrosshairEnabled,
-            tooltipBehavior.tooltipGroup,
-            tooltipTitle?.let(::LinePattern)
+            tooltipBehavior.tooltipGroup
         )
     }
 
@@ -61,6 +61,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 userDefinedValueSources
             )
             return createContextualMapping(
+                tooltipTitle = null,
                 defaultTooltipLines,
                 dataAccess,
                 dataFrame,
@@ -68,12 +69,12 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 minWidth = null,
                 ignoreInvisibleTargets = false,
                 isCrosshairEnabled = false,
-                tooltipGroup = null,
-                tooltipTitle = null
+                tooltipGroup = null
             )
         }
 
         private fun createContextualMapping(
+            tooltipTitle: LinePattern?,
             tooltipLines: List<LinePattern>,
             dataAccess: MappedDataAccess,
             dataFrame: DataFrame,
@@ -81,16 +82,9 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             minWidth: Double?,
             ignoreInvisibleTargets: Boolean,
             isCrosshairEnabled: Boolean,
-            tooltipGroup: String?,
-            tooltipTitle: LinePattern?
+            tooltipGroup: String?
         ): ContextualMapping {
             val mappedTooltipLines = LinePattern.prepareMappedLines(tooltipLines, dataAccess, dataFrame)
-            val hasGeneralTooltip = mappedTooltipLines.any { line ->
-                line.fields.none(ValueSource::isSide)
-            }
-            val hasAxisTooltip = mappedTooltipLines.any { line ->
-                line.fields.any(ValueSource::isAxis)
-            }
 
             tooltipTitle?.initDataContext(dataFrame, dataAccess)
 
@@ -99,8 +93,6 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 anchor,
                 minWidth,
                 ignoreInvisibleTargets,
-                hasGeneralTooltip,
-                hasAxisTooltip,
                 isCrosshairEnabled,
                 tooltipGroup,
                 tooltipTitle

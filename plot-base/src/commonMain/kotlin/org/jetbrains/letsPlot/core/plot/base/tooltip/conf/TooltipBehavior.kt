@@ -29,10 +29,6 @@ data class TooltipBehavior(
 
     fun hideTooltips() = tooltipLinePatterns?.isEmpty() ?: false
 
-    fun withTooltipGroup(tooltipGroup: String?): TooltipBehavior {
-        return copy(tooltipGroup = tooltipGroup)
-    }
-
     companion object {
         val NONE = TooltipBehavior(
             valueSources = emptyList(),

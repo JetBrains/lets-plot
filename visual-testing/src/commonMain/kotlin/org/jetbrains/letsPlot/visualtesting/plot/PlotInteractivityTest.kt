@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 @file:Suppress("FunctionName")
 
 package org.jetbrains.letsPlot.visualtesting.plot
@@ -21,6 +26,10 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_panInProgressWithIncompleteBuffer)
         registerTest(::plot_interactivity_compositeTooltip)
         registerTest(::plot_interactivity_nestedCompositeTooltip)
+        registerTest(::plot_interactivity_pointAndLine_LineTooltip)
+        registerTest(::plot_interactivity_pointAndLine_PointTooltip)
+        registerTest(::plot_interactivity_pointAndPoint_PointTooltip)
+
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
@@ -199,4 +208,37 @@ class PlotInteractivityTest(
 
         return paint(plotCanvasDrawable, dragEndPos)
     }
+
+    fun plot_interactivity_pointAndLine_LineTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_LINE))
+
+        val cursorPos = Vector(465, 80)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pointAndLine_PointTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_LINE))
+
+        val cursorPos = Vector(460, 135)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pointAndPoint_PointTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_POINT))
+
+        val cursorPos = Vector(460, 135)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pointLineSmooth_simple(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_LINE_SMOOTH))
+    }
+
+
 }

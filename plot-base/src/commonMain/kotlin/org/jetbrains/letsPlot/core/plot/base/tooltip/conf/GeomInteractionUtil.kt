@@ -117,7 +117,7 @@ object GeomInteractionUtil {
             tooltipBehavior
         }.let {
             var multilayerLookup = false
-            if (multilayerWithTooltips && !it.isCrosshairEnabled) {
+            if (false && multilayerWithTooltips && !it.isCrosshairEnabled) {
                 // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot,
                 // and tooltips should not be disabled in other layers.
                 // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
