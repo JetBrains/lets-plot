@@ -70,17 +70,16 @@ internal class HorizontalMultilineLabelsLayout(
             boundsByShelfIndex[0]
         }
 
-        var dy = 0.0
-        for (shelfBounds in boundsByShelfIndex) {
-            bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, dy)))
-            dy += shelfBounds.height * LINE_HEIGHT
-        }
-
         val linesCount = boundsByShelfIndex.size
+        val shelfLineInterval = labelSpec.regularLineHeight() * (LINE_HEIGHT - 1)
+        val shelfOffsets = shelfOffsets(boundsByShelfIndex.map(DoubleRectangle::height), shelfLineInterval)
+        for ((shelfBounds, shelfOffset) in boundsByShelfIndex zip shelfOffsets) {
+            bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, shelfOffset)))
+        }
         val labelAdditionalOffsets = labelAdditionalOffsets(
             breaks,
             shelfIndexForTickIndex,
-            boundsByShelfIndex
+            shelfOffsets
         ).let { offsets ->
             when (orientation) {
                 BOTTOM -> offsets
@@ -120,19 +119,21 @@ internal class HorizontalMultilineLabelsLayout(
         private fun labelAdditionalOffsets(
             breaks: ScaleBreaks,
             shelfIndexForTickIndex: List<Int>,
-            shelfBounds: List<DoubleRectangle>
+            shelfOffsets: List<Double>
         ): List<DoubleVector> {
-            // Cumulative shelf offsets: offset[k] = sum of heights of shelves 0..k-1
-            val shelfOffsets = ArrayList<Double>()
-            var cumulative = 0.0
-            for (bounds in shelfBounds) {
-                shelfOffsets.add(cumulative)
-                cumulative += bounds.height * LINE_HEIGHT
-            }
-
             val result = ArrayList<DoubleVector>()
             for (i in 0 until breaks.size) {
                 result.add(DoubleVector(0.0, shelfOffsets[shelfIndexForTickIndex[i]]))
+            }
+            return result
+        }
+
+        internal fun shelfOffsets(shelfHeights: List<Double>, lineInterval: Double): List<Double> {
+            val result = ArrayList<Double>(shelfHeights.size)
+            var cumulative = 0.0
+            for (height in shelfHeights) {
+                result.add(cumulative)
+                cumulative += height + lineInterval
             }
             return result
         }
