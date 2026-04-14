@@ -235,6 +235,19 @@ object Option {
             const val TOOLTIP_MIN_WIDTH = "tooltip_min_width"
             const val DISABLE_SPLITTING = "disable_splitting"
             const val TOOLTIP_GROUP = "tooltip_group"
+            const val LOOKUP_SPACE = "lookup_space"
+            const val LOOKUP_STRATEGY = "lookup_strategy"
+
+            object LookupSpace {
+                const val X = "x"
+                const val Y = "y"
+                const val XY = "xy"
+            }
+
+            object LookupStrategy {
+                const val HOVER = "hover"
+                const val NEAREST = "nearest"
+            }
         }
 
         const val NONE = "none"

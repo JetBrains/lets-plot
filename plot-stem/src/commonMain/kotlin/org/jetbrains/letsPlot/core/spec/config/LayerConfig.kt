@@ -557,14 +557,13 @@ class LayerConfig constructor(
                 is Map<*, *> -> {
                     @Suppress("UNCHECKED_CAST")
                     TooltipConfig(
+                        geomKind = geomKind,
+                        statKind = statKind,
                         opts = tooltipOptions as Map<String, Any>,
                         constantsMap = constantsMap,
                         groupingVarNames = explicitGroupingVarNames,
                         varBindings = varBindings
-                    ).createTooltips(
-                        geomKind = geomKind,
-                        statKind = statKind,
-                    )
+                    ).createTooltips()
                 }
 
                 NONE -> TooltipBehavior.NONE

@@ -108,6 +108,8 @@ class LayerTooltipsSpec(FeatureSpec):
         self._tooltip_title = None
         self._disable_splitting = None
         self._tooltip_group = None
+        self._tooltip_lookup_space = None
+        self._tooltip_lookup_strategy = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
@@ -508,4 +510,12 @@ class LayerTooltipsSpec(FeatureSpec):
 
     def group(self, value):
         self._tooltip_group = value
+        return self
+
+    def lookup_space(self, value):
+        self._tooltip_lookup_space = value
+        return self
+
+    def lookup_strategy(self, value):
+        self._tooltip_lookup_strategy = value
         return self

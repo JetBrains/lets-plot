@@ -15,31 +15,52 @@ import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.spec.Option
 
 class TooltipConfig(
+    private val geomKind: GeomKind,
+    private val statKind: StatKind,
     opts: Map<String, Any>,
     constantsMap: Map<Aes<*>, Any>,
     groupingVarNames: List<String>?,
     varBindings: List<VarBinding>
 ) : LineSpecConfig(opts, constantsMap, groupingVarNames, varBindings) {
 
-    fun createTooltips(
-        geomKind: GeomKind,
-        statKind: StatKind,
-    ): TooltipBehavior {
-        return createTooltipBehavior(
-            geomKind = geomKind,
-            statKind = statKind,
-            create().run {
-                TooltipBehavior(
-                    valueSources = valueSources,
-                    tooltipLinePatterns = linePatterns,
-                    anchor = readAnchor(),
-                    minWidth = getDouble(Option.Layer.Tooltips.TOOLTIP_MIN_WIDTH),
-                    tooltipTitle = titleLine,
-                    disableSplitting = getBoolean(Option.Layer.Tooltips.DISABLE_SPLITTING, def = false),
-                    tooltipGroup = getString(Option.Layer.Tooltips.TOOLTIP_GROUP)
-                )
-            }
+    val anchor: TooltipAnchor? = readAnchor()
+    val isCrosshairEnabled = isCrosshairEnabled(geomKind, anchor)
+    val minWidth = getDouble(Option.Layer.Tooltips.TOOLTIP_MIN_WIDTH)
+    val disableSplitting = getBoolean(Option.Layer.Tooltips.DISABLE_SPLITTING, def = false)
+    val tooltipGroup = getString(Option.Layer.Tooltips.TOOLTIP_GROUP)
+
+    //val lookupSpec: LookupSpec = readLookupSpec()
+
+    //private fun readLookupSpec(): LookupSpec {
+    //    val lookupSpace = when (getString(Option.Layer.Tooltips.LOOKUP_SPACE)) {
+    //        Option.Layer.Tooltips.LookupSpace.X -> LookupSpace.X
+    //        Option.Layer.Tooltips.LookupSpace.Y -> LookupSpace.Y
+    //        Option.Layer.Tooltips.LookupSpace.XY -> LookupSpace.XY
+    //        else -> defaultLookupSpace()
+    //    }
+    //
+    //    val lookupStrategy = when (getString(Option.Layer.Tooltips.LOOKUP_STRATEGY)) {
+    //        Option.Layer.Tooltips.LookupStrategy.NEAREST -> LookupStrategy.NEAREST
+    //        Option.Layer.Tooltips.LookupStrategy.HOVER -> LookupStrategy.HOVER
+    //        else -> defaultLookupStrategy()
+    //    }
+    //}
+
+    fun createTooltips(): TooltipBehavior {
+        val contentSpecification = create()
+        val tooltipBehavior = TooltipBehavior(
+            valueSources = contentSpecification.valueSources,
+            tooltipLinePatterns = contentSpecification.linePatterns,
+            tooltipTitle = contentSpecification.titleLine,
+
+            anchor = anchor,
+            minWidth = minWidth,
+            disableSplitting = disableSplitting,
+            tooltipGroup = tooltipGroup,
+            isCrosshairEnabled = isCrosshairEnabled,
         )
+
+        return createTooltipBehavior(geomKind = geomKind, statKind = statKind, tooltipBehavior)
     }
 
     private fun readAnchor(): TooltipAnchor? {
@@ -95,13 +116,10 @@ class TooltipConfig(
             statKind: StatKind,
             tooltipBehavior: TooltipBehavior,
         ): TooltipBehavior {
-            val isCrosshairEnabled = isCrosshairEnabled(geomKind, tooltipBehavior.anchor)
-
             val defaultTooltipBehavior = when {
                 statKind == StatKind.SMOOTH && geomKind in listOf(GeomKind.POINT, GeomKind.CONTOUR) -> {
                     xUnivariateFunction(
                         lookupStrategy = LookupStrategy.NEAREST,
-                        isCrosshairEnabled = isCrosshairEnabled,
                         tooltipBehavior = tooltipBehavior
                     )
                 }
@@ -109,8 +127,7 @@ class TooltipConfig(
                 geomKind == GeomKind.RIBBON -> {
                     xUnivariateFunction(
                         lookupStrategy = LookupStrategy.NEAREST,
-                        isCrosshairEnabled = isCrosshairEnabled,
-                        axisTooltipVisibilityFromConfig = true,
+                        axisTooltipEnabledOverride = true,
                         tooltipBehavior = tooltipBehavior
                     )
                 }
@@ -131,16 +148,15 @@ class TooltipConfig(
                 ) -> {
                     xUnivariateFunction(
                         lookupStrategy = LookupStrategy.HOVER,
-                        isCrosshairEnabled = isCrosshairEnabled,
-                        axisTooltipVisibilityFromConfig = true,
+                        axisTooltipEnabledOverride = true,
                         tooltipBehavior = tooltipBehavior
                     )
                 }
 
                 geomKind == GeomKind.SMOOTH -> {
                     xUnivariateFunction(
-                        lookupStrategy = if (isCrosshairEnabled) LookupStrategy.NEAREST else LookupStrategy.HOVER,
-                        isCrosshairEnabled = isCrosshairEnabled,
+                        //lookupStrategy = if (isCrosshairEnabled) LookupStrategy.NEAREST else LookupStrategy.HOVER,
+                        lookupStrategy = LookupStrategy.HOVER,
                         tooltipBehavior = tooltipBehavior
                     )
                 }
@@ -156,8 +172,7 @@ class TooltipConfig(
                 ) -> {
                     bivariateFunction(
                         area = true,
-                        isCrosshairEnabled = isCrosshairEnabled,
-                        axisTooltipVisibilityFromConfig = true,
+                        axisTooltipEnabledOverride = true,
                         tooltipBehavior = tooltipBehavior
                     )
                 }
@@ -181,17 +196,12 @@ class TooltipConfig(
                     GeomKind.SPOKE,
                     GeomKind.CURVE
                 ) -> {
-                    bivariateFunction(
-                        area = false,
-                        isCrosshairEnabled = isCrosshairEnabled,
-                        tooltipBehavior = tooltipBehavior
-                    )
+                    bivariateFunction(area = false, tooltipBehavior)
                 }
 
                 geomKind in listOf(GeomKind.Q_Q_LINE, GeomKind.Q_Q_2_LINE, GeomKind.PATH) -> {
                     bivariateFunction(
                         area = statKind !in listOf(StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D),
-                        isCrosshairEnabled = isCrosshairEnabled,
                         tooltipBehavior = tooltipBehavior
                     )
                 }
@@ -205,23 +215,11 @@ class TooltipConfig(
                     GeomKind.POLYGON,
                     GeomKind.MAP,
                     GeomKind.RECT
-                ) -> {
-                    bivariateFunction(
-                        area = true,
-                        isCrosshairEnabled = isCrosshairEnabled,
-                        tooltipBehavior = tooltipBehavior
-                    )
-                }
+                ) -> bivariateFunction(area = true, tooltipBehavior)
 
-                geomKind == GeomKind.LIVE_MAP -> {
-                    bivariateFunction(
-                        area = false,
-                        isCrosshairEnabled = isCrosshairEnabled,
-                        tooltipBehavior = tooltipBehavior
-                    )
-                }
+                geomKind == GeomKind.LIVE_MAP -> bivariateFunction(area = false, tooltipBehavior)
 
-                else -> noneTooltipBehavior(isCrosshairEnabled, tooltipBehavior)
+                else -> noneTooltipBehavior(tooltipBehavior)
             }
 
             return defaultTooltipBehavior.withTooltipGroup(
@@ -231,24 +229,21 @@ class TooltipConfig(
 
         private fun xUnivariateFunction(
             lookupStrategy: LookupStrategy,
-            isCrosshairEnabled: Boolean,
-            axisTooltipVisibilityFromConfig: Boolean? = null,
+            axisTooltipEnabledOverride: Boolean? = null,
             tooltipBehavior: TooltipBehavior,
         ): TooltipBehavior {
             return tooltipBehavior.copy(
                 lookupSpec = LookupSpec(LookupSpace.X, lookupStrategy),
                 axisAesFromFunctionKind = listOf(Aes.X),
-                axisTooltipEnabled = isAxisTooltipEnabled(axisTooltipVisibilityFromConfig, true),
-                isCrosshairEnabled = isCrosshairEnabled,
+                axisTooltipEnabled = axisTooltipEnabledOverride ?: true,
                 ignoreInvisibleTargets = false,
             )
         }
 
         private fun bivariateFunction(
             area: Boolean,
-            isCrosshairEnabled: Boolean,
             tooltipBehavior: TooltipBehavior,
-            axisTooltipVisibilityFromConfig: Boolean? = null,
+            axisTooltipEnabledOverride: Boolean? = null,
         ): TooltipBehavior {
             return tooltipBehavior.copy(
                 lookupSpec = LookupSpec(
@@ -256,30 +251,20 @@ class TooltipConfig(
                     if (area) LookupStrategy.HOVER else LookupStrategy.NEAREST
                 ),
                 axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
-                axisTooltipEnabled = isAxisTooltipEnabled(axisTooltipVisibilityFromConfig, !area),
-                isCrosshairEnabled = isCrosshairEnabled,
+                axisTooltipEnabled = axisTooltipEnabledOverride ?: !area,
                 ignoreInvisibleTargets = false,
             )
         }
 
         private fun noneTooltipBehavior(
-            isCrosshairEnabled: Boolean,
             tooltipBehavior: TooltipBehavior
         ): TooltipBehavior {
             return tooltipBehavior.copy(
                 lookupSpec = LookupSpec.NONE,
                 axisAesFromFunctionKind = emptyList(),
-                axisTooltipEnabled = isAxisTooltipEnabled(null, true),
-                isCrosshairEnabled = isCrosshairEnabled,
+                axisTooltipEnabled = true,
                 ignoreInvisibleTargets = false,
             )
-        }
-
-        private fun isAxisTooltipEnabled(
-            axisTooltipVisibilityFromConfig: Boolean?,
-            axisTooltipVisibilityFromFunctionKind: Boolean
-        ): Boolean {
-            return axisTooltipVisibilityFromConfig ?: axisTooltipVisibilityFromFunctionKind
         }
 
         private fun defaultTooltipGroup(geomKind: GeomKind): String {

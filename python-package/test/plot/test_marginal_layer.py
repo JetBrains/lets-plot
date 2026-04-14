@@ -109,7 +109,8 @@ def _clean_input(input):
             gg.ggmarginal("tl", layer=gg.geom_boxplot()),
             _to_feature_list(
                 expected_y_stat_t("boxplot"), expected_y_stat_l("boxplot"),
-                expected_y_stat_t("point"), expected_y_stat_l("point")
+                {**expected_y_stat_t("point"), 'na_rm': True},
+                {**expected_y_stat_l("point"), 'na_rm': True}
             )
     ),
     (

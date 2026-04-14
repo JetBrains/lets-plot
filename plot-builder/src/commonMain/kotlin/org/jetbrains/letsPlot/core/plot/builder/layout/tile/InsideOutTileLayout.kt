@@ -42,14 +42,12 @@ internal class InsideOutTileLayout(
 
         // Combine geom area and x/y-axis
         val (l, r, t, b) = axisInfos
-        val axisBounds = listOfNotNull(l, r, t, b)
-            .map {
-                it.axisBoundsAbsolute(geomOuterBounds)
-            }
-
-        val geomWithAxisBounds = axisBounds.fold(geomOuterBounds) { a, e ->
-            a.union(e)
-        }
+        val geomWithAxisBounds = DoubleRectangle.LTRB(
+            left = l?.axisBoundsAbsolute(geomOuterBounds)?.left ?: geomOuterBounds.left,
+            top = t?.axisBoundsAbsolute(geomOuterBounds)?.top ?: geomOuterBounds.top,
+            right = r?.axisBoundsAbsolute(geomOuterBounds)?.right ?: geomOuterBounds.right,
+            bottom = b?.axisBoundsAbsolute(geomOuterBounds)?.bottom ?: geomOuterBounds.bottom,
+        )
 
 
         return TileLayoutInfo(
