@@ -371,7 +371,7 @@ class LocatedTargetsPickerTest {
                     tooltipTitle = null
                 )
                 myResult = LookupResult(
-                    cursorOffset = DoubleVector.ZERO,
+                    cursor = DoubleVector.ZERO,
                     targets = emptyList(),
                     lookupDistance = myDistance,
                     geomKind = requireNotNull(myGeomKind),

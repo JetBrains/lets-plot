@@ -51,7 +51,7 @@ class LocatedTargetsPicker(
         // then check distance. This will allow to use bar-alike geoms to use their X lookup strategy and to not win
         // every distance checks as the distance between them and the cursor is an order of magnitude smaller than for XY
         val withDistances = allLookupResults
-            .map { lookupResult -> lookupResult to distance(lookupResult, cursorCoord) }
+            .map { lookupResult -> lookupResult to distance(lookupResult) }
             .filter { (lookupResult, distance) ->
                 lookupResult.isCrosshairEnabled || distance <= CUTOFF_DISTANCE
             }
@@ -125,7 +125,7 @@ class LocatedTargetsPicker(
         // User won't get much info from it anyway.
         private const val EXPECTED_TARGETS_MAX_COUNT = 10
 
-        private fun distance(lookupResult: LookupResult, coord: DoubleVector): Double {
+        private fun distance(lookupResult: LookupResult): Double {
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
             return when {
@@ -133,7 +133,7 @@ class LocatedTargetsPicker(
                 lookupResult.isCrosshairEnabled -> {
                     // use XY distance for tooltips with crosshair to avoid giving them priority
                     lookupResult.targets
-                        .minOfOrNull { target -> distance(coord, target.tipLayoutHint.coord) }
+                        .minOfOrNull { target -> distance(lookupResult.cursor, target.tipLayoutHint.coord) }
                         ?: FAKE_DISTANCE
                 }
 
