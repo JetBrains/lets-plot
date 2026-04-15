@@ -102,6 +102,7 @@ internal class LayerTargetLocator(
 
         targets.add(
             GeomTargetLocator.LookupResult(
+                collector.cursor,
                 collector.collection(),
                 // Distance can be negative when lookup space is X or Y
                 // In this case use 0.0 as a distance - we have a direct hit.
@@ -149,10 +150,10 @@ internal class LayerTargetLocator(
         }
 
         var closestTargets: GeomTargetLocator.LookupResult = lookupResults[0]
-        require(closestTargets.distance >= 0)
+        require(closestTargets.lookupDistance >= 0)
 
         for (lookupResult in lookupResults) {
-            if (lookupResult.distance < closestTargets.distance) {
+            if (lookupResult.lookupDistance < closestTargets.lookupDistance) {
                 closestTargets = lookupResult
             }
         }
@@ -251,11 +252,12 @@ internal class LayerTargetLocator(
     }
 
     internal class Collector<T>(
-        cursor: DoubleVector,
+        val cursor: DoubleVector,
         private val myStrategy: CollectingStrategy,
         lookupSpace: LookupSpace
     ) {
         private val result = ArrayList<T>()
+
         val closestPointChecker: ClosestPointChecker = when (lookupSpace) {
             X -> ClosestPointChecker(DoubleVector(cursor.x, 0.0))
             Y -> ClosestPointChecker(DoubleVector(0.0, cursor.y))

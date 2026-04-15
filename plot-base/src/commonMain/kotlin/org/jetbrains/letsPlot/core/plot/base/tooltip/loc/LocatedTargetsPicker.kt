@@ -129,7 +129,7 @@ class LocatedTargetsPicker(
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
             return when {
-                lookupResult.distance != 0.0 -> lookupResult.distance
+                lookupResult.lookupDistance != 0.0 -> lookupResult.lookupDistance
                 lookupResult.isCrosshairEnabled -> {
                     // use XY distance for tooltips with crosshair to avoid giving them priority
                     lookupResult.targets

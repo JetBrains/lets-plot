@@ -248,20 +248,23 @@ object LiveMapProviderUtil {
                 )
 
                 fun buildLookupResult(coord: DoubleVector, hoverObjects: List<HoverObject>): GeomTargetLocator.LookupResult {
+                    val geomTargets = hoverObjects.map { hoverObject ->
+                        require(layerIndex == hoverObject.layerIndex)
+                        GeomTarget(
+                            hitIndex = hoverObject.index,
+                            tipLayoutHint = TipLayoutHint.horizontalTooltip(
+                                hoverObject.targetPosition ?: coord,
+                                objectRadius = hoverObject.targetRadius ?: 0.0,
+                                markerColors = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
+                            ),
+                            aesTipLayoutHints = emptyMap()
+                        )
+                    }
+
                     return GeomTargetLocator.LookupResult(
-                        targets = hoverObjects.map { hoverObject ->
-                            require(layerIndex == hoverObject.layerIndex)
-                            GeomTarget(
-                                hitIndex = hoverObject.index,
-                                tipLayoutHint = TipLayoutHint.horizontalTooltip(
-                                    hoverObject.targetPosition ?: coord,
-                                    objectRadius = hoverObject.targetRadius ?: 0.0,
-                                    markerColors = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
-                                ),
-                                aesTipLayoutHints = emptyMap()
-                            )
-                        },
-                        distance = hoverObjects.maxOf { it.distance },
+                        cursor = coord,
+                        targets = geomTargets,
+                        lookupDistance = hoverObjects.maxOf { it.distance },
                         geomKind = layer.geomKind,
                         contextualMapping = contextualMapping!!,
                         hitShapeKind = when (hoverObjects.first().kind) {

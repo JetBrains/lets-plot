@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -42,7 +42,7 @@ class LayerTargetLocatorSinglePolygonTest {
     }
 
     private fun distanceFor(coord: DoubleVector): Double {
-        return locator.search(coord)!!.distance
+        return locator.search(coord)!!.lookupDistance
     }
 
     companion object {

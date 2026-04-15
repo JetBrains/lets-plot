@@ -281,7 +281,7 @@ class LocatedTargetsPickerTest {
     private fun assertLookupResult(actual: LookupResult, expected: LookupResultConfig) {
         val expectedResult = expected.build()!!
         assertThat(actual.geomKind).isEqualTo(expectedResult.geomKind)
-        assertThat(actual.distance).isEqualTo(expectedResult.distance)
+        assertThat(actual.lookupDistance).isEqualTo(expectedResult.lookupDistance)
         assertThat(actual.hasGeneralTooltip).isEqualTo(expectedResult.hasGeneralTooltip)
         assertThat(actual.hasAxisTooltip).isEqualTo(expectedResult.hasAxisTooltip)
         assertThat(actual.isCrosshairEnabled).isEqualTo(expectedResult.isCrosshairEnabled)
@@ -371,8 +371,9 @@ class LocatedTargetsPickerTest {
                     tooltipTitle = null
                 )
                 myResult = LookupResult(
+                    cursorOffset = DoubleVector.ZERO,
                     targets = emptyList(),
-                    distance = myDistance,
+                    lookupDistance = myDistance,
                     geomKind = requireNotNull(myGeomKind),
                     contextualMapping = contextualMapping,
                     hitShapeKind = myHitShapeKind

@@ -33,8 +33,9 @@ interface GeomTargetLocator {
 
     // `open` for Mockito test
     data class LookupResult(
+        val cursor: DoubleVector,
         val targets: List<GeomTarget>,
-        val distance: Double,
+        val lookupDistance: Double,
         val geomKind: GeomKind,
         val contextualMapping: ContextualMapping,
         val hitShapeKind: HitShape.Kind,
@@ -43,6 +44,11 @@ interface GeomTargetLocator {
         val hasAxisTooltip: Boolean = contextualMapping.hasAxisTooltip
         val isCrosshairEnabled: Boolean = contextualMapping.isCrosshairEnabled
         val tooltipGroup: String? = contextualMapping.tooltipGroup
+
+        val cursorOffset = targets.asSequence()
+            .map { geomTarget -> geomTarget.tipLayoutHint.coord.subtract(cursor) }
+            .minByOrNull(DoubleVector::length)
+            ?: DoubleVector.ZERO
     }
 
     object NullGeomTargetLocator : GeomTargetLocator {
