@@ -53,11 +53,13 @@ object RichText {
         markdown: Boolean = false,
     ): List<Double> {
         val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
+        val regularLineHeight = RichTextNode.Text("").estimateHeight(font)
         if (lines.isEmpty()) {
-            return listOf(RichTextNode.Text("").estimateHeight(font))
+            return listOf(regularLineHeight)
         }
         return lines.map { line ->
-            line.maxOf { term -> (term as? RichTextNode.RichSpan)?.estimateHeight(font) ?: 0.0 }
+            if (line.isEmpty()) regularLineHeight
+            else line.maxOf { term -> (term as? RichTextNode.RichSpan)?.estimateHeight(font) ?: 0.0 }
         }
     }
 
