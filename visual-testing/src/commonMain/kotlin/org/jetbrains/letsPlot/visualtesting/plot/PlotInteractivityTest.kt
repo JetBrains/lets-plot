@@ -261,7 +261,7 @@ class PlotInteractivityTest(
     fun plot_interactivity_histogramDensity_densityTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.HISTOGRAM_DENSITY))
 
-        val cursorPos = Vector(270, 445)
+        val cursorPos = Vector(265, 155)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)
@@ -270,7 +270,7 @@ class PlotInteractivityTest(
     fun plot_interactivity_histogramDensity_histogramTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.HISTOGRAM_DENSITY))
 
-        val cursorPos = Vector(270, 75)
+        val cursorPos = Vector(265, 345)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

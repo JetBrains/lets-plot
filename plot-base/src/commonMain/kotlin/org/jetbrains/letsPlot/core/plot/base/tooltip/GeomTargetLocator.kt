@@ -22,7 +22,7 @@ interface GeomTargetLocator {
         HOVER, NEAREST, NONE
     }
 
-    class LookupSpec(val lookupSpace: LookupSpace, val lookupStrategy: LookupStrategy) {
+    data class LookupSpec(val lookupSpace: LookupSpace, val lookupStrategy: LookupStrategy) {
         companion object {
             val NONE = LookupSpec(
                 LookupSpace.NONE,
