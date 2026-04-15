@@ -45,7 +45,7 @@ internal class DefaultFacetStripTheme(
 
     override fun stripTextJustification() = getTextJustification(getElemValue(textKey))
 
-    override fun stripAngle(): Double {
+    override fun stripTextAngle(): Double {
         val elem = getElemValue(textKey)
         return if (Elem.ANGLE in elem) getNumber(elem, Elem.ANGLE) else Double.NaN
     }

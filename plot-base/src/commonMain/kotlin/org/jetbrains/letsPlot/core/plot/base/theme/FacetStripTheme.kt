@@ -22,6 +22,6 @@ interface FacetStripTheme {
     fun stripTextStyle(): ThemeTextStyle
     fun stripMargins(): Thickness
     fun stripTextJustification(): TextJustification
-    fun stripAngle(): Double
+    fun stripTextAngle(): Double
     fun stripSpacing(): DoubleVector
 }
