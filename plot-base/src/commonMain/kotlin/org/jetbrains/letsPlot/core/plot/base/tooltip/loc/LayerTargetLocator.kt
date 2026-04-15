@@ -215,7 +215,8 @@ internal class LayerTargetLocator(
         // When searching single point from all targets (REPLACE) - should search nearest projection between every path target.
         // When searching points for every target (APPEND) - should reset nearest point between every path target.
         val pointChecker = if (myCollectingStrategy == CollectingStrategy.APPEND)
-            ClosestPointChecker(coord)
+            //ClosestPointChecker(coord)
+            resultCollector.closestPointChecker
         else
             resultCollector.closestPointChecker
 

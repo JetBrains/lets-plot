@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -39,7 +39,9 @@ internal class TargetDetector(
                     ) {
                         null
                     } else {
-                        searchNearest(cursorCoord.x, pathProjection.points) { it.projection().x() } to null
+                        val nearest = searchNearest(cursorCoord.x, pathProjection.points) { it.projection().x() }
+                        closestPointChecker.check(nearest.originalCoord, 0.0)
+                        nearest to null
                     }
             }
 
@@ -52,7 +54,9 @@ internal class TargetDetector(
                     ) {
                         null
                     } else {
-                        searchNearest(cursorCoord.y, pathProjection.points) { it.projection().y() } to null
+                        val nearest = searchNearest(cursorCoord.y, pathProjection.points) { it.projection().y() }
+                        closestPointChecker.check(nearest.originalCoord)
+                        nearest to null
                     }
             }
 
@@ -174,19 +178,23 @@ internal class TargetDetector(
         range: DoubleSpan,
         byX: Boolean
     ): Boolean {
+        val coord = if (byX) {
+            DoubleVector(range.lowerEnd + range.length / 2, cursor.y)
+        } else {
+            DoubleVector(cursor.x, range.lowerEnd + range.length / 2)
+        }
+
         return when (locatorLookupStrategy) {
             LookupStrategy.NONE -> false
-            LookupStrategy.HOVER -> (if (byX) cursor.x else cursor.y) in range
+            LookupStrategy.HOVER -> {
+                closestPointChecker.check(coord)
+                (if (byX) cursor.x else cursor.y) in range
+            }
             LookupStrategy.NEAREST -> {
                 val cursorCoord = if (byX) cursor.x else cursor.y
                 //Too far
                 if (range.contains(cursorCoord - RECT_X_NEAREST_EPSILON) || range.contains(cursorCoord + RECT_X_NEAREST_EPSILON)) {
-                    val coord = if (byX) {
-                        DoubleVector(range.lowerEnd + range.length / 2, cursor.y)
-                    } else {
-                        DoubleVector(cursor.x, range.lowerEnd + range.length / 2)
-                    }
-                    closestPointChecker.compareObject(coord) != ClosestPointChecker.COMPARISON_RESULT.NEW_FARTHER
+                    closestPointChecker.check(coord)
                 } else {
                     false
                 }

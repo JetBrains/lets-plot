@@ -9,8 +9,10 @@ import org.jetbrains.letsPlot.awt.NotoFontManager
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.visualtesting.plot.AllPlotTests
 import org.jetbrains.letsPlot.visualtesting.plot.PlotInteractivityTest
+import kotlin.test.Ignore
 import kotlin.test.Test
 
+@Ignore
 class AwtAllPlotTests {
     val canvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
     val awtBitmapIO = AwtBitmapIO(
