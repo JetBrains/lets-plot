@@ -18,6 +18,9 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 interface LegendKeyElementFactory {
     fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement
 
+    val supportsKeySizeMultiplier: Boolean
+        get() = false
+
     fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
         val strokeWidth = AesScaling.strokeWidth(p)
         val size = 2 * strokeWidth + 4
