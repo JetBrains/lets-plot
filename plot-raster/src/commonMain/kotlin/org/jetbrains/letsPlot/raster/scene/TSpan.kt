@@ -21,6 +21,8 @@ internal class TSpan : Figure() {
 
     var baselineShift: BaselineShift by variableAttr(BaselineShift.NONE)
     var dy: Float by variableAttr(0f)
+    var x: Float? by variableAttr(null)
+    var textAnchor: Text.HorizontalAlignment by variableAttr(Text.HorizontalAlignment.LEFT)
     var fontScale: Float by variableAttr(1f)
 
     var fontFamily: List<String> by variableAttr(emptyList())
@@ -105,6 +107,8 @@ internal class TSpan : Figure() {
             attrSpec == FontAttrSpec ||
             attrSpec == BaselineShiftAttrSpec ||
             attrSpec == DyAttrSpec ||
+            attrSpec == XAttrSpec ||
+            attrSpec == TextAnchorAttrSpec ||
             attrSpec == FontScaleAttrSpec
         ) {
             (parent as? Text)?.invalidateLayout()
@@ -121,6 +125,8 @@ internal class TSpan : Figure() {
         val TextAttrSpec = CLASS.registerVariableAttr(TSpan::text, affectsBBox = true)
         val BaselineShiftAttrSpec = CLASS.registerVariableAttr(TSpan::baselineShift, affectsBBox = true)
         val DyAttrSpec = CLASS.registerVariableAttr(TSpan::dy, affectsBBox = true)
+        val XAttrSpec = CLASS.registerVariableAttr(TSpan::x, affectsBBox = true)
+        val TextAnchorAttrSpec = CLASS.registerVariableAttr(TSpan::textAnchor, affectsBBox = true)
         val FontScaleAttrSpec = CLASS.registerVariableAttr(TSpan::fontScale, affectsBBox = true)
 
         val FontFamilyAttrSpec = CLASS.registerVariableAttr(TSpan::fontFamily, affectsBBox = true)

@@ -6,15 +6,21 @@
 
 package org.jetbrains.letsPlot.raster.mapping.svg
 
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionItemEvent
+import org.jetbrains.letsPlot.commons.intern.observable.collections.CollectionListener
 import org.jetbrains.letsPlot.commons.intern.observable.collections.ObservableCollection
+import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
+import org.jetbrains.letsPlot.commons.intern.observable.property.BaseDerivedProperty
+import org.jetbrains.letsPlot.commons.intern.observable.property.PropertyChangeEvent
 import org.jetbrains.letsPlot.commons.intern.observable.property.ReadableProperty
-import org.jetbrains.letsPlot.commons.intern.observable.property.SimpleCollectionProperty
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
+import org.jetbrains.letsPlot.commons.registration.CompositeRegistration
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.event.SvgAttributeEvent
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.SvgTSpanElementAttrMapping
@@ -104,9 +110,76 @@ internal class SvgTextElementMapper(
                 }
             }
 
-            return object : SimpleCollectionProperty<SvgNode, List<TSpan>>(nodes, toTSpans(nodes)) {
-                override val propExpr = "textRuns($collection)"
-                override fun doGet() = toTSpans(collection)
+            return object : BaseDerivedProperty<List<TSpan>>(toTSpans(nodes)) {
+                private var myRegistrations = CompositeRegistration()
+
+                override val propExpr = "textRuns($nodes)"
+
+                override fun doAddListeners() {
+                    rebindListeners()
+                }
+
+                override fun doRemoveListeners() {
+                    myRegistrations.remove()
+                    myRegistrations = CompositeRegistration()
+                }
+
+                override fun doGet(): List<TSpan> = toTSpans(nodes)
+
+                private fun rebindListeners() {
+                    myRegistrations.remove()
+                    myRegistrations = CompositeRegistration()
+
+                    val collectionListener = object : CollectionListener<SvgNode> {
+                        override fun onItemAdded(event: CollectionItemEvent<out SvgNode>) {
+                            onStructureChanged()
+                        }
+
+                        override fun onItemSet(event: CollectionItemEvent<out SvgNode>) {
+                            onStructureChanged()
+                        }
+
+                        override fun onItemRemoved(event: CollectionItemEvent<out SvgNode>) {
+                            onStructureChanged()
+                        }
+
+                        private fun onStructureChanged() {
+                            rebindListeners()
+                            somethingChanged()
+                        }
+                    }
+
+                    fun observeCollection(nodes: ObservableCollection<SvgNode>) {
+                        myRegistrations.add(nodes.addListener(collectionListener))
+                    }
+
+                    fun observeNode(node: SvgNode) {
+                        observeCollection(node.children())
+
+                        when (node) {
+                            is SvgElement -> {
+                                myRegistrations.add(node.addListener(object : SvgElementListener {
+                                    override fun onAttrSet(event: SvgAttributeEvent<*>) {
+                                        somethingChanged()
+                                    }
+                                }))
+                            }
+
+                            is SvgTextNode -> {
+                                myRegistrations.add(node.textContent().addHandler(object : EventHandler<PropertyChangeEvent<out String>> {
+                                    override fun onEvent(event: PropertyChangeEvent<out String>) {
+                                        somethingChanged()
+                                    }
+                                }))
+                            }
+                        }
+
+                        node.children().forEach(::observeNode)
+                    }
+
+                    observeCollection(nodes)
+                    nodes.forEach(::observeNode)
+                }
             }
         }
 
