@@ -83,6 +83,52 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
     }
 
     @Test
+    fun `legend at bottom`() {
+        val spec = """
+            {
+              "data": {
+                "x": [
+                  0.0,
+                  1.0,
+                  2.0,
+                  3.0,
+                  4.0
+                ]
+              },
+              "mapping": {
+                "x": "x",
+                "color": "x"
+              },
+              "data_meta": {
+                "series_annotations": [
+                  {
+                    "type": "int",
+                    "column": "x"
+                  }
+                ]
+              },
+              "theme": {
+                "legend_position": "bottom"
+              },
+              "kind": "plot",
+              "scales": [],
+              "layers": [
+                {
+                  "geom": "point",
+                  "mapping": {},
+                  "data_meta": {}
+                }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_legend_at_bottom_test.png", plotSpec)
+    }
+
+    @Test
     fun `italic from theme`() {
         // See the issue https://github.com/JetBrains/lets-plot/issues/1391
         val spec = """
@@ -271,6 +317,68 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
         val plotSpec = parsePlotSpec(spec)
 
         assertPlot("plot_labels_test.png", plotSpec)
+    }
+
+    @Test
+    fun `plot title with blank line`() {
+        val spec = """
+            {
+              "mapping": {},
+              "data_meta": {},
+              "ggtitle": {
+                "text": "A\n\nB"
+              },
+              "kind": "plot",
+              "scales": [],
+              "layers": [
+                {
+                  "geom": "blank",
+                  "mapping": {},
+                  "inherit_aes": false,
+                  "tooltips": "none",
+                  "data_meta": {}
+                }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_title_with_blank_line_test.png", plotSpec)
+    }
+
+    @Test
+    fun `multiline text with fixed coord and size_unit='x'`() {
+        val spec = """
+            {
+              "mapping": {},
+              "data_meta": {},
+              "coord": {
+                "name": "fixed",
+                "ratio": 1.0,
+                "flip": false
+              },
+              "kind": "plot",
+              "scales": [],
+              "layers": [
+                {
+                  "geom": "text",
+                  "mapping": {},
+                  "data_meta": {},
+                  "size_unit": "x",
+                  "x": 0.0,
+                  "label": "Multiline\nText",
+                  "size": 0.2
+                }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        val plotSpec = parsePlotSpec(spec)
+
+        assertPlot("plot_multiline_text_with_fixed_coord_and_size_unit_x_test.png", plotSpec)
     }
 
     @Test
