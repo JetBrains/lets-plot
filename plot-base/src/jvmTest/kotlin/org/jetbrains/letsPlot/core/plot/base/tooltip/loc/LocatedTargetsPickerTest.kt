@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
@@ -296,6 +297,7 @@ class LocatedTargetsPickerTest {
         internal var myResult: LookupResult? = null
         private var myGeomKind: GeomKind? = null
         private var myDistance: Double = 0.toDouble()
+        private var myLookupSpec: GeomTargetLocator.LookupSpec = GeomTargetLocator.LookupSpec.NONE
         private var myHasTarget: Boolean = true
         private var myHasGeneralTooltip: Boolean = false
         private var myHasAxisTooltip: Boolean = false
@@ -310,6 +312,11 @@ class LocatedTargetsPickerTest {
 
         fun geomKind(v: GeomKind): LookupResultConfig {
             myGeomKind = v
+            return this
+        }
+
+        fun lookupSpec(v: GeomTargetLocator.LookupSpec): LookupResultConfig {
+            myLookupSpec = v
             return this
         }
 
@@ -374,6 +381,7 @@ class LocatedTargetsPickerTest {
                     cursor = DoubleVector.ZERO,
                     targets = emptyList(),
                     lookupDistance = myDistance,
+                    lookupSpec = myLookupSpec,
                     geomKind = requireNotNull(myGeomKind),
                     contextualMapping = contextualMapping,
                     hitShapeKind = myHitShapeKind

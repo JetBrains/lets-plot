@@ -36,6 +36,7 @@ interface GeomTargetLocator {
         val cursor: DoubleVector,
         val targets: List<GeomTarget>,
         val lookupDistance: Double,
+        val lookupSpec: LookupSpec,
         val geomKind: GeomKind,
         val contextualMapping: ContextualMapping,
         val hitShapeKind: HitShape.Kind,
