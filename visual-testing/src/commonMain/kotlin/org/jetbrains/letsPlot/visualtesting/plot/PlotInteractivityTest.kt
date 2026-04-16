@@ -30,6 +30,8 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_pointAndLine_lineTooltip)
         registerTest(::plot_interactivity_pointAndLine_pointTooltip)
         registerTest(::plot_interactivity_pointAndPoint_pointTooltip)
+        registerTest(::plot_interactivity_pathDistancePriority_implicitLineGroupTooltip)
+        registerTest(::plot_interactivity_pathDistancePriority_separateGroupsLowerTooltip)
         registerTest(::plot_interactivity_pointLineSmooth_linesTooltip)
         registerTest(::plot_interactivity_pointLineSmooth_pointTooltip)
         registerTest(::plot_interactivity_histogramDensity_densityTooltip)
@@ -235,6 +237,24 @@ class PlotInteractivityTest(
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_POINT))
 
         val cursorPos = Vector(460, 135)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pathDistancePriority_implicitLineGroupTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.PATH_DISTANCE_PRIORITY_IMPLICIT_LINE_GROUP))
+
+        val cursorPos = Vector(305, 210)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pathDistancePriority_separateGroupsLowerTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.PATH_DISTANCE_PRIORITY_SEPARATE_GROUPS))
+
+        val cursorPos = Vector(305, 210)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

@@ -162,6 +162,92 @@ object PlotSpecs {
             |}
         """.trimMargin()
 
+    val PATH_DISTANCE_PRIORITY_IMPLICIT_LINE_GROUP = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 600.0, "height": 300.0 },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": {
+        |        "x": [ 0.0, 1.0, 2.0, 3.0, 4.0 ],
+        |        "y": [ 2.0, 2.2, 2.1, 2.3, 2.2 ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "color": "#4E79A7",
+        |      "size": 2.5,
+        |      "tooltips": { "lines": [ "near line" ] }
+        |    },
+        |    {
+        |      "geom": "line",
+        |      "data": {
+        |        "x": [ 0.0, 1.0, 2.0, 3.0, 4.0 ],
+        |        "y": [ 8.0, 8.2, 8.1, 8.3, 8.2 ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "color": "#E15759",
+        |      "size": 2.5,
+        |      "tooltips": { "lines": [ "far line" ] }
+        |    }
+        |  ],
+        |  "scales": [
+        |    { "aesthetic": "x", "limits": [ 0.0, 4.0 ] },
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ],
+        |  "theme": {
+        |    "legend_position": "none",
+        |    "panel_grid_minor_blank": {},
+        |    "axis_tooltip_x": { "name": "blank" }
+        |  }
+        |}
+    """.trimMargin()
+
+    val PATH_DISTANCE_PRIORITY_SEPARATE_GROUPS = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 600.0, "height": 300.0 },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": {
+        |        "x": [ 0.0, 1.0, 2.0, 3.0, 4.0 ],
+        |        "y": [ 2.0, 2.2, 2.1, 2.3, 2.2 ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "color": "#4E79A7",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "lines": [ "lower" ],
+        |        "tooltip_group": "lower"
+        |      }
+        |    },
+        |    {
+        |      "geom": "line",
+        |      "data": {
+        |        "x": [ 0.0, 1.0, 2.0, 3.0, 4.0 ],
+        |        "y": [ 8.0, 8.2, 8.1, 8.3, 8.2 ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "color": "#E15759",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "lines": [ "upper" ],
+        |        "tooltip_group": "upper"
+        |      }
+        |    }
+        |  ],
+        |  "scales": [
+        |    { "aesthetic": "x", "limits": [ 0.0, 4.0 ] },
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ],
+        |  "theme": {
+        |    "legend_position": "none",
+        |    "panel_grid_minor_blank": {},
+        |    "axis_tooltip_x": { "name": "blank" }
+        |  }
+        |}
+    """.trimMargin()
+
 
     /*
         data = {
