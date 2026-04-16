@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import kotlin.math.abs
@@ -53,7 +54,9 @@ class LocatedTargetsPicker(
         val withDistances = allLookupResults
             .map { lookupResult -> lookupResult to distance(lookupResult) }
             .filter { (lookupResult, distance) ->
-                lookupResult.isCrosshairEnabled || distance <= CUTOFF_DISTANCE
+                lookupResult.isCrosshairEnabled ||
+                        (lookupResult.lookupSpec.lookupSpace == GeomTargetLocator.LookupSpace.XY  && distance <= CUTOFF_DISTANCE) ||
+                        lookupResult.lookupSpec.lookupSpace.isUnivariate() // keep all
             }
 
         val minDistance = withDistances.minByOrNull { (_, distance) -> distance }?.second ?: 0.0

@@ -30,7 +30,6 @@ internal class LayerTargetLocator(
 ) : GeomTargetLocator {
 
     private val myTargets = ArrayList<Target>()
-    private val myTargetDetector = TargetDetector(lookupSpec.lookupSpace, lookupSpec.lookupStrategy)
 
     private val mySimpleGeometry = setOf(GeomKind.RECT, GeomKind.POLYGON)
 
@@ -57,25 +56,19 @@ internal class LayerTargetLocator(
     init {
         fun toProjection(prototype: TargetPrototype): TargetProjection {
             return when (prototype.hitShape.kind) {
-                POINT -> PointTargetProjection.create(
+                POINT -> PointTargetProjection(
                     prototype.hitShape.point.center,
                     prototype.hitShape.point.radius,
                     lookupSpec.lookupSpace
                 )
 
-                RECT -> RectTargetProjection.create(
-                    prototype.hitShape.rect,
-                    lookupSpec.lookupSpace
-                )
+                RECT -> RectTargetProjection(prototype.hitShape.rect, lookupSpec.lookupSpace)
+                POLYGON -> PolygonTargetProjection(prototype.hitShape.points, lookupSpec.lookupSpace)
 
-                POLYGON -> PolygonTargetProjection.create(
-                    prototype.hitShape.points,
-                    lookupSpec.lookupSpace
-                )
-
-                PATH -> PathTargetProjection.create(
-                    prototype.hitShape.points,
-                    prototype.indexMapper,
+                PATH -> PathTargetProjection(
+                    prototype.hitShape.points.mapIndexed { i, point ->
+                        PathTargetProjection.PathPoint(point, prototype.indexMapper(i))
+                    },
                     lookupSpec.lookupSpace
                 )
             }
@@ -162,7 +155,7 @@ internal class LayerTargetLocator(
     }
 
     private fun processRect(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
-        if (myTargetDetector.checkRect(coord, target.rectProjection, resultCollector.closestPointChecker)) {
+        if (target.rectProjection.check(coord, lookupSpec.lookupStrategy, resultCollector.closestPointChecker)) {
 
             val rect = target.prototype.hitShape.rect
             val yOffset = when {
@@ -187,7 +180,7 @@ internal class LayerTargetLocator(
     }
 
     private fun processPolygon(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
-        if (myTargetDetector.checkPolygon(coord, target.polygonProjection, resultCollector.closestPointChecker)) {
+        if (target.polygonProjection.check(coord, lookupSpec.lookupStrategy, resultCollector.closestPointChecker)) {
 
             resultCollector.collect(
                 target.prototype.createGeomTarget(
@@ -199,7 +192,7 @@ internal class LayerTargetLocator(
     }
 
     private fun processPoint(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
-        if (myTargetDetector.checkPoint(coord, target.pointProjection, resultCollector.closestPointChecker)) {
+        if (target.pointProjection.check(coord, lookupSpec.lookupStrategy, resultCollector.closestPointChecker)) {
 
             resultCollector.collect(
                 target.prototype.createGeomTarget(
@@ -220,7 +213,7 @@ internal class LayerTargetLocator(
         else
             resultCollector.closestPointChecker
 
-        val lookupResult = myTargetDetector.checkPath(coord, target.pathProjection, pointChecker)
+        val lookupResult = target.pathProjection.check(coord, lookupSpec.lookupStrategy, pointChecker)
         if (lookupResult != null) {
             val hitPoint = lookupResult.first
             val hitCoord = lookupResult.second ?: hitPoint.originalCoord
@@ -261,8 +254,8 @@ internal class LayerTargetLocator(
         private val result = ArrayList<T>()
 
         val closestPointChecker: ClosestPointChecker = when (lookupSpace) {
-            X -> ClosestPointChecker(DoubleVector(cursor.x, 0.0))
-            Y -> ClosestPointChecker(DoubleVector(0.0, cursor.y))
+            X -> ClosestPointChecker(cursor)
+            Y -> ClosestPointChecker(cursor)
             else -> ClosestPointChecker(cursor)
         }
         private var myLastAddedDistance: Double = -1.0
