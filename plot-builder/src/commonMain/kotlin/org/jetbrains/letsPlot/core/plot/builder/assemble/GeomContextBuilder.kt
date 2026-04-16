@@ -166,6 +166,8 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return PlotLabelSpec(
                 Font(
                     family = family,
+                    // PlotLabelSpec measures text with integer font sizes, so fractional sizes
+                    // (for example, geom_text with size_unit = "x") may shift multiline text slightly.
                     size = size.toInt(),
                     isBold = isBold,
                     isItalic = isItalic

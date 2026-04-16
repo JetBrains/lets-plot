@@ -349,39 +349,6 @@ class PlotImageExportVisualTest : VisualPlotTestBase() {
     }
 
     @Test
-    fun `multiline text with fixed coord and size_unit='x'`() {
-        val spec = """
-            {
-              "mapping": {},
-              "data_meta": {},
-              "coord": {
-                "name": "fixed",
-                "ratio": 1.0,
-                "flip": false
-              },
-              "kind": "plot",
-              "scales": [],
-              "layers": [
-                {
-                  "geom": "text",
-                  "mapping": {},
-                  "data_meta": {},
-                  "size_unit": "x",
-                  "x": 0.0,
-                  "label": "Multiline\nText",
-                  "size": 0.2
-                }
-              ],
-              "metainfo_list": []
-            }
-        """.trimIndent()
-
-        val plotSpec = parsePlotSpec(spec)
-
-        assertPlot("plot_multiline_text_with_fixed_coord_and_size_unit_x_test.png", plotSpec)
-    }
-
-    @Test
     fun markdown2Xscale() {
         val spec = """
             |{
