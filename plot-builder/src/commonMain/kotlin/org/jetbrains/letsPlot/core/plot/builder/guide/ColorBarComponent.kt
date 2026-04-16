@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.verticalCorrectionFactor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
@@ -90,8 +91,11 @@ class ColorBarComponent(
             label.setLineHeights(lineHeights)
             fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, labelSpec)
             val correction = verticalCorrectionFactor(lineHeights.firstOrNull() ?: fontSize, fontSize)
-            // brInfo.labelVerticalAnchor is always CENTER
-            val yOffset = -labelSize().y / 2 + correction(0.6)
+            val yOffset = when (brInfo.labelVerticalAnchor) {
+                Text.VerticalAnchor.TOP -> correction(1.2)
+                Text.VerticalAnchor.BOTTOM -> -labelSize().y + correction(0.0)
+                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + correction(0.6)
+            }
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
         }
