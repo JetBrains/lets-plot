@@ -93,8 +93,8 @@ class ColorBarComponent(
             val correction = verticalCorrectionFactor(lineHeights.firstOrNull() ?: fontSize, fontSize)
             val yOffset = when (brInfo.labelVerticalAnchor) {
                 Text.VerticalAnchor.TOP -> correction(1.2)
-                Text.VerticalAnchor.BOTTOM -> -labelSize().y + correction(0.0)
                 Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + correction(0.6)
+                Text.VerticalAnchor.BOTTOM -> error("Unexpected vertical anchor: ${brInfo.labelVerticalAnchor}")
             }
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
