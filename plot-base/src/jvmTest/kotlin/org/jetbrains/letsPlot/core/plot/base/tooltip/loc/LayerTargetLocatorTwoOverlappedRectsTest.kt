@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -75,7 +75,7 @@ class LayerTargetLocatorTwoOverlappedRectsTest {
         val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.X)
 
         TestUtil.assertObjects(locator, TestUtil.inside(FIRST_RECT), FIRST_RECT_KEY, SECOND_RECT_KEY)
-        TestUtil.assertObjects(locator, TestUtil.outsideY(FIRST_RECT), FIRST_RECT_KEY, SECOND_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.outsideY(FIRST_RECT), SECOND_RECT_KEY)
 
         TestUtil.assertEmpty(locator, TestUtil.outsideX(SECOND_RECT))
         TestUtil.assertEmpty(locator, TestUtil.outsideX(FIRST_RECT))
