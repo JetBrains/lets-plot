@@ -506,6 +506,7 @@ internal class Latex(
         private val MISCELLANEOUS = mapOf(
             "infty" to "∞",
         )
+        // If you add symbols here, also update LatexTest (`latex symbols`) and https://lets-plot.org/python/pages/latex.html.
         private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
     }
 }
