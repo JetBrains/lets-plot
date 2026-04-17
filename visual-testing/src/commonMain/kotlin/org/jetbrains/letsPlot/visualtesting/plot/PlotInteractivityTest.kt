@@ -52,6 +52,8 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_pointAndPoint_withCrosshair)
         registerTest(::plot_interactivity_pointAndText_pointTooltip)
         registerTest(::plot_interactivity_pointAndLabel_pointTooltip)
+        registerTest(::plot_interactivity_groupedLine_closestByXTooltip)
+        registerTest(::plot_interactivity_barOverlappedMany_singleTooltip)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
@@ -322,6 +324,24 @@ class PlotInteractivityTest(
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_LABEL))
 
         val cursorPos = Vector(205, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_groupedLine_closestByXTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.GROUPED_LINE_CLOSEST_BY_X))
+
+        val cursorPos = Vector(205, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_barOverlappedMany_singleTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.BAR_OVERLAPPED_MANY))
+
+        val cursorPos = Vector(205, 75)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

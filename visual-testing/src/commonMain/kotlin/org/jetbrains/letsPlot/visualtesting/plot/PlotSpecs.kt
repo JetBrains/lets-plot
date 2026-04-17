@@ -717,6 +717,57 @@ object PlotSpecs {
         |}
     """.trimMargin()
 
+    val GROUPED_LINE_CLOSEST_BY_X = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 3.0 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": {
+        |        "x": [ 0.0, 3.0, 1.0, 3.0, 0.0, 2.0 ],
+        |        "y": [ 1.0, 1.0, 2.0, 2.0, 3.0, 3.0 ],
+        |        "id": [ "line A", "line A", "line B", "line B", "line C", "line C" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "group": "id", "color": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val BAR_OVERLAPPED_MANY = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 7.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "width": 1.5,
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "x": [ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0 ],
+        |        "y": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ],
+        |        "id": [ "bar 1", "bar 2", "bar 3", "bar 4", "bar 5", "bar 6" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
     val POLYGON_OVERLAPPED = """
         |{
         |  "kind": "plot",
