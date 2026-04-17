@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -22,6 +22,10 @@ class RectangleTooltipHelper(
     private val tooltipKind: TipLayoutHint.Kind = VERTICAL_TOOLTIP.takeIf { ctx.flipped } ?: HORIZONTAL_TOOLTIP,
     private val fillColorMapper: (DataPointAesthetics) -> Color? = { null },
     private val colorMarkerMapper: (DataPointAesthetics) -> List<Color> = createColorMarkerMapper(ctx),
+    // Anchor the tooltip at the bar's tip (far end from zero): top for positive,
+    // bottom for negative (or right/left when flipped). Off by default — other
+    // rect-based geoms (tile, rect) aren't anchored relative to a zero baseline.
+    private val snapToBarTip: Boolean = false,
 ) {
     private val helper = GeomHelper(pos, coord, ctx)
 
@@ -40,10 +44,19 @@ class RectangleTooltipHelper(
     }
 
     fun addTarget(p: DataPointAesthetics, rect: DoubleRectangle) {
+        val tooltipAnchor: DoubleVector?
         val objectRadius = with(rect) {
             if (ctx.flipped) {
+                tooltipAnchor = snapToBarTip.ifTrue {
+                    val ax = if ((p.finiteOrNull(Aes.Y) ?: 0.0) >= 0) right else left
+                    DoubleVector(ax, top + height / 2.0)
+                }
                 height / 2.0
             } else {
+                tooltipAnchor = snapToBarTip.ifTrue {
+                    val ay = if ((p.finiteOrNull(Aes.Y) ?: 0.0) >= 0) top else bottom
+                    DoubleVector(left + width / 2.0, ay)
+                }
                 width / 2.0
             }
         }
@@ -72,10 +85,13 @@ class RectangleTooltipHelper(
                 fillColor = fillColorMapper(p),
                 markerColors = colorMarkerMapper(p)
             ),
-            tooltipKind = tooltipKind
+            tooltipKind = tooltipKind,
+            tooltipAnchor = tooltipAnchor
         )
 
     }
+
+    private inline fun <T> Boolean.ifTrue(block: () -> T): T? = if (this) block() else null
 
     fun collectRectangleTargets(aesthetics: Aesthetics, clientRectFactory: (DataPointAesthetics) -> DoubleRectangle?) {
         for (p in aesthetics.dataPoints()) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -22,7 +22,8 @@ class TargetPrototype(
     internal val hitShape: HitShape,
     internal val indexMapper: (Int) -> Int,
     private val tooltipParams: TooltipParams,
-    internal val tooltipKind: TipLayoutHint.Kind
+    internal val tooltipKind: TipLayoutHint.Kind,
+    internal val tooltipAnchor: DoubleVector? = null
 ) {
 
     internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int, objectRadius: Double = 0.0): GeomTarget {

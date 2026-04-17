@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -25,7 +25,8 @@ interface GeomTargetCollector {
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: TooltipParams,
-        tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP
+        tooltipKind: Kind = Kind.HORIZONTAL_TOOLTIP,
+        tooltipAnchor: DoubleVector? = null
     )
 
     fun addPath(

@@ -29,7 +29,7 @@ open class BarGeom : GeomBase() {
     ) {
         val binSpan = getBinSpanCalculator(ctx)
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx, visualRectByDataPoint(binSpan))
-        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx)
+        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, snapToBarTip = true)
         val rectangles = mutableListOf<SvgNode>()
         if (coord.isLinear) {
             helper.createRectangles { _, svgNode, _ -> rectangles.add(svgNode) }

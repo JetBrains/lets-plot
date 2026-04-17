@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -35,13 +35,15 @@ internal class YOrientationTargetCollector(
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipKind: TipLayoutHint.Kind,
+        tooltipAnchor: DoubleVector?
     ) {
         targetCollector.addRectangle(
             index,
             rectangle,
             afterYOrientation(tooltipParams),
-            tooltipKind
+            tooltipKind,
+            tooltipAnchor
         )
     }
 

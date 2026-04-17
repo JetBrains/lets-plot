@@ -169,9 +169,11 @@ internal class LayerTargetLocator(
                 else -> 0.0
             }
 
+            val hitCoord = target.prototype.tooltipAnchor
+                ?: rect.origin.add(DoubleVector(rect.width / 2, yOffset))
             resultCollector.collect(
                 target.prototype.createGeomTarget(
-                    rect.origin.add(DoubleVector(rect.width / 2, yOffset)),
+                    hitCoord,
                     getKeyForSingleObjectGeometry(target.prototype),
                     objectRadius = hintOffset
                 )

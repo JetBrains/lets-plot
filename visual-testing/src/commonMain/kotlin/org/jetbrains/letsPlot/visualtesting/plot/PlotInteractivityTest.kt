@@ -37,6 +37,13 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_histogramDensity_densityTooltip)
         registerTest(::plot_interactivity_histogramDensity_histogramTooltip)
 
+        registerTest(::plot_interactivity_barPositiveHeight_tooltip)
+        registerTest(::plot_interactivity_barPositiveHeightHorizontal_tooltip)
+        registerTest(::plot_interactivity_barNegativeHeight_tooltip)
+        registerTest(::plot_interactivity_barNegativeHeightHorizontal_tooltip)
+
+        registerTest(::plot_interactivity_pointAndPointWithCrosshair)
+
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
     }
@@ -291,6 +298,80 @@ class PlotInteractivityTest(
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.HISTOGRAM_DENSITY))
 
         val cursorPos = Vector(265, 345)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_barPositiveHeight_tooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.BAR_WITH_NEGATIVE_HEIGHT))
+
+        val cursorPos = Vector(260, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_barPositiveHeightHorizontal_tooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.BAR_WITH_NEGATIVE_HEIGHT_HORIZONTAL))
+
+        val cursorPos = Vector(290, 90)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_barNegativeHeight_tooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.BAR_WITH_NEGATIVE_HEIGHT))
+
+        val cursorPos = Vector(180, 220)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_barNegativeHeightHorizontal_tooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.BAR_WITH_NEGATIVE_HEIGHT_HORIZONTAL))
+
+        val cursorPos = Vector(140, 140)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pointAndPointWithCrosshair(): Bitmap {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "ggtitle": { "text": "anchored: point + point" },
+            |  "layers": [
+            |    {
+            |      "geom": "point", "color": "#6a3d9a", "size": 6.0, "alpha": 0.8, 
+            |      "data": {
+            |        "x": [ 1.0, 1.8, 2.8, 3.3, 4.0 ],
+            |        "y": [ 1.0, 2.2, 1.4, 2.8, 1.8 ],
+            |        "layer": [ "A1", "A2", "A3", "A4", "A5" ]
+            |      },
+            |      "mapping": { "x": "x", "y": "y" },
+            |      "tooltips": { "lines": [ "point A @layer" ], "tooltip_anchor": "top_left" }
+            |    },
+            |    {
+            |      "geom": "point", "color": "#b15928", "size": 6.0, "alpha": 0.8,
+            |      "data": {
+            |        "x": [ 1.3, 2.0, 2.9, 3.6, 4.1 ],
+            |        "y": [ 1.4, 2.0, 1.8, 2.5, 1.5 ],
+            |        "layer": [ "B1", "B2", "B3", "B4", "B5" ]
+            |      },
+            |      "mapping": { "x": "x", "y": "y" },
+            |      "tooltips": { "lines": [ "point B @layer" ], "tooltip_anchor": "top_right" }
+            |    }
+            |  ]
+            |}            
+        """.trimMargin()
+
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        val cursorPos = Vector(235, 165)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

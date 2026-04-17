@@ -370,6 +370,57 @@ object PlotSpecs {
 
         p
      */
+    val BAR_WITH_NEGATIVE_HEIGHT = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "x": [ "a", "b", "c", "d" ],
+        |    "y": [ 3.0, -2.0, 4.0, -1.5 ]
+        |  },
+        |  "data_meta": {
+        |    "series_annotations": [
+        |      { "type": "str", "column": "x" },
+        |      { "type": "float", "column": "y" }
+        |    ]
+        |  },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "layers": [
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "tooltips": { "lines": [ "@x = @y" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val BAR_WITH_NEGATIVE_HEIGHT_HORIZONTAL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "y": [ "a", "b", "c", "d" ],
+        |    "x": [ 3.0, -2.0, 4.0, -1.5 ]
+        |  },
+        |  "data_meta": {
+        |    "series_annotations": [
+        |      { "type": "str", "column": "y" },
+        |      { "type": "float", "column": "x" }
+        |    ]
+        |  },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "layers": [
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "orientation": "y",
+        |      "tooltips": { "lines": [ "@y = @x" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
     val HISTOGRAM_DENSITY = """
         |{
         |  "kind": "plot",
