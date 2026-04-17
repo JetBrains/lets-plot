@@ -6,9 +6,118 @@
 package org.jetbrains.letsPlot.visualtesting.plot
 
 object PlotSpecs {
+    val FACET_GRID_TOOLTIP = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 600.0, "height": 150.0 },
+        |  "data": {
+        |    "x": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ],
+        |    "c": [ "a", "b", "c", "d", "e", "f" ],
+        |    "g": [ 0.0, 0.0, 0.0, 1.0, 1.0, 1.0 ]
+        |  },
+        |  "data_meta": {
+        |    "series_annotations": [
+        |      { "type": "int", "column": "x" },
+        |      { "type": "str", "column": "c" },
+        |      { "type": "int", "column": "g" }
+        |    ]
+        |  },
+        |  "facet": { "name": "grid", "x": "g", "x_order": 1.0, "y_order": 1.0 },
+        |  "layers": [
+        |    {
+        |      "geom": "point",
+        |      "mapping": { "x": "x", "color": "c" },
+        |      "tooltips": { "lines": [ "^color" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val PAN_IN_PROGRESS_WITH_INCOMPLETE_BUFFER = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400, "height": 400 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 20.0, 40.0 ],
+        |    "ylim": [ 0.0, 100.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "segment",
+        |      "x": 0.0,
+        |      "y": 0.0,
+        |      "xend": 100.0,
+        |      "yend": 100.0
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val COMPOSITE_TOOLTIP = """
+        |{
+        |  "kind": "subplots",
+        |  "ggsize": { "width": 600.0, "height": 150.0 },
+        |  "layout": { "ncol": 2.0, "nrow": 1.0, "name": "grid" },
+        |  "figures": [
+        |    {
+        |      "kind": "plot",
+        |      "data": { "x": [ 1.0, 2.0, 3.0 ], "c": [ "a", "b", "c" ], "g": [ 0.0, 0.0, 0.0 ] },
+        |      "layers": [
+        |        {
+        |          "geom": "point",
+        |          "mapping": { "x": "x", "color": "c" },
+        |          "tooltips": { "lines": [ "^color" ] }
+        |        }
+        |      ]
+        |    },
+        |    {
+        |      "kind": "plot",
+        |      "data": { "x": [ 4.0, 5.0, 6.0 ], "c": [ "d", "e", "f" ], "g": [ 1.0, 1.0, 1.0 ] },
+        |      "layers": [
+        |        {
+        |          "geom": "point",
+        |          "mapping": { "x": "x", "color": "c" },
+        |          "tooltips": { "lines": [ "^color" ] }
+        |        }
+        |      ]
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val POINT_AND_POINT_WITH_CROSSHAIR = """
+        |{
+        |  "kind": "plot",
+        |  "ggtitle": { "text": "anchored: point + point" },
+        |  "layers": [
+        |    {
+        |      "geom": "point", "color": "#6a3d9a", "size": 6.0, "alpha": 0.8,
+        |      "data": {
+        |        "x": [ 1.0, 1.8, 2.8, 3.3, 4.0 ],
+        |        "y": [ 1.0, 2.2, 1.4, 2.8, 1.8 ],
+        |        "layer": [ "A1", "A2", "A3", "A4", "A5" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "lines": [ "point A @layer" ], "tooltip_anchor": "top_left" }
+        |    },
+        |    {
+        |      "geom": "point", "color": "#b15928", "size": 6.0, "alpha": 0.8,
+        |      "data": {
+        |        "x": [ 1.3, 2.0, 2.9, 3.6, 4.1 ],
+        |        "y": [ 1.4, 2.0, 1.8, 2.5, 1.5 ],
+        |        "layer": [ "B1", "B2", "B3", "B4", "B5" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "lines": [ "point B @layer" ], "tooltip_anchor": "top_right" }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
     val COMPOSITE_NESTED = """
-            |{
-            |  "kind": "subplots", 
+        |{
+        |  "kind": "subplots",
             |  "ggsize": { "width": 400.0, "height": 300.0 }, 
             |  "layout": { "ncol": 1.0, "nrow": 2.0, "name": "grid" }, 
             |  "figures": [
@@ -532,6 +641,77 @@ object PlotSpecs {
         |      },
         |      "mapping": { "x": "x", "y": "y", "color": "id" },
         |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val POINT_AND_TEXT = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "point",
+        |      "size": 12.0,
+        |      "color": "#4E79A7",
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 2.0 ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "lines": [ "point tooltip" ] }
+        |    },
+        |    {
+        |      "geom": "text",
+        |      "color": "#E15759",
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 2.0 ],
+        |        "label": [ "TXT" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "label": "label" }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val POINT_AND_LABEL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "point",
+        |      "size": 12.0,
+        |      "color": "#59A14F",
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 2.0 ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "lines": [ "point tooltip" ] }
+        |    },
+        |    {
+        |      "geom": "label",
+        |      "color": "#B07AA1",
+        |      "fill": "#FCE5F6",
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 2.0 ],
+        |        "label": [ "LBL" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "label": "label" }
         |    }
         |  ]
         |}
