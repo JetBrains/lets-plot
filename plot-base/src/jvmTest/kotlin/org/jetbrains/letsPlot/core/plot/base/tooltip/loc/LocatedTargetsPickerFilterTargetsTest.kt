@@ -131,6 +131,25 @@ class LocatedTargetsPickerFilterTargetsTest {
     }
 
     @Test
+    fun `step plot - choose targets closest to cursor by x`() {
+        val pathKey1 = 1
+        val pathKey2 = 2
+        val pathKey3 = 3
+
+        val targetPrototypes = listOf(
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 0.0), DoubleVector(3.0, 0.0)), indexMapper = { pathKey1 }),
+            TestUtil.pathTarget(listOf(DoubleVector(1.0, 1.0), DoubleVector(3.0, 1.0)), indexMapper = { pathKey2 }),
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 2.0), DoubleVector(2.0, 2.0)), indexMapper = { pathKey3 }),
+        )
+        val locator = createLocator(GeomKind.STEP, targetPrototypes)
+
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(1.5, 0.0)),
+            pathKey2
+        )
+    }
+
+    @Test
     fun `bar plot - check restriction on visible tooltips`() {
 
         val targetPrototypes = run {

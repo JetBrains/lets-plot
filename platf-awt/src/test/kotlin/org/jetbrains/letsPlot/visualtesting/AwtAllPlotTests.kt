@@ -28,6 +28,6 @@ class AwtAllPlotTests {
     @Test
     fun debugTest() {
         val testSuit = PlotInteractivityTest(canvasPeer, imageComparer)
-        testSuit.assertTest(testSuit::plot_interactivity_histogramDensity_histogramTooltip)
+        testSuit.assertTest(testSuit::plot_interactivity_groupedLine_closestByXTooltip)
     }
 }

@@ -29,8 +29,10 @@ class LocatedTargetsPicker(
                 .minBy { target -> cursorCoord.distanceTo(target.tipLayoutHint.coord) }
 
             result.copy(targets = listOf(closestTarget))
-        } else if (result.geomKind in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, SPOKE, RIBBON)) {
-            // Get the closest targets and remove duplicates
+        } else if (result.lookupSpec.lookupSpace.isUnivariate() && result.hitShapeKind == HitShape.Kind.PATH) {
+            // Univariate hover on grouped path-like geoms can return several hits from the same layer
+            // because the cursor only has to match the lookup axis range.
+            // Keep only the hits aligned with the cursor on that axis and drop duplicate hits for the same datum.
             val minXDistanceToTarget = result.targets
                 .map { target -> xDistanceToCoord(target, cursorCoord, flippedAxis) }
                 .minByOrNull(::abs)
