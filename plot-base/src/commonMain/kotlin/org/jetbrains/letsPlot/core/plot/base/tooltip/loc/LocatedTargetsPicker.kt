@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import kotlin.math.abs
 
@@ -133,6 +134,10 @@ class LocatedTargetsPicker(
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
             return when {
+                // Case: points A and B close to each other.
+                // Hovering over A may generate fake distance and highlight B instead.
+                // To avoid that, we use real distance for XY lookupspace.
+                lookupResult.lookupSpec.lookupSpace == XY -> lookupResult.lookupDistance
                 lookupResult.lookupDistance != 0.0 -> lookupResult.lookupDistance
                 lookupResult.isCrosshairEnabled -> {
                     // use XY distance for tooltips with crosshair to avoid giving them priority
@@ -141,7 +146,8 @@ class LocatedTargetsPicker(
                         ?: FAKE_DISTANCE
                 }
 
-                lookupResult.hitShapeKind == HitShape.Kind.POINT -> 0.0 // Points are small; on hovering over them, we don't want to give priority to other tooltips by faking distance.
+                // Points are small; on hovering over them, we don't want to give priority to other tooltips by faking distance.
+                lookupResult.hitShapeKind == HitShape.Kind.POINT -> 0.0
                 else -> FAKE_DISTANCE // fake distance to give a chance for tooltips from other layers
             }
         }
