@@ -462,4 +462,194 @@ object PlotSpecs {
         |    }
         |  ]
         |}""".trimMargin()
+
+    val POINT_AND_POLYGON = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "polygon",
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "x": [ 1.0, 3.0, 3.0, 1.0, 1.0 ],
+        |        "y": [ 1.0, 1.0, 3.0, 3.0, 1.0 ],
+        |        "id": [ "polygon", "polygon", "polygon", "polygon", "polygon" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    },
+        |    {
+        |      "geom": "point",
+        |      "size": 12.0,
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 2.0 ],
+        |        "id": [ "point" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "color": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val POINT_AND_BAR = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 5.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "width": 1.5,
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 4.0 ],
+        |        "id": [ "bar" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    },
+        |    {
+        |      "geom": "point",
+        |      "size": 12.0,
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 2.0 ],
+        |        "id": [ "point" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "color": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val POLYGON_OVERLAPPED = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "polygon",
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "x": [ 0.5, 2.5, 2.5, 0.5, 0.5 ],
+        |        "y": [ 0.5, 0.5, 2.5, 2.5, 0.5 ],
+        |        "id": [ "polygon A", "polygon A", "polygon A", "polygon A", "polygon A" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    },
+        |    {
+        |      "geom": "polygon",
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "x": [ 1.5, 3.5, 3.5, 1.5, 1.5 ],
+        |        "y": [ 1.5, 1.5, 3.5, 3.5, 1.5 ],
+        |        "id": [ "polygon B", "polygon B", "polygon B", "polygon B", "polygon B" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val BAR_OVERLAPPED = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 5.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "width": 1.5,
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "x": [ 1.5 ],
+        |        "y": [ 3.0 ],
+        |        "id": [ "bar A" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    },
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "width": 1.5,
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 4.0 ],
+        |        "id": [ "bar B" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val RECT_OVERLAPPED = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "rect",
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "xmin": [ 0.5 ],
+        |        "xmax": [ 2.5 ],
+        |        "ymin": [ 0.5 ],
+        |        "ymax": [ 2.5 ],
+        |        "id": [ "rect A" ]
+        |      },
+        |      "mapping": { "xmin": "xmin", "xmax": "xmax", "ymin": "ymin", "ymax": "ymax", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    },
+        |    {
+        |      "geom": "rect",
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "xmin": [ 1.5 ],
+        |        "xmax": [ 3.5 ],
+        |        "ymin": [ 1.5 ],
+        |        "ymax": [ 3.5 ],
+        |        "id": [ "rect B" ]
+        |      },
+        |      "mapping": { "xmin": "xmin", "xmax": "xmax", "ymin": "ymin", "ymax": "ymax", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
 }

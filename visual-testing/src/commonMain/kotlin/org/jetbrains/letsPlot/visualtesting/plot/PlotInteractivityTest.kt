@@ -30,6 +30,10 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_pointAndLine_lineTooltip)
         registerTest(::plot_interactivity_pointAndLine_pointTooltip)
         registerTest(::plot_interactivity_pointAndPoint_pointTooltip)
+        registerTest(::plot_interactivity_pointAndPolygon_polygonTooltip)
+        registerTest(::plot_interactivity_pointAndPolygon_pointTooltip)
+        registerTest(::plot_interactivity_pointAndBar_barTooltip)
+        registerTest(::plot_interactivity_pointAndBar_pointTooltip)
         registerTest(::plot_interactivity_pathDistancePriority_implicitLineGroupTooltip)
         registerTest(::plot_interactivity_pathDistancePriority_separateGroupsLowerTooltip)
         registerTest(::plot_interactivity_pointLineSmooth_linesTooltip)
@@ -41,6 +45,9 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_barPositiveHeightHorizontal_tooltip)
         registerTest(::plot_interactivity_barNegativeHeight_tooltip)
         registerTest(::plot_interactivity_barNegativeHeightHorizontal_tooltip)
+        registerTest(::plot_interactivity_polygonOverlapped_tooltip)
+        registerTest(::plot_interactivity_barOverlapped_tooltip)
+        registerTest(::plot_interactivity_rectOverlapped_tooltip)
 
         registerTest(::plot_interactivity_pointAndPointWithCrosshair)
 
@@ -249,6 +256,42 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
+    fun plot_interactivity_pointAndPolygon_polygonTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_POLYGON))
+
+        val cursorPos = Vector(155, 195)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pointAndPolygon_pointTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_POLYGON))
+
+        val cursorPos = Vector(167, 132)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pointAndBar_barTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_BAR))
+
+        val cursorPos = Vector(205, 110)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pointAndBar_pointTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_BAR))
+
+        val cursorPos = Vector(176, 159)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
     fun plot_interactivity_pathDistancePriority_implicitLineGroupTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.PATH_DISTANCE_PRIORITY_IMPLICIT_LINE_GROUP))
 
@@ -339,6 +382,33 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
+    fun plot_interactivity_polygonOverlapped_tooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POLYGON_OVERLAPPED))
+
+        val cursorPos = Vector(175, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_barOverlapped_tooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.BAR_OVERLAPPED))
+
+        val cursorPos = Vector(175, 165)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_rectOverlapped_tooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.RECT_OVERLAPPED))
+
+        val cursorPos = Vector(175, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
     fun plot_interactivity_pointAndPointWithCrosshair(): Bitmap {
         val spec = """
             |{
@@ -376,4 +446,5 @@ class PlotInteractivityTest(
 
         return paint(plotCanvasDrawable, cursorPos)
     }
+
 }
