@@ -22,10 +22,10 @@ class PlotInteractivityTest(
     override val imageComparer: ImageComparer,
 ) : PlotTestBase() {
     init {
-        registerTest(::plot_interactivity_facetGridTooltip)
-        registerTest(::plot_interactivity_panInProgressWithIncompleteBuffer)
-        registerTest(::plot_interactivity_compositeTooltip)
-        registerTest(::plot_interactivity_nestedCompositeTooltip)
+        registerTest(::plot_interactivity_facetGrid_tooltip)
+        registerTest(::plot_interactivity_panInProgress_withIncompleteBuffer)
+        registerTest(::plot_interactivity_composite_tooltip)
+        registerTest(::plot_interactivity_nestedComposite_tooltip)
 
         registerTest(::plot_interactivity_pointAndLine_lineTooltip)
         registerTest(::plot_interactivity_pointAndLine_pointTooltip)
@@ -49,7 +49,7 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_barOverlapped_tooltip)
         registerTest(::plot_interactivity_rectOverlapped_tooltip)
 
-        registerTest(::plot_interactivity_pointAndPointWithCrosshair)
+        registerTest(::plot_interactivity_pointAndPoint_withCrosshair)
         registerTest(::plot_interactivity_pointAndText_pointTooltip)
         registerTest(::plot_interactivity_pointAndLabel_pointTooltip)
 
@@ -57,7 +57,7 @@ class PlotInteractivityTest(
         //registerTest(::plot_interactivity_panNestedComposite)
     }
 
-    fun plot_interactivity_facetGridTooltip(): Bitmap {
+    fun plot_interactivity_facetGrid_tooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.FACET_GRID_TOOLTIP))
 
         val cursorPos = Vector(500, 80)
@@ -66,7 +66,7 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    fun plot_interactivity_panInProgressWithIncompleteBuffer(): Bitmap {
+    fun plot_interactivity_panInProgress_withIncompleteBuffer(): Bitmap {
         // With xlim = [20, 40] and overscan factor = 1, the repaint manager creates a buffer covering the range [20, 40].
         // Dragging left by half the plot width (200 px out of 400 px) shifts the visible range to [30, 50].
         // This makes a buffer incomplete and triggers update to ensure the range [30, 50] is fully covered.
@@ -88,7 +88,7 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable)
     }
 
-    fun plot_interactivity_compositeTooltip(): Bitmap {
+    fun plot_interactivity_composite_tooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.COMPOSITE_TOOLTIP))
 
         val cursorPos = Vector(450, 80)
@@ -97,7 +97,7 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    fun plot_interactivity_nestedCompositeTooltip(): Bitmap {
+    fun plot_interactivity_nestedComposite_tooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.COMPOSITE_NESTED))
 
         val cursorPos = Vector(100, 180)
@@ -300,7 +300,7 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    fun plot_interactivity_pointAndPointWithCrosshair(): Bitmap {
+    fun plot_interactivity_pointAndPoint_withCrosshair(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_POINT_WITH_CROSSHAIR))
 
         val cursorPos = Vector(235, 165)
