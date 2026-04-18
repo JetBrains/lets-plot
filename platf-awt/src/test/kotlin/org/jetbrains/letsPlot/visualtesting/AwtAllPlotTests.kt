@@ -28,6 +28,6 @@ class AwtAllPlotTests {
     @Test
     fun runSinglePlotTest() {
         val testSuit = PlotInteractivityTest(canvasPeer, imageComparer)
-        testSuit.assertTest(testSuit::plot_interactivity_boxplotAndPoint_pointTooltip)
+        testSuit.assertTest(testSuit::plot_interactivity_histogramDensity_densityTooltip)
     }
 }

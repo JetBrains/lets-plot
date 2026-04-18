@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import kotlin.math.abs
 
@@ -127,11 +126,10 @@ class LocatedTargetsPicker(
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
             return when {
-                // Case: points A and B close to each other.
-                // Hovering over A may generate fake distance and highlight B instead.
-                // To avoid that, we use real distance for XY lookupspace.
-                lookupResult.lookupSpec.lookupSpace == XY -> lookupResult.lookupDistance
-                lookupResult.lookupDistance != 0.0 -> lookupResult.lookupDistance
+                // HOVER over polygon/boxplot/histogram - give chance for points or lines to show tooltips
+                (lookupResult.hitShapeKind == HitShape.Kind.POLYGON ||
+                lookupResult.hitShapeKind == HitShape.Kind.RECT) &&
+                        lookupResult.lookupDistance == 0.0 -> FAKE_DISTANCE
                 lookupResult.isCrosshairEnabled -> {
                     // use XY distance for tooltips with crosshair to avoid giving them priority
                     lookupResult.targets
@@ -139,7 +137,7 @@ class LocatedTargetsPicker(
                         ?: FAKE_DISTANCE
                 }
 
-                else -> FAKE_DISTANCE // fake distance to give a chance for tooltips from other layers
+                else -> lookupResult.lookupDistance // fake distance to give a chance for tooltips from other layers
             }
         }
 
