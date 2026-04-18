@@ -50,9 +50,6 @@ class LocatedTargetsPicker(
     }
 
     fun chooseBestResult(): List<LookupResult> {
-        // TODO: take into account LookupSpace and LookupStrategy, i.e. first check XY target to fall into CUTOFF_DISTANCE
-        // then check distance. This will allow to use bar-alike geoms to use their X lookup strategy and to not win
-        // every distance checks as the distance between them and the cursor is an order of magnitude smaller than for XY
         val withDistances = allLookupResults
             .map { lookupResult -> lookupResult to distance(lookupResult) }
             .filter { (lookupResult, distance) ->
@@ -83,30 +80,24 @@ class LocatedTargetsPicker(
             }
 
         val allConsideredResults = withDistances.map { (lookupResult, _) -> lookupResult }
+        val sortedResults = withDistances
+            .sortedByDescending { (_, distance) -> distance }
+            .map { (lookupResult, _) -> lookupResult }
 
         val picked = when {
             candidates.any { it.hasGeneralTooltip && hasAxisTooltip(it) } -> candidates
             allConsideredResults.none { it.hasGeneralTooltip } -> candidates
             allConsideredResults.any { it.hasGeneralTooltip && hasAxisTooltip(it) } -> {
                 listOf(
-                    withDistances
-                        .sortedByDescending { (_, distance) -> distance }
-                        .map { (lookupResult, _) -> lookupResult }
-                        .last { it.hasGeneralTooltip && hasAxisTooltip(it) }
+                    sortedResults.last { it.hasGeneralTooltip && hasAxisTooltip(it) }
                 )
             }
 
             else -> {
-                with(
-                    withDistances
-                        .sortedByDescending { (_, distance) -> distance }
-                        .map { (lookupResult, _) -> lookupResult }
-                ) {
-                    listOfNotNull(
-                        lastOrNull { it.hasGeneralTooltip },
-                        lastOrNull(::hasAxisTooltip)
-                    )
-                }
+                listOfNotNull(
+                    sortedResults.lastOrNull { it.hasGeneralTooltip },
+                    sortedResults.lastOrNull(::hasAxisTooltip)
+                )
             }
         }
 
@@ -148,8 +139,6 @@ class LocatedTargetsPicker(
                         ?: FAKE_DISTANCE
                 }
 
-                // Points are small; on hovering over them, we don't want to give priority to other tooltips by faking distance.
-                lookupResult.hitShapeKind == HitShape.Kind.POINT -> 0.0
                 else -> FAKE_DISTANCE // fake distance to give a chance for tooltips from other layers
             }
         }

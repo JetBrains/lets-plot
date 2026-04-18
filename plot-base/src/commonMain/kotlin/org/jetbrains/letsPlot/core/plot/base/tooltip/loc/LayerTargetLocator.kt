@@ -207,15 +207,11 @@ internal class LayerTargetLocator(
     }
 
     private fun processPath(coord: DoubleVector, target: Target, resultCollector: Collector<GeomTarget>) {
-        // When searching single point from all targets (REPLACE) - should search nearest projection between every path target.
-        // When searching points for every target (APPEND) - should reset nearest point between every path target.
-        val pointChecker = if (myCollectingStrategy == CollectingStrategy.APPEND)
-            //ClosestPointChecker(coord)
-            resultCollector.closestPointChecker
-        else
-            resultCollector.closestPointChecker
-
-        val lookupResult = target.pathProjection.check(coord, lookupSpec.lookupStrategy, pointChecker)
+        val lookupResult = target.pathProjection.check(
+            cursorCoord = coord,
+            lookupStrategy = lookupSpec.lookupStrategy,
+            closestPointChecker = resultCollector.closestPointChecker
+        )
         if (lookupResult != null) {
             val hitPoint = lookupResult.first
             val hitCoord = lookupResult.second ?: hitPoint.originalCoord
