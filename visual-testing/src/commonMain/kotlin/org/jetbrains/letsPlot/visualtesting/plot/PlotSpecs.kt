@@ -271,6 +271,54 @@ object PlotSpecs {
             |}
         """.trimMargin()
 
+    val BOXPLOT_AND_POINT = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "layers": [
+        |    {
+        |      "geom": "boxplot",
+        |      "stat": "identity",
+        |      "data": {
+        |        "x": [ 1.0 ],
+        |        "lower": [ 4.0 ],
+        |        "middle": [ 5.0 ],
+        |        "upper": [ 6.0 ],
+        |        "ymin": [ 3.0 ],
+        |        "ymax": [ 7.0 ],
+        |        "width": [ 0.6 ]
+        |      },
+        |      "mapping": {
+        |        "x": "x",
+        |        "lower": "lower",
+        |        "middle": "middle",
+        |        "upper": "upper",
+        |        "ymin": "ymin",
+        |        "ymax": "ymax",
+        |        "width": "width"
+        |      },
+        |      "fill": "#A8DADC",
+        |      "color": "#1D3557"
+        |    },
+        |    {
+        |      "geom": "point",
+        |      "data": {
+        |        "x": [ 1.0 ],
+        |        "y": [ 5.0 ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "color": "#E63946",
+        |      "size": 12.0,
+        |      "tooltips": { "lines": [ "point tooltip" ] }
+        |    }
+        |  ],
+        |  "scales": [
+        |    { "aesthetic": "x", "limits": [ 0.0, 2.0 ] },
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
+        |}
+    """.trimMargin()
+
     val PATH_DISTANCE_PRIORITY_IMPLICIT_LINE_GROUP = """
         |{
         |  "kind": "plot",

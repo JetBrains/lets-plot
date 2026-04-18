@@ -51,7 +51,7 @@ class LocatedTargetsPicker(
 
     fun chooseBestResult(): List<LookupResult> {
         val withDistances = allLookupResults
-            .map { lookupResult -> lookupResult to distance(lookupResult) }
+            .map { lookupResult -> lookupResult to distance(cursorCoord, lookupResult) }
             .filter { (lookupResult, distance) ->
                 when {
                     lookupResult.isCrosshairEnabled -> true                          // crosshair always snaps to nearest
@@ -123,7 +123,7 @@ class LocatedTargetsPicker(
         // User won't get much info from it anyway.
         private const val EXPECTED_TARGETS_MAX_COUNT = 10
 
-        private fun distance(lookupResult: LookupResult): Double {
+        private fun distance(cursor: DoubleVector, lookupResult: LookupResult): Double {
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
             return when {
@@ -135,7 +135,7 @@ class LocatedTargetsPicker(
                 lookupResult.isCrosshairEnabled -> {
                     // use XY distance for tooltips with crosshair to avoid giving them priority
                     lookupResult.targets
-                        .minOfOrNull { target -> distance(lookupResult.cursor, target.tipLayoutHint.coord) }
+                        .minOfOrNull { target -> distance(cursor, target.tipLayoutHint.coord) }
                         ?: FAKE_DISTANCE
                 }
 

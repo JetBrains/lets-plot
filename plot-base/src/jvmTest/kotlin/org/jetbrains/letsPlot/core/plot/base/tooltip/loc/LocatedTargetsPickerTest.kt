@@ -378,7 +378,6 @@ class LocatedTargetsPickerTest {
                     tooltipTitle = null
                 )
                 myResult = LookupResult(
-                    cursor = DoubleVector.ZERO,
                     targets = emptyList(),
                     lookupDistance = myDistance,
                     lookupSpec = myLookupSpec,

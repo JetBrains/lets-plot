@@ -34,6 +34,7 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_pointAndPolygon_pointTooltip)
         registerTest(::plot_interactivity_pointAndBar_barTooltip)
         registerTest(::plot_interactivity_pointAndBar_pointTooltip)
+        registerTest(::plot_interactivity_boxplotAndPoint_pointTooltip)
         registerTest(::plot_interactivity_pathDistancePriority_implicitLineGroupTooltip)
         registerTest(::plot_interactivity_pathDistancePriority_separateGroupsLowerTooltip)
         registerTest(::plot_interactivity_pointLineSmooth_linesTooltip)
@@ -180,6 +181,15 @@ class PlotInteractivityTest(
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_BAR))
 
         val cursorPos = Vector(176, 159)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_boxplotAndPoint_pointTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.BOXPLOT_AND_POINT))
+
+        val cursorPos = Vector(216, 150)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

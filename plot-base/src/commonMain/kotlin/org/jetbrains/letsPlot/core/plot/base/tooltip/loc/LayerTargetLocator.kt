@@ -95,7 +95,6 @@ internal class LayerTargetLocator(
 
         targets.add(
             GeomTargetLocator.LookupResult(
-                collector.cursor,
                 collector.collection(),
                 // Distance can be negative when lookup space is X or Y
                 // In this case use 0.0 as a distance - we have a direct hit.

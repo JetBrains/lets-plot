@@ -26,8 +26,8 @@ class AwtAllPlotTests {
     }
 
     @Test
-    fun debugTest() {
+    fun runSinglePlotTest() {
         val testSuit = PlotInteractivityTest(canvasPeer, imageComparer)
-        testSuit.assertTest(testSuit::plot_interactivity_groupedLine_closestByXTooltip)
+        testSuit.assertTest(testSuit::plot_interactivity_boxplotAndPoint_pointTooltip)
     }
 }

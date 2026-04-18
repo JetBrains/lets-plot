@@ -264,7 +264,6 @@ object LiveMapProviderUtil {
                     }
 
                     return GeomTargetLocator.LookupResult(
-                        cursor = coord,
                         targets = geomTargets,
                         lookupDistance = hoverObjects.maxOf { it.distance },
                         lookupSpec = GeomTargetLocator.LookupSpec(LookupSpace.XY, LookupStrategy.HOVER),
