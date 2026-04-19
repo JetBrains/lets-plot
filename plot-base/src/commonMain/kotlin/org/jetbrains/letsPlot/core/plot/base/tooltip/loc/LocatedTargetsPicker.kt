@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.distance
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
@@ -131,12 +130,10 @@ class LocatedTargetsPicker(
                 lookupResult.hitShapeKind == HitShape.Kind.RECT) &&
                         lookupResult.lookupDistance == 0.0 -> FAKE_DISTANCE
                 lookupResult.isCrosshairEnabled -> {
-                    // use XY distance for tooltips with crosshair to avoid giving them priority
                     lookupResult.targets
-                        .minOfOrNull { target -> distance(cursor, target.tipLayoutHint.coord) }
+                        .minOfOrNull { target -> cursor.distanceTo(target.tipLayoutHint.coord) }
                         ?: FAKE_DISTANCE
                 }
-
                 else -> lookupResult.lookupDistance // fake distance to give a chance for tooltips from other layers
             }
         }

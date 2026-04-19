@@ -51,6 +51,7 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_rectOverlapped_tooltip)
 
         registerTest(::plot_interactivity_pointAndPoint_withCrosshair)
+        registerTest(::plot_interactivity_pointAndPoint_withCrosshair_overlapNearerPointTooltip)
         registerTest(::plot_interactivity_pointAndText_pointTooltip)
         registerTest(::plot_interactivity_pointAndLabel_pointTooltip)
         registerTest(::plot_interactivity_groupedLine_closestByXTooltip)
@@ -316,6 +317,15 @@ class PlotInteractivityTest(
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_POINT_WITH_CROSSHAIR))
 
         val cursorPos = Vector(235, 165)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_pointAndPoint_withCrosshair_overlapNearerPointTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.POINT_AND_POINT_WITH_CROSSHAIR_OVERLAP))
+
+        val cursorPos = Vector(331, 191)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

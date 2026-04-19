@@ -115,6 +115,39 @@ object PlotSpecs {
         |}
     """.trimMargin()
 
+    val POINT_AND_POINT_WITH_CROSSHAIR_OVERLAP = """
+        |{
+        |  "kind": "plot",
+        |  "ggtitle": { "text": "anchored: overlapping point + point" },
+        |  "scales": [
+        |    { "aesthetic": "x", "limits": [ 0.0, 4.0 ] },
+        |    { "aesthetic": "y", "limits": [ 0.0, 4.0 ] }
+        |  ],
+        |  "layers": [
+        |    {
+        |      "geom": "point", "color": "#6a3d9a", "size": 30.0, "alpha": 0.75,
+        |      "data": {
+        |        "x": [ 2.0 ],
+        |        "y": [ 2.0 ],
+        |        "layer": [ "A" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "lines": [ "point A @layer" ], "tooltip_anchor": "top_left" }
+        |    },
+        |    {
+        |      "geom": "point", "color": "#b15928", "size": 30.0, "alpha": 0.75,
+        |      "data": {
+        |        "x": [ 2.24 ],
+        |        "y": [ 2.0 ],
+        |        "layer": [ "B" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "lines": [ "point B @layer" ], "tooltip_anchor": "top_right" }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
     val COMPOSITE_NESTED = """
         |{
         |  "kind": "subplots",
