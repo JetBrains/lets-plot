@@ -23,7 +23,7 @@ object RichText {
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
         anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
-        initialX: Double = 0.0
+        initialX: Double? = null
     ): List<SvgTextElement> {
         val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
         val svgLines = render(lines, font, anchorCoefficients = anchorCoefficients(lines, anchor), initialX = initialX)
@@ -208,7 +208,7 @@ object RichText {
                 return@map null
             }
             when (anchor) {
-                Text.HorizontalAnchor.LEFT -> null // no shift needed when text is left-aligned
+                Text.HorizontalAnchor.LEFT -> 0.0
                 Text.HorizontalAnchor.MIDDLE -> 0.5
                 Text.HorizontalAnchor.RIGHT -> 1.0
             }
@@ -219,7 +219,7 @@ object RichText {
         lines: List<List<RichTextNode>>,
         font: Font,
         anchorCoefficients: List<Double?>,
-        initialX: Double
+        initialX: Double?
     ): List<SvgTextElement> {
         val stack = mutableListOf(RenderState())
         val svgLines = (lines zip anchorCoefficients).map { (line, anchorCoefficient) ->
@@ -237,11 +237,15 @@ object RichText {
                     is RichTextNode.ColorEnd -> stack.removeLast()
 
                     is RichTextNode.RichSpan -> {
-                        // Based on the whole line the `anchorCoefficient` was calculated
-                        // and if it is not null, it means that the line contains [at least] a fraction node,
-                        // and then we need to add x attribute to the first tspan in the line with shift,
-                        // that corresponds to the anchorCoefficient.
-                        val x = anchorCoefficient?.let { initialX - it * lineWidth }
+                        // When the line contains a fraction (anchorCoefficient != null), emitting x on the
+                        // first tspan forces Label.updateHorizontalAnchor() to flip text-anchor to "start",
+                        // so plain text and the fraction's own tspans share the same coordinate frame.
+                        val x = when {
+                            anchorCoefficient == null -> null
+                            initialX == null && anchorCoefficient == 0.0 -> null // LEFT anchor, no origin: line-local frame already starts at 0
+                            initialX == null -> -anchorCoefficient * lineWidth
+                            else -> initialX - anchorCoefficient * lineWidth // caller-supplied origin: emit x even when the shift is 0
+                        }
                         svg += term.render(stack.last(), prefixWidth, x, isFirstRichSpanInLine)
                         prefixWidth += term.estimateWidth(font)
                         isFirstRichSpanInLine = false

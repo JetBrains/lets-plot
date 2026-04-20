@@ -227,7 +227,7 @@ class Label(
             wrapWidth,
             markdown = markdown,
             anchor = myHorizontalAnchor,
-            initialX = xStart ?: 0.0
+            initialX = xStart
         )
     }
 
