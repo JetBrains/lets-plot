@@ -55,6 +55,8 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_pointAndText_pointTooltip)
         registerTest(::plot_interactivity_pointAndLabel_pointTooltip)
         registerTest(::plot_interactivity_groupedLine_closestByXTooltip)
+        registerTest(::plot_interactivity_logicalGroup_differentXAxisTooltip)
+        registerTest(::plot_interactivity_logicalGroup_differentXAxisTooltip_reversedSides)
         registerTest(::plot_interactivity_barOverlappedMany_singleTooltip)
 
         // TODO: fix it
@@ -353,6 +355,24 @@ class PlotInteractivityTest(
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.GROUPED_LINE_CLOSEST_BY_X))
 
         val cursorPos = Vector(205, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_logicalGroup_differentXAxisTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.LOGICAL_GROUP_DIFFERENT_X_TOOLTIP))
+
+        val cursorPos = Vector(205, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_logicalGroup_differentXAxisTooltip_reversedSides(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.LOGICAL_GROUP_DIFFERENT_X_TOOLTIP_REVERSED_SIDES))
+
+        val cursorPos = Vector(103, 145)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

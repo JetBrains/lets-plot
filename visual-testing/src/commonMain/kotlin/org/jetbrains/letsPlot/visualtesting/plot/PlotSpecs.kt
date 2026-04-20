@@ -822,6 +822,96 @@ object PlotSpecs {
         |}
     """.trimMargin()
 
+    val LOGICAL_GROUP_DIFFERENT_X_TOOLTIP = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.2 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line", "color": "#4E79A7", "size": 2.0,
+        |      "data": {
+        |        "x": [ 0.0, 1.0, 2.0, 3.0, 4.0 ],
+        |        "y": [ 1.0, 2.1, 1.6, 2.8, 2.0 ],
+        |        "label": [ "line A", "line A", "line A", "line A", "line A" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": {
+        |        "lines": [ "@label" ],
+        |        "tooltip_group": "logical_group"
+        |      }
+        |    },
+        |    {
+        |      "geom": "line", "color": "#E15759", "size": 2.0,
+        |      "data": {
+        |        "x": [ 0.15, 1.15, 2.15, 3.15, 4.15 ],
+        |        "y": [ 1.6, 2.7, 2.2, 3.4, 2.6 ],
+        |        "label": [ "line B", "line B", "line B", "line B", "line B" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": {
+        |        "lines": [ "@label" ],
+        |        "tooltip_group": "logical_group"
+        |      }
+        |    }
+        |  ],
+        |  "theme": {
+        |    "legend_position": "none",
+        |    "panel_grid_minor_blank": {},
+        |    "axis_tooltip_y": { "name": "blank" }
+        |  }
+        |}
+    """.trimMargin()
+
+    val LOGICAL_GROUP_DIFFERENT_X_TOOLTIP_REVERSED_SIDES = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.7 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line", "color": "#4E79A7", "size": 2.0,
+        |      "data": {
+        |        "x": [ 0.6, 1.6, 2.6, 3.6, 4.6 ],
+        |        "y": [ 1.0, 2.1, 1.6, 2.8, 2.0 ],
+        |        "label": [ "line A", "line A", "line A", "line A", "line A" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": {
+        |        "lines": [ "@label" ],
+        |        "tooltip_group": "logical_group"
+        |      }
+        |    },
+        |    {
+        |      "geom": "line", "color": "#E15759", "size": 2.0,
+        |      "data": {
+        |        "x": [ 0.0, 1.0, 2.0, 3.0, 4.0 ],
+        |        "y": [ 1.6, 2.7, 2.2, 3.4, 2.6 ],
+        |        "label": [ "line B", "line B", "line B", "line B", "line B" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": {
+        |        "lines": [ "@label" ],
+        |        "tooltip_group": "logical_group"
+        |      }
+        |    }
+        |  ],
+        |  "theme": {
+        |    "legend_position": "none",
+        |    "panel_grid_minor_blank": {},
+        |    "axis_tooltip_y": { "name": "blank" }
+        |  }
+        |}
+    """.trimMargin()
+
     val BAR_OVERLAPPED_MANY = """
         |{
         |  "kind": "plot",
