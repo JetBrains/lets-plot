@@ -21,6 +21,7 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_panInProgressWithIncompleteBuffer)
         registerTest(::plot_interactivity_compositeTooltip)
         registerTest(::plot_interactivity_nestedCompositeTooltip)
+        registerTest(::plot_interactivity_latexTooltip)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
@@ -198,5 +199,88 @@ class PlotInteractivityTest(
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_RELEASED, leftButton(dragEndPos))
 
         return paint(plotCanvasDrawable, dragEndPos)
+    }
+
+    fun plot_interactivity_latexTooltip(): Bitmap {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [
+            |      0.0,
+            |      1.0,
+            |      0.0,
+            |      1.0,
+            |      0.0,
+            |      1.0
+            |    ],
+            |    "y": [
+            |      0.0,
+            |      0.0,
+            |      1.0,
+            |      1.0,
+            |      2.0,
+            |      2.0
+            |    ],
+            |    "label": [
+            |      "\\( \\frac{A}{B} \\)\nX",
+            |      "\\( \\frac{A}{B} \\)\nX",
+            |      "X\n\\( A \\cdot \\frac{B}{C} \\)",
+            |      "X\n\\( A \\cdot \\frac{B}{C} \\)",
+            |      "A + \\( B_1 + \\frac{C + D}{E} + F^2 \\) + G\nT + \\( U_1 + \\frac{V + W}{X} + Y^2 \\) + Z",
+            |      "A + \\( B_1 + \\frac{C + D}{E} + F^2 \\) + G\nT + \\( U_1 + \\frac{V + W}{X} + Y^2 \\) + Z"
+            |    ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      {
+            |        "type": "int",
+            |        "column": "x"
+            |      },
+            |      {
+            |        "type": "int",
+            |        "column": "y"
+            |      },
+            |      {
+            |        "type": "str",
+            |        "column": "label"
+            |      }
+            |    ]
+            |  },
+            |  "ggsize": {
+            |    "width": 600.0,
+            |    "height": 500.0
+            |  },
+            |  "kind": "plot",
+            |  "scales": [],
+            |  "layers": [
+            |    {
+            |      "geom": "line",
+            |      "mapping": {
+            |        "color": "label"
+            |      },
+            |      "tooltips": {
+            |        "formats": [],
+            |        "lines": [
+            |          "@|@label"
+            |        ],
+            |        "title": "@label"
+            |      },
+            |      "data_meta": {}
+            |    }
+            |  ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin()
+
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        val cursorPos = Vector(380, 250)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
     }
 }
