@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.visualtesting
 
 import org.jetbrains.letsPlot.commons.values.Bitmap
@@ -14,10 +19,11 @@ class AwtBitmapIO(
     companion object {
         const val DEFAULT_EXPECTED_IMAGES_DIR = "/src/test/resources/expected-images"
         const val DEFAULT_OUTPUT_DIR = "/build/reports/actual-images"
+        private const val TOOLTIPS_SUBDIR = "/tooltips"
     }
 
-    val expectedImagesDir = if (subdir.isNotEmpty()) "$expectedImagesDir/$subdir" else expectedImagesDir
-    val outputDir = if (subdir.isNotEmpty()) "$outputDir/$subdir" else outputDir
+    private val expectedImagesDir = if (subdir.isNotEmpty()) "$expectedImagesDir/$subdir" else expectedImagesDir
+    private val outputDir = if (subdir.isNotEmpty()) "$outputDir/$subdir" else outputDir
 
     override fun write(bitmap: Bitmap, fileName: String) {
         val filePath = getWriteFilePath(fileName)
@@ -43,14 +49,17 @@ class AwtBitmapIO(
     }
 
     override fun getReadFilePath(fileName: String): String {
-        return System.getProperty("user.dir") + "$expectedImagesDir/$fileName"
+        return resolveFilePath(expectedImagesDir, fileName)
     }
 
     override fun getWriteFilePath(fileName: String): String {
-        val dir = File(System.getProperty("user.dir") + outputDir)
-        if (!dir.exists()) {
-            dir.mkdirs()
-        }
-        return "$dir/$fileName"
+        val filePath = resolveFilePath(outputDir, fileName)
+        File(filePath).parentFile.mkdirs()
+        return filePath
+    }
+
+    private fun resolveFilePath(baseDir: String, fileName: String): String {
+        val tooltipSubdir = if (fileName.contains("tooltip", ignoreCase = true)) TOOLTIPS_SUBDIR else ""
+        return System.getProperty("user.dir") + "$baseDir$tooltipSubdir/$fileName"
     }
 }

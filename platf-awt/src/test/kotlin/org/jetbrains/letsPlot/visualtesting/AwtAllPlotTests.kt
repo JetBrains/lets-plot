@@ -13,10 +13,7 @@ import kotlin.test.Test
 
 class AwtAllPlotTests {
     val canvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
-    val awtBitmapIO = AwtBitmapIO(
-        expectedImagesDir = "/src/test/resources/expected-images/plot",
-        outputDir = "/build/reports/actual-images/plot"
-    )
+    val awtBitmapIO = AwtBitmapIO()
 
     val imageComparer = ImageComparer(canvasPeer, awtBitmapIO, silent = true)
 
@@ -28,6 +25,6 @@ class AwtAllPlotTests {
     @Test
     fun runSinglePlotTest() {
         val testSuit = PlotInteractivityTest(canvasPeer, imageComparer)
-        testSuit.assertTest(testSuit::plot_interactivity_logicalGroup_differentXAxisTooltip_reversedSides)
+        testSuit.assertTest(testSuit::plot_interactivity_nestedComposite_tooltip)
     }
 }
