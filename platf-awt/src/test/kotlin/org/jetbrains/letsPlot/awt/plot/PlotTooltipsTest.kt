@@ -56,7 +56,8 @@ class PlotTooltipsTest : PlotTestBase() {
         registerTest(::plot_tooltips_pointAndLabel_pointTooltip)
         registerTest(::plot_tooltips_groupedLine_closestByXTooltip)
         registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip)
-        registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip_reversedSides)
+        registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip_closerToA)
+        registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip_closerToB)
         registerTest(::plot_tooltips_barOverlappedMany_singleTooltip)
     }
 
@@ -311,10 +312,19 @@ class PlotTooltipsTest : PlotTestBase() {
         return paint(plotCanvasDrawable, cursorPos)
     }
 
-    fun plot_tooltips_logicalGroup_differentXAxisTooltip_reversedSides(): Bitmap {
+    fun plot_tooltips_logicalGroup_differentXAxisTooltip_closerToB(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.LOGICAL_GROUP_DIFFERENT_X_TOOLTIP_REVERSED_SIDES))
 
         val cursorPos = Vector(103, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_tooltips_logicalGroup_differentXAxisTooltip_closerToA(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.LOGICAL_GROUP_DIFFERENT_X_TOOLTIP_REVERSED_SIDES))
+
+        val cursorPos = Vector(80, 145)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)
