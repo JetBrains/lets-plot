@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,12 +9,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TargetPrototype.Companion.createTipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TargetPrototype.Companion.createTooltipHint
 
 class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
 
     private var myHintShape: HitShape = HitShape.point(DoubleVector.ZERO, 0.0)
-    private val myAesTipLayoutHints: MutableMap<Aes<*>, TipLayoutHint> = HashMap()
+    private val myAesTooltipHint: MutableMap<Aes<*>, TooltipHint> = HashMap()
     private var myFill = Color.TRANSPARENT
 
     fun withPointHitShape(coord: DoubleVector, radius: Double): TestingGeomTargetBuilder {
@@ -40,35 +40,30 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
 
     fun withLayoutHint(
         aes: Aes<*>,
-        layoutHint: TipLayoutHint
+        layoutHint: TooltipHint
     ): TestingGeomTargetBuilder {
-        myAesTipLayoutHints[aes] = layoutHint
-        return this
-    }
-
-    fun withFill(fill: Color): TestingGeomTargetBuilder {
-        myFill = fill
+        myAesTooltipHint[aes] = layoutHint
         return this
     }
 
     fun build(): GeomTarget {
 
-        fun detectTipLayoutHint(kind: HitShape.Kind): TipLayoutHint.Kind {
+        fun detectTooltipHint(kind: HitShape.Kind): TooltipHint.Placement {
             return when (kind) {
-                HitShape.Kind.POINT -> TipLayoutHint.Kind.VERTICAL_TOOLTIP
-                HitShape.Kind.RECT -> TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-                HitShape.Kind.POLYGON -> TipLayoutHint.Kind.CURSOR_TOOLTIP
-                HitShape.Kind.PATH -> TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                HitShape.Kind.POINT -> TooltipHint.Placement.VERTICAL
+                HitShape.Kind.RECT -> TooltipHint.Placement.HORIZONTAL
+                HitShape.Kind.POLYGON -> TooltipHint.Placement.CURSOR
+                HitShape.Kind.PATH -> TooltipHint.Placement.HORIZONTAL
             }
         }
 
         return GeomTarget(
             IGNORED_HIT_INDEX,
-            createTipLayoutHint(
+            createTooltipHint(
                 myTargetHitCoord,
                 myHintShape.kind,
-                detectTipLayoutHint(myHintShape.kind),
-                TipLayoutHint.StemLength.NORMAL,
+                detectTooltipHint(myHintShape.kind),
+                TooltipHint.StemLength.NORMAL,
                 fillColor = myFill,
                 markerColors = emptyList(),
                 objectRadius = if (myHintShape.kind == HitShape.Kind.RECT) {
@@ -77,7 +72,7 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
                     0.0
                 }
             ),
-            myAesTipLayoutHints
+            myAesTooltipHint
         )
     }
 

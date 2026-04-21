@@ -6,11 +6,11 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.X_AXIS_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.X_AXIS
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
+class TooltipModelAxisTooltipTest : TooltipModelTestHelper() {
 
     @BeforeTest
     fun setUp() {
@@ -20,7 +20,7 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
 
     @Test
     fun whenXIsNotMapped_ShouldNotThrowException() {
-        createTooltipSpecs(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
+        createTooltipModels(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
     }
 
     @Test
@@ -30,11 +30,11 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
         val fillMapping = addMappedData(v.mapping(Aes.FILL))
         val yMapping = addMappedData(v.mapping(Aes.Y))
 
-        createTooltipSpecs(
+        createTooltipModels(
             geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
                     Aes.FILL,
-                    TipLayoutHint.verticalTooltip(
+                    TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         markerColors = emptyList()
@@ -48,14 +48,14 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
     }
 
     @Test
-    fun whenXIsMapped_AndAxisTooltipEnabled_ShouldAddTooltipSpec() {
+    fun whenXIsMapped_AndAxisTooltipEnabled_ShouldAddTooltipModel() {
         val variable = MappedDataAccessMock.variable().name("some label").value("some value").isContinuous(true)
         val xMapping = addMappedData(variable.mapping(Aes.X))
 
-        buildTooltipSpecs()
+        buildTooltipModels()
 
         assertHint(
-            expectedHintKind = X_AXIS_TOOLTIP,
+            expectedHintPlacement = X_AXIS,
             expectedHintCoord = TARGET_X_AXIS_COORD,
             expectedObjectRadius = 0.5
         )
@@ -69,7 +69,7 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
         val v = MappedDataAccessMock.variable().name("var_for_y").value("sedan")
         val yMapping = addMappedData(v.mapping(Aes.Y))
 
-        buildTooltipSpecs()
+        buildTooltipModels()
         assertLines(0, yMapping.shortTooltipText())
     }
 
@@ -79,7 +79,7 @@ class TooltipSpecAxisTooltipTest : TooltipSpecTestHelper() {
         val fillMapping = addMappedData(v.mapping(Aes.FILL))
         val yMapping = addMappedData(v.mapping(Aes.Y))
 
-        buildTooltipSpecs()
+        buildTooltipModels()
         assertLines(0, fillMapping.longTooltipText(), yMapping.longTooltipText())
     }
 }

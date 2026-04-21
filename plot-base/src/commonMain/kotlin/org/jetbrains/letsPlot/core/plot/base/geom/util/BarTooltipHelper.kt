@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,9 +9,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.HORIZONTAL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
 
 object BarTooltipHelper {
     fun collectRectangleTargets(
@@ -23,7 +23,7 @@ object BarTooltipHelper {
         clientRectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         fillColorMapper: (DataPointAesthetics) -> Color? = { null },
         colorMarkerMapper: (DataPointAesthetics) -> List<Color> = HintColorUtil.createColorMarkerMapper(ctx),
-        defaultTooltipKind: TipLayoutHint.Kind = VERTICAL_TOOLTIP.takeIf { ctx.flipped } ?: HORIZONTAL_TOOLTIP
+        defaultTooltipPlacement: TooltipHint.Placement = VERTICAL.takeIf { ctx.flipped } ?: HORIZONTAL
     ) {
         val helper = GeomHelper(pos, coord, ctx)
 
@@ -42,9 +42,9 @@ object BarTooltipHelper {
                 .defaultCoord(p.x()!!)
                 .defaultKind(
                     if (ctx.flipped) {
-                        TipLayoutHint.Kind.ROTATED_TOOLTIP
+                        TooltipHint.Placement.ROTATED
                     } else {
-                        HORIZONTAL_TOOLTIP
+                        HORIZONTAL
                     }
                 )
 
@@ -57,11 +57,11 @@ object BarTooltipHelper {
                 p.index(),
                 clientRect,
                 GeomTargetCollector.TooltipParams(
-                    tipLayoutHints = hintConfigs.hints,
+                    tooltipHints = hintConfigs.hints,
                     fillColor = fillColorMapper(p),
                     markerColors = colorMarkerMapper(p)
                 ),
-                tooltipKind = defaultTooltipKind
+                tooltipPlacement = defaultTooltipPlacement
             )
         }
     }

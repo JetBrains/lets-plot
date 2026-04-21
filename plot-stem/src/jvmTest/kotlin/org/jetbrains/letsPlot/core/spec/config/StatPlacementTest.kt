@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.StatKind
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class StatKindTest {
+class StatPlacementTest {
 
     @Test
     fun valueOf() {

@@ -75,7 +75,7 @@ object TestUtil {
     private const val VARIABLE_VALUE = "value"
     private val defaultTooltipParams = TooltipParams(
         emptyMap(),
-        TipLayoutHint.StemLength.NORMAL,
+        TooltipHint.StemLength.NORMAL,
         null,
         emptyList()
     )
@@ -92,17 +92,17 @@ object TestUtil {
         return MappedDataAccessMock.variable().name(VARIABLE_NAME).value(VARIABLE_VALUE).isContinuous(isContinuous).mapping(aes)
     }
 
-    internal fun assertText(tooltipSpecs: List<TooltipSpec>, vararg expectedTooltipText: String) {
-        assertText(tooltipSpecs, listOf(*expectedTooltipText))
+    internal fun assertText(tooltipModels: List<TooltipModel>, vararg expectedTooltipText: String) {
+        assertText(tooltipModels, listOf(*expectedTooltipText))
     }
 
     @SafeVarargs
-    internal fun assertText(tooltipSpecs: List<TooltipSpec>, vararg expectedTooltips: List<String>) {
-        assertEquals(expectedTooltips.size.toLong(), tooltipSpecs.size.toLong())
+    internal fun assertText(tooltipModels: List<TooltipModel>, vararg expectedTooltips: List<String>) {
+        assertEquals(expectedTooltips.size.toLong(), tooltipModels.size.toLong())
         var i = 0
-        val n = tooltipSpecs.size
+        val n = tooltipModels.size
         while (i < n) {
-            val tooltipText = tooltipSpecs[i].lines.map(TooltipSpec.Line::toString)
+            val tooltipText = tooltipModels[i].lines.map(TooltipModel.Line::toString)
             assertListsEqual(expectedTooltips[i], tooltipText)
             ++i
         }
@@ -118,8 +118,8 @@ object TestUtil {
         }
     }
 
-    internal fun assertNoTooltips(tooltipSpecs: List<TooltipSpec>) {
-        assertTrue(tooltipSpecs.isEmpty())
+    internal fun assertNoTooltips(tooltipModels: List<TooltipModel>) {
+        assertTrue(tooltipModels.isEmpty())
     }
 
 
@@ -172,10 +172,6 @@ object TestUtil {
         )
     }
 
-    internal fun outsideX(rect: DoubleRectangle, delta: Double): DoubleVector {
-        return rect.origin.add(point(rect.right + delta, 0.0))
-    }
-
     internal fun outsideY(rect: DoubleRectangle): DoubleVector {
         return rect.center.add(
             point(
@@ -217,11 +213,6 @@ object TestUtil {
         return v1 + (v2 - v1)
     }
 
-    internal fun middle(v1: Double, v2: Double): Double {
-        val halfLength = (v2 - v1) / 2
-        return v1 + halfLength
-    }
-
     internal fun inside(rect: DoubleRectangle): DoubleVector {
         return rect.center
     }
@@ -233,10 +224,6 @@ object TestUtil {
                 0.0
             )
         )
-    }
-
-    internal fun offsetX(p: DoubleVector, delta: Double): DoubleVector {
-        return p.add(point(delta, 0.0))
     }
 
     internal fun offsetY(p: DoubleVector): DoubleVector {
@@ -316,7 +303,7 @@ object TestUtil {
         val rectShape = HitShape.rect(rect)
         return TargetPrototype(
             rectShape, { key as Int },
-            defaultTooltipParams, TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+            defaultTooltipParams, TooltipHint.Placement.HORIZONTAL
         )
     }
 
@@ -324,7 +311,7 @@ object TestUtil {
         val pointShape = HitShape.point(p, radius)
         return TargetPrototype(
             pointShape, { key as Int },
-            defaultTooltipParams, TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            defaultTooltipParams, TooltipHint.Placement.VERTICAL
         )
     }
 
@@ -335,12 +322,12 @@ object TestUtil {
                 key,
                 hitIndex
             )
-        }, defaultTooltipParams, TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        }, defaultTooltipParams, TooltipHint.Placement.HORIZONTAL)
     }
 
     internal fun pathTarget(points: List<DoubleVector>): TargetPrototype {
         val pathShape = HitShape.path(points)
-        return TargetPrototype(pathShape, identity(), defaultTooltipParams, TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        return TargetPrototype(pathShape, identity(), defaultTooltipParams, TooltipHint.Placement.HORIZONTAL)
     }
 
     private fun encodeIndex(key: Int, integer: Int?): Int {
@@ -357,12 +344,12 @@ object TestUtil {
 
     internal fun pathTarget(points: List<DoubleVector>, indexMapper: (Int) -> Int): TargetPrototype {
         val pathShape = HitShape.path(points)
-        return TargetPrototype(pathShape, indexMapper, defaultTooltipParams, TipLayoutHint.Kind.HORIZONTAL_TOOLTIP)
+        return TargetPrototype(pathShape, indexMapper, defaultTooltipParams, TooltipHint.Placement.HORIZONTAL)
     }
 
     internal fun polygonTarget(key: Int, points: List<DoubleVector>): TargetPrototype {
         val polygonShape = HitShape.polygon(points)
-        return TargetPrototype(polygonShape, { key }, defaultTooltipParams, TipLayoutHint.Kind.CURSOR_TOOLTIP)
+        return TargetPrototype(polygonShape, { key }, defaultTooltipParams, TooltipHint.Placement.CURSOR)
     }
 
     fun point(x: Double, y: Double): DoubleVector {
@@ -428,11 +415,6 @@ object TestUtil {
         private var defaultX: Double? = null
         private var defaultY: Double? = null
         private var counter = 0
-
-        fun defaultX(x: Double): PathPointsBuilder {
-            defaultX = x
-            return this
-        }
 
         fun defaultY(y: Double): PathPointsBuilder {
             defaultY = y

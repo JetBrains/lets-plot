@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 
 // `open` - for Mockito tests
-open class TipLayoutHint(
-    open val kind: Kind,
+open class TooltipHint(
+    open val placement: Placement,
     open val coord: DoubleVector,
     open val objectRadius: Double,
     open val stemLength: StemLength,
@@ -19,22 +19,21 @@ open class TipLayoutHint(
 ) {
     enum class StemLength(val value: Double) {
         NORMAL(12.0),
-        SHORT(5.0),
         NONE(0.0)
     }
 
     override fun toString(): String {
-        return "$kind"
+        return "$placement"
     }
 
 
-    enum class Kind {
-        VERTICAL_TOOLTIP,
-        HORIZONTAL_TOOLTIP,
-        CURSOR_TOOLTIP,
-        X_AXIS_TOOLTIP,
-        Y_AXIS_TOOLTIP,
-        ROTATED_TOOLTIP
+    enum class Placement {
+        VERTICAL,
+        HORIZONTAL,
+        CURSOR,
+        X_AXIS,
+        Y_AXIS,
+        ROTATED
     }
 
 
@@ -46,9 +45,9 @@ open class TipLayoutHint(
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
             markerColors: List<Color> = emptyList()
-        ): TipLayoutHint {
-            return TipLayoutHint(
-                Kind.VERTICAL_TOOLTIP,
+        ): TooltipHint {
+            return TooltipHint(
+                Placement.VERTICAL,
                 coord,
                 objectRadius,
                 stemLength,
@@ -63,9 +62,9 @@ open class TipLayoutHint(
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
             markerColors: List<Color> = emptyList()
-        ): TipLayoutHint {
-            return TipLayoutHint(
-                Kind.HORIZONTAL_TOOLTIP,
+        ): TooltipHint {
+            return TooltipHint(
+                Placement.HORIZONTAL,
                 coord,
                 objectRadius,
                 stemLength,
@@ -79,9 +78,9 @@ open class TipLayoutHint(
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
             markerColors: List<Color> = emptyList()
-        ): TipLayoutHint {
-            return TipLayoutHint(
-                kind = Kind.CURSOR_TOOLTIP,
+        ): TooltipHint {
+            return TooltipHint(
+                placement = Placement.CURSOR,
                 coord,
                 objectRadius = 0.0,
                 stemLength,
@@ -95,9 +94,9 @@ open class TipLayoutHint(
             axisRadius: Double = 0.0,
             stemLength: StemLength = StemLength.NONE,
             fillColor: Color? = null
-        ): TipLayoutHint {
-            return TipLayoutHint(
-                kind = Kind.X_AXIS_TOOLTIP,
+        ): TooltipHint {
+            return TooltipHint(
+                placement = Placement.X_AXIS,
                 coord,
                 objectRadius = axisRadius,
                 stemLength,
@@ -111,9 +110,9 @@ open class TipLayoutHint(
             axisRadius: Double = 0.0,
             stemLength: StemLength = StemLength.NONE,
             fillColor: Color? = null
-        ): TipLayoutHint {
-            return TipLayoutHint(
-                kind = Kind.Y_AXIS_TOOLTIP,
+        ): TooltipHint {
+            return TooltipHint(
+                placement = Placement.Y_AXIS,
                 coord,
                 objectRadius = axisRadius,
                 stemLength,
@@ -122,9 +121,9 @@ open class TipLayoutHint(
             )
         }
 
-        fun rotatedTooltip(coord: DoubleVector, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL): TipLayoutHint {
-            return TipLayoutHint(
-                Kind.ROTATED_TOOLTIP,
+        fun rotatedTooltip(coord: DoubleVector, objectRadius: Double, color: Color?, stemLength: StemLength = StemLength.NORMAL): TooltipHint {
+            return TooltipHint(
+                Placement.ROTATED,
                 coord,
                 objectRadius,
                 stemLength,

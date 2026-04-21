@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -16,8 +16,8 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YM
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_ZERO
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.HORIZONTAL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
 
 class RibbonGeom : GeomBase() {
 
@@ -57,7 +57,7 @@ class RibbonGeom : GeomBase() {
         val colorMapper = HintColorUtil.createColorMarkerMapper(ctx)
         val hint = HintsCollection.HintConfigFactory()
             .defaultObjectRadius(0.0)
-            .defaultKind(HORIZONTAL_TOOLTIP.takeUnless { ctx.flipped } ?: VERTICAL_TOOLTIP)
+            .defaultKind(HORIZONTAL.takeUnless { ctx.flipped } ?: VERTICAL)
 
         for (p in aesthetics.dataPoints()) {
             val x = TO_LOCATION_X_ZERO(p)?.let { helper.toClient(it, p) }?.x ?: continue
@@ -72,7 +72,7 @@ class RibbonGeom : GeomBase() {
                 .addHint(hint.create(Aes.YMIN))
 
             val tooltipParams = GeomTargetCollector.TooltipParams(
-                tipLayoutHints = hintsCollection.hints,
+                tooltipHints = hintsCollection.hints,
                 markerColors = colorMapper(p)
             )
 

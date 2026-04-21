@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -11,9 +11,9 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.HORIZONTAL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
 
 class TargetCollectorHelper(
     private val ctx: GeomContext
@@ -55,7 +55,7 @@ class TargetCollectorHelper(
             polygonData.flattenCoordinates,
             polygonData.aes.index(),
             TooltipParams(markerColors = colorMarkerMapper(polygonData.aes)),
-            TipLayoutHint.Kind.CURSOR_TOOLTIP
+            TooltipHint.Placement.CURSOR
         )
     }
 
@@ -64,7 +64,7 @@ class TargetCollectorHelper(
             points = path.coordinates,
             localToGlobalIndex = { i -> path.aesthetics[i].index() },
             tooltipParams = tooltipParams,
-            tooltipKind = VERTICAL_TOOLTIP.takeIf { ctx.flipped } ?: HORIZONTAL_TOOLTIP
+            tooltipPlacement = VERTICAL.takeIf { ctx.flipped } ?: HORIZONTAL
         )
     }
 
@@ -77,7 +77,7 @@ class TargetCollectorHelper(
             points = lineString,
             localToGlobalIndex = { p.index() },
             tooltipParams = TooltipParams(markerColors = colorMarkerMapper(p)),
-            tooltipKind = HORIZONTAL_TOOLTIP
+            tooltipPlacement = HORIZONTAL
         )
     }
 }

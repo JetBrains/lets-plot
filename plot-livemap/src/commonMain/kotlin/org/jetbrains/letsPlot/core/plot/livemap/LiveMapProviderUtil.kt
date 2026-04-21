@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
@@ -254,12 +254,12 @@ object LiveMapProviderUtil {
                         require(layerIndex == hoverObject.layerIndex)
                         GeomTarget(
                             hitIndex = hoverObject.index,
-                            tipLayoutHint = TipLayoutHint.horizontalTooltip(
+                            tooltipHint = TooltipHint.horizontalTooltip(
                                 hoverObject.targetPosition ?: coord,
                                 objectRadius = hoverObject.targetRadius ?: 0.0,
                                 markerColors = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
                             ),
-                            aesTipLayoutHints = emptyMap()
+                            aesTooltipHint = emptyMap()
                         )
                     }
 

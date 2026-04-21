@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil.size
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.MeasuredTooltipBuilder.MeasuredTooltipBuilderFactory
 import kotlin.test.Test
 
-internal class UnderCursorTooltipLayoutTest : TooltipLayoutTestBase() {
+internal class UnderCursorTooltipHintTest : TooltipLayoutTestBase() {
 
     @Test
     fun underCursorShouldStayAtDesiredCoord_AroundPointMovedOut() {

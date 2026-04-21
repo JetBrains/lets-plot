@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
+class TooltipModelFactoryTest : TooltipModelTestHelper() {
 
     @BeforeTest
     fun setUp() {
@@ -19,7 +19,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
 
     @Test
     fun whenAesFromTooltipListIsNotMapped_ShouldNotThrowException() {
-        createTooltipSpecs(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
+        createTooltipModels(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
     }
 
     @Test
@@ -28,10 +28,10 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
         val colorMapping =
             addMappedData(MappedDataAccessMock.variable().name("cyl").value("4").mapping(Aes.COLOR))
 
-        createTooltipSpecs(
+        createTooltipModels(
             geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
-                    AES_WIDTH, TipLayoutHint.verticalTooltip(
+                    AES_WIDTH, TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         markerColors = emptyList()
@@ -48,7 +48,7 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
     fun shouldNotAddSemicolonIfLabelIsEmpty() {
         val widthMapping = addMappedData(MappedDataAccessMock.variable().value("sedan").mapping(AES_WIDTH))
 
-        buildTooltipSpecs()
+        buildTooltipModels()
 
         assertTooltipsCount(1)
         assertLines(0, widthMapping.shortTooltipText())
@@ -57,10 +57,10 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
     @Test
     fun checkIfTooltipIsSide() {
         val widthMapping = addMappedData(MappedDataAccessMock.variable().name("type").value("sedan").mapping(AES_WIDTH))
-        createTooltipSpecs(
+        createTooltipModels(
             geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
-                    AES_WIDTH, TipLayoutHint.verticalTooltip(
+                    AES_WIDTH, TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         markerColors = emptyList()
@@ -79,10 +79,10 @@ class TooltipSpecFactoryTest : TooltipSpecTestHelper() {
             AES_WIDTH,
             format = "value = {}"
         )
-        createTooltipSpecWithValueSources(
+        createTooltipModelWithValueSources(
             geomTargetBuilder.withPathHitShape()
                 .withLayoutHint(
-                    AES_WIDTH, TipLayoutHint.verticalTooltip(
+                    AES_WIDTH, TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
                         markerColors = emptyList()

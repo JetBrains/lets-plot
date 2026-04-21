@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.commons.values.Color
 
-class TooltipSpec(
-    val layoutHint: TipLayoutHint,
+class TooltipModel(
+    val tooltipHint: TooltipHint,
     val title: String?,
     val lines: List<Line>,
     val fill: Color?,
@@ -19,7 +19,7 @@ class TooltipSpec(
     val isCrosshairEnabled: Boolean = false
 ) {
     override fun toString(): String {
-        return "TooltipSpec($layoutHint, lines=${lines.map(Line::toString)})"
+        return "TooltipModel($tooltipHint, lines=${lines.map(Line::toString)})"
     }
 
     class Line private constructor(val label: String?, val value: String) {

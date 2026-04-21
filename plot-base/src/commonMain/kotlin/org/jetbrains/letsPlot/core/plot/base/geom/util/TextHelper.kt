@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
 import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil.DEF_LABEL_NUDGE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 class TextHelper(
@@ -62,7 +62,7 @@ class TextHelper(
 
     internal fun createSvgComponents(
         flipAngle: Boolean = false,
-        labelNudge: (DoubleVector, DoubleVector) -> DoubleVector = TextUtil.DEF_LABEL_NUDGE
+        labelNudge: (DoubleVector, DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE
     ): List<SvgGElement> {
         val restrictions = mutableListOf<List<DoubleVector>>()
         val aesBoundsCenter = coord.toClient(ctx.getAesBounds())?.center
@@ -117,7 +117,7 @@ class TextHelper(
                 GeomTargetCollector.TooltipParams(
                     markerColors = colorsByDataPoint(p)
                 ),
-                TipLayoutHint.Kind.CURSOR_TOOLTIP
+                TooltipHint.Placement.CURSOR
             )
         }
     }

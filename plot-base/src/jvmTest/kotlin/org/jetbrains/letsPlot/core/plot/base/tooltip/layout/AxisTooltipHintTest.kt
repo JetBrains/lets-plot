@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.MeasuredTooltipBuild
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-internal class AxisTooltipLayoutTest : TooltipLayoutTestBase() {
+internal class AxisTooltipHintTest : TooltipLayoutTestBase() {
     private var factory: MeasuredTooltipBuilderFactory? = null
 
     @BeforeTest

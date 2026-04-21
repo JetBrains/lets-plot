@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.config
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec.Line
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel.Line
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
@@ -490,7 +490,7 @@ class TooltipConfigTest {
 
     @Test
     fun `wrong tooltip format (no arguments)`() {
-        assertFailTooltipSpec(
+        assertFailTooltipModel(
             tooltipConfig = mapOf(FORMATS to listOf(emptyMap<String, String>())),
             expectedMessage = "Invalid 'format' arguments: 'field' and 'format' are expected"
         )
@@ -498,7 +498,7 @@ class TooltipConfigTest {
 
     @Test
     fun `wrong tooltip format (list instead of map)`() {
-        assertFailTooltipSpec(
+        assertFailTooltipModel(
             tooltipConfig = mapOf(
                 FORMATS to listOf(
                     listOf(
@@ -524,7 +524,7 @@ class TooltipConfigTest {
         assertEquals("cty: 15.00 {.2f}", tooltip)
     }
 
-    private fun assertFailTooltipSpec(
+    private fun assertFailTooltipModel(
         tooltipConfig: Any?,
         expectedMessage: String
     ) {

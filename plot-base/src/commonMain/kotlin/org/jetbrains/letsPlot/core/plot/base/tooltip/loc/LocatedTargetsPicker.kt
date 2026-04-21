@@ -24,7 +24,7 @@ class LocatedTargetsPicker(
             || result.targets.size > EXPECTED_TARGETS_MAX_COUNT // perf: when LP is used by vis tools with raw data
         ) {
             val closestTarget = result.targets
-                .minBy { target -> cursorCoord.distanceTo(target.tipLayoutHint.coord) }
+                .minBy { target -> cursorCoord.distanceTo(target.tooltipHint.coord) }
 
             result.copy(targets = listOf(closestTarget))
         } else if (result.lookupSpec.lookupSpace.isUnivariate() && result.hitShapeKind == HitShape.Kind.PATH) {
@@ -131,7 +131,7 @@ class LocatedTargetsPicker(
                         lookupResult.lookupDistance == 0.0 -> FAKE_DISTANCE
                 lookupResult.isCrosshairEnabled -> {
                     lookupResult.targets
-                        .minOfOrNull { target -> cursor.distanceTo(target.tipLayoutHint.coord) }
+                        .minOfOrNull { target -> cursor.distanceTo(target.tooltipHint.coord) }
                         ?: FAKE_DISTANCE
                 }
                 else -> lookupResult.lookupDistance // fake distance to give a chance for tooltips from other layers
@@ -149,7 +149,7 @@ class LocatedTargetsPicker(
         }
 
         fun xDistanceToCoord(target: GeomTarget, coord: DoubleVector, flippedAxis: Boolean): Double {
-            val distance = target.tipLayoutHint.coord.subtract(coord)
+            val distance = target.tooltipHint.coord.subtract(coord)
             return when (flippedAxis) {
                 true -> distance.y
                 false -> distance.x

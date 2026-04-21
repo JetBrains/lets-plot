@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStr
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape.Kind.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.CURSOR
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetLocator.Collector.CollectingStrategy
 import kotlin.math.max
 
@@ -158,7 +158,7 @@ internal class LayerTargetLocator(
 
             val rect = target.prototype.hitShape.rect
             val yOffset = when {
-                target.prototype.tooltipKind == CURSOR_TOOLTIP -> rect.height / 2.0
+                target.prototype.tooltipPlacement == CURSOR -> rect.height / 2.0
                 lookupSpec.lookupSpace == Y -> rect.height / 2.0
                 else -> 0.0
             }

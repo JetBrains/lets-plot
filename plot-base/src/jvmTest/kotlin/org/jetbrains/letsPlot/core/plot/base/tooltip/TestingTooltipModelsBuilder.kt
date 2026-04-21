@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,14 +10,14 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.base.tooltip.mockito.ReturnsNotNullValuesAnswer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.mockito.Mockito.*
 
 
-internal class TestingTooltipSpecsBuilder private constructor(
+internal class TestingTooltipModelsBuilder private constructor(
     private val contextualMappingProvider: ContextualMappingProvider
 ) {
 
@@ -27,7 +27,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
 
     private val plotContext = NullPlotContext
 
-    fun build(): List<TooltipSpec> {
+    fun build(): List<TooltipModel> {
         val mappedDataAccess = buildMappedDataAccess()
 
         val contextualMapping = contextualMappingProvider.createContextualMapping(
@@ -35,7 +35,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
             DataFrame.Builder().build()
         )
         val factory =
-            TooltipSpecFactory(
+            TooltipModelFactory(
                 contextualMapping,
                 DoubleVector.ZERO,
                 flippedAxis = false,
@@ -44,13 +44,13 @@ internal class TestingTooltipSpecsBuilder private constructor(
                 plotContext
             )
 
-        val tipLayoutHint = mock(TipLayoutHint::class.java, mockSettings)
-        `when`(tipLayoutHint.kind).thenReturn(VERTICAL_TOOLTIP)
-        `when`(tipLayoutHint.coord).thenReturn(DoubleVector.ZERO)
-        `when`(tipLayoutHint.objectRadius).thenReturn(0.0)
+        val tooltipHint = mock(TooltipHint::class.java, mockSettings)
+        `when`(tooltipHint.placement).thenReturn(VERTICAL)
+        `when`(tooltipHint.coord).thenReturn(DoubleVector.ZERO)
+        `when`(tooltipHint.objectRadius).thenReturn(0.0)
 
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
-        `when`(geomTarget.tipLayoutHint).thenReturn(tipLayoutHint)
+        `when`(geomTarget.tooltipHint).thenReturn(tooltipHint)
 
         return factory.create(geomTarget)
     }
@@ -59,7 +59,7 @@ internal class TestingTooltipSpecsBuilder private constructor(
         return mappedDataAccessMock.mappedDataAccess
     }
 
-    fun <T> variable(mappedData: MappedDataAccessMock.Mapping<T>): TestingTooltipSpecsBuilder {
+    fun <T> variable(mappedData: MappedDataAccessMock.Mapping<T>): TestingTooltipModelsBuilder {
         mappedDataAccessMock.add(mappedData)
         return this
     }
@@ -68,24 +68,24 @@ internal class TestingTooltipSpecsBuilder private constructor(
         private val DISPLAYABLE_AES_LIST =
             toList(Aes.values())
 
-        fun univariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
-            return TestingTooltipSpecsBuilder(
+        fun univariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
+            return TestingTooltipModelsBuilder(
                 GeomInteractionBuilder.DemoAndTest(displayableAesList)
                     .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
                     .build()
             )
         }
 
-        fun bivariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
-            return TestingTooltipSpecsBuilder(
+        fun bivariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
+            return TestingTooltipModelsBuilder(
                 GeomInteractionBuilder.DemoAndTest(displayableAesList)
                     .bivariateFunction(false)
                     .build()
             )
         }
 
-        fun areaFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipSpecsBuilder {
-            return TestingTooltipSpecsBuilder(
+        fun areaFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
+            return TestingTooltipModelsBuilder(
                 GeomInteractionBuilder.DemoAndTest(displayableAesList)
                     .bivariateFunction(true)
                     .build()

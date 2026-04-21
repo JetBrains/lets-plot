@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 
 abstract class TransformedTargetLocator(
     private val targetLocator: GeomTargetLocator
@@ -29,15 +29,15 @@ abstract class TransformedTargetLocator(
         return geomTargets.map { geomTarget ->
             GeomTarget(
                 geomTarget.hitIndex,
-                convertTipLayoutHint(geomTarget.tipLayoutHint),
-                convertTipLayoutHints(geomTarget.aesTipLayoutHints)
+                convertTooltipHint(geomTarget.tooltipHint),
+                convertTooltipHints(geomTarget.aesTooltipHint)
             )
         }
     }
 
-    private fun convertTipLayoutHint(hint: TipLayoutHint): TipLayoutHint {
-        return TipLayoutHint(
-            hint.kind,
+    private fun convertTooltipHint(hint: TooltipHint): TooltipHint {
+        return TooltipHint(
+            hint.placement,
             safeConvertToPlotCoord(hint.coord),
             convertToPlotDistance(hint.objectRadius),
             hint.stemLength,
@@ -46,9 +46,9 @@ abstract class TransformedTargetLocator(
         )
     }
 
-    private fun convertTipLayoutHints(tipLayoutHints: Map<Aes<*>, TipLayoutHint>): Map<Aes<*>, TipLayoutHint> {
-        val result = HashMap<Aes<*>, TipLayoutHint>()
-        tipLayoutHints.forEach { (aes, hint) -> result[aes] = convertTipLayoutHint(hint) }
+    private fun convertTooltipHints(tooltipHint: Map<Aes<*>, TooltipHint>): Map<Aes<*>, TooltipHint> {
+        val result = HashMap<Aes<*>, TooltipHint>()
+        tooltipHint.forEach { (aes, hint) -> result[aes] = convertTooltipHint(hint) }
         return result
     }
 

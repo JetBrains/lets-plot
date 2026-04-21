@@ -46,7 +46,7 @@ class TooltipBoxTest {
                 borderColor = Color.BLACK,
                 strokeWidth = 1.0,
                 lineType = NamedLineType.SOLID,
-                lines = listOf(TooltipSpec.Line.withValue(wordText)),
+                lines = listOf(TooltipModel.Line.withValue(wordText)),
                 title = null,
                 textClassName = "anyStyle",
                 borderRadius = 0.0,

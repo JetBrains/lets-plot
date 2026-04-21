@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,14 +10,14 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 import kotlin.test.assertEquals
 
-open class TooltipSpecTestHelper {
+open class TooltipModelTestHelper {
     private lateinit var mappedDataAccessMock: MappedDataAccessMock
-    private lateinit var myTooltipSpecs: List<TooltipSpec>
+    private lateinit var myTooltipModels: List<TooltipModel>
     internal lateinit var geomTargetBuilder: TestingGeomTargetBuilder
         private set
     private var axisTooltipEnabled: Boolean = false
@@ -44,24 +44,24 @@ open class TooltipSpecTestHelper {
         return mapping
     }
 
-    internal fun assertHint(expectedHintKind: Kind, expectedHintCoord: DoubleVector, expectedObjectRadius: Double) {
-        assertHint(0, expectedHintKind, expectedHintCoord, expectedObjectRadius)
+    internal fun assertHint(expectedHintPlacement: Placement, expectedHintCoord: DoubleVector, expectedObjectRadius: Double) {
+        assertHint(0, expectedHintPlacement, expectedHintCoord, expectedObjectRadius)
     }
 
     internal fun assertFill(expected: Color) {
-        assertEquals(expected, myTooltipSpecs[0].fill)
+        assertEquals(expected, myTooltipModels[0].fill)
     }
 
     private fun assertHint(
         index: Int,
-        expectedHintKind: Kind,
+        expectedHintPlacement: Placement,
         expectedHintCoord: DoubleVector,
         expectedObjectRadius: Double
     ) {
-        val tooltipSpec = myTooltipSpecs[index]
-        assertEquals(expectedHintKind, tooltipSpec.layoutHint.kind)
-        assertEquals(expectedHintCoord, tooltipSpec.layoutHint.coord)
-        assertEquals(expectedObjectRadius, tooltipSpec.layoutHint.objectRadius, 0.001)
+        val tooltipModel = myTooltipModels[index]
+        assertEquals(expectedHintPlacement, tooltipModel.tooltipHint.placement)
+        assertEquals(expectedHintCoord, tooltipModel.tooltipHint.coord)
+        assertEquals(expectedObjectRadius, tooltipModel.tooltipHint.objectRadius, 0.001)
     }
 
     internal fun assertLines(index: Int, vararg expectedLines: String) {
@@ -69,22 +69,22 @@ open class TooltipSpecTestHelper {
     }
 
     private fun assertLines(index: Int, expectedLines: List<String>) {
-        val tooltipSpec = myTooltipSpecs[index]
-        assertEquals(expectedLines, tooltipSpec.lines.map(TooltipSpec.Line::toString))
+        val tooltipModel = myTooltipModels[index]
+        assertEquals(expectedLines, tooltipModel.lines.map(TooltipModel.Line::toString))
     }
 
     fun assertLines(expectedLines: List<String>, isSide: Boolean) {
         val actualLines =
-            myTooltipSpecs.filter { it.isSide == isSide }.flatMap { it.lines.map(TooltipSpec.Line::toString) }
+            myTooltipModels.filter { it.isSide == isSide }.flatMap { it.lines.map(TooltipModel.Line::toString) }
         assertEquals(expectedLines.size, actualLines.size)
         assertEquals(expectedLines, actualLines)
     }
 
     internal fun assertTooltipsCount(expectedCount: Int) {
-        assertEquals(expectedCount, myTooltipSpecs.size)
+        assertEquals(expectedCount, myTooltipModels.size)
     }
 
-    internal fun createTooltipSpecs(geomTarget: GeomTarget) {
+    internal fun createTooltipModels(geomTarget: GeomTarget) {
         val tipAes = ArrayList<Aes<*>>()
         for (aes in mappedDataAccessMock.getMappedAes()) {
             if (nonTooltipAes.contains(aes)) {
@@ -93,11 +93,11 @@ open class TooltipSpecTestHelper {
             tipAes.add(aes)
         }
 
-        myTooltipSpecs = TooltipSpecFactory(
+        myTooltipModels = TooltipModelFactory(
             GeomInteraction.createTestContextualMapping(
                 tipAes,
                 if (axisTooltipEnabled) axisAes else emptyList(),
-                sideTooltipAes = geomTarget.aesTipLayoutHints.map { it.key },
+                sideTooltipAes = geomTarget.aesTooltipHint.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build()
             ),
@@ -109,15 +109,15 @@ open class TooltipSpecTestHelper {
         ).create(geomTarget)
     }
 
-    internal fun createTooltipSpecWithValueSources(
+    internal fun createTooltipModelWithValueSources(
         geomTarget: GeomTarget,
         valueSources: List<ValueSource>
     ) {
-        myTooltipSpecs = TooltipSpecFactory(
+        myTooltipModels = TooltipModelFactory(
             GeomInteraction.createTestContextualMapping(
                 emptyList(),
                 if (axisTooltipEnabled) axisAes else emptyList(),
-                geomTarget.aesTipLayoutHints.map { it.key },
+                geomTarget.aesTooltipHint.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build(),
                 valueSources
@@ -130,8 +130,8 @@ open class TooltipSpecTestHelper {
         ).create(geomTarget)
     }
 
-    internal fun buildTooltipSpecs() {
-        createTooltipSpecs(geomTargetBuilder.withPathHitShape().build())
+    internal fun buildTooltipModels() {
+        createTooltipModels(geomTargetBuilder.withPathHitShape().build())
     }
 
     internal fun setAxisTooltipEnabled(axisTooltipEnabled: Boolean) {

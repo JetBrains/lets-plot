@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 
 class RectGeom : GeomBase() {
 
@@ -22,7 +22,7 @@ class RectGeom : GeomBase() {
         ctx: GeomContext
     ) {
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx, ::clientRectByDataPoint)
-        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, tooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP)
+        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, tooltipPlacement = TooltipHint.Placement.CURSOR)
         if (coord.isLinear) {
             helper.createRectangles() { aes, svgNode, rect ->
                 root.add(svgNode)

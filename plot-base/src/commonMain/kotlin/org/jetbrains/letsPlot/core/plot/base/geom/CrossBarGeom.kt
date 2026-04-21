@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.annotation.CrossBarAnnotation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 
 class CrossBarGeom : GeomBase(), WithWidth {
 
@@ -38,7 +38,7 @@ class CrossBarGeom : GeomBase(), WithWidth {
             coord = coord,
             ctx = ctx,
             hintAesList = listOf(Aes.YMIN, Aes.Y, Aes.YMAX),
-            tooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP,
+            tooltipPlacement = TooltipHint.Placement.CURSOR,
             fillColorMapper = { HintColorUtil.colorWithAlpha(it) }
         )
 

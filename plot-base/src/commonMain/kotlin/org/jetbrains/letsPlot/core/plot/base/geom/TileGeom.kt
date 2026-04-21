@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectangleTooltipHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.RectanglesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.CURSOR
 
 /**
  * geom_tile uses the center of the tile and its size (x, y, width, height).
@@ -30,7 +30,7 @@ open class TileGeom : GeomBase(), WithWidth, WithHeight {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, tooltipKind = CURSOR_TOOLTIP)
+        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, tooltipPlacement = CURSOR)
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx, clientRectByDataPoint(widthUnit, heightUnit, geomHelper))
         val svgRectHelper = helper.createSvgRectHelper()
         svgRectHelper.setResamplingEnabled(!coord.isLinear)

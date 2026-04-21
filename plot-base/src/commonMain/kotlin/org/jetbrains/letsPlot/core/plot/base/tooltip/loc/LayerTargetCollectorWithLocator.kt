@@ -24,7 +24,7 @@ class LayerTargetCollectorWithLocator(
         point: DoubleVector,
         radius: Double,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
             if (radius == 0.0 || tooltipParams.markerColorsFactory(index).all { it.alpha == 0 }) {
@@ -36,7 +36,7 @@ class LayerTargetCollectorWithLocator(
                 HitShape.point(point, radius),
                 { index },
                 tooltipParams,
-                tooltipKind
+                tooltipPlacement
             )
         )
     }
@@ -45,7 +45,7 @@ class LayerTargetCollectorWithLocator(
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind,
+        tooltipPlacement: TooltipHint.Placement,
         tooltipAnchor: DoubleVector?
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
@@ -60,7 +60,7 @@ class LayerTargetCollectorWithLocator(
                 HitShape.rect(rectangle),
                 { index },
                 tooltipParams,
-                tooltipKind,
+                tooltipPlacement,
                 tooltipAnchor
             )
         )
@@ -70,14 +70,14 @@ class LayerTargetCollectorWithLocator(
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         addTarget(
             TargetPrototype(
                 HitShape.path(points),
                 localToGlobalIndex,
                 tooltipParams,
-                tooltipKind
+                tooltipPlacement
             )
         )
     }
@@ -86,14 +86,14 @@ class LayerTargetCollectorWithLocator(
         points: List<DoubleVector>,
         index: Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         addTarget(
             TargetPrototype(
                 HitShape.polygon(points),
                 { index },
                 tooltipParams,
-                tooltipKind
+                tooltipPlacement
             )
         )
     }

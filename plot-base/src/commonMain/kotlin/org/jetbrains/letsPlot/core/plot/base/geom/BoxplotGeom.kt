@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.extendHeight
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.colorWithAlpha
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 
 class BoxplotGeom : GeomBase(), WithWidth {
 
@@ -45,7 +45,7 @@ class BoxplotGeom : GeomBase(), WithWidth {
             aesthetics, pos, coord, ctx,
             clientRectByDataPoint(ctx, geomHelper, widthUnit, isHintRect = true),
             { colorWithAlpha(it) },
-            defaultTooltipKind = TipLayoutHint.Kind.CURSOR_TOOLTIP
+            defaultTooltipPlacement = TooltipHint.Placement.CURSOR
         )
     }
 

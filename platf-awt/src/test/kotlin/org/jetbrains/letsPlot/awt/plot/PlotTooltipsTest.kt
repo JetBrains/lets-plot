@@ -69,6 +69,12 @@ class PlotTooltipsTest : PlotTestBase() {
         }
     }
 
+    @Test
+    fun runSingleTest() {
+        val testSuit = PlotTooltipsTest()
+        testSuit.assertTest(testSuit::plot_tooltips_logicalGroup_differentXAxisTooltip_closerToB)
+    }
+
     fun plot_tooltips_pointAndLine_lineTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.POINT_AND_LINE))
 

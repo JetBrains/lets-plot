@@ -15,7 +15,7 @@ object NullGeomTargetCollector : GeomTargetCollector {
         point: DoubleVector,
         radius: Double,
         tooltipParams: TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
     }
 
@@ -23,7 +23,7 @@ object NullGeomTargetCollector : GeomTargetCollector {
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: TooltipParams,
-        tooltipKind: TipLayoutHint.Kind,
+        tooltipPlacement: TooltipHint.Placement,
         tooltipAnchor: DoubleVector?
     ) {
     }
@@ -32,7 +32,7 @@ object NullGeomTargetCollector : GeomTargetCollector {
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
     }
 
@@ -40,7 +40,7 @@ object NullGeomTargetCollector : GeomTargetCollector {
         points: List<DoubleVector>,
         index: Int,
         tooltipParams: TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
     }
 

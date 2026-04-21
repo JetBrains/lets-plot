@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -23,7 +23,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDouble
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 
 open class TextRepelGeom: TextGeom() {
@@ -147,7 +147,7 @@ open class TextRepelGeom: TextGeom() {
                 GeomTargetCollector.TooltipParams(
                     markerColors = colorsByDataPoint(dp)
                 ),
-                TipLayoutHint.Kind.CURSOR_TOOLTIP
+                TooltipHint.Placement.CURSOR
             )
         }
     }

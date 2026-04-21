@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.CURSOR_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.CURSOR
 
 class HexagonsHelper(
     private val myAesthetics: Aesthetics,
@@ -71,7 +71,7 @@ class HexagonsHelper(
             GeomTargetCollector.TooltipParams(
                 markerColors = createColorMarkerMapper(ctx)(p)
             ),
-            tooltipKind = CURSOR_TOOLTIP
+            tooltipPlacement = CURSOR
         )
     }
 }
