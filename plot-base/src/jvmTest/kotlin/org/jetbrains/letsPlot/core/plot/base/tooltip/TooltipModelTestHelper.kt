@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.createTooltipModels
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 import kotlin.test.assertEquals
 
@@ -93,28 +94,30 @@ open class TooltipModelTestHelper {
             tipAes.add(aes)
         }
 
-        myTooltipModels = TooltipModelFactory(
-            GeomInteraction.createTestContextualMapping(
+        myTooltipModels = createTooltipModels(
+            geomTarget = geomTarget,
+            contextualMapping = GeomInteraction.createTestContextualMapping(
                 tipAes,
                 if (axisTooltipEnabled) axisAes else emptyList(),
                 sideTooltipAes = geomTarget.aesTooltipHint.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build()
             ),
-            DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
             flippedAxis = false,
-            TestUtil.axisTheme,
-            TestUtil.axisTheme,
-            plotContext
-        ).create(geomTarget)
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = plotContext
+        )
     }
 
     internal fun createTooltipModelWithValueSources(
         geomTarget: GeomTarget,
         valueSources: List<ValueSource>
     ) {
-        myTooltipModels = TooltipModelFactory(
-            GeomInteraction.createTestContextualMapping(
+        myTooltipModels = createTooltipModels(
+            geomTarget = geomTarget,
+            contextualMapping = GeomInteraction.createTestContextualMapping(
                 emptyList(),
                 if (axisTooltipEnabled) axisAes else emptyList(),
                 geomTarget.aesTooltipHint.map { it.key },
@@ -122,12 +125,12 @@ open class TooltipModelTestHelper {
                 DataFrame.Builder().build(),
                 valueSources
             ),
-            DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
             flippedAxis = false,
-            TestUtil.axisTheme,
-            TestUtil.axisTheme,
-            plotContext
-        ).create(geomTarget)
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = plotContext
+        )
     }
 
     internal fun buildTooltipModels() {

@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.createTooltipModels
 import org.jetbrains.letsPlot.core.plot.base.tooltip.mockito.ReturnsNotNullValuesAnswer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.mockito.Mockito.*
@@ -34,16 +35,6 @@ internal class TestingTooltipModelsBuilder private constructor(
             mappedDataAccess,
             DataFrame.Builder().build()
         )
-        val factory =
-            TooltipModelFactory(
-                contextualMapping,
-                DoubleVector.ZERO,
-                flippedAxis = false,
-                TestUtil.axisTheme,
-                TestUtil.axisTheme,
-                plotContext
-            )
-
         val tooltipHint = mock(TooltipHint::class.java, mockSettings)
         `when`(tooltipHint.placement).thenReturn(VERTICAL)
         `when`(tooltipHint.coord).thenReturn(DoubleVector.ZERO)
@@ -52,7 +43,15 @@ internal class TestingTooltipModelsBuilder private constructor(
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tooltipHint).thenReturn(tooltipHint)
 
-        return factory.create(geomTarget)
+        return createTooltipModels(
+            geomTarget = geomTarget,
+            contextualMapping = contextualMapping,
+            axisOrigin = DoubleVector.ZERO,
+            flippedAxis = false,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = plotContext
+        )
     }
 
     private fun buildMappedDataAccess(): MappedDataAccess {

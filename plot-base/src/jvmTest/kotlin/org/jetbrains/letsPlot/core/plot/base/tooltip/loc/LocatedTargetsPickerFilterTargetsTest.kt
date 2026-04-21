@@ -11,10 +11,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccessMock
@@ -52,10 +54,17 @@ class LocatedTargetsPickerFilterTargetsTest {
         val lineLookupResult = lineTargetLocator.search(cursorCoord)!!
         val pointLookupResult = pointTargetLocator.search(cursorCoord)!!
 
-        LocatedTargetsPicker(flippedAxis = false, cursorCoord).apply {
+        LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = cursorCoord,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext
+        ).apply {
                 addLookupResult(lineLookupResult)
                 addLookupResult(pointLookupResult)
-            }.chooseBestResult().let { picked ->
+            }.chooseBestLookupResults().let { picked ->
             assertThat(picked).hasSize(1)
             assertThat(picked[0].geomKind).isEqualTo(GeomKind.POINT)
         }
@@ -218,14 +227,14 @@ class LocatedTargetsPickerFilterTargetsTest {
 
     private fun createLocator(geomKind: GeomKind, targetPrototypes: List<TargetPrototype>): GeomTargetLocator {
         val contextualMapping = GeomInteractionBuilder.DemoAndTest(supportedAes = Aes.values())
-            .xUnivariateFunction(LookupStrategy.HOVER)
+            .xUnivariateFunction(HOVER)
             .build()
             .createContextualMapping(
                 MappedDataAccessMock().mappedDataAccess,
                 DataFrame.Builder().build()
             )
         return TestUtil.createLocator(
-            lookupSpec = LookupSpec(LookupSpace.X, LookupStrategy.HOVER),
+            lookupSpec = LookupSpec(LookupSpace.X, HOVER),
             contextualMapping = contextualMapping,
             targets = targetPrototypes,
             geomKind = geomKind
@@ -237,9 +246,16 @@ class LocatedTargetsPickerFilterTargetsTest {
         cursor: DoubleVector,
         flippedAxis: Boolean = false
     ): List<GeomTarget> {
-        return LocatedTargetsPicker(flippedAxis = flippedAxis, cursor)
+        return LocatedTargetsPicker(
+            flippedAxis = flippedAxis,
+            cursorCoord = cursor,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext
+        )
                 .apply { locator.search(cursor)?.let(::addLookupResult) }
-            .chooseBestResult()
+            .chooseBestLookupResults()
             .singleOrNull()
             ?.targets
             ?: emptyList()

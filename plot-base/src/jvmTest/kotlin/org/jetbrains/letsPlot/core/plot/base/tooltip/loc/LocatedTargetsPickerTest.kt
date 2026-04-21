@@ -9,10 +9,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
@@ -264,10 +266,17 @@ class LocatedTargetsPickerTest {
     }
 
     private fun assertTargetFrom(vararg expected: LookupResultConfig?, addResults: LocatedTargetsPicker.() -> Unit) {
-        val targetsPicker = LocatedTargetsPicker(flippedAxis = false, DoubleVector.ZERO)
+        val targetsPicker = LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext
+        )
         targetsPicker.addResults()
 
-        val lookupResults = targetsPicker.chooseBestResult()
+        val lookupResults = targetsPicker.chooseBestLookupResults()
 
         if (expected.isEmpty() || expected.all { layerConfig -> layerConfig == null }) {
             assertThat<LookupResult>(lookupResults).isEmpty()

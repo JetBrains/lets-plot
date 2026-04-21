@@ -6,15 +6,23 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
-import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import kotlin.math.abs
 
 class LocatedTargetsPicker(
     private val flippedAxis: Boolean,
-    private val cursorCoord: DoubleVector
+    private val cursorCoord: DoubleVector,
+    private val axisOrigin: DoubleVector,
+    private val xAxisTheme: AxisTheme,
+    private val yAxisTheme: AxisTheme,
+    private val ctx: PlotContext
 ) {
     private val allLookupResults = ArrayList<LookupResult>()
 
@@ -47,7 +55,13 @@ class LocatedTargetsPicker(
         allLookupResults.add(lookupResult)
     }
 
-    fun chooseBestResult(): List<LookupResult> {
+    fun chooseBestResult(): List<TooltipModel> {
+        return chooseBestLookupResults()
+            .flatMap(::createTooltipModels)
+            .filter { it.lines.isNotEmpty() }
+    }
+
+    internal fun chooseBestLookupResults(): List<LookupResult> {
         val withDistances = allLookupResults
             .map { lookupResult -> lookupResult to distance(cursorCoord, lookupResult) }
             .filter { (lookupResult, distance) ->
@@ -102,6 +116,159 @@ class LocatedTargetsPicker(
         return expandWithGroupTooltips(picked)
     }
 
+    private fun createTooltipModels(lookupResult: LookupResult): List<TooltipModel> {
+        return lookupResult.targets.flatMap { geomTarget ->
+            createTooltipModels(
+                geomTarget = geomTarget,
+                contextualMapping = lookupResult.contextualMapping
+            )
+        }
+    }
+
+    internal fun createTooltipModels(
+        geomTarget: GeomTarget,
+        contextualMapping: ContextualMapping
+    ): List<TooltipModel> {
+        val dataPoints = contextualMapping.getDataPoints(geomTarget.hitIndex, ctx)
+        val tooltipModels = ArrayList<TooltipModel>()
+        tooltipModels += axisTooltipModels(geomTarget, dataPoints)
+        tooltipModels += sideTooltipModels(geomTarget, dataPoints)
+        tooltipModels += generalTooltipModels(geomTarget, contextualMapping, dataPoints)
+        return tooltipModels
+    }
+
+    private fun sideTooltipModels(
+        geomTarget: GeomTarget,
+        dataPoints: List<DataPoint>
+    ): List<TooltipModel> {
+        val tooltipModels = ArrayList<TooltipModel>()
+        val sideDataPoints = sideDataPoints(dataPoints)
+
+        geomTarget.aesTooltipHint.forEach { (aes, hint) ->
+            val linesForAes = sideDataPoints
+                .filter { aes == it.aes }
+                .map(DataPoint::value)
+                .map(TooltipModel.Line.Companion::withValue)
+            if (linesForAes.isNotEmpty()) {
+                tooltipModels.add(
+                    TooltipModel(
+                        tooltipHint = hint,
+                        title = null,
+                        lines = linesForAes,
+                        fill = hint.fillColor ?: geomTarget.tooltipHint.fillColor
+                            ?: geomTarget.tooltipHint.markerColors.firstOrNull() ?: WHITE,
+                        markerColors = emptyList(),
+                        isSide = true
+                    )
+                )
+            }
+        }
+
+        return tooltipModels
+    }
+
+    private fun axisTooltipModels(
+        geomTarget: GeomTarget,
+        dataPoints: List<DataPoint>
+    ): List<TooltipModel> {
+        val tooltipModels = ArrayList<TooltipModel>()
+        val axis = mapOf(
+            Aes.X to axisDataPoints(dataPoints).filter { Aes.X == it.aes }
+                .map(DataPoint::value)
+                .map(TooltipModel.Line.Companion::withValue),
+            Aes.Y to axisDataPoints(dataPoints).filter { Aes.Y == it.aes }
+                .map(DataPoint::value)
+                .map(TooltipModel.Line.Companion::withValue)
+        )
+
+        axis.forEach { (aes, lines) ->
+            if (lines.isNotEmpty()) {
+                val hint = createHintForAxis(aes, geomTarget.tooltipHint)
+                tooltipModels.add(
+                    TooltipModel(
+                        tooltipHint = hint,
+                        title = null,
+                        lines = lines,
+                        fill = hint.fillColor!!,
+                        markerColors = emptyList(),
+                        isSide = true
+                    )
+                )
+            }
+        }
+
+        return tooltipModels
+    }
+
+    private fun generalTooltipModels(
+        geomTarget: GeomTarget,
+        contextualMapping: ContextualMapping,
+        dataPoints: List<DataPoint>
+    ): List<TooltipModel> {
+        val generalLines = generalDataPoints(dataPoints).map {
+            TooltipModel.Line.withLabelAndValue(it.label, it.value)
+        }
+
+        return if (generalLines.isNotEmpty()) {
+            listOf(
+                TooltipModel(
+                    tooltipHint = geomTarget.tooltipHint,
+                    title = contextualMapping.getTitle(geomTarget.hitIndex, ctx),
+                    lines = generalLines,
+                    fill = null,
+                    markerColors = geomTarget.tooltipHint.markerColors,
+                    isSide = false,
+                    anchor = contextualMapping.tooltipAnchor,
+                    minWidth = contextualMapping.tooltipMinWidth,
+                    isCrosshairEnabled = contextualMapping.isCrosshairEnabled
+                )
+            )
+        } else {
+            emptyList()
+        }
+    }
+
+    private fun sideDataPoints(dataPoints: List<DataPoint>) = dataPoints.filter { it.isSide && !it.isAxis }
+
+    private fun axisDataPoints(dataPoints: List<DataPoint>) = dataPoints.filter(DataPoint::isAxis)
+
+    private fun generalDataPoints(dataPoints: List<DataPoint>): List<DataPoint> {
+        val nonSideDataPoints = dataPoints.filterNot(DataPoint::isSide)
+        val sideAes = sideDataPoints(dataPoints).mapNotNull(DataPoint::aes)
+        val generalAesList = nonSideDataPoints.mapNotNull(DataPoint::aes) - sideAes
+        return nonSideDataPoints.filter { dataPoint ->
+            when (dataPoint.aes) {
+                null -> true
+                in generalAesList -> true
+                else -> false
+            }
+        }
+    }
+
+    private fun createHintForAxis(aes: Aes<*>, tooltipHint: TooltipHint): TooltipHint {
+        val axis = when {
+            flippedAxis && aes == Aes.X -> Aes.Y
+            flippedAxis && aes == Aes.Y -> Aes.X
+            else -> aes
+        }
+
+        return when (axis) {
+            Aes.X -> TooltipHint.xAxisTooltip(
+                coord = DoubleVector(tooltipHint.coord.x, axisOrigin.y),
+                axisRadius = xAxisTheme.lineWidth() / 2,
+                fillColor = xAxisTheme.tooltipFill()
+            )
+
+            Aes.Y -> TooltipHint.yAxisTooltip(
+                coord = DoubleVector(axisOrigin.x, tooltipHint.coord.y),
+                axisRadius = yAxisTheme.lineWidth() / 2,
+                fillColor = yAxisTheme.tooltipFill()
+            )
+
+            else -> error("Not an axis aes: $axis")
+        }
+    }
+
     private fun expandWithGroupTooltips(picked: List<LookupResult>): List<LookupResult> {
         val groupIds = picked.mapNotNull { it.tooltipGroup }.toSet()
 
@@ -149,11 +316,28 @@ class LocatedTargetsPicker(
         }
 
         fun xDistanceToCoord(target: GeomTarget, coord: DoubleVector, flippedAxis: Boolean): Double {
-            val distance = target.tooltipHint.coord.subtract(coord)
-            return when (flippedAxis) {
-                true -> distance.y
-                false -> distance.x
-            }
+            val offset = target.tooltipHint.coord.subtract(coord)
+            return offset.flipIf(flippedAxis).x
         }
     }
+}
+
+internal fun createTooltipModels(
+    geomTarget: GeomTarget,
+    contextualMapping: ContextualMapping,
+    axisOrigin: DoubleVector,
+    flippedAxis: Boolean,
+    xAxisTheme: AxisTheme,
+    yAxisTheme: AxisTheme,
+    ctx: PlotContext
+): List<TooltipModel> {
+    return LocatedTargetsPicker(
+        flippedAxis = flippedAxis,
+        cursorCoord = DoubleVector.ZERO,
+        axisOrigin = axisOrigin,
+        xAxisTheme = xAxisTheme,
+        yAxisTheme = yAxisTheme,
+        ctx = ctx
+    )
+        .createTooltipModels(geomTarget, contextualMapping)
 }

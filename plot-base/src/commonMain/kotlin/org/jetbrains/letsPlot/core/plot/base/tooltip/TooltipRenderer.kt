@@ -118,11 +118,7 @@ class TooltipRenderer(
 
         val lookupResults = tileInfo.findTargets(cursor)
 
-        val tooltips = lookupResults
-            .flatMap { tooltipModelFromLookupResult(it, tileInfo.axisOrigin) }
-            .filter { it.lines.isNotEmpty() }
-
-        val measuredTooltips = tooltips.map(::measureTooltip)
+        val measuredTooltips = lookupResults.map(::measureTooltip)
 
         val positionedTooltips = myLayoutManager.arrange(
             measuredTooltips,
@@ -256,6 +252,9 @@ class TooltipRenderer(
             layerYOrientations,
             flippedAxis,
             axisOrigin,
+            xAxisTheme,
+            yAxisTheme,
+            plotContext,
             hAxisTooltipPosition,
             vAxisTooltipPosition
         )
@@ -277,6 +276,9 @@ class TooltipRenderer(
         layerYOrientations: List<Boolean>,
         private val flippedAxis: Boolean,
         val axisOrigin: DoubleVector,
+        private val xAxisTheme: AxisTheme,
+        private val yAxisTheme: AxisTheme,
+        private val plotContext: PlotContext,
         val hAxisTooltipPosition: HorizontalAxisTooltipPosition,
         val vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
@@ -290,8 +292,15 @@ class TooltipRenderer(
                 }
             }
 
-        fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
-            val targetsPicker = LocatedTargetsPicker(flippedAxis, plotCoord).apply {
+        fun findTargets(plotCoord: DoubleVector): List<TooltipModel> {
+            val targetsPicker = LocatedTargetsPicker(
+                flippedAxis = flippedAxis,
+                cursorCoord = plotCoord,
+                axisOrigin = axisOrigin,
+                xAxisTheme = xAxisTheme,
+                yAxisTheme = yAxisTheme,
+                ctx = plotContext
+            ).apply {
                 for (locator in transformedLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
@@ -403,19 +412,5 @@ class TooltipRenderer(
         spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipStrokeWidth()
         spec.isSide -> 1.0
         else -> tooltipsTheme.tooltipStrokeWidth()
-    }
-
-    private fun tooltipModelFromLookupResult(
-        lookupResult: GeomTargetLocator.LookupResult,
-        axisOrigin: DoubleVector,
-    ): List<TooltipModel> {
-        return TooltipModelFactory(
-            lookupResult.contextualMapping,
-            axisOrigin,
-            flippedAxis,
-            xAxisTheme,
-            yAxisTheme,
-            plotContext
-        ).let { lookupResult.targets.flatMap(it::create) }
     }
 }
