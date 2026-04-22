@@ -8,15 +8,12 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.util.ClosestPointChecker
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.X
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.Y
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
-import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape.Kind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.CURSOR
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetLocator.Collector.CollectingStrategy
@@ -86,7 +83,7 @@ internal class LayerTargetLocator(
 
     private fun addLookupResults(
         collector: Collector<GeomTarget>,
-        targets: MutableList<GeomTargetLocator.LookupResult>,
+        targets: MutableList<LookupResult>,
         hitShapeKind: HitShape.Kind
     ) {
         if (collector.size() == 0) {
@@ -94,7 +91,7 @@ internal class LayerTargetLocator(
         }
 
         targets.add(
-            GeomTargetLocator.LookupResult(
+            LookupResult(
                 collector.collection(),
                 // Distance can be negative when lookup space is X or Y
                 // In this case use 0.0 as a distance - we have a direct hit.
@@ -107,7 +104,7 @@ internal class LayerTargetLocator(
         )
     }
 
-    override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
+    override fun search(coord: DoubleVector): LookupResult? {
         if (myTargets.isEmpty()) {
             return null
         }
@@ -127,7 +124,7 @@ internal class LayerTargetLocator(
             }
         }
 
-        val lookupResults = ArrayList<GeomTargetLocator.LookupResult>()
+        val lookupResults = ArrayList<LookupResult>()
 
         addLookupResults(pathCollector, lookupResults, PATH)
         addLookupResults(rectCollector, lookupResults, RECT)
@@ -137,12 +134,12 @@ internal class LayerTargetLocator(
         return getClosestTarget(lookupResults)
     }
 
-    private fun getClosestTarget(lookupResults: List<GeomTargetLocator.LookupResult>): GeomTargetLocator.LookupResult? {
+    private fun getClosestTarget(lookupResults: List<LookupResult>): LookupResult? {
         if (lookupResults.isEmpty()) {
             return null
         }
 
-        var closestTargets: GeomTargetLocator.LookupResult = lookupResults[0]
+        var closestTargets: LookupResult = lookupResults[0]
         require(closestTargets.lookupDistance >= 0)
 
         for (lookupResult in lookupResults) {

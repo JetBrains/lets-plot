@@ -11,11 +11,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccessMock
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals

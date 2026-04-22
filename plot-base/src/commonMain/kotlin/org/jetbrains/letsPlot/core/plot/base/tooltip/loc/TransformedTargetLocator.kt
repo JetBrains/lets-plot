@@ -9,13 +9,14 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LookupResult
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 
 abstract class TransformedTargetLocator(
     private val targetLocator: GeomTargetLocator
 ) : GeomTargetLocator {
 
-    override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
+    override fun search(coord: DoubleVector): LookupResult? {
         val targetCoord = convertToTargetCoord(coord)
         val result = targetLocator.search(targetCoord) ?: return null
 

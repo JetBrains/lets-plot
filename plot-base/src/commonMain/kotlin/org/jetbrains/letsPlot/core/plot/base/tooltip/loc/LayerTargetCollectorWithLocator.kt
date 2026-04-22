@@ -111,7 +111,7 @@ class LayerTargetCollectorWithLocator(
         myLocator = null
     }
 
-    override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
+    override fun search(coord: DoubleVector): LookupResult? {
         if (myLocator == null) {
             myLocator = LayerTargetLocator(
                 geomKind,

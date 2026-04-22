@@ -22,11 +22,7 @@ import kotlin.test.Test
 
 class PlotTooltipsTest : PlotTestBase() {
     override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
-    override val imageComparer: ImageComparer = ImageComparer(
-        canvasPeer,
-        AwtBitmapIO(),
-        silent = true
-    )
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(), silent = true)
 
     init {
         registerTest(::plot_tooltips_pointAndLine_lineTooltip)
@@ -321,7 +317,7 @@ class PlotTooltipsTest : PlotTestBase() {
     fun plot_tooltips_logicalGroup_differentXAxisTooltip_closerToB(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.LOGICAL_GROUP_DIFFERENT_X_TOOLTIP_REVERSED_SIDES))
 
-        val cursorPos = Vector(103, 145)
+        val cursorPos = Vector(103, 245)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

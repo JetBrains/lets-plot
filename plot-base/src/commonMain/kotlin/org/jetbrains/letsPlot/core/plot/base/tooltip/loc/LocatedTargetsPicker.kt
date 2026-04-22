@@ -6,17 +6,20 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
+import org.jetbrains.letsPlot.commons.intern.removeDuplicates
 import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.X_AXIS
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.Y_AXIS
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import kotlin.math.abs
 
-class LocatedTargetsPicker(
+internal class LocatedTargetsPicker(
     private val flippedAxis: Boolean,
     private val cursorCoord: DoubleVector,
     private val axisOrigin: DoubleVector,
@@ -56,10 +59,29 @@ class LocatedTargetsPicker(
     }
 
     fun chooseBestResult(): List<TooltipModel> {
-        return chooseBestLookupResults()
-            .flatMap(::createTooltipModels)
-            .filter { it.lines.isNotEmpty() }
+        val bestLookupResults = chooseBestLookupResults()
+
+        val tooltipModels = bestLookupResults.associateWith { chooseTooltipModels(it) }
+
+        // Filter axis tooltips
+        val xAxisTooltips = tooltipModels
+            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == X_AXIS } }
+            .filterNotNullValues()
+
+        val yAxisTooltips = tooltipModels
+            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == Y_AXIS } }
+            .filterNotNullValues()
+
+        val closestXAxisTooltip = xAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.lookupDistance }
+        val closestYAxisTooltip = yAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.lookupDistance }
+
+        val finalTooltips = tooltipModels.values.flatten() - xAxisTooltips.values - yAxisTooltips.values +
+                closestXAxisTooltip?.value +
+                closestYAxisTooltip?.value
+
+        return finalTooltips.filterNotNull()
     }
+
 
     internal fun chooseBestLookupResults(): List<LookupResult> {
         val withDistances = allLookupResults
@@ -116,24 +138,26 @@ class LocatedTargetsPicker(
         return expandWithGroupTooltips(picked)
     }
 
-    private fun createTooltipModels(lookupResult: LookupResult): List<TooltipModel> {
-        return lookupResult.targets.flatMap { geomTarget ->
-            createTooltipModels(
-                geomTarget = geomTarget,
-                contextualMapping = lookupResult.contextualMapping
-            )
-        }
+    private fun chooseTooltipModels(lookupResult: LookupResult): List<TooltipModel> {
+        val tooltipModels = chooseTooltipModels(lookupResult.targets, lookupResult.contextualMapping)
+            .filter { it.lines.isNotEmpty() }
+
+        return tooltipModels
+            .removeDuplicates { it.tooltipHint.placement == X_AXIS }
+            .removeDuplicates { it.tooltipHint.placement == Y_AXIS }
     }
 
-    internal fun createTooltipModels(
-        geomTarget: GeomTarget,
+    internal fun chooseTooltipModels(
+        geomTargets: List<GeomTarget>,
         contextualMapping: ContextualMapping
     ): List<TooltipModel> {
-        val dataPoints = contextualMapping.getDataPoints(geomTarget.hitIndex, ctx)
         val tooltipModels = ArrayList<TooltipModel>()
-        tooltipModels += axisTooltipModels(geomTarget, dataPoints)
-        tooltipModels += sideTooltipModels(geomTarget, dataPoints)
-        tooltipModels += generalTooltipModels(geomTarget, contextualMapping, dataPoints)
+        geomTargets.forEach { geomTarget ->
+            val dataPoints = contextualMapping.getDataPoints(geomTarget.hitIndex, ctx)
+            tooltipModels += axisTooltipModels(geomTarget, dataPoints)
+            tooltipModels += sideTooltipModels(geomTarget, dataPoints)
+            tooltipModels += generalTooltipModels(geomTarget, contextualMapping, dataPoints)
+        }
         return tooltipModels
     }
 
@@ -339,5 +363,5 @@ internal fun createTooltipModels(
         yAxisTheme = yAxisTheme,
         ctx = ctx
     )
-        .createTooltipModels(geomTarget, contextualMapping)
+        .chooseTooltipModels(listOf(geomTarget), contextualMapping)
 }

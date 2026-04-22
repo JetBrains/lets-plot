@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.LookupResult
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -55,7 +56,7 @@ class LocatorForSameObjectsTest {
         private val FIRST_TARGET = TestUtil.pointTarget(FIRST_POINT_KEY, POINT_COORD)
         private val SECOND_TARGET = TestUtil.pointTarget(SECOND_POINT_KEY, POINT_COORD)
 
-        private fun findTargets(targetLocators: List<GeomTargetLocator>): List<GeomTargetLocator.LookupResult> {
+        private fun findTargets(targetLocators: List<GeomTargetLocator>): List<LookupResult> {
             val targetsPicker = LocatedTargetsPicker(
                 flippedAxis = false,
                 cursorCoord = POINT_COORD,
@@ -70,7 +71,7 @@ class LocatorForSameObjectsTest {
             return targetsPicker.chooseBestLookupResults()
         }
 
-        private fun assertLookupResult(results: List<GeomTargetLocator.LookupResult>, expectedIndex: Int) {
+        private fun assertLookupResult(results: List<LookupResult>, expectedIndex: Int) {
             assertEquals(1, results.size)
             assertEquals(1, results.single().targets.size)
             val geomTarget = results.single().targets.single()

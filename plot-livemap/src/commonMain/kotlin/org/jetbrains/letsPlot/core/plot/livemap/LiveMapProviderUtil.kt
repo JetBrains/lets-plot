@@ -16,12 +16,9 @@ import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider.LiveMapData
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
-import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
@@ -210,13 +207,13 @@ object LiveMapProviderUtil {
                 }
             }
             private var lastCoord: DoubleVector? = null
-            private var lastResult: Map<Int, GeomTargetLocator.LookupResult> = emptyMap()
+            private var lastResult: Map<Int, LookupResult> = emptyMap()
 
             val geomTargetLocators: List<GeomTargetLocator> = adapters
 
             // called n-times with same coord (where n - number of "layers").
             // Search only if coord changed, return cached result for the rest calls.
-            private fun search(layerIndex: Int, coord: DoubleVector): GeomTargetLocator.LookupResult? {
+            private fun search(layerIndex: Int, coord: DoubleVector): LookupResult? {
                 if (lastCoord != coord) {
                     lastResult = myLiveMap
                         .hoverObjects()
@@ -236,7 +233,7 @@ object LiveMapProviderUtil {
             ) : GeomTargetLocator {
                 private val contextualMapping = layer.contextualMapping
 
-                override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
+                override fun search(coord: DoubleVector): LookupResult? {
                     if (contextualMapping == null) {
                         return null
                     }
@@ -249,7 +246,7 @@ object LiveMapProviderUtil {
                     isMappedColor = { p: DataPointAesthetics -> p.colorAes in layer.mappedAes }
                 )
 
-                fun buildLookupResult(coord: DoubleVector, hoverObjects: List<HoverObject>): GeomTargetLocator.LookupResult {
+                fun buildLookupResult(coord: DoubleVector, hoverObjects: List<HoverObject>): LookupResult {
                     val geomTargets = hoverObjects.map { hoverObject ->
                         require(layerIndex == hoverObject.layerIndex)
                         GeomTarget(
@@ -263,7 +260,7 @@ object LiveMapProviderUtil {
                         )
                     }
 
-                    return GeomTargetLocator.LookupResult(
+                    return LookupResult(
                         targets = geomTargets,
                         lookupDistance = hoverObjects.maxOf { it.distance },
                         lookupSpec = GeomTargetLocator.LookupSpec(LookupSpace.XY, LookupStrategy.HOVER),
