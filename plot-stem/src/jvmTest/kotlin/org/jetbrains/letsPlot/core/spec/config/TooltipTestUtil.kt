@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel.Line
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModelFactory
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.createTooltipModels
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
@@ -21,20 +21,18 @@ object TooltipTestUtil {
     private val axisTheme = DefaultTheme.minimal2().horizontalAxis(false)
 
     private fun createTooltipModels(layer: GeomLayer, hitIndex: Int, tooltipHint: TooltipHint): List<TooltipModel> {
-        val factory = TooltipModelFactory(
+        return createTooltipModels(
+            geomTarget = GeomTarget(
+                hitIndex = hitIndex,
+                tooltipHint = tooltipHint,
+                aesTooltipHint = emptyMap()
+            ),
             contextualMapping = layer.createContextualMapping()!!,
             axisOrigin = ZERO,
             flippedAxis = false,
             xAxisTheme = axisTheme,
             yAxisTheme = axisTheme,
             ctx = TestingPlotContext.create(layer)
-        )
-        return factory.create(
-            geomTarget = GeomTarget(
-                hitIndex = hitIndex,
-                tooltipHint = tooltipHint,
-                aesTooltipHint = emptyMap()
-            )
         )
     }
 

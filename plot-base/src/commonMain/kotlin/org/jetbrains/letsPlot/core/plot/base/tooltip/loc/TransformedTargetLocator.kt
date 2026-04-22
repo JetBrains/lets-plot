@@ -22,7 +22,8 @@ abstract class TransformedTargetLocator(
 
         return result.copy(
             targets = convertGeomTargets(result.targets),
-            lookupDistance = convertToPlotDistance(result.lookupDistance)
+            lookupDistance = convertToPlotDistance(result.lookupDistance),
+            ownerDistance = convertToPlotDistance(result.ownerDistance)
         )
     }
 

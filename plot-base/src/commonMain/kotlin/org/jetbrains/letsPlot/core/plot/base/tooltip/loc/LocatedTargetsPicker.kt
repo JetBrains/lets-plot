@@ -72,8 +72,8 @@ internal class LocatedTargetsPicker(
             .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == Y_AXIS } }
             .filterNotNullValues()
 
-        val closestXAxisTooltip = xAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.lookupDistance }
-        val closestYAxisTooltip = yAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.lookupDistance }
+        val closestXAxisTooltip = xAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }
+        val closestYAxisTooltip = yAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }
 
         val finalTooltips = tooltipModels.values.flatten() - xAxisTooltips.values - yAxisTooltips.values +
                 closestXAxisTooltip?.value +
@@ -346,7 +346,7 @@ internal class LocatedTargetsPicker(
     }
 }
 
-internal fun createTooltipModels(
+fun createTooltipModels(
     geomTarget: GeomTarget,
     contextualMapping: ContextualMapping,
     axisOrigin: DoubleVector,

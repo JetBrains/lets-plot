@@ -263,6 +263,9 @@ object LiveMapProviderUtil {
                     return LookupResult(
                         targets = geomTargets,
                         lookupDistance = hoverObjects.maxOf { it.distance },
+                        ownerDistance = geomTargets.minOf { target ->
+                            target.tooltipHint.coord.subtract(coord).length()
+                        },
                         lookupSpec = GeomTargetLocator.LookupSpec(LookupSpace.XY, LookupStrategy.HOVER),
                         geomKind = layer.geomKind,
                         contextualMapping = contextualMapping!!,

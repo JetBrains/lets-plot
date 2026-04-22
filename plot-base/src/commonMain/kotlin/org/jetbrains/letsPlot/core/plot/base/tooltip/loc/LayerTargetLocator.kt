@@ -96,6 +96,7 @@ internal class LayerTargetLocator(
                 // Distance can be negative when lookup space is X or Y
                 // In this case use 0.0 as a distance - we have a direct hit.
                 max(0.0, collector.closestPointChecker.distance),
+                ownerDistance(collector.cursor, collector.collection(), lookupSpec.lookupSpace),
                 lookupSpec,
                 geomKind,
                 contextualMapping,
@@ -223,6 +224,22 @@ internal class LayerTargetLocator(
 
     private fun getKeyForSingleObjectGeometry(prototype: TargetPrototype): Int {
         return prototype.indexMapper(0)
+    }
+
+    private fun ownerDistance(
+        cursor: DoubleVector,
+        targets: List<GeomTarget>,
+        lookupSpace: LookupSpace
+    ): Double {
+        return targets.minOf { target ->
+            val offset = target.tooltipHint.coord.subtract(cursor)
+            when (lookupSpace) {
+                X -> kotlin.math.abs(offset.x)
+                Y -> kotlin.math.abs(offset.y)
+                LookupSpace.XY -> offset.length()
+                LookupSpace.NONE -> error("Distance calculation is not supported for NONE lookup space")
+            }
+        }
     }
 
     internal class Target(private val targetProjection: TargetProjection, val prototype: TargetPrototype) {

@@ -288,6 +288,7 @@ class LocatedTargetsPickerTest {
         val expectedResult = expected.build()!!
         assertThat(actual.geomKind).isEqualTo(expectedResult.geomKind)
         assertThat(actual.lookupDistance).isEqualTo(expectedResult.lookupDistance)
+        assertThat(actual.ownerDistance).isEqualTo(expectedResult.ownerDistance)
         assertThat(actual.hasGeneralTooltip).isEqualTo(expectedResult.hasGeneralTooltip)
         assertThat(actual.hasAxisTooltip).isEqualTo(expectedResult.hasAxisTooltip)
         assertThat(actual.isCrosshairEnabled).isEqualTo(expectedResult.isCrosshairEnabled)
@@ -302,6 +303,7 @@ class LocatedTargetsPickerTest {
         internal var myResult: LookupResult? = null
         private var myGeomKind: GeomKind? = null
         private var myDistance: Double = 0.toDouble()
+        private var myOwnerDistance: Double? = null
         private var myLookupSpec: GeomTargetLocator.LookupSpec = GeomTargetLocator.LookupSpec.NONE
         private var myHasTarget: Boolean = true
         private var myHasGeneralTooltip: Boolean = false
@@ -317,6 +319,11 @@ class LocatedTargetsPickerTest {
 
         fun geomKind(v: GeomKind): LookupResultConfig {
             myGeomKind = v
+            return this
+        }
+
+        fun ownerDistance(v: Double): LookupResultConfig {
+            myOwnerDistance = v
             return this
         }
 
@@ -385,6 +392,7 @@ class LocatedTargetsPickerTest {
                 myResult = LookupResult(
                     targets = emptyList(),
                     lookupDistance = myDistance,
+                    ownerDistance = myOwnerDistance ?: myDistance,
                     lookupSpec = myLookupSpec,
                     geomKind = requireNotNull(myGeomKind),
                     contextualMapping = contextualMapping,
