@@ -589,6 +589,46 @@ object PlotTooltipsSpecs {
         |}
     """.trimMargin()
 
+    val GROUPED_LINE_AND_POINT = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": {
+        |        "x": [ 0.0, 4.0, 0.0, 4.0 ],
+        |        "y": [ 1.0, 1.0, 3.0, 3.0 ],
+        |        "id": [ "A", "A", "B", "B" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "group": "id", "color": "id" },
+        |      "size": 2.0,
+        |      "tooltips": { "lines": [ "line @id" ] }
+        |    },
+        |    {
+        |      "geom": "point",
+        |      "data": {
+        |        "x": [ 2.0, 2.0 ],
+        |        "y": [ 1.8, 2.2 ],
+        |        "id": [ "A", "B" ]
+        |      },
+        |      "mapping": { "x": "x", "y": "y", "color": "id" },
+        |      "size": 16.0,
+        |      "tooltips": { "lines": [ "point @id" ] }
+        |    }
+        |  ],
+        |  "theme": {
+        |    "legend_position": "none",
+        |    "panel_grid_minor_blank": {}
+        |  }
+        |}
+    """.trimMargin()
+
     val LOGICAL_GROUP_DIFFERENT_X_TOOLTIP = """
         |{
         |  "kind": "plot",

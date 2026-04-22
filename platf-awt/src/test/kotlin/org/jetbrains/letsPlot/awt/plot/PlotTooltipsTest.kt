@@ -51,6 +51,8 @@ class PlotTooltipsTest : PlotTestBase() {
         registerTest(::plot_tooltips_pointAndText_pointTooltip)
         registerTest(::plot_tooltips_pointAndLabel_pointTooltip)
         registerTest(::plot_tooltips_groupedLine_closestByXTooltip)
+        registerTest(::plot_tooltips_groupedLineAndPoint_lineTooltip)
+        registerTest(::plot_tooltips_groupedLineAndPoint_pointTooltip)
         registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip)
         registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip_closerToA)
         registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip_closerToB)
@@ -300,6 +302,24 @@ class PlotTooltipsTest : PlotTestBase() {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.GROUPED_LINE_CLOSEST_BY_X))
 
         val cursorPos = Vector(205, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_tooltips_groupedLineAndPoint_lineTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.GROUPED_LINE_AND_POINT))
+
+        val cursorPos = Vector(205, 205)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_tooltips_groupedLineAndPoint_pointTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.GROUPED_LINE_AND_POINT))
+
+        val cursorPos = Vector(205, 157)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)
