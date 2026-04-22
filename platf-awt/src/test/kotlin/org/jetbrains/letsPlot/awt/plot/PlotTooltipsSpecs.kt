@@ -190,6 +190,40 @@ object PlotTooltipsSpecs {
         |}
     """.trimMargin()
 
+    val ERRORBAR_VERTICAL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "category": [ "A" ],
+        |    "ymin": [ 3.0 ],
+        |    "ymax": [ 7.0 ],
+        |    "id": [ "errorbar" ]
+        |  },
+        |  "data_meta": {
+        |    "series_annotations": [
+        |      { "type": "str", "column": "category" },
+        |      { "type": "float", "column": "ymin" },
+        |      { "type": "float", "column": "ymax" },
+        |      { "type": "str", "column": "id" }
+        |    ]
+        |  },
+        |  "mapping": { "x": "category", "ymin": "ymin", "ymax": "ymax" },
+        |  "layers": [
+        |    {
+        |      "geom": "errorbar",
+        |      "width": 0.25,
+        |      "size": 2.0,
+        |      "color": "#4E79A7",
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
+        |  ],
+        |  "scales": [
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
+        |}
+    """.trimMargin()
+
     val ERRORBAR_HORIZONTAL = """
         |{
         |  "kind": "plot",
@@ -220,11 +254,43 @@ object PlotTooltipsSpecs {
         |  ],
         |  "scales": [
         |    { "aesthetic": "x", "limits": [ 0.0, 10.0 ] }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val CROSSBAR_VERTICAL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "category": [ "A" ],
+        |    "lower": [ 3.0 ],
+        |    "middle": [ 5.0 ],
+        |    "upper": [ 7.0 ],
+        |    "id": [ "crossbar" ]
+        |  },
+        |  "data_meta": {
+        |    "series_annotations": [
+        |      { "type": "str", "column": "category" },
+        |      { "type": "float", "column": "lower" },
+        |      { "type": "float", "column": "middle" },
+        |      { "type": "float", "column": "upper" },
+        |      { "type": "str", "column": "id" }
+        |    ]
+        |  },
+        |  "mapping": { "x": "category", "ymin": "lower", "y": "middle", "ymax": "upper" },
+        |  "layers": [
+        |    {
+        |      "geom": "crossbar",
+        |      "width": 0.45,
+        |      "fill": "#A8DADC",
+        |      "color": "#1D3557",
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
         |  ],
-        |  "theme": {
-        |    "axis_tooltip_x": { "name": "blank" },
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  "scales": [
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
         |}
     """.trimMargin()
 
@@ -261,11 +327,44 @@ object PlotTooltipsSpecs {
         |  ],
         |  "scales": [
         |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val POINTRANGE_VERTICAL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "category": [ "A" ],
+        |    "lower": [ 3.0 ],
+        |    "middle": [ 5.0 ],
+        |    "upper": [ 7.0 ],
+        |    "id": [ "pointrange" ]
+        |  },
+        |  "data_meta": {
+        |    "series_annotations": [
+        |      { "type": "str", "column": "category" },
+        |      { "type": "float", "column": "lower" },
+        |      { "type": "float", "column": "middle" },
+        |      { "type": "float", "column": "upper" },
+        |      { "type": "str", "column": "id" }
+        |    ]
+        |  },
+        |  "mapping": { "x": "category", "ymin": "lower", "y": "middle", "ymax": "upper" },
+        |  "layers": [
+        |    {
+        |      "geom": "pointrange",
+        |      "size": 2.0,
+        |      "shape": 21.0,
+        |      "fill": "#F4A261",
+        |      "color": "#264653",
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
         |  ],
-        |  "theme": {
-        |    "axis_tooltip_x": { "name": "blank" },
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  "scales": [
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
         |}
     """.trimMargin()
 
@@ -303,11 +402,40 @@ object PlotTooltipsSpecs {
         |  ],
         |  "scales": [
         |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val LINERANGE_VERTICAL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "category": [ "A" ],
+        |    "lower": [ 3.0 ],
+        |    "upper": [ 7.0 ],
+        |    "id": [ "linerange" ]
+        |  },
+        |  "data_meta": {
+        |    "series_annotations": [
+        |      { "type": "str", "column": "category" },
+        |      { "type": "float", "column": "lower" },
+        |      { "type": "float", "column": "upper" },
+        |      { "type": "str", "column": "id" }
+        |    ]
+        |  },
+        |  "mapping": { "x": "category", "ymin": "lower", "ymax": "upper" },
+        |  "layers": [
+        |    {
+        |      "geom": "linerange",
+        |      "size": 4.0,
+        |      "color": "#6C584C",
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
         |  ],
-        |  "theme": {
-        |    "axis_tooltip_x": { "name": "blank" },
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  "scales": [
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
         |}
     """.trimMargin()
 
@@ -341,11 +469,34 @@ object PlotTooltipsSpecs {
         |  ],
         |  "scales": [
         |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val RIBBON_VERTICAL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "x": [ 1.0, 2.0, 3.0, 4.0, 5.0 ],
+        |    "lower": [ 3.0, 2.5, 2.0, 2.5, 3.0 ],
+        |    "upper": [ 7.0, 7.5, 8.0, 7.5, 7.0 ],
+        |    "id": [ "ribbon", "ribbon", "ribbon", "ribbon", "ribbon" ]
+        |  },
+        |  "mapping": { "x": "x", "ymin": "lower", "ymax": "upper" },
+        |  "layers": [
+        |    {
+        |      "geom": "ribbon",
+        |      "fill": "#84A59D",
+        |      "color": "#52796F",
+        |      "alpha": 0.65,
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
         |  ],
-        |  "theme": {
-        |    "axis_tooltip_x": { "name": "blank" },
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  "scales": [
+        |    { "aesthetic": "x", "limits": [ 1.0, 5.0 ] },
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
         |}
     """.trimMargin()
 
@@ -373,11 +524,28 @@ object PlotTooltipsSpecs {
         |  "scales": [
         |    { "aesthetic": "x", "limits": [ 1.0, 5.0 ] },
         |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
-        |  ],
-        |  "theme": {
-        |    "axis_tooltip_x": { "name": "blank" },
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val DENSITY_VERTICAL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "x": [ -1.7, -1.3, -1.1, -0.8, -0.4, -0.2, 0.0, 0.1, 0.4, 0.7, 1.0, 1.3, 1.5, 1.8 ]
+        |  },
+        |  "mapping": { "x": "x" },
+        |  "layers": [
+        |    {
+        |      "geom": "density",
+        |      "fill": "#B8DE6F",
+        |      "color": "#2D6A4F",
+        |      "alpha": 0.6,
+        |      "size": 1.5,
+        |      "tooltips": { "lines": [ "density" ] }
+        |    }
+        |  ]
         |}
     """.trimMargin()
 
@@ -399,11 +567,35 @@ object PlotTooltipsSpecs {
         |      "size": 1.5,
         |      "tooltips": { "lines": [ "density" ] }
         |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val LOLLIPOP_VERTICAL = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 400.0, "height": 300.0 },
+        |  "data": {
+        |    "x": [ 1.0, 2.0, 3.0 ],
+        |    "y": [ 4.0, 7.0, 5.0 ],
+        |    "id": [ "lollipop A", "lollipop B", "lollipop C" ]
+        |  },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "layers": [
+        |    {
+        |      "geom": "lollipop",
+        |      "size": 6.0,
+        |      "linewidth": 2.0,
+        |      "stroke": 1.5,
+        |      "shape": 21.0,
+        |      "fill": "#F6BD60",
+        |      "color": "#355070",
+        |      "tooltips": { "lines": [ "@id" ] }
+        |    }
         |  ],
-        |  "theme": {
-        |    "axis_tooltip_x": { "name": "blank" },
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  "scales": [
+        |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
+        |  ]
         |}
     """.trimMargin()
 
@@ -432,11 +624,7 @@ object PlotTooltipsSpecs {
         |  ],
         |  "scales": [
         |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
-        |  ],
-        |  "theme": {
-        |    "axis_tooltip_x": { "name": "blank" },
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  ]
         |}
     """.trimMargin()
 
@@ -471,12 +659,7 @@ object PlotTooltipsSpecs {
         |  "scales": [
         |    { "aesthetic": "x", "limits": [ 0.0, 4.0 ] },
         |    { "aesthetic": "y", "limits": [ 0.0, 10.0 ] }
-        |  ],
-        |  "theme": {
-        |    "legend_position": "none",
-        |    "panel_grid_minor_blank": {},
-        |    "axis_tooltip_x": { "name": "blank" }
-        |  }
+        |  ]
         |}
     """.trimMargin()
 
@@ -866,11 +1049,7 @@ object PlotTooltipsSpecs {
         |      "size": 16.0,
         |      "tooltips": { "lines": [ "point @id" ] }
         |    }
-        |  ],
-        |  "theme": {
-        |    "legend_position": "none",
-        |    "panel_grid_minor_blank": {}
-        |  }
+        |  ]
         |}
     """.trimMargin()
 
@@ -910,12 +1089,7 @@ object PlotTooltipsSpecs {
         |        "tooltip_group": "logical_group"
         |      }
         |    }
-        |  ],
-        |  "theme": {
-        |    "legend_position": "none",
-        |    "panel_grid_minor_blank": {},
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  ]
         |}
     """.trimMargin()
 
@@ -955,12 +1129,7 @@ object PlotTooltipsSpecs {
         |        "tooltip_group": "logical_group"
         |      }
         |    }
-        |  ],
-        |  "theme": {
-        |    "legend_position": "none",
-        |    "panel_grid_minor_blank": {},
-        |    "axis_tooltip_y": { "name": "blank" }
-        |  }
+        |  ]
         |}
     """.trimMargin()
 

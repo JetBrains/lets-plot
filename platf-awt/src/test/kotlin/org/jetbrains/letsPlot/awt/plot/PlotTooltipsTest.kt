@@ -33,12 +33,19 @@ class PlotTooltipsTest : PlotTestBase() {
         registerTest(::plot_tooltips_pointAndBar_barTooltip)
         registerTest(::plot_tooltips_pointAndBar_pointTooltip)
         registerTest(::plot_tooltips_boxplotAndPoint_pointTooltip)
+        registerTest(::plot_tooltips_errorBarVertical)
         registerTest(::plot_tooltips_errorBarHorizontal)
+        registerTest(::plot_tooltips_crossBarVertical)
         registerTest(::plot_tooltips_crossBarHorizontal)
+        registerTest(::plot_tooltips_pointRangeVertical)
         registerTest(::plot_tooltips_pointRangeHorizontal)
+        registerTest(::plot_tooltips_lineRangeVertical)
         registerTest(::plot_tooltips_lineRangeHorizontal)
+        registerTest(::plot_tooltips_ribbonVertical)
         registerTest(::plot_tooltips_ribbonHorizontal)
+        registerTest(::plot_tooltips_densityVertical)
         registerTest(::plot_tooltips_densityHorizontal)
+        registerTest(::plot_tooltips_lollipopVertical)
         registerTest(::plot_tooltips_lollipopHorizontal)
         registerTest(::plot_tooltips_pathDistancePriority_implicitLineGroupTooltip)
         registerTest(::plot_tooltips_pathDistancePriority_separateGroupsLowerTooltip)
@@ -153,8 +160,26 @@ class PlotTooltipsTest : PlotTestBase() {
         return paint(plotCanvasDrawable, cursorPos)
     }
 
+    fun plot_tooltips_errorBarVertical(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.ERRORBAR_VERTICAL))
+
+        val cursorPos = Vector(205, 150)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
     fun plot_tooltips_errorBarHorizontal(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.ERRORBAR_HORIZONTAL))
+
+        val cursorPos = Vector(205, 150)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_tooltips_crossBarVertical(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.CROSSBAR_VERTICAL))
 
         val cursorPos = Vector(205, 150)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
@@ -171,10 +196,28 @@ class PlotTooltipsTest : PlotTestBase() {
         return paint(plotCanvasDrawable, cursorPos)
     }
 
+    fun plot_tooltips_pointRangeVertical(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.POINTRANGE_VERTICAL))
+
+        val cursorPos = Vector(205, 150)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
     fun plot_tooltips_pointRangeHorizontal(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.POINTRANGE_HORIZONTAL))
 
         val cursorPos = Vector(205, 132)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_tooltips_lineRangeVertical(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.LINERANGE_VERTICAL))
+
+        val cursorPos = Vector(215, 150)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)
@@ -189,6 +232,15 @@ class PlotTooltipsTest : PlotTestBase() {
         return paint(plotCanvasDrawable, cursorPos)
     }
 
+    fun plot_tooltips_ribbonVertical(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.RIBBON_VERTICAL))
+
+        val cursorPos = Vector(205, 150)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
     fun plot_tooltips_ribbonHorizontal(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.RIBBON_HORIZONTAL))
 
@@ -198,10 +250,28 @@ class PlotTooltipsTest : PlotTestBase() {
         return paint(plotCanvasDrawable, cursorPos)
     }
 
+    fun plot_tooltips_densityVertical(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.DENSITY_VERTICAL))
+
+        val cursorPos = Vector(205, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
     fun plot_tooltips_densityHorizontal(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.DENSITY_HORIZONTAL))
 
         val cursorPos = Vector(230, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_tooltips_lollipopVertical(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.LOLLIPOP_VERTICAL))
+
+        val cursorPos = Vector(215, 96)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)
