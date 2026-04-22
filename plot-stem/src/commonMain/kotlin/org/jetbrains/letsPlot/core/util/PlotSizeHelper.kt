@@ -111,7 +111,11 @@ object PlotSizeHelper {
         }
         return when (PlotConfig.figSpecKind(figureSpec)) {
             FigKind.PLOT_SPEC -> {
-                val config = PlotConfigFrontend.create(figureSpec, containerTheme = null) { /*ignore messages*/ }
+                val config = PlotConfigFrontend.create(
+                    figureSpec,
+                    containerTheme = null,
+                    isInDeck = false
+                ) { /*ignore messages*/ }
                 singlePlotSizeDefault(
                     figureSpec,
                     config.facets,

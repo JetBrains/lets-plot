@@ -26,7 +26,7 @@ import kotlin.math.round
 class RasterGeom : GeomBase() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = FilledSquareLegendKeyElementFactory()
+        get() = FilledRectLegendKeyElementFactory()
 
     override fun filterDataPoints(dataPoints: Iterable<DataPointAesthetics>): Pair<Iterable<DataPointAesthetics>, Iterable<DataPointAesthetics>> {
         return GeomUtil.with_X_Y(dataPoints)

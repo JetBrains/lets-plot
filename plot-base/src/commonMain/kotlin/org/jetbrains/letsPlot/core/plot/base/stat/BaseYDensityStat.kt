@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -51,6 +52,8 @@ abstract class BaseYDensityStat(
         } else {
             List(ys.size) { 1.0 }
         }
+        val filteredSize = xs.indices.count { i -> SeriesUtil.allFinite(xs[i], ys[i], ws[i]) }
+        emitRemovedNonFiniteValuesMessage(data.rowCount() - filteredSize, data.rowCount(), messageConsumer)
         val indices = xs.indices.toList()
 
         val overallYRange = statCtx.overallYRange() ?: DoubleSpan(-0.5, 0.5)

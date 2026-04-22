@@ -76,11 +76,19 @@ object BoxHelper {
         }
     }
 
-    fun legendFactory(whiskers: Boolean, showMidline: Boolean): LegendKeyElementFactory =
-        BoxLegendKeyElementFactory(whiskers, showMidline)
+    fun legendFactory(
+        whiskers: Boolean,
+        showMidline: Boolean,
+        supportsKeySizeMultiplier: Boolean = false
+    ): LegendKeyElementFactory =
+        BoxLegendKeyElementFactory(whiskers, showMidline, supportsKeySizeMultiplier)
 }
 
-private class BoxLegendKeyElementFactory(val whiskers: Boolean, val showMidline: Boolean) :
+private class BoxLegendKeyElementFactory(
+    val whiskers: Boolean,
+    val showMidline: Boolean,
+    override val supportsKeySizeMultiplier: Boolean
+) :
     LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {

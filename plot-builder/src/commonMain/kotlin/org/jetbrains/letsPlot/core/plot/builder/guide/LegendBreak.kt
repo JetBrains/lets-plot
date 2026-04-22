@@ -9,28 +9,42 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import kotlin.math.floor
 
 class LegendBreak(val label: String) {
     private val myLayers = ArrayList<LegendBreakLayer>()
 
-    val minimumKeySize: DoubleVector
-        get() {
-            var minSize = DoubleVector.ZERO
-            for (layer in myLayers) {
-                val layerMinKeySize = layer.keyElementFactory.minimumKeySize(layer.dataPoint)
-                minSize = minSize.max(layerMinKeySize)
+    fun preferredKeySize(themeKeySize: DoubleVector): DoubleVector {
+        var preferredSize = DoubleVector.ZERO
+        for (layer in myLayers) {
+            val keySizeMultiplier = if (layer.keyElementFactory.supportsKeySizeMultiplier) {
+                layer.keySizeMultiplier
+            } else {
+                UNIT_KEY_SIZE_MULTIPLIER
             }
-            return minSize
+            val layerSize = sizeWithMultiplier(
+                themeKeySize,
+                pretty(layer.keyElementFactory.minimumKeySize(layer.dataPoint)),
+                keySizeMultiplier
+            )
+            preferredSize = preferredSize.max(layerSize)
         }
+        return preferredSize
+    }
 
     val isEmpty: Boolean
         get() = myLayers.isEmpty()
 
-    fun addLayer(dataPoint: DataPointAesthetics, keyElementFactory: LegendKeyElementFactory) {
+    fun addLayer(
+        dataPoint: DataPointAesthetics,
+        keyElementFactory: LegendKeyElementFactory,
+        keySizeMultiplier: DoubleVector = UNIT_KEY_SIZE_MULTIPLIER
+    ) {
         myLayers.add(
             LegendBreakLayer(
                 dataPoint,
-                keyElementFactory
+                keyElementFactory,
+                keySizeMultiplier
             )
         )
     }
@@ -70,10 +84,37 @@ class LegendBreak(val label: String) {
 
     private class LegendBreakLayer(
         val dataPoint: DataPointAesthetics,
-        val keyElementFactory: LegendKeyElementFactory
+        val keyElementFactory: LegendKeyElementFactory,
+        val keySizeMultiplier: DoubleVector
     )
 
     companion object {
+        val UNIT_KEY_SIZE_MULTIPLIER = DoubleVector(1.0, 1.0)
+
+        private fun pretty(v: DoubleVector): DoubleVector {
+            val margin = 1.0
+            return DoubleVector(
+                floor(v.x / 2) * 2 + 1.0 + margin,
+                floor(v.y / 2) * 2 + 1.0 + margin
+            )
+        }
+
+        private fun sizeWithMultiplier(
+            themeKeySize: DoubleVector,
+            minimumKeySize: DoubleVector,
+            keySizeMultiplier: DoubleVector
+        ): DoubleVector {
+            fun adjust(themeSize: Double, minimumSize: Double, multiplier: Double): Double {
+                val scaledSize = (themeSize * multiplier).coerceAtLeast(0.0)
+                return if (multiplier < 1.0) scaledSize else maxOf(scaledSize, minimumSize)
+            }
+
+            return DoubleVector(
+                adjust(themeKeySize.x, minimumKeySize.x, keySizeMultiplier.x),
+                adjust(themeKeySize.y, minimumKeySize.y, keySizeMultiplier.y)
+            )
+        }
+
         fun simple(
             label: String,
             dataPoint: DataPointAesthetics,

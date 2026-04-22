@@ -130,7 +130,11 @@ class BoxplotGeom : GeomBase(), WithWidth {
         private val DEF_WIDTH_UNIT: DimensionUnit = DimensionUnit.RESOLUTION
         const val HANDLES_GROUPS = false
 
-        private val LEGEND_FACTORY = BoxHelper.legendFactory(whiskers = true, showMidline = true)
+        private val LEGEND_FACTORY = BoxHelper.legendFactory(
+            whiskers = true,
+            showMidline = true,
+            supportsKeySizeMultiplier = true
+        )
 
         private fun clientRectByDataPoint(
             ctx: GeomContext,

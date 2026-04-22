@@ -15,6 +15,7 @@ def stat_summary(mapping=None, *, data=None, geom=None,
                  fun=None, fun_min=None, fun_max=None,
                  quantiles=None,
                  color_by=None, fill_by=None,
+                 na_rm=None,
                  **other_args):
     """
     Display the aggregated values of a single continuous variable grouped along the x axis.
@@ -66,6 +67,8 @@ def stat_summary(mapping=None, *, data=None, geom=None,
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -155,6 +158,7 @@ def stat_summary(mapping=None, *, data=None, geom=None,
                  fun=fun, fun_min=fun_min, fun_max=fun_max,
                  quantiles=quantiles,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -167,6 +171,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
                      bins=None, binwidth=None,
                      center=None, boundary=None,
                      color_by=None, fill_by=None,
+                     na_rm=None,
                      **other_args):
     """
     Display a distribution by dividing variable mapped to x axis into bins
@@ -228,6 +233,8 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -320,6 +327,7 @@ def stat_summary_bin(mapping=None, *, data=None, geom=None,
                  bins=bins, binwidth=binwidth,
                  center=center, boundary=boundary,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -329,6 +337,7 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
               orientation=None,
               n=None, pad=None,
               color_by=None,
+              na_rm=None,
               **other_args):
     """
     Display the empirical cumulative distribution function.
@@ -371,6 +380,8 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
         (-inf, 0) and (inf, 1) are added to the ecdf.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -465,12 +476,14 @@ def stat_ecdf(mapping=None, *, data=None, geom=None,
                  n=n,
                  pad=ecdf_pad,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
 def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=None, inherit_aes=None,
              sampling=None, tooltips=None,
              color_by=None, fill_by=None,
+             na_rm=None,
              **other_args):
     """
     Sum unique values.
@@ -506,6 +519,8 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -582,4 +597,5 @@ def stat_sum(mapping=None, *, data=None, geom=None, position=None, show_legend=N
                  tooltips=tooltips,
                  color_by=color_by,
                  fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)

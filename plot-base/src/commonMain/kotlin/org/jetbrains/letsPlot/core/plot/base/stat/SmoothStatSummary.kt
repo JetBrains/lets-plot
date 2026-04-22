@@ -53,13 +53,6 @@ class SmoothStatSummary(
         return true
     }
 
-    private fun applySampling(data: DataFrame, messageConsumer: (s: String) -> Unit): DataFrame {
-        val msg = "LOESS drew a random sample with max_n=$loessCriticalSize, seed=$samplingSeed"
-        messageConsumer(msg)
-
-        return SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(samplingSeed), data)
-    }
-
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
         if (!hasRequiredValues(data, Aes.Y)) {
             return withEmptyStatValues()
@@ -69,7 +62,7 @@ class SmoothStatSummary(
         var data = data
 
         if (needSampling(data.rowCount())) {
-            data = applySampling(data) {}
+            data = SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(samplingSeed), data)
         }
 
         val valuesY = data.getNumeric(TransformVar.Y)
@@ -156,5 +149,3 @@ class SmoothStatSummary(
         }
     }
 }
-
-

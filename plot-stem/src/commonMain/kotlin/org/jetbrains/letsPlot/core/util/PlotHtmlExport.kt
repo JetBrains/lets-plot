@@ -134,7 +134,11 @@ object PlotHtmlExport {
             return when (PlotConfig.figSpecKind(plotSpec)) {
                 FigKind.PLOT_SPEC,
                 FigKind.SUBPLOTS_SPEC -> {
-                    val config = PlotConfigFrontend.create(plotSpec, containerTheme = null) { /*ignore messages*/ }
+                    val config = PlotConfigFrontend.create(
+                        plotSpec,
+                        containerTheme = null,
+                        isInDeck = false
+                    ) { /*ignore messages*/ }
                     PlotSizeHelper.singlePlotSizeDefault(
                         plotSpec,
                         config.facets, config.containsLiveMap

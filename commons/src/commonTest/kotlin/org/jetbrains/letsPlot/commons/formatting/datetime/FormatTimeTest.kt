@@ -5,7 +5,6 @@
 
 package org.jetbrains.letsPlot.commons.formatting.datetime
 
-import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
 import org.jetbrains.letsPlot.commons.intern.datetime.Time
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,8 +14,8 @@ class FormatTimeTest {
 
     @Test
     fun onlyTime() {
-        val f = DateTimeFormat("%Y-%m-%dT%H:%M:%S")
-        assertEquals("--T04:46:35", f.apply(time))
+        val f = DateTimeFormat("%Y-%m-%dT%H:%M:%S.%f")
+        assertEquals("--T04:46:35.000", f.apply(time))
     }
 
     @Test

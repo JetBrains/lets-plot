@@ -5,11 +5,11 @@
 
 package org.jetbrains.letsPlot.core.plot.base.stat
 
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 class SummaryStat(
     private val yAggFunction: (List<Double>) -> Double,
@@ -32,6 +32,8 @@ class SummaryStat(
         } else {
             List(ys.size) { 0.0 }
         }
+        val filteredSize = xs.zip(ys).count { (x, y) -> SeriesUtil.allFinite(x, y) }
+        emitRemovedNonFiniteValuesMessage(data.rowCount() - filteredSize, data.rowCount(), messageConsumer)
 
         val statData = buildStat(xs, ys)
 

@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
@@ -107,10 +108,14 @@ class SmoothStat constructor(
     }
 
     private fun applySampling(data: DataFrame, messageConsumer: (s: String) -> Unit): DataFrame {
-        val msg = "LOESS drew a random sample with max_n=$loessCriticalSize, seed=$samplingSeed"
-        messageConsumer(msg)
-
-        return SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(samplingSeed), data)
+        val sampled = SamplingUtil.sampleWithoutReplacement(loessCriticalSize, Random(samplingSeed), data)
+        emitRemovedBySamplingMessage(
+            droppedCount = data.rowCount() - sampled.rowCount(),
+            totalCount = data.rowCount(),
+            samplingExpression = "LOESS sampling_random(n=$loessCriticalSize, seed=$samplingSeed)",
+            messageConsumer = messageConsumer
+        )
+        return sampled
     }
 
     override fun apply(data: DataFrame, statCtx: StatContext, messageConsumer: (s: String) -> Unit): DataFrame {
@@ -124,6 +129,12 @@ class SmoothStat constructor(
         if (needSampling(data.rowCount())) {
             data = applySampling(data, messageConsumer)
         }
+
+        emitRemovedNonFiniteValuesMessage(
+            data.rowCount() - finiteRowCount(data),
+            data.rowCount(),
+            messageConsumer
+        )
 
         val valuesY = data.getNumeric(TransformVar.Y)
         if (valuesY.size < 3) {  // at least 3 data points required
@@ -229,6 +240,14 @@ class SmoothStat constructor(
         }
         return result
     }
+
+    private fun finiteRowCount(data: DataFrame): Int {
+        val ys = data.getNumeric(TransformVar.Y)
+        return if (data.has(TransformVar.X)) {
+            val xs = data.getNumeric(TransformVar.X)
+            xs.indices.count { i -> SeriesUtil.allFinite(xs[i], ys[i]) }
+        } else {
+            ys.count { SeriesUtil.isFinite(it) }
+        }
+    }
 }
-
-

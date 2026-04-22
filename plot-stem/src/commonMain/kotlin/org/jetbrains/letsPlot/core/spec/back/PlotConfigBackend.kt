@@ -24,6 +24,7 @@ import org.jetbrains.letsPlot.core.plot.builder.data.DataProcessing
 import org.jetbrains.letsPlot.core.plot.builder.data.OrderOptionUtil.OrderOption
 import org.jetbrains.letsPlot.core.plot.builder.data.YOrientationUtil
 import org.jetbrains.letsPlot.core.spec.Option
+import org.jetbrains.letsPlot.core.spec.Option.Layer.NA_RM
 import org.jetbrains.letsPlot.core.spec.Option.Mapping.toOption
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Meta.GeoDataFrame.GDF
@@ -36,13 +37,14 @@ import org.jetbrains.letsPlot.core.spec.back.data.PlotSampling
 import org.jetbrains.letsPlot.core.spec.config.*
 import org.jetbrains.letsPlot.core.spec.getString
 
-open class PlotConfigBackend(
+open class PlotConfigBackend constructor(
     opts: Map<String, Any>,
     containerTheme: Theme?,
 ) : PlotConfig(
     opts,
     containerTheme,
-    isClientSide = false
+    isClientSide = false,
+    isInDeck = false
 ) {
     private val transformByAes: Map<Aes<*>, Transform>
 
@@ -99,9 +101,9 @@ open class PlotConfigBackend(
         val layerIndexWhereSamplingOccurred = HashSet<Int>()
 
         val dataByLayerAfterStat = dataByLayerAfterStat { layerIndex, message ->
+            val layerConfig = layerConfigs[layerIndex]
             layerIndexWhereSamplingOccurred.add(layerIndex)
-            if (theme.plot().showMessage()) {
-                val layerConfig = layerConfigs[layerIndex]
+            if (theme.plot().showMessage() && !layerConfig.getBoolean(NA_RM)) {
                 val fullMessage = BackendDataProcUtil.createLayerMessage(message, layerConfig)
                 PlotConfigUtil.addComputationMessage(this, fullMessage)
             }

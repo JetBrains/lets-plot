@@ -320,7 +320,7 @@ class OrderOptionsConfigTest {
                 .let(BackendTestUtil::backendSpecTransform)
                 .let {
                     try {
-                        PlotConfigFrontend.create(it) {}
+                        PlotConfigFrontend.createForTesting(it) {}
                     } catch (e: Throwable) {
                         assertEquals(
                             expectedMessage,

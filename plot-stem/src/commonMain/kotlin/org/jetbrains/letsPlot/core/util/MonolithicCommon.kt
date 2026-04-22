@@ -153,7 +153,8 @@ object MonolithicCommon {
         val computationMessages = ArrayList<String>()
         val config = PlotConfigFrontend.create(
             plotSpec,
-            containerTheme = null
+            containerTheme = null,
+            isInDeck = false,
         ) {
             computationMessages.addAll(it)
         }
@@ -252,8 +253,6 @@ object MonolithicCommon {
             null
         }
 
-        val sharedXDomains: List<DoubleSpan?>?
-        val sharedYDomains: List<DoubleSpan?>?
         val sharedDomainsXY = when {
             compositeFigureLayout is CompositeFigureGridLayoutBase &&
                     compositeFigureLayout.hasSharedAxis() -> {
@@ -273,8 +272,9 @@ object MonolithicCommon {
 
             else -> null
         }
-        sharedXDomains = sharedDomainsXY?.first
-        sharedYDomains = sharedDomainsXY?.second
+
+        val sharedXDomains: List<DoubleSpan?>? = sharedDomainsXY?.first
+        val sharedYDomains: List<DoubleSpan?>? = sharedDomainsXY?.second
 
         val elements: List<FigureBuildInfo?> = config.elementConfigs.mapIndexed { index, element ->
             element?.let {

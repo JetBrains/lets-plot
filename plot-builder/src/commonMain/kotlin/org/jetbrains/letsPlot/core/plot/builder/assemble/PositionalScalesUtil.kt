@@ -35,7 +35,8 @@ object PositionalScalesUtil {
         scaleProtoXByTile: List<Scale>,
         scaleProtoYByTile: List<Scale>,
         facets: PlotFacets,
-        coordProvider: CoordProvider
+        coordProvider: CoordProvider,
+        withExpand: Boolean = true,
     ): List<Pair<DoubleSpan, DoubleSpan>> {
 
         var xDomains = ArrayList<DoubleSpan?>()
@@ -63,14 +64,16 @@ object PositionalScalesUtil {
             scaleProtoXByTile,
             adjustedXDomains,
             layersByTile,
-            facets.freeHScale
+            facets.freeHScale,
+            withExpand
         )
         val finalizedYDomains: List<DoubleSpan> = finalizeDomains(
             Aes.Y,
             scaleProtoYByTile,
             adjustedYDomains,
             layersByTile,
-            facets.freeVScale
+            facets.freeVScale,
+            withExpand
         )
 
         return finalizedXDomains.zip(finalizedYDomains)
@@ -81,15 +84,20 @@ object PositionalScalesUtil {
         axisScaleByTile: List<Scale>,
         domainByTile: List<DoubleSpan?>,
         layersByTile: List<List<GeomLayer>>,
-        freeScale: Boolean
+        freeScale: Boolean,
+        withExpand: Boolean
     ): List<DoubleSpan> {
+
+        fun expandDomain(domain: DoubleSpan?, scale: Scale, layers: List<GeomLayer>): DoubleSpan? {
+            return RangeUtil.expandRange(domain, aes, scale, layers, withExpand)
+        }
 
         return when {
             freeScale -> {
                 // Each tile has its own domain
                 domainByTile.mapIndexed { i, v ->
                     // 'expand' ranges and include '0' if necessary
-                    val domainExpanded = RangeUtil.expandRange(v, aes, axisScaleByTile[i], layersByTile[i])
+                    val domainExpanded = expandDomain(v, axisScaleByTile[i], layersByTile[i])
                     SeriesUtil.ensureApplicableRange(domainExpanded)
                 }
             }
@@ -104,10 +112,9 @@ object PositionalScalesUtil {
                     .reduceOrNull { r0, r1 -> RangeUtil.updateRange(r0, r1)!! }
 
                 // 'expand' ranges and include '0' if necessary
-                val domainExpanded = RangeUtil.expandRange(domainOverall, aes, axisScaleByTile[0], layersByTile[0])
-                val domain = SeriesUtil.ensureApplicableRange(domainExpanded, preferableNullDomainOverall)
-
-                layersByTile.map { domain }
+                val domainExpanded = expandDomain(domainOverall, axisScaleByTile[0], layersByTile[0])
+                val domainFinal = SeriesUtil.ensureApplicableRange(domainExpanded, preferableNullDomainOverall)
+                layersByTile.map { domainFinal }
             }
         }
     }
@@ -380,7 +387,8 @@ object PositionalScalesUtil {
             range: DoubleSpan?,
             aes: Aes<Double>,
             scale: Scale,
-            layers: List<GeomLayer>
+            layers: List<GeomLayer>,
+            withExpand: Boolean = true
         ): DoubleSpan? {
             val (lowerLim, upperLim) = scale.transform.let {
                 if (it is ContinuousTransform) it.definedLimits()
@@ -398,7 +406,11 @@ object PositionalScalesUtil {
                 false -> range
             }
 
-            return PlotUtil.rangeWithExpand(range, scale, includeZero)
+            return if (withExpand) {
+                PlotUtil.rangeWithExpand(range, scale, includeZero)
+            } else {
+                range
+            }
         }
 
         private fun updateRange(values: Iterable<Double>, wasRange: DoubleSpan?): DoubleSpan {

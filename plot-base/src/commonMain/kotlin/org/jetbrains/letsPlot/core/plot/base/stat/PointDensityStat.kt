@@ -15,9 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.math3.BlockRealMatrix
-import kotlin.Comparator
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.math.abs
 
 class PointDensityStat(
@@ -59,6 +56,7 @@ class PointDensityStat(
         val xs = data.getNumeric(TransformVar.X)
         val ys = data.getNumeric(TransformVar.Y)
         val finiteIndices = (xs zip ys).indicesOf { (x, y) -> SeriesUtil.allFinite(x, y) }
+        emitRemovedNonFiniteValuesMessage(data.rowCount() - finiteIndices.size, data.rowCount(), messageConsumer)
 
         val xVector = xs.slice(finiteIndices).requireNoNulls()
         val yVector = ys.slice(finiteIndices).requireNoNulls()

@@ -6,11 +6,12 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.allFinite
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isFinite
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isFinite
 
 class YDotplotStat(
     binCount: Int,
@@ -36,6 +37,8 @@ class YDotplotStat(
         } else {
             List(ys.size) { 0.0 }
         }
+        val filteredSize = xs.zip(ys).count { (x, y) -> allFinite(x, y) }
+        emitRemovedNonFiniteValuesMessage(data.rowCount() - filteredSize, data.rowCount(), messageConsumer)
 
         val statData = buildStat(data, xs, ys, statCtx.overallYRange())
 

@@ -56,9 +56,13 @@ class ErrorBarDomainTest {
             containsLiveMap = false
         )
 
-        val (_, yDomain) = errorBarTile.overallXYContinuousDomains()
-        assertEquals(MIN_VALUE - 0.05, yDomain?.lowerEnd, EPSILON)
-        assertEquals(MAX_VALUE + 0.05, yDomain?.upperEnd, EPSILON)
+        val (_, yDomainWithExpand) = errorBarTile.overallXYContinuousDomains(withExpand = true)
+        assertEquals(MIN_VALUE - 0.05, yDomainWithExpand?.lowerEnd, EPSILON)
+        assertEquals(MAX_VALUE + 0.05, yDomainWithExpand?.upperEnd, EPSILON)
+
+        val (_, yDomainNoExpand) = errorBarTile.overallXYContinuousDomains(withExpand = false)
+        assertEquals(MIN_VALUE, yDomainNoExpand?.lowerEnd, EPSILON)
+        assertEquals(MAX_VALUE, yDomainNoExpand?.upperEnd, EPSILON)
     }
 
     companion object {

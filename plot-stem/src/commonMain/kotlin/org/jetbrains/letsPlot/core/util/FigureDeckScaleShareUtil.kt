@@ -22,7 +22,13 @@ internal object FigureDeckScaleShareUtil {
                 isApplicableElement(it) -> {
                     it as PlotConfigFrontend
                     val plotGeomTiles = PlotConfigFrontendUtil.createPlotGeomTiles(it)
-                    plotGeomTiles.overallXYContinuousDomains()
+                    // Do not 'expand' domains here.
+                    // The required 'expand' will be added later, in PlotAssembler (see PositionalScalesUtil.computePlotXYTransformedDomains() call).
+                    // However, for 0-based layers, the 0-value must be included in the domain here, because the domains computed here
+                    // become hard-set limits on the corresponding scales (see PlotConfigFrontendUtil.createPlotGeomTiles()).
+                    // Once set, those limits suppress the 0-inclusion heuristic in PositionalScalesUtil.RangeUtil.expandRange():
+                    // if the lower limit is > 0, 0 will not be re-added to the final domain later (in PlotAssembler).
+                    plotGeomTiles.overallXYContinuousDomains(withExpand = false)
                 }
 
                 else -> Pair(null, null)

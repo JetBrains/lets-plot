@@ -43,14 +43,15 @@ class SimplePlotGeomTiles constructor(
         return listOf(scaleYProto)
     }
 
-    override fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?> {
+    override fun overallXYContinuousDomains(withExpand: Boolean): Pair<DoubleSpan?, DoubleSpan?> {
         check(!containsLiveMap) { "Not applicable to LiveMap." }
         val xyTransformedDomains = PositionalScalesUtil.computePlotXYTransformedDomains(
             coreLayersByTile(),
             listOf(scaleXProto),   // Just one tile
             listOf(scaleYProto),
             PlotFacets.UNDEFINED,
-            coordProvider
+            coordProvider,
+            withExpand
         )
         val pair = xyTransformedDomains[0].let {
             val xTransform = scaleXProto.transform

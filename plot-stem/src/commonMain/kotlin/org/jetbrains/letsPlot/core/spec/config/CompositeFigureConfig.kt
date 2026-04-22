@@ -37,6 +37,7 @@ import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.ROW_HEIGHTS
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Grid.VSPACE
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout
 import org.jetbrains.letsPlot.core.spec.Option.SubPlots.Layout.NAME
+import org.jetbrains.letsPlot.core.spec.config.CompositeFigureConfig.DeckPosition.FIRST
 import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontend
 import org.jetbrains.letsPlot.core.util.PlotSizeHelper
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.ELEMENT_BLANK_SHORTHAND as BLANK
@@ -69,12 +70,18 @@ class CompositeFigureConfig constructor(
             return theme.plot().tagPrefix() + text + theme.plot().tagSuffix()
         }
 
+    private val isDeckLayout: Boolean
+
     init {
+        val layoutOptions = OptionsAccessor(getMap(Option.SubPlots.LAYOUT))
+        val layoutKind = layoutOptions.getStringSafe(NAME)
+        isDeckLayout = layoutKind == Layout.SUBPLOTS_DECK
+
         val fontFamilyRegistry: FontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
         theme = ThemeConfig(
             themeOptions = getMap(THEME),
             containerTheme = containerTheme,
-            fontFamilyRegistry
+            fontFamilyRegistry = fontFamilyRegistry,
         ).theme
 
         @Suppress("UNCHECKED_CAST")
@@ -102,16 +109,23 @@ class CompositeFigureConfig constructor(
             }
         }
 
-        val layoutOptions = OptionsAccessor(getMap(Option.SubPlots.LAYOUT))
-        val layoutKind = layoutOptions.getStringSafe(NAME)
-
         // The "deck" layout: apply the "deck" overlay theme to all sub-figures except the first one.
-        val figureSpecsFinal = if (layoutKind == Layout.SUBPLOTS_DECK) {
+        val figureSpecsFinal = if (isDeckLayout) {
+            val ontopX = theme.horizontalAxis(false).isOntop()
+            val ontopY = theme.verticalAxis(false).isOntop()
+            val maxInd = figureSpecsWithToolbarOptions.size - 1
+
             val deckShareConfig = DeckScaleShareConfig(layoutOptions)
             figureSpecsWithToolbarOptions.mapIndexed { index, spec ->
-                when (index) {
-                    0 -> spec  // The "base" figure.
-                    else -> spec?.let { applyDeckOverlayTheme(spec, deckShareConfig.shareX, deckShareConfig.shareY) }
+                spec?.let {
+                    applyDeckOverlayTheme(
+                        spec,
+                        deckShareConfig.shareX,
+                        deckShareConfig.shareY,
+                        position = DeckPosition.ofIndex(index, maxInd),
+                        ontopX = ontopX,
+                        ontopY = ontopY
+                    )
                 }
             }
         } else {
@@ -124,7 +138,8 @@ class CompositeFigureConfig constructor(
                 when (PlotConfig.figSpecKind(spec)) {
                     FigKind.PLOT_SPEC -> PlotConfigFrontend.create(
                         plotSpec = spec,
-                        containerTheme = theme
+                        containerTheme = theme,
+                        isInDeck = isDeckLayout,
                     ) { computationMessages.addAll(it) }
 
                     FigKind.SUBPLOTS_SPEC -> CompositeFigureConfig(
@@ -254,30 +269,67 @@ class CompositeFigureConfig constructor(
             ThemeOption.PANEL_GRID to BLANK,
         )
 
-        private val DECK_OVERLAY_THEME_BLANK_X = mapOf(
-            ThemeOption.AXIS_LINE_X to BLANK,
+        private val AXIS_BLANK_X = mapOf(
+//            ThemeOption.AXIS_LINE_X to BLANK,
             ThemeOption.AXIS_TICKS_X to BLANK,
             ThemeOption.AXIS_TEXT_X to BLANK,
             ThemeOption.AXIS_TITLE_X to BLANK,
             ThemeOption.AXIS_TOOLTIP_X to BLANK,
         )
 
-        private val DECK_OVERLAY_THEME_BLANK_Y = mapOf(
-            ThemeOption.AXIS_LINE_Y to BLANK,
+        private val AXIS_BLANK_Y = mapOf(
+//            ThemeOption.AXIS_LINE_Y to BLANK,
             ThemeOption.AXIS_TICKS_Y to BLANK,
             ThemeOption.AXIS_TEXT_Y to BLANK,
             ThemeOption.AXIS_TITLE_Y to BLANK,
             ThemeOption.AXIS_TOOLTIP_Y to BLANK,
         )
 
-        private fun applyDeckOverlayTheme(spec: Map<String, Any>, shareX: Boolean, shareY: Boolean): Map<String, Any> {
-            val blankSharedAxes = when {
-                shareX && shareY -> DECK_OVERLAY_THEME_BLANK_X + DECK_OVERLAY_THEME_BLANK_Y
-                shareX -> DECK_OVERLAY_THEME_BLANK_X
-                shareY -> DECK_OVERLAY_THEME_BLANK_Y
-                else -> emptyMap()
+        private val AXIS_LINE_BLANK_X = mapOf(
+            ThemeOption.AXIS_LINE_X to BLANK,
+        )
+
+        private val AXIS_LINE_BLANK_Y = mapOf(
+            ThemeOption.AXIS_LINE_Y to BLANK,
+        )
+
+        private fun applyDeckOverlayTheme(
+            spec: Map<String, Any>,
+            shareX: Boolean,
+            shareY: Boolean,
+            position: DeckPosition,
+            ontopX: Boolean,
+            ontopY: Boolean
+        ): Map<String, Any> {
+
+            val overlayTheme = if (position == FIRST) {
+                // The first figure (base plot) retains all axis elements with one possible exception: axis line.
+                val axisLineX = if (shareX && ontopX) AXIS_LINE_BLANK_X else emptyMap()
+                val axisLineY = if (shareY && ontopY) AXIS_LINE_BLANK_Y else emptyMap()
+                axisLineX + axisLineY
+            } else if (position == DeckPosition.MIDDLE) {
+                // Middle figures in the deck have blank axes.
+                val sharedAxesTheme = when {
+                    shareX && shareY -> AXIS_BLANK_X + AXIS_BLANK_Y + AXIS_LINE_BLANK_X + AXIS_LINE_BLANK_Y
+                    shareX -> AXIS_BLANK_X + AXIS_LINE_BLANK_X
+                    shareY -> AXIS_BLANK_Y + AXIS_LINE_BLANK_Y
+                    else -> emptyMap()
+                }
+
+                DECK_OVERLAY_THEME_BASE + sharedAxesTheme
+            } else {
+                // The last figure (topmost layer) has blank axes, except the axis line, which is shown if shared and ontop=True.
+                val sharedAxesTheme = when {
+                    shareX && shareY -> AXIS_BLANK_X + AXIS_BLANK_Y
+                    shareX -> AXIS_BLANK_X
+                    shareY -> AXIS_BLANK_Y
+                    else -> emptyMap()
+                }
+                val axisLineX = if (shareX && !ontopX) AXIS_LINE_BLANK_X else emptyMap()
+                val axisLineY = if (shareY && !ontopY) AXIS_LINE_BLANK_Y else emptyMap()
+
+                DECK_OVERLAY_THEME_BASE + sharedAxesTheme + axisLineX + axisLineY
             }
-            val overlayTheme = DECK_OVERLAY_THEME_BASE + blankSharedAxes
 
             @Suppress("UNCHECKED_CAST")
             val existingTheme = (spec[THEME] as? Map<String, Any>) ?: emptyMap()
@@ -299,6 +351,22 @@ class CompositeFigureConfig constructor(
                     Option.SubPlots.Guides.COLLECT -> COLLECT
                     Option.SubPlots.Guides.KEEP -> KEEP
                     else -> throw IllegalArgumentException("'guides'='$option'. Use: 'auto', 'collect', or 'keep'.")
+                }
+            }
+        }
+    }
+
+    private enum class DeckPosition() {
+        FIRST,
+        MIDDLE,
+        LAST;  // topmost layer in the deck, drawn last
+
+        companion object {
+            fun ofIndex(index: Int, maxIndex: Int): DeckPosition {
+                return when (index) {
+                    0 -> FIRST
+                    maxIndex -> LAST
+                    else -> MIDDLE
                 }
             }
         }

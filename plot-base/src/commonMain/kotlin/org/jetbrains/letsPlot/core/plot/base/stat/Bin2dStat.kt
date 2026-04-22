@@ -6,14 +6,14 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.StatContext
-import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.ensureApplicableRange
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.isBeyondPrecision
 import org.jetbrains.letsPlot.core.commons.mutables.MutableDouble
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.StatContext
+import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import kotlin.math.floor
 
 /**
@@ -51,6 +51,14 @@ class Bin2dStat(
             return withEmptyStatValues()
         }
 
+        val xs = data.getNumeric(TransformVar.X)
+        val ys = data.getNumeric(TransformVar.Y)
+        emitRemovedNonFiniteValuesMessage(
+            xs.zip(ys).count { (x, y) -> !SeriesUtil.allFinite(x, y) },
+            data.rowCount(),
+            messageConsumer
+        )
+
         val xRange = statCtx.overallXRange()
         val yRange = statCtx.overallYRange()
         if (xRange == null || yRange == null) {
@@ -78,8 +86,8 @@ class Bin2dStat(
             densityNormalizingFactor(xRangeFinal.length, yRangeFinal.length, countTotal)
 
         val binsData = computeBins(
-            data.getNumeric(TransformVar.X),
-            data.getNumeric(TransformVar.Y),
+            xs,
+            ys,
             xRangeFinal.lowerEnd,
             yRangeFinal.lowerEnd,
             xCountAndWidthFinal.count,

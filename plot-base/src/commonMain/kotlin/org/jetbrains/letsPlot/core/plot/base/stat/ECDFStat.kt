@@ -24,7 +24,10 @@ class ECDFStat(
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(data.getNumeric(TransformVar.X))
+        val xs = data.getNumeric(TransformVar.X)
+        emitRemovedNonFiniteValuesMessage(xs.count { !(it?.isFinite() ?: false) }, xs.size, messageConsumer)
+
+        val statData = buildStat(xs)
 
         return DataFrame.Builder()
             .putNumeric(Stats.X, statData.getValue(Stats.X))

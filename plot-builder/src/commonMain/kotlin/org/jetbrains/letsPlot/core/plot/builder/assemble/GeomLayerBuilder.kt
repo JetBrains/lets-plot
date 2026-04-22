@@ -233,7 +233,6 @@ class GeomLayerBuilder(
         return MyGeomLayer(
             data,
             geomProvider,
-            getStatName(stat),
             myGeomTheme,
             posProvider,
             groupingContext.groupMapper,
@@ -266,7 +265,6 @@ class GeomLayerBuilder(
     private class MyGeomLayer(
         override val dataFrame: DataFrame,
         geomProvider: GeomProvider,
-        override val statName: String,
         geomTheme: GeomTheme,
         override val posProvider: PosProvider,
         override val group: (Int) -> Int,
@@ -386,13 +384,6 @@ class GeomLayerBuilder(
     }
 
     companion object {
-
-        fun getStatName(stat: Stat): String {
-            return stat::class.simpleName!!
-                .replace("Stat", "")
-                .replace("([a-z])([A-Z]+)".toRegex(), "$1_$2")
-                .lowercase()
-        }
 
         fun demoAndTest(
             geomProvider: GeomProvider,

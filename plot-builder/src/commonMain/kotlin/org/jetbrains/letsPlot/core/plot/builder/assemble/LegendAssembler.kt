@@ -23,7 +23,6 @@ import org.jetbrains.letsPlot.core.plot.builder.assemble.LegendAssemblerUtil.map
 import org.jetbrains.letsPlot.core.plot.builder.guide.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendBoxInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.Common.Legend
-import kotlin.math.floor
 import kotlin.math.min
 
 class LegendAssembler(
@@ -97,10 +96,14 @@ class LegendAssembler(
         for (legendLayer in legendLayers) {
             val keyElementFactory = legendLayer.keyElementFactory
             val dataPoints = legendLayer.keyAesthetics.dataPoints().iterator()
-            for (label in legendLayer.labels) {
+            for ((index, label) in legendLayer.labels.withIndex()) {
                 legendBreaksByLabel.getOrPut(label) {
                     LegendBreak(wrap(label, Legend.LINES_MAX_LENGTH, Legend.LINES_MAX_COUNT))
-                }.addLayer(dataPoints.next(), keyElementFactory)
+                }.addLayer(
+                    dataPoints.next(),
+                    keyElementFactory,
+                    legendLayer.keySizeMultipliers.getOrElse(index) { LegendBreak.UNIT_KEY_SIZE_MULTIPLIER }
+                )
             }
         }
 
@@ -139,7 +142,8 @@ class LegendAssembler(
         val labels: List<String>,
         val guideKeys: List<GuideKey>,
         val index: Int? = null,
-        val isMarginal: Boolean
+        val isMarginal: Boolean,
+        val keySizeMultipliers: List<DoubleVector>
     ) {
         companion object {
             fun createDefaultLegendLayer(
@@ -181,6 +185,11 @@ class LegendAssembler(
                 }
 
                 val labelValues = processOverrideAesValues(labelsValuesByAes, overrideAesValues)
+                val keySizeMultipliers = createKeySizeMultipliers(
+                    labelsValuesByAes,
+                    labelValues.first,
+                    overrideAesValues
+                )
 
                 val keyAesthetics = mapToAesthetics(
                     labelValues.second,
@@ -203,7 +212,8 @@ class LegendAssembler(
                     keyAesthetics,
                     labels = labelValues.first,
                     guideKeys = aesList.map(GuideKey::fromAes),
-                    isMarginal = isMarginal
+                    isMarginal = isMarginal,
+                    keySizeMultipliers = keySizeMultipliers
                 )
             }
 
@@ -230,7 +240,8 @@ class LegendAssembler(
                     labels = listOf(customLegendOptions.label),
                     guideKeys = listOf(GuideKey.fromName(customLegendOptions.group)),
                     customLegendOptions.index,
-                    isMarginal
+                    isMarginal,
+                    keySizeMultipliers = listOf(keySizeMultiplier(overrideAesValues))
                 )
             }
         }
@@ -251,18 +262,9 @@ class LegendAssembler(
 
             val legendDirection = LegendAssemblerUtil.legendDirection(theme)
 
-            // key size
-            fun pretty(v: DoubleVector): DoubleVector {
-                val margin = 1.0
-                return DoubleVector(
-                    floor(v.x / 2) * 2 + 1.0 + margin,
-                    floor(v.y / 2) * 2 + 1.0 + margin
-                )
-            }
-
             val themeKeySize = theme.keySize()
             val keySizes = breaks
-                .map { br -> themeKeySize.max(pretty(br.minimumKeySize)) }
+                .map { br -> br.preferredKeySize(themeKeySize) }
                 .let { sizes ->
                     // Use max height for horizontal and max width for vertical legend for better (central) alignment
                     if (legendDirection == LegendDirection.HORIZONTAL) {
@@ -406,5 +408,52 @@ internal fun createOverrideAesValueLists(
         }
     }
     return overrideAesValueLists
+}
+
+internal fun createKeySizeMultipliers(
+    labelsValuesByAes: Map<Aes<*>, Pair<List<String>, List<Any?>>>,
+    keyLabels: List<String>,
+    overrideAesValues: Map<Aes<*>, Any>
+): List<DoubleVector> {
+    val maxLabelsSize = labelsValuesByAes.values.map { it.first.size }.maxOrNull() ?: 0
+    val overrideAesValueLists = createOverrideAesValueLists(overrideAesValues, maxLabelsSize)
+    val widthValues = overrideAesValueLists[Aes.WIDTH]
+    val heightValues = overrideAesValueLists[Aes.HEIGHT]
+
+    if (widthValues == null && heightValues == null) {
+        return List(keyLabels.size) { LegendBreak.UNIT_KEY_SIZE_MULTIPLIER }
+    }
+
+    fun overrideValue(aes: Aes<Double>, values: List<Any?>?, label: String): Double {
+        if (values == null) return 1.0
+
+        val labels = labelsValuesByAes[aes]?.first
+            ?: labelsValuesByAes.values.firstOrNull()?.first
+            ?: return 1.0
+
+        val index = labels.indices.lastOrNull { labels[it] == label } ?: return 1.0
+        val value = values.getOrNull(index) as? Number ?: return 1.0
+        val multiplier = value.toDouble()
+        return if (multiplier.isFinite()) multiplier else 1.0
+    }
+
+    return keyLabels.map { label ->
+        DoubleVector(
+            overrideValue(Aes.WIDTH, widthValues, label),
+            overrideValue(Aes.HEIGHT, heightValues, label)
+        )
+    }
+}
+
+internal fun keySizeMultiplier(overrideAesValues: Map<Aes<*>, Any>): DoubleVector {
+    fun overrideValue(aes: Aes<Double>): Double {
+        val multiplier = (overrideAesValues[aes] as? Number)?.toDouble() ?: return 1.0
+        return if (multiplier.isFinite()) multiplier else 1.0
+    }
+
+    return DoubleVector(
+        overrideValue(Aes.WIDTH),
+        overrideValue(Aes.HEIGHT)
+    )
 }
 
