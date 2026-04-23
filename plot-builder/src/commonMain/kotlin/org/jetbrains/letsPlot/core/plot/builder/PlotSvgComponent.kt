@@ -23,6 +23,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
@@ -110,7 +111,7 @@ class PlotSvgComponent constructor(
             }
             errorLabel.textColor().set(textColor)
             errorLabel.setFontSize(12.0)
-            errorLabel.setConstantLineHeight(16.0)
+            errorLabel.setConstantLineMetrics(LineMetrics.ascentOnly(16.0))
             errorLabel.setFontWeight("normal")
             errorLabel.setFontStyle("normal")
             errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)

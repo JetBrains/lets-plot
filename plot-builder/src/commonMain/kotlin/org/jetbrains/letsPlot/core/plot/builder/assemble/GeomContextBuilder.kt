@@ -6,13 +6,13 @@
 package org.jetbrains.letsPlot.core.plot.builder.assemble
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
@@ -152,13 +152,13 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return aestheticMappers?.containsKey(aes) ?: false
         }
 
-        override fun estimateTextSize(
+        override fun estimateLineDimensions(
             text: String,
             family: String,
             size: Double,
             isBold: Boolean,
             isItalic: Boolean
-        ): List<DoubleVector> {
+        ): List<LineDimensions> {
             val registry = fontFamilyRegistry
             check(registry != null) { "Font-family registry is not specified." }
             @Suppress("NAME_SHADOWING")
@@ -172,7 +172,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
                     isBold = isBold,
                     isItalic = isItalic
                 ),
-            ).dimensions(text)
+            ).lineDimensions(text)
         }
 
         override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {

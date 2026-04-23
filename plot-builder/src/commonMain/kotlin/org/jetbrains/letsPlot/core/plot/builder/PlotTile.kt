@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -35,6 +36,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Compani
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
@@ -228,7 +230,7 @@ internal class PlotTile constructor(
 
         val textSize = FacetedPlotLayout.titleSize(label, theme)
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val lineHeights = labelSpec.heights(label)
+        val metricsByLine = labelSpec.lineMetrics(label)
         val className = if (isColumnLabel) "x" else "y"
         val rotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
 
@@ -240,13 +242,13 @@ internal class PlotTile constructor(
             textBounds,
             fontSize,
             textSize,
-            lineHeights.firstOrNull() ?: fontSize,
+            metricsByLine.firstOrNull() ?: LineMetrics.ascentOnly(fontSize),
             theme.stripTextJustification(),
             rotation
         )
         lab.setHorizontalAnchor(hAnchor)
         lab.setFontSize(labelSpec.font.size.toDouble())
-        lab.setLineHeights(lineHeights)
+        lab.setLineMetrics(metricsByLine)
         lab.moveTo(pos)
         rotation?.let { lab.rotate(it.angle) }
 

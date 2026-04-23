@@ -257,7 +257,6 @@ internal class Latex(
 
     internal abstract inner class LatexNode(val children: List<LatexNode>, protected val level: Int) : RichTextNode.RichSpan() {
         protected abstract fun estimateNodeWidth(font: Font): Double
-        abstract override fun estimateHeight(font: Font): Double
 
         fun flatListOfAllDescendants(): List<LatexNode> {
             fun childrenWithGrandchildren(nodes: List<LatexNode>): List<LatexNode> {
@@ -280,8 +279,8 @@ internal class Latex(
         override fun estimateWidth(font: Font): Double =
             node.estimateWidth(font)
 
-        override fun estimateHeight(font: Font): Double =
-            node.estimateHeight(font)
+        override fun estimateLineMetrics(font: Font): LineMetrics =
+            node.estimateLineMetrics(font)
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return node.render(context, prefixWidth)
@@ -294,8 +293,8 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun estimateHeight(font: Font): Double {
-            return font.size.toDouble()
+        override fun estimateLineMetrics(font: Font): LineMetrics {
+            return LineMetrics.plainText(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -309,8 +308,11 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font) }
         }
 
-        override fun estimateHeight(font: Font): Double {
-            return children.maxOf { it.estimateHeight(font) }
+        override fun estimateLineMetrics(font: Font): LineMetrics {
+            return LineMetrics.mergeOnBaseline(
+                metrics = children.map { it.estimateLineMetrics(font) },
+                defaultIfEmpty = LineMetrics.plainText(font)
+            )
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -330,8 +332,8 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun estimateHeight(font: Font): Double {
-            return content.estimateHeight(font)
+        override fun estimateLineMetrics(font: Font): LineMetrics {
+            return content.estimateLineMetrics(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -345,8 +347,8 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun estimateHeight(font: Font): Double {
-            return content.estimateHeight(font)
+        override fun estimateLineMetrics(font: Font): LineMetrics {
+            return content.estimateLineMetrics(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -354,6 +356,7 @@ internal class Latex(
         }
     }
 
+    // Nested fractions are not supported: numerator and denominator are assumed to contain non-fraction content.
     internal inner class FractionNode(
         private val numerator: LatexNode,
         private val denominator: LatexNode,
@@ -364,8 +367,14 @@ internal class Latex(
             return max(numerator.estimateWidth(font), denominator.estimateWidth(font))
         }
 
-        override fun estimateHeight(font: Font): Double {
-            return numerator.estimateHeight(font) + denominator.estimateHeight(font)
+        override fun estimateLineMetrics(font: Font): LineMetrics {
+            val numeratorMetrics = numerator.estimateLineMetrics(font)
+            val denominatorMetrics = denominator.estimateLineMetrics(font)
+            val fractionShift = FRACTION_RELATIVE_SHIFT * font.size
+            return LineMetrics(
+                ascent = numeratorMetrics.ascent + fractionShift,
+                descent = denominatorMetrics.height - fractionShift
+            )
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {

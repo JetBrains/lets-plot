@@ -6,15 +6,15 @@
 package demo.plot.common.model
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 
 /**
@@ -63,13 +63,13 @@ class EmptyGeomContext : GeomContext {
 
     override fun isMappedAes(aes: Aes<*>): Boolean = false
 
-    override fun estimateTextSize(
+    override fun estimateLineDimensions(
         text: String,
         family: String,
         size: Double,
         isBold: Boolean,
         isItalic: Boolean
-    ): List<DoubleVector> {
+    ): List<LineDimensions> {
         @Suppress("NAME_SHADOWING")
         val family = DefaultFontFamilyRegistry().get(family)
         return PlotLabelSpec(
@@ -79,6 +79,6 @@ class EmptyGeomContext : GeomContext {
                 isBold = isBold,
                 isItalic = isItalic
             ),
-        ).dimensions(text)
+        ).lineDimensions(text)
     }
 }

@@ -30,36 +30,32 @@ object RichText {
         return svgLines
     }
 
-    fun estimateMaxWidth(
+    fun estimateLineDimensions(
         text: String,
         font: Font,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
-    ): Double {
-        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
-        val widths = lines.map { line ->
-            line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font) ?: 0.0 }
-        }
+    ): List<LineDimensions> {
+        val defaultLineMetrics = LineMetrics.plainText(font)
+        val defaultDimensions = LineDimensions(0.0, defaultLineMetrics)
 
-        return widths.maxOrNull() ?: 0.0
-    }
-
-    fun estimateHeights(
-        text: String,
-        font: Font,
-        wrapLength: Int = -1,
-        maxLinesCount: Int = -1,
-        markdown: Boolean = false,
-    ): List<Double> {
         val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
-        val regularLineHeight = RichTextNode.Text("").estimateHeight(font)
         if (lines.isEmpty()) {
-            return listOf(regularLineHeight)
+            return listOf(defaultDimensions)
         }
         return lines.map { line ->
-            if (line.isEmpty()) regularLineHeight
-            else line.maxOf { term -> (term as? RichTextNode.RichSpan)?.estimateHeight(font) ?: 0.0 }
+            if (line.isEmpty()) defaultDimensions
+            else {
+                val terms = line.mapNotNull { term -> term as? RichTextNode.RichSpan }
+                LineDimensions(
+                    width = terms.sumOf { term -> term.estimateWidth(font) },
+                    metrics = LineMetrics.mergeOnBaseline(
+                        metrics = terms.map { term -> term.estimateLineMetrics(font) },
+                        defaultIfEmpty = defaultLineMetrics
+                    )
+                )
+            }
         }
     }
 
@@ -276,7 +272,7 @@ object RichText {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font): Double
-            abstract fun estimateHeight(font: Font): Double
+            abstract fun estimateLineMetrics(font: Font): LineMetrics
             abstract fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>>
 
             // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
@@ -323,8 +319,8 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun estimateHeight(font: Font): Double {
-                return font.size.toDouble()
+            override fun estimateLineMetrics(font: Font): LineMetrics {
+                return LineMetrics.plainText(font)
             }
 
             override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {

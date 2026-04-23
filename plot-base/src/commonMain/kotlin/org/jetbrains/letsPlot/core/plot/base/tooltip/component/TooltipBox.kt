@@ -9,8 +9,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.*
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipStyle
@@ -19,8 +24,10 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox.Orient
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox.PointerDirection.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
+import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 class TooltipBox(
     private val styleSheet: StyleSheet
@@ -464,23 +471,22 @@ class TooltipBox(
             val titleComponent = Label(titleLine)
             titleComponent.addClassName(TooltipStyle.TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            val lineHeights = estimateLineHeights(titleLine, TooltipStyle.TOOLTIP_TITLE).map { height ->
-                (height ?: fontSize) + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS
-            }
-            titleComponent.setLineHeights(lineHeights)
+            val defaultLineMetrics = LineMetrics.ascentOnly(fontSize)
+            val metricsByLine = estimateLineMetrics(titleLine, TooltipStyle.TOOLTIP_TITLE).map { it ?: defaultLineMetrics }
+            titleComponent.setLineMetrics(metricsByLine)
             titleComponent.setFontSize(fontSize)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
         }
 
-        private fun estimateLineHeights(line: String, className: String): List<Double?> {
-            val fontSize = styleSheet.getTextStyle(className).size
+        private fun estimateLineMetrics(line: String, className: String): List<LineMetrics?> {
+            val style = styleSheet.getTextStyle(className)
             return line
                 .split("\n")
                 .map { Label(it).apply {
                     addClassName(className)
-                    setFontSize(fontSize)
+                    setFontSize(style.size)
                 } }
                 .map { lineTextLabel ->
                     with(myLinesContainer.children()) {
@@ -490,6 +496,50 @@ class TooltipBox(
                         height
                     }
                 }
+                .let { estimatedHeights ->
+                    estimateBaseline(line, style, estimatedHeights)
+                }
+        }
+
+        // For line-height estimation, we currently treat the SVG bounding box as the single source of truth.
+        // But we need a baseline-aware height, so we also have to get the baseline,
+        // and that information is only available from RichText.estimateLineMetrics().
+        // This makes the algorithm more complex.
+        // In practice, though, RichText.estimateLineMetrics() may already be accurate enough,
+        // so we should consider relying on it alone and dropping the merge with getBBox().
+        private fun estimateBaseline(
+            line: String,
+            style: TextStyle,
+            estimatedHeights: List<Double?>
+        ): List<LineMetrics?> {
+            val font = Font(
+                family = DefaultFontFamilyRegistry().get(style.family),
+                size = style.size.roundToInt(),
+                isBold = style.face.bold,
+                isItalic = style.face.italic
+            )
+            val estimatedLineMetrics = RichText.estimateLineDimensions(line, font).map(LineDimensions::metrics)
+            if (estimatedLineMetrics.size == estimatedHeights.size) {
+                // One scale for the whole block, not per line: keeps (ascent - descent) equal
+                // across lines so Label's baseline stacking stays consistent between plain and fraction lines.
+                val scale = estimatedLineMetrics.sumOf(LineMetrics::height).let { totalMetricsHeight ->
+                    if (totalMetricsHeight > 0) {
+                        estimatedHeights.filterNotNull().sum() / totalMetricsHeight
+                    } else 1.0
+                }
+                return (estimatedLineMetrics zip estimatedHeights).map { (lineMetrics, height) ->
+                    if (height == null) {
+                        null
+                    } else {
+                        LineMetrics(
+                            lineMetrics.ascent * scale + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS,
+                            lineMetrics.descent * scale
+                        )
+                    }
+                }
+            }
+            // Fallback
+            return estimatedLineMetrics
         }
 
         private fun layoutTitle(
@@ -539,26 +589,24 @@ class TooltipBox(
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }
 
-            // calculate heights of original label/value lines
-            val lineHeights: List<Pair<List<Double>?, List<Double>>> = lines.map { line ->
+            // calculate LineMetrics of original label/value lines
+            val defaultLabelMetrics = LineMetrics.ascentOnly(labelFontSize)
+            val defaultValueMetrics = LineMetrics.ascentOnly(valueFontSize)
+            val metricsByLine: List<Pair<List<LineMetrics>?, List<LineMetrics>>> = lines.map { line ->
                 Pair(
                     line.label?.let {
-                        estimateLineHeights(it, TooltipStyle.TOOLTIP_LABEL).map { height ->
-                            (height ?: labelFontSize) + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS
-                        }
+                        estimateLineMetrics(it, TooltipStyle.TOOLTIP_LABEL).map { labelMetrics -> labelMetrics ?: defaultLabelMetrics }
                     },
-                    estimateLineHeights(line.value, textClassName).map { height ->
-                        (height ?: valueFontSize) + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS
-                    }
+                    estimateLineMetrics(line.value, textClassName).map { valueMetrics -> valueMetrics ?: defaultValueMetrics }
                 )
             }
 
             // set vertical shifts for tspan elements
-            lineHeights.zip(components).onEach { (heights, component) ->
-                val (labelHeights, valueHeights) = heights
+            metricsByLine.zip(components).onEach { (metrics, component) ->
+                val (labelLineMetrics, valueLineMetrics) = metrics
                 val (labelComponent, valueComponent) = component
-                labelHeights?.let { labelComponent?.setLineHeights(it) }
-                valueComponent.setLineHeights(valueHeights)
+                labelLineMetrics?.let { labelComponent?.setLineMetrics(it) }
+                valueComponent.setLineMetrics(valueLineMetrics)
             }
 
             val rawBBoxes = components.map { (label, value) -> getBBox(label) to getBBox(value) }
@@ -567,8 +615,13 @@ class TooltipBox(
             val maxLabelWidth = rawBBoxes.maxOf { (labelBbox) -> labelBbox?.width ?: 0.0 }
 
             // max line height - will be used as default height for empty string
-            val defaultLineHeight = lineHeights
-                .flatMap { (labelHeights, valueHeights) -> listOfNotNull(labelHeights?.maxOrNull(), valueHeights.maxOrNull()) }
+            val defaultLineHeight = metricsByLine
+                .flatMap { (labelLineMetrics, valueLineMetrics) ->
+                    listOfNotNull(
+                        labelLineMetrics?.maxOfOrNull(LineMetrics::height),
+                        valueLineMetrics.maxOfOrNull(LineMetrics::height)
+                    )
+                }
                 .maxOrNull()
                 ?: valueFontSize
 

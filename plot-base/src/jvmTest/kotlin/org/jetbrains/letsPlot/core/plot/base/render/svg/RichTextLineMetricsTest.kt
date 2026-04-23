@@ -8,39 +8,50 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.test.Test
 
-class RichTextLineHeightTest {
+class RichTextLineMetricsTest {
     @Test
-    fun estimateHeightsForTwoPlainTextLines() {
-        val heights = RichText.estimateHeights(
+    fun estimateBaselineMetricsForTwoPlainTextLines() {
+        val lineMetrics = RichText.estimateLineDimensions(
             text = "A\nB",
             font = DEF_FONT
-        )
+        ).map(LineDimensions::metrics)
 
-        assertThat(heights).containsExactly(16.0, 16.0)
+        assertThat(lineMetrics).containsExactly(
+            LineMetrics(16.0, 0.0),
+            LineMetrics(16.0, 0.0)
+        )
     }
 
     @Test
-    fun estimateHeightsForPlainTextThenFraction() {
-        val heights = RichText.estimateHeights(
+    fun estimateBaselineMetricsForPlainTextThenFraction() {
+        val lineMetrics = RichText.estimateLineDimensions(
             text = "A\n\\( \\frac{B}{C} \\)",
             font = DEF_FONT
-        )
+        ).map(LineDimensions::metrics)
 
-        assertThat(heights).containsExactly(16.0, 32.0)
+        assertThat(lineMetrics).containsExactly(
+            LineMetrics(16.0, 0.0),
+            LineMetrics(24.0, 8.0)
+        )
     }
 
     @Test
-    fun estimateHeightsForFractionThenPlainText() {
-        val heights = RichText.estimateHeights(
+    fun estimateBaselineMetricsForFractionThenPlainText() {
+        val lineMetrics = RichText.estimateLineDimensions(
             text = "\\( A\\frac{B}{C} \\)\nD",
             font = DEF_FONT
-        )
+        ).map(LineDimensions::metrics)
 
-        assertThat(heights).containsExactly(32.0, 16.0)
+        assertThat(lineMetrics).containsExactly(
+            LineMetrics(24.0, 8.0),
+            LineMetrics(16.0, 0.0)
+        )
     }
 
     @Test
@@ -48,9 +59,9 @@ class RichTextLineHeightTest {
         val label = Label("A\n\\( \\frac{B}{C} \\)")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.setLineHeights(listOf(16.0, 32.0))
+        label.setLineMetrics(listOf(LineMetrics(16.0, 0.0), LineMetrics(24.0, 8.0)))
 
-        assertThat(lineYPositions(label)).containsExactly(92.0, 116.0)
+        assertThat(lineYPositions(label)).containsExactly(88.0, 112.0)
     }
 
     @Test
@@ -58,17 +69,17 @@ class RichTextLineHeightTest {
         val label = Label("\\( \\frac{A}{B} \\)\nC")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.setLineHeights(listOf(32.0, 16.0))
+        label.setLineMetrics(listOf(LineMetrics(24.0, 8.0), LineMetrics(16.0, 0.0)))
 
-        assertThat(lineYPositions(label)).containsExactly(84.0, 108.0)
+        assertThat(lineYPositions(label)).containsExactly(88.0, 112.0)
     }
 
     @Test
-    fun topAnchoredLabelKeepsCumulativeLineHeights() {
+    fun topAnchoredLabelStacksLinesByBaselineOffsets() {
         val label = Label("A\n\\( \\frac{B}{C} \\)")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.TOP)
-        label.setLineHeights(listOf(16.0, 32.0))
+        label.setLineMetrics(listOf(LineMetrics(16.0, 0.0), LineMetrics(24.0, 8.0)))
 
         assertThat(lineYPositions(label)).containsExactly(100.0, 124.0)
     }

@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -30,7 +31,7 @@ class Label(
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
-    private val myLineHeights = mutableListOf<Double>()
+    private val myLineMetrics = mutableListOf<LineMetrics>()
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
@@ -135,47 +136,38 @@ class Label(
         verticalRepositionLines()
     }
 
-    fun setConstantLineHeight(v: Double) {
-        setLineHeights(List(linesCount()) { v })
+    fun setConstantLineMetrics(v: LineMetrics) {
+        setLineMetrics(List(linesCount()) { v })
     }
 
-    fun setLineHeights(values: List<Double>) {
-        myLineHeights.clear()
+    fun setLineMetrics(values: List<LineMetrics>) {
+        myLineMetrics.clear()
         if (myLines.isEmpty()) return
-        require(values.size == linesCount()) { "Line heights count must match line count." }
-        myLineHeights.addAll(values)
+        require(values.size == linesCount()) { "Line metrics count must match line count." }
+        myLineMetrics.addAll(values)
         verticalRepositionLines()
     }
 
     private fun verticalRepositionLines() {
-        if (myLineHeights.isEmpty()) {
+        if (myLineMetrics.isEmpty()) {
             myLines.forEach { it.y().set(yStart) }
             return
         }
 
-        val totalHeightShift = myLineHeights.dropLast(1).sum()
+        val baselineOffsets = myLineMetrics
+            .zipWithNext { prev, next -> prev.descent + next.ascent }
+            .runningFold(0.0, Double::plus)
+        val totalBaselineShift = baselineOffsets.last()
 
-        val adjustedYStart = yStart - when (myVerticalAnchor) {
+        val firstLineY = yStart - when (myVerticalAnchor) {
             VerticalAnchor.TOP -> 0.0
-            VerticalAnchor.CENTER -> totalHeightShift / 2
-            VerticalAnchor.BOTTOM -> totalHeightShift
+            VerticalAnchor.CENTER -> totalBaselineShift / 2.0
+            VerticalAnchor.BOTTOM -> totalBaselineShift
             else -> 0.0
         }
 
-        // TODO: Refactor
-        // Uses the fact that there is only two types of line heights: for plane text (smaller) and for fractions (larger)
-        val plainTextLineHeight = myLineHeights.minOrNull() ?: return
-        val fractionLineHeight = myLineHeights.maxOrNull() ?: return
         myLines.forEachIndexed { index, elem ->
-            val totalLineHeightsBeforeCurrent = myLineHeights.take(index).sum()
-            val currentLineHeight = myLineHeights[index]
-            val currentShift = when {
-                index == 0 -> 0.0
-                plainTextLineHeight < myLineHeights.first() -> (currentLineHeight - fractionLineHeight) / 2.0
-                plainTextLineHeight < currentLineHeight -> (currentLineHeight - plainTextLineHeight) / 2.0
-                else -> 0.0
-            }
-            elem.y().set(adjustedYStart + totalLineHeightsBeforeCurrent + currentShift)
+            elem.y().set(firstLineY + baselineOffsets[index])
         }
     }
 

@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TagLocation
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
@@ -21,6 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
 
 internal object PlotSvgComponentHelper {
     private fun textRectangle(elementRect: DoubleRectangle, margins: Thickness) = createTextRectangle(
@@ -217,7 +219,7 @@ internal object PlotSvgComponentHelper {
     ) {
         if (text == null) return
 
-        val lineHeights = labelSpec.heights(text)
+        val metricsByLine = labelSpec.lineMetrics(text)
         val textLabel = Label(text, markdown = labelSpec.markdown)
         textLabel.addClassName(className)
         val fontSize = labelSpec.font.size.toDouble()
@@ -225,12 +227,12 @@ internal object PlotSvgComponentHelper {
             boundRect,
             fontSize = fontSize,
             textSize = PlotLayoutUtil.textDimensions(text, labelSpec),
-            firstLineHeight = lineHeights.firstOrNull() ?: fontSize,
+            firstLineMetrics = metricsByLine.firstOrNull() ?: LineMetrics.ascentOnly(fontSize),
             justification,
             rotation
         )
         textLabel.setFontSize(fontSize)
-        textLabel.setLineHeights(lineHeights)
+        textLabel.setLineMetrics(metricsByLine)
         textLabel.setHorizontalAnchor(hAnchor)
         textLabel.moveTo(position)
         rotation?.angle?.let(textLabel::rotate)

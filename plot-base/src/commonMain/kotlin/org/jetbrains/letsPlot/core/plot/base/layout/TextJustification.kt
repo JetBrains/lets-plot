@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 
 class TextJustification(val x: Double, val y: Double) {
 
@@ -21,14 +22,14 @@ class TextJustification(val x: Double, val y: Double) {
             boundRect: DoubleRectangle,
             fontSize: Double,
             textSize: DoubleVector,
-            firstLineHeight: Double,
+            firstLineMetrics: LineMetrics,
             justification: TextJustification,
             rotation: TextRotation? = null
         ): Pair<DoubleVector, Text.HorizontalAnchor> {
             val rect = if (rotation != null) boundRect.flip() else boundRect
 
             val (x, hAnchor) = xPosition(rect, justification.x)
-            val y = yPosition(rect, fontSize, textSize, firstLineHeight, justification.y)
+            val y = yPosition(rect, fontSize, textSize, firstLineMetrics, justification.y)
 
             val position = when (rotation) {
                 null -> DoubleVector(x, y)
@@ -38,13 +39,11 @@ class TextJustification(val x: Double, val y: Double) {
             return position to hAnchor
         }
 
-        fun verticalCorrectionFactor(firstLineHeight: Double, fontSize: Double): (Double) -> Double {
+        fun verticalCorrectionFactor(firstLineMetrics: LineMetrics, fontSize: Double): (Double) -> Double {
             return { vjust ->
                 // It's selected by eye to look good with both normal height lines and double height lines (fractions).
                 // It centers text at vjust = 0.5, though callers usually nudge it slightly upward for better visuals.
-                val basicCorrection = (fontSize + firstLineHeight) / 2
-                val vjustCorrectionCoefficient = fontSize / 4
-                basicCorrection - vjust * vjustCorrectionCoefficient
+                firstLineMetrics.ascent - vjust * fontSize / 4
             }
         }
 
@@ -69,12 +68,12 @@ class TextJustification(val x: Double, val y: Double) {
             boundRect: DoubleRectangle,
             fontSize: Double,
             textSize: DoubleVector,
-            firstLineHeight: Double,
+            firstLineMetrics: LineMetrics,
             vjust: Double,
         ): Double {
             val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
             // use 0.8 for better alignment: like vertical_anchor = 'top' (dy="0.8em")
-            val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
+            val correction = verticalCorrectionFactor(firstLineMetrics, fontSize)
             return y - textSize.y + correction(0.8)
         }
     }

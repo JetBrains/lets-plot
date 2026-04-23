@@ -6,10 +6,10 @@
 package org.jetbrains.letsPlot.core.plot.base
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 object BogusContext : GeomContext {
@@ -62,13 +62,13 @@ object BogusContext : GeomContext {
         error("Not available in a bogus geom context")
     }
 
-    override fun estimateTextSize(
+    override fun estimateLineDimensions(
         text: String,
         family: String,
         size: Double,
         isBold: Boolean,
         isItalic: Boolean
-    ): List<DoubleVector> {
+    ): List<LineDimensions> {
         error("Not available in a bogus geom context")
     }
 }

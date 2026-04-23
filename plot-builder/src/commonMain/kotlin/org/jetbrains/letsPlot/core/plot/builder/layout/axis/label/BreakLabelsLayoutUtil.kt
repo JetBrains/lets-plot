@@ -10,12 +10,15 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProvider
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
+import org.jetbrains.letsPlot.core.plot.builder.presentation.maxWidth
+import org.jetbrains.letsPlot.core.plot.builder.presentation.totalDimensions
 import kotlin.math.*
 
 internal object BreakLabelsLayoutUtil {
@@ -212,8 +215,8 @@ internal object BreakLabelsLayoutUtil {
 
             y1 = min(projectedBreaks[0], projectedBreaks.last())
             y2 = max(projectedBreaks[0], projectedBreaks.last())
-            y1 -= tickLabelSpec.regularLineHeight() / 2
-            y2 += tickLabelSpec.regularLineHeight() / 2
+            y1 -= tickLabelSpec.defaultLine().height / 2
+            y2 += tickLabelSpec.defaultLine().height / 2
         }
 
         val origin = DoubleVector(0.0, y1)
@@ -227,7 +230,9 @@ internal object BreakLabelsLayoutUtil {
         rotationAngle: Double?,
         side: (DoubleVector) -> Double
     ): Int {
-        val initialDim = tickLabelSpec.dimensions(AxisLabelsLayout.INITIAL_TICK_LABEL).single() // Makes sense to use .single() because INITIAL_TICK_LABEL is a single line label with plain text
+        val initialDim = tickLabelSpec.lineDimensions(AxisLabelsLayout.INITIAL_TICK_LABEL)
+                                      .map(LineDimensions::extent)
+                                      .single() // Makes sense to use .single() because INITIAL_TICK_LABEL is a single line label with plain text
         val dimension = if (rotationAngle != null) {
             rotatedLabelBounds(initialDim, rotationAngle).dimension
         } else {
@@ -247,7 +252,9 @@ internal object BreakLabelsLayoutUtil {
             if (rotationAngle != null) {
                 rotatedLabelBounds(tickLabelSpec.totalDimensions(label), rotationAngle).dimension
             } else {
-                tickLabelSpec.dimensions(label).maxBy(side)
+                tickLabelSpec.lineDimensions(label)
+                             .map(LineDimensions::extent)
+                             .maxBy(side)
             }
         }
         val longestSide = dims.maxOfOrNull(side) ?: 0.0

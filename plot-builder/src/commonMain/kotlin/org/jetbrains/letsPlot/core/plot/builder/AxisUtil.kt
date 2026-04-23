@@ -9,6 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
@@ -213,8 +214,9 @@ object AxisUtil {
             rotationDegree: Double,
             labelOffset: DoubleVector
         ): DoubleRectangle {
-            val labelNormalSize = labelSpec.dimensions(label).firstOrNull() ?: DoubleVector(0.0, labelSpec.regularLineHeight())
-            val wh = labelNormalSize.flipIf(isVertical(rotationDegree))
+            val labelDimensions = labelSpec.lineDimensions(label).takeIf { it.isNotEmpty() } ?: listOf(labelSpec.defaultLine())
+            val labelNormalExtent = DoubleVector(labelDimensions.maxOf(LineDimensions::width), labelDimensions.first().height)
+            val wh = labelNormalExtent.flipIf(isVertical(rotationDegree))
             val origin = if (horizontalAxis) DoubleVector(loc, 0.0) else DoubleVector(0.0, loc)
             return DoubleRectangle(origin, wh)
                 .subtract(wh.mul(0.5)) // labels use central adjustments

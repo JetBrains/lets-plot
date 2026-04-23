@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
 import org.jetbrains.letsPlot.commons.values.Colors.parseColor
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.math.max
@@ -40,12 +41,12 @@ object TestUtil {
         wrapLength: Int = -1,
         markdown: Boolean = false,
     ): Double {
-        return RichText.estimateMaxWidth(
+        return RichText.estimateLineDimensions(
             text = text,
             font = font,
             wrapLength = wrapLength,
             markdown = markdown
-        )
+        ).maxOfOrNull(LineDimensions::width) ?: 0.0
     }
 
     internal fun toTestWidth(text: String, baseFont: Font = DEF_FONT, level: FormulaLevel = FormulaLevel()): Double {

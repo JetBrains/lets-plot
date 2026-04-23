@@ -7,18 +7,33 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import kotlin.math.max
 
 interface LabelSpec {
     val font: Font
     val markdown: Boolean
 
-    fun dimensions(labelText: String): List<DoubleVector>
+    fun lineDimensions(labelText: String): List<LineDimensions>
 
-    fun totalDimensions(labelText: String): DoubleVector
-
-    fun maxWidth(labelText: String): Double
-
-    fun heights(labelText: String): List<Double>
-
-    fun regularLineHeight(): Double
+    fun defaultLine(): LineDimensions
 }
+
+fun LabelSpec.lineMetrics(labelText: String): List<LineMetrics> =
+    RichText.estimateLineDimensions(labelText, font, markdown = markdown)
+        .map(LineDimensions::metrics)
+
+fun LabelSpec.totalDimensions(labelText: String): DoubleVector =
+    lineDimensions(labelText).fold(DoubleVector.ZERO) { acc, dim ->
+        DoubleVector(
+            x = max(acc.x, dim.width),
+            y = acc.y + dim.height
+        )
+    }
+
+fun LabelSpec.maxWidth(labelText: String): Double =
+    RichText.estimateLineDimensions(labelText, font, markdown = markdown)
+        .maxOfOrNull(LineDimensions::width)
+        ?: 0.0

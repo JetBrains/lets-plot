@@ -10,11 +10,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.BOTTOM
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.TOP
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -44,7 +46,10 @@ internal class HorizontalTiltedLabelsLayout(
         axisLength: Double,
     ): AxisLabelsLayoutInfo {
 
-        val maxHeight = breaks.labels.maxOf { labelSpec.heights(it).maxOrNull() ?: labelSpec.regularLineHeight() }
+        val maxHeight = breaks.labels.maxOf {
+            labelSpec.lineMetrics(it).maxOfOrNull(LineMetrics::height) ?:
+            labelSpec.defaultLine().height
+        }
         val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = true)
         var overlap = false
         if (breaks.size >= 2) {

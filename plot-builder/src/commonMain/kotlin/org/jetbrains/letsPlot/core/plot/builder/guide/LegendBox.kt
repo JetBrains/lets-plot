@@ -13,10 +13,12 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
@@ -129,7 +131,7 @@ abstract class LegendBox : SvgComponent() {
         justification: TextJustification
     ): Label {
         val labelSpec = PlotLabelSpecFactory.legendTitle(theme)
-        val lineHeights = labelSpec.heights(title)
+        val metricsByLine = labelSpec.lineMetrics(title)
         val fontSize = labelSpec.font.size.toDouble()
 
         val label = Label(title)
@@ -137,13 +139,13 @@ abstract class LegendBox : SvgComponent() {
             boundRect,
             fontSize = fontSize,
             textSize = titleSize,
-            firstLineHeight = lineHeights.firstOrNull() ?: fontSize,
+            firstLineMetrics = metricsByLine.firstOrNull() ?: LineMetrics.ascentOnly(fontSize),
             justification
         )
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
         label.setFontSize(fontSize)
-        label.setLineHeights(lineHeights)
+        label.setLineMetrics(metricsByLine)
         label.moveTo(pos)
         return label
     }

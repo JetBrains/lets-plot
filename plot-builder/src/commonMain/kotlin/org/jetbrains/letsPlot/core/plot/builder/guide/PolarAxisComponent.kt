@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.math.atan2
 
@@ -164,7 +165,7 @@ class PolarAxisComponent(
 
             val labelSpec = PlotLabelSpecFactory.axisTick(axisTheme)
             tickLabel.setFontSize(labelSpec.font.size.toDouble())
-            tickLabel.setLineHeights(labelSpec.heights(label))
+            tickLabel.setLineMetrics(labelSpec.lineMetrics(label))
             tickLabel.rotate(labelAdjustments.rotationDegree)
             tickLabel
         } else {

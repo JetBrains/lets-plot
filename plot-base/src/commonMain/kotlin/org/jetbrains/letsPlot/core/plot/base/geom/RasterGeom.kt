@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElementEx
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import kotlin.math.abs
@@ -61,7 +62,7 @@ class RasterGeom : GeomBase() {
             label.textColor().set(Color.DARK_MAGENTA)
             label.setTextOpacity(0.5)
             label.setFontSize(12.0)
-            label.setConstantLineHeight(16.0)
+            label.setConstantLineMetrics(LineMetrics.ascentOnly(16.0))
             label.setFontWeight("bold")
             label.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
             label.setVerticalAnchor(VerticalAnchor.CENTER)

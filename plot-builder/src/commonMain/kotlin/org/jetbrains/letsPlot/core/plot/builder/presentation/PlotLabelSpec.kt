@@ -5,9 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.presentation
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 
 class PlotLabelSpec(
@@ -15,28 +16,12 @@ class PlotLabelSpec(
     override val markdown: Boolean = false
 ) : LabelSpec {
 
-    override fun dimensions(labelText: String): List<DoubleVector> {
-        val maxWidth = maxWidth(labelText)
-        return heights(labelText).map { height ->
-            DoubleVector(maxWidth, height)
-        }
+    override fun lineDimensions(labelText: String): List<LineDimensions> {
+        return RichText.estimateLineDimensions(labelText, font, markdown = markdown)
     }
 
-    override fun totalDimensions(labelText: String): DoubleVector {
-        val totalHeight = heights(labelText).sum()
-        return DoubleVector(maxWidth(labelText), totalHeight)
-    }
-
-    override fun maxWidth(labelText: String): Double {
-        return RichText.estimateMaxWidth(labelText, font, markdown = markdown)
-    }
-
-    override fun heights(labelText: String): List<Double> {
-        return RichText.estimateHeights(labelText, font, markdown = markdown)
-    }
-
-    override fun regularLineHeight(): Double {
-        return heights("").single()
+    override fun defaultLine(): LineDimensions {
+        return LineDimensions(0.0, LineMetrics.plainText(font))
     }
 
     companion object {
@@ -47,23 +32,11 @@ class PlotLabelSpec(
             override val markdown: Boolean
                 get() = UNSUPPORTED("Dummy Label Spec")
 
-            override fun dimensions(labelText: String): List<DoubleVector> {
+            override fun lineDimensions(labelText: String): List<LineDimensions> {
                 UNSUPPORTED("Dummy Label Spec")
             }
 
-            override fun totalDimensions(labelText: String): DoubleVector {
-                UNSUPPORTED("Dummy Label Spec")
-            }
-
-            override fun maxWidth(labelText: String): Double {
-                UNSUPPORTED("Dummy Label Spec")
-            }
-
-            override fun heights(labelText: String): List<Double> {
-                UNSUPPORTED("Dummy Label Spec")
-            }
-
-            override fun regularLineHeight(): Double {
+            override fun defaultLine(): LineDimensions {
                 UNSUPPORTED("Dummy Label Spec")
             }
         }

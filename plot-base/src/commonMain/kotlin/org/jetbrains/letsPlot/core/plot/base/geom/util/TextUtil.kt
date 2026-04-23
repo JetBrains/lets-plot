@@ -19,6 +19,8 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.verticalCorrectionFactor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
@@ -154,8 +156,10 @@ object TextUtil {
     fun decorate(label: Label, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0, applyAlpha: Boolean = true) {
         decorateLabelStyle(label, p, scale, applyAlpha)
         val lineInterval = (p.lineheight()!! - 1) * fontSize(p, scale)
-        label.setLineHeights(
-            estimatedLineHeights(label.text, p, ctx, scale).map { it + lineInterval }
+        label.setLineMetrics(
+            estimatedLineMetrics(label.text, p, ctx, scale).map {
+                LineMetrics(it.ascent + lineInterval, it.descent)
+            }
         )
     }
 
@@ -189,7 +193,7 @@ object TextUtil {
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
-        val estimated = ctx.estimateTextSize(
+        val estimated = ctx.estimateLineDimensions(
             text,
             fontFamily,
             fontSize,
@@ -197,8 +201,8 @@ object TextUtil {
             fontFace.italic
         ).fold(DoubleVector.ZERO) { acc, sz ->
             DoubleVector(
-                x = max(acc.x, sz.x),
-                y = acc.y + sz.y
+                x = max(acc.x, sz.width),
+                y = acc.y + sz.height
             )
         }
         val lineInterval = (p.lineheight()!! - 1) * fontSize
@@ -206,18 +210,18 @@ object TextUtil {
         return DoubleVector(estimated.x, textHeight)
     }
 
-    fun estimatedLineHeights(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<Double> {
+    fun estimatedLineMetrics(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<LineMetrics> {
         val fontSize = fontSize(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
 
-        return ctx.estimateTextSize(
+        return ctx.estimateLineDimensions(
             text,
             fontFamily,
             fontSize,
             fontFace.bold,
             fontFace.italic
-        ).map(DoubleVector::y)
+        ).map(LineDimensions::metrics)
     }
 
     fun rectangleForText(
@@ -272,11 +276,11 @@ object TextUtil {
 
         val fontSize = fontSize(p, sizeUnitRatio)
         val textSize = measure(text, p, ctx, sizeUnitRatio)
-        val firstLineHeight = estimatedLineHeights(text, p, ctx, sizeUnitRatio)
+        val firstLineMetrics = estimatedLineMetrics(text, p, ctx, sizeUnitRatio)
             .firstOrNull()
-            ?: fontSize
+            ?: LineMetrics.ascentOnly(fontSize)
 
-        val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
+        val correction = verticalCorrectionFactor(firstLineMetrics, fontSize)
         val yPosition = vAnchor(p, location, boundsCenter).let { vjust ->
             // 1.2 is a visual tweak: a slightly stronger vjust shift usually places text better.
             location.y + (vjust - 1) * textSize.y + correction(1.2 * vjust)
@@ -329,10 +333,10 @@ object TextUtil {
             Text.HorizontalAnchor.RIGHT -> location.x - padding
             Text.HorizontalAnchor.MIDDLE -> location.x
         }
-        val firstLineHeight = estimatedLineHeights(text, p, ctx, sizeUnitRatio)
+        val firstLineMetrics = estimatedLineMetrics(text, p, ctx, sizeUnitRatio)
             .firstOrNull()
-            ?: fontSize
-        val correction = verticalCorrectionFactor(firstLineHeight, fontSize)
+            ?: LineMetrics.ascentOnly(fontSize)
+        val correction = verticalCorrectionFactor(firstLineMetrics, fontSize)
         val textPosition = DoubleVector(
             xPosition,
             rectangle.origin.y + padding + correction(0.8)
