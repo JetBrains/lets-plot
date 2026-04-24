@@ -13,13 +13,16 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpa
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 
 internal class PathTargetProjection(
-    val path: List<PathPoint>,
-    val lookupSpace: LookupSpace
+    path: List<DoubleVector>,
+    indexMapper: (Int) -> Int,
+    val lookupSpace: LookupSpace,
 ) : TargetProjection {
-    val points = when (lookupSpace) {
-        LookupSpace.X -> path.sortedBy { it.x }
-        LookupSpace.Y -> path.sortedBy { it.y }
-        else -> path
+    private val pathPoints = path.mapIndexed { i, point -> PathPoint(point, indexMapper(i)) }
+
+    private val localPoints = when (lookupSpace) {
+        LookupSpace.X -> pathPoints.sortedBy { it.x }
+        LookupSpace.Y -> pathPoints.sortedBy { it.y }
+        else -> pathPoints
     }
 
     internal class PathPoint(
@@ -36,7 +39,7 @@ internal class PathTargetProjection(
         lookupStrategy: LookupStrategy,
         closestPointChecker: ClosestPointChecker
     ): Pair<PathPoint, DoubleVector?>? {
-        if (points.isEmpty()) {
+        if (localPoints.isEmpty()) {
             return null
         }
 
@@ -44,12 +47,12 @@ internal class PathTargetProjection(
             LookupSpace.NONE -> null
             LookupSpace.X -> when (lookupStrategy) {
                 LookupStrategy.NONE -> null
-                LookupStrategy.NEAREST -> searchNearest(cursorCoord.x, points) { it.x } to null
+                LookupStrategy.NEAREST -> searchNearest(cursorCoord.x, localPoints) { it.x } to null
                 LookupStrategy.HOVER ->
-                    if (cursorCoord.x < points.first().x || cursorCoord.x > points.last().x) {
+                    if (cursorCoord.x < localPoints.first().x || cursorCoord.x > localPoints.last().x) {
                         null
                     } else {
-                        val nearest = searchNearest(cursorCoord.x, points) { it.x }
+                        val nearest = searchNearest(cursorCoord.x, localPoints) { it.x }
                         closestPointChecker.check(nearest.originalCoord, 0.0)
                         nearest to null
                     }
@@ -57,12 +60,12 @@ internal class PathTargetProjection(
 
             LookupSpace.Y -> when (lookupStrategy) {
                 LookupStrategy.NONE -> null
-                LookupStrategy.NEAREST -> searchNearest(cursorCoord.y, points) { it.y } to null
+                LookupStrategy.NEAREST -> searchNearest(cursorCoord.y, localPoints) { it.y } to null
                 LookupStrategy.HOVER ->
-                    if (cursorCoord.y < points.first().y || cursorCoord.y > points.last().y) {
+                    if (cursorCoord.y < localPoints.first().y || cursorCoord.y > localPoints.last().y) {
                         null
                     } else {
-                        val nearest = searchNearest(cursorCoord.y, points) { it.y }
+                        val nearest = searchNearest(cursorCoord.y, localPoints) { it.y }
                         closestPointChecker.check(nearest.originalCoord)
                         nearest to null
                     }
@@ -73,7 +76,7 @@ internal class PathTargetProjection(
                 LookupStrategy.HOVER -> {
                     var candidate: Pair<PathPoint, DoubleVector>? = null
 
-                    points.asSequence().windowed(2).forEach {
+                    localPoints.asSequence().windowed(2).forEach {
                         val p1 = it[0].xy
                         val p2 = it[1].xy
 
@@ -92,7 +95,7 @@ internal class PathTargetProjection(
 
                 LookupStrategy.NEAREST -> {
                     var candidate: PathPoint? = null
-                    for (pathPoint in points) {
+                    for (pathPoint in localPoints) {
                         if (closestPointChecker.check(pathPoint.xy)) {
                             candidate = pathPoint
                         }

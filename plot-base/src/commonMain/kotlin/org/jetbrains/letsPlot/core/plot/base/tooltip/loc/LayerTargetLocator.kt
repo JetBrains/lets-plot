@@ -30,9 +30,12 @@ internal class LayerTargetLocator(
 
     private val mySimpleGeometry = setOf(GeomKind.RECT, GeomKind.POLYGON)
 
+    // Geoms that never have more than one target per X coord
+    private val unstackableGeoms = setOf(GeomKind.LINE_RANGE, GeomKind.POINT_RANGE, GeomKind.ERROR_BAR, GeomKind.BOX_PLOT)
+
     private val myCollectingStrategy: CollectingStrategy =
         when {
-            lookupSpec.lookupStrategy == LookupStrategy.NEAREST -> CollectingStrategy.REPLACE
+            geomKind in unstackableGeoms && lookupSpec.lookupStrategy == LookupStrategy.NEAREST -> CollectingStrategy.REPLACE
             geomKind in mySimpleGeometry -> CollectingStrategy.REPLACE // fix overlapping tooltips under cursor
 
             lookupSpec.lookupSpace.isUnivariate() && lookupSpec.lookupStrategy === LookupStrategy.NEAREST -> {
@@ -54,21 +57,10 @@ internal class LayerTargetLocator(
     init {
         fun toProjection(prototype: TargetPrototype): TargetProjection {
             return when (prototype.hitShape.kind) {
-                POINT -> PointTargetProjection(
-                    prototype.hitShape.point.center,
-                    prototype.hitShape.point.radius,
-                    lookupSpec.lookupSpace
-                )
-
+                POINT -> PointTargetProjection(prototype.hitShape.point, lookupSpec.lookupSpace)
                 RECT -> RectTargetProjection(prototype.hitShape.rect, lookupSpec.lookupSpace)
                 POLYGON -> PolygonTargetProjection(prototype.hitShape.points, lookupSpec.lookupSpace)
-
-                PATH -> PathTargetProjection(
-                    prototype.hitShape.points.mapIndexed { i, point ->
-                        PathTargetProjection.PathPoint(point, prototype.indexMapper(i))
-                    },
-                    lookupSpec.lookupSpace
-                )
+                PATH -> PathTargetProjection(prototype.hitShape.points, prototype.indexMapper, lookupSpec.lookupSpace)
             }
         }
 

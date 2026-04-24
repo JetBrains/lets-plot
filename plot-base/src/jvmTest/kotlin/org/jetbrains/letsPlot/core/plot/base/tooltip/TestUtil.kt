@@ -138,7 +138,26 @@ object TestUtil {
         return createLocator(
             lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
             contextualMapping = mock(ContextualMapping::class.java),
-            targets = targetsList
+            targets = targetsList,
+            geomKind = GeomKind.POINT
+        )
+    }
+
+    internal fun createLocator(
+        lookupStrategy: LookupStrategy,
+        lookupSpace: LookupSpace,
+        geomKind: GeomKind,
+        vararg list: TargetPrototype
+    ): GeomTargetLocator {
+
+        val targetsList = ArrayList<TargetPrototype>()
+        targetsList.addAll(list)
+
+        return createLocator(
+            lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
+            contextualMapping = mock(ContextualMapping::class.java),
+            targets = targetsList,
+            geomKind = geomKind
         )
     }
 
