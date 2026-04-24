@@ -43,6 +43,7 @@ class LiveMapUiSystem(
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myLayerManager: LayerManager,
     private val myAttribution: String?,
+    private val interactive: Boolean,
     private val showCoordPickTools: Boolean,
     private val showResetPositionAction: Boolean,
 ) : AbstractSystem<LiveMapContext>(componentManager) {
@@ -176,6 +177,11 @@ class LiveMapUiSystem(
         private fun updateVerticalPanel() {
             verticalPanel.forEach(uiService::removeFromRenderer)
             verticalPanel.clear()
+
+            if (!interactive) {
+                uiService.repaint()
+                return
+            }
 
             verticalPanel.add(myZoomPlusButton)
             verticalPanel.add(myZoomMinusButton)

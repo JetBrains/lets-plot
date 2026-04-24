@@ -29,6 +29,7 @@ def geom_livemap(*,
                  zoom=None,
                  projection=None,
                  tiles=None,
+                 interactive=True,
                  show_coord_pick_tools=None,
                  data_size_zoomin=None,
                  const_size_zoomin=None,
@@ -58,6 +59,9 @@ def geom_livemap(*,
 
         More information about tiles can be found here:
         https://lets-plot.org/python/pages/basemap_tiles.html
+    interactive : bool, default=True
+        Enable map interactivity. When ``False``, the map cannot be dragged and
+        the control buttons are hidden.
     show_coord_pick_tools : bool, default=False
         Show buttons "copy location" and "draw geometry".
     data_size_zoomin : int, default=0
@@ -92,7 +96,7 @@ def geom_livemap(*,
 
     Notes
     -----
-    ``geom_livemap()`` draws a map, which can be dragged and zoomed.
+    ``geom_livemap()`` draws a map, which can be dragged and zoomed unless ``static=True``.
 
     ----
 
@@ -190,6 +194,7 @@ def geom_livemap(*,
                  projection=projection,
                  tiles=tiles,
                  geocoding=geocoding,
+                 interactive=interactive,
                  show_coord_pick_tools=show_coord_pick_tools,
                  data_size_zoomin=data_size_zoomin,
                  const_size_zoomin=const_size_zoomin,

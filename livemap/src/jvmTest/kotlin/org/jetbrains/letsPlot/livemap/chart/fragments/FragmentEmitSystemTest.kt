@@ -5,13 +5,13 @@
 
 package org.jetbrains.letsPlot.livemap.chart.fragments
 
+import org.assertj.core.api.Assertions
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
 import org.jetbrains.letsPlot.livemap.Mocks
-import org.jetbrains.letsPlot.livemap.chart.fragments.FragmentSpec.Companion.quads
 import org.jetbrains.letsPlot.livemap.Utils
-import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.chart.fragment.*
+import org.jetbrains.letsPlot.livemap.chart.fragments.FragmentSpec.Companion.quads
 import org.jetbrains.letsPlot.livemap.config.createMapProjection
 import org.jetbrains.letsPlot.livemap.core.Projections
 import org.jetbrains.letsPlot.livemap.core.ecs.EcsEntity
@@ -23,7 +23,6 @@ import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraInputSystem
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldDimensionComponent
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOriginComponent
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.ViewportGridStateComponent
-import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -66,7 +65,7 @@ class FragmentEmitSystemTest : RegionsTestBase() {
             RegionIdComponent(FOO_REGION_ID),
             ParentLayerComponent(parentLayerEntity.id)
         )
-        addSystem(CameraInputSystem(componentManager))
+        addSystem(CameraInputSystem(componentManager, true))
         addSystem(FragmentEmitSystem(Int.MAX_VALUE, componentManager))
         Mockito.`when`(liveMapContext.mapProjection).thenReturn(createMapProjection(Projections.mercator()))
         fragmentFoo0 = FragmentSpec(FOO_REGION_ID, QUAD_0).setGeometries(Utils.square(1, 2, 30, 40))

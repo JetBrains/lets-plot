@@ -25,7 +25,7 @@ class RegionEmitSystemTest : RegionsTestBase() {
     private lateinit var emptyFragmentFoo3: FragmentSpec
     override fun setUp() {
         super.setUp()
-        addSystem(CameraInputSystem(componentManager))
+        addSystem(CameraInputSystem(componentManager, true))
         addSystem(RegionEmitSystem(componentManager))
         createEntity("FragmentsChange", ChangedFragmentsComponent())
         createEntity("FragmentsResponse", EmittedFragmentsComponent())

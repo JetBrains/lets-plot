@@ -26,6 +26,7 @@ import org.jetbrains.letsPlot.core.spec.*
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.CONST_SIZE_ZOOMIN
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.DATA_SIZE_ZOOMIN
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.DEV_PARAMS
+import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.INTERACTIVE
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.LOCATION
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.PROJECTION
 import org.jetbrains.letsPlot.core.spec.Option.Geom.LiveMap.TILES
@@ -114,6 +115,7 @@ object LiveMapProviderUtil {
                 minZoom = myLiveMapOptions.getInt(TILES, MIN_ZOOM) ?: minZoom
                 maxZoom = myLiveMapOptions.getInt(TILES, MAX_ZOOM) ?: maxZoom
                 zoom = myLiveMapOptions.getInt(Option.Geom.LiveMap.ZOOM)
+                interactive = myLiveMapOptions.getBool(INTERACTIVE) ?: true
                 showCoordPickTools = myLiveMapOptions.getBool(Option.Geom.LiveMap.SHOW_COORD_PICK_TOOLS) ?: false
                 geocodingService = myLiveMapOptions.getMap(Option.Geom.LiveMap.GEOCODING)
                     ?.getString("url")

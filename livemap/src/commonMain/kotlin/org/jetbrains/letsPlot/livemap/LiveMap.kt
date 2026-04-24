@@ -14,9 +14,6 @@ import org.jetbrains.letsPlot.commons.intern.observable.event.SimpleEventSource
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.ValueProperty
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.Rect
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.div
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.plus
-import org.jetbrains.letsPlot.commons.intern.typedGeometry.toDoubleVector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.registration.Registration
 import org.jetbrains.letsPlot.core.canvas.AnimationProvider.AnimationEventHandler
@@ -46,9 +43,10 @@ import org.jetbrains.letsPlot.livemap.config.DevParams.MicroTaskExecutor.*
 import org.jetbrains.letsPlot.livemap.core.BusyStateComponent
 import org.jetbrains.letsPlot.livemap.core.MapRuler
 import org.jetbrains.letsPlot.livemap.core.ecs.*
-import org.jetbrains.letsPlot.livemap.core.graphics.Rectangle
 import org.jetbrains.letsPlot.livemap.core.graphics.TextMeasurer
-import org.jetbrains.letsPlot.livemap.core.input.*
+import org.jetbrains.letsPlot.livemap.core.input.CursorStyleSystem
+import org.jetbrains.letsPlot.livemap.core.input.MouseInputDetectionSystem
+import org.jetbrains.letsPlot.livemap.core.input.MouseInputSystem
 import org.jetbrains.letsPlot.livemap.core.layers.*
 import org.jetbrains.letsPlot.livemap.core.layers.RenderTarget.OWN_OFFSCREEN_CANVAS
 import org.jetbrains.letsPlot.livemap.core.layers.RenderTarget.OWN_SCREEN_CANVAS
@@ -63,10 +61,8 @@ import org.jetbrains.letsPlot.livemap.makegeometrywidget.MakeGeometryWidgetSyste
 import org.jetbrains.letsPlot.livemap.mapengine.*
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.*
 import org.jetbrains.letsPlot.livemap.mapengine.basemap.vector.debug.DebugDataSystem
-import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraComponent
 import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraInputSystem
 import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraScale
-import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraScale.CameraScaleEffectComponent
 import org.jetbrains.letsPlot.livemap.mapengine.camera.MutableCamera
 import org.jetbrains.letsPlot.livemap.mapengine.placement.WorldOrigin2ScreenUpdateSystem
 import org.jetbrains.letsPlot.livemap.mapengine.viewport.Viewport
@@ -86,6 +82,7 @@ class LiveMap(
     private val myMapLocationConsumer: (DoubleRectangle) -> Unit,
     private val myMapLocationRect: Async<Rect<World>>?,
     private val myZoom: Int?,
+    private val myInteractive: Boolean,
     private val myAttribution: String?,
     private val myShowCoordPickTools: Boolean,
     private val myCursorService: CursorService
@@ -208,7 +205,6 @@ class LiveMap(
     private fun init(componentManager: EcsComponentManager) {
         initLayers(componentManager)
         initSystems(componentManager)
-        initCamera(componentManager)
         myDiagnostics = if (myDevParams.isSet(PERF_STATS)) {
             LiveMapDiagnostics(
                 isLoading,
@@ -239,7 +235,7 @@ class LiveMap(
                 // Input systems
                 MouseInputSystem(componentManager),
                 MouseInputDetectionSystem(componentManager, myLayerManager),
-                CameraInputSystem(componentManager),
+                CameraInputSystem(componentManager, myInteractive),
                 CursorStyleSystem(componentManager, myCursorService),
 
                 MakeGeometryWidgetSystem(componentManager, myMapProjection, viewport),
@@ -262,6 +258,7 @@ class LiveMap(
                     myMapLocationConsumer,
                     myLayerManager,
                     myAttribution,
+                    myInteractive,
                     myShowCoordPickTools,
                     myDevParams.isSet(SHOW_RESET_POSITION_ACTION),
                 ),
@@ -300,32 +297,6 @@ class LiveMap(
                 CameraScale.CameraScaleEffectSystem(componentManager)
             )
         )
-    }
-
-    private fun initCamera(componentManager: EcsComponentManager) {
-        // Camera
-        val listeners = EventListenerComponent()
-
-        val camera = componentManager.getSingletonEntity<CameraComponent>()
-            .addComponents {
-                + ClickableComponent(
-                    Rectangle().apply {
-                        origin = Client.ZERO_VEC.toDoubleVector()
-                        dimension = viewport.size.toDoubleVector()
-                    }
-                )
-                + listeners
-            }
-
-        listeners.addDoubleClickListener { clickEvent ->
-            if (camera.contains<CameraScaleEffectComponent>() || camera.getComponent<CameraComponent>().zoom == viewport.maxZoom.toDouble()) {
-                return@addDoubleClickListener
-            }
-
-            val location = clickEvent.location.toClientPoint()
-            val newViewportPosition = viewport.getMapCoord((location + viewport.center) / 2.0)
-            CameraScale.setAnimation(camera, location, newViewportPosition, 1.0)
-        }
     }
 
     private fun initLayers(componentManager: EcsComponentManager) {
