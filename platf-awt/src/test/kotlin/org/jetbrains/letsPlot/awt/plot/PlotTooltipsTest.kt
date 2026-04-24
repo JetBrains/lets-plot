@@ -72,6 +72,7 @@ class PlotTooltipsTest : PlotTestBase() {
         registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip_closerToA)
         registerTest(::plot_tooltips_logicalGroup_differentXAxisTooltip_closerToB)
         registerTest(::plot_tooltips_barOverlappedMany_singleTooltip)
+        registerTest(::plot_tooltips_pointRangeNearest)
     }
 
     @Test
@@ -85,7 +86,7 @@ class PlotTooltipsTest : PlotTestBase() {
     @Test
     fun runSingleTest() {
         val testSuit = PlotTooltipsTest()
-        testSuit.assertTest(testSuit::plot_tooltips_logicalGroup_differentXAxisTooltip_closerToB)
+        testSuit.assertTest(testSuit::plot_tooltips_pointRangeNearest)
     }
 
     fun plot_tooltips_pointAndLine_lineTooltip(): Bitmap {
@@ -511,4 +512,12 @@ class PlotTooltipsTest : PlotTestBase() {
         return paint(plotCanvasDrawable, cursorPos)
     }
 
+    fun plot_tooltips_pointRangeNearest(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.ANCHOR_FOR_RECT_LIKE_GEOM))
+
+        val cursorPos = Vector(205, 145)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
 }

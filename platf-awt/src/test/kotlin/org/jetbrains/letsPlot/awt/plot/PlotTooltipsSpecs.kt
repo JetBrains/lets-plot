@@ -7,6 +7,25 @@ package org.jetbrains.letsPlot.awt.plot
 
 object PlotTooltipsSpecs {
 
+    val ANCHOR_FOR_RECT_LIKE_GEOM = """
+        |{
+        |  "kind": "plot",
+        |  "data": {
+        |    "x": [ "a", "b", "c", "d" ],
+        |    "ymin": [ 5.0, 7.0, 3.0, 5.0 ],
+        |    "y": [ 6.5, 9.0, 4.5, 7.0 ],
+        |    "ymax": [ 8.0, 11.0, 6.0, 9.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "pointrange",
+        |      "mapping": { "x": "x", "y": "y", "ymin": "ymin", "ymax": "ymax" },
+        |      "tooltips": { "tooltip_anchor": "top_right" }
+        |    }
+        |  ]
+        |}        
+    """.trimMargin()
+
     val POINT_AND_POINT_WITH_CROSSHAIR = """
         |{
         |  "kind": "plot",

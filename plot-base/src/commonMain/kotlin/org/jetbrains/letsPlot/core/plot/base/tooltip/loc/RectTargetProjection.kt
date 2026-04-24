@@ -68,12 +68,16 @@ internal class RectTargetProjection(
             }
 
             LookupStrategy.NEAREST -> {
-                if (range.contains(p - RECT_X_NEAREST_EPSILON) || range.contains(p + RECT_X_NEAREST_EPSILON)) {
-                    updatePointChecker(closestPointChecker)
-                    true
+                val pp = if (byX) {
+                    DoubleVector(range.lowerEnd, cursor.y)
                 } else {
-                    false
+                    DoubleVector(cursor.x, range.lowerEnd)
                 }
+                //if (range.contains(p - RECT_X_NEAREST_EPSILON) || range.contains(p + RECT_X_NEAREST_EPSILON)) {
+                    closestPointChecker.check(pp)
+                //} else {
+                //    false
+                //}
             }
         }
     }

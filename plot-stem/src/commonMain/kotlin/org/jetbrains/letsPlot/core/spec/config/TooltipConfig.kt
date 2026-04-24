@@ -62,7 +62,7 @@ class TooltipConfig(
             isCrosshairEnabled = isCrosshairEnabled,
         )
 
-        return createTooltipBehavior(geomKind = geomKind, statKind = statKind, tooltipBehavior)
+        return createTooltipBehavior(geomKind, statKind, isCrosshairEnabled, tooltipBehavior)
     }
 
     private fun readAnchor(): TooltipAnchor? {
@@ -95,12 +95,13 @@ class TooltipConfig(
             geomKind: GeomKind,
             statKind: StatKind,
         ): TooltipBehavior {
-            return createTooltipBehavior(geomKind, statKind, TooltipBehavior.defaultTooltip())
+            return createTooltipBehavior(geomKind, statKind, false, TooltipBehavior.defaultTooltip())
         }
 
         private fun createTooltipBehavior(
             geomKind: GeomKind,
             statKind: StatKind,
+            isCrosshairEnabled: Boolean,
             tooltipBehavior: TooltipBehavior,
         ): TooltipBehavior {
             val defaultTooltipBehavior = when {
@@ -209,7 +210,11 @@ class TooltipConfig(
                 else -> noneTooltipBehavior(tooltipBehavior)
             }
 
-            return defaultTooltipBehavior
+            if (isCrosshairEnabled) {
+                return defaultTooltipBehavior.copy(lookupSpec = defaultTooltipBehavior.lookupSpec.copy(lookupStrategy = LookupStrategy.NEAREST))
+            } else {
+                return defaultTooltipBehavior
+            }
         }
 
         private fun xUnivariateFunction(
@@ -256,6 +261,8 @@ class TooltipConfig(
             if (anchor == null) {
                 return false
             }
+
+            return true
 
             return geomKind in setOf(
                 GeomKind.POINT,

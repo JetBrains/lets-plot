@@ -32,6 +32,7 @@ internal class LayerTargetLocator(
 
     private val myCollectingStrategy: CollectingStrategy =
         when {
+            lookupSpec.lookupStrategy == LookupStrategy.NEAREST -> CollectingStrategy.REPLACE
             geomKind in mySimpleGeometry -> CollectingStrategy.REPLACE // fix overlapping tooltips under cursor
 
             lookupSpec.lookupSpace.isUnivariate() && lookupSpec.lookupStrategy === LookupStrategy.NEAREST -> {
