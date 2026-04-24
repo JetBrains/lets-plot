@@ -11,186 +11,82 @@ import kotlin.test.Test
 class LatexTest : VisualPlotTestBase() {
     @Test
     fun `latex symbols`() {
+        val greekLetters = listOf(
+            "Alpha",
+            "Beta",
+            "Gamma",
+            "Delta",
+            "Epsilon",
+            "Zeta",
+            "Eta",
+            "Theta",
+            "Iota",
+            "Kappa",
+            "Lambda",
+            "Mu",
+            "Nu",
+            "Xi",
+            "Omicron",
+            "Pi",
+            "Rho",
+            "Sigma",
+            "Tau",
+            "Upsilon",
+            "Phi",
+            "Chi",
+            "Psi",
+            "Omega",
+            "alpha",
+            "beta",
+            "gamma",
+            "delta",
+            "epsilon",
+            "zeta",
+            "eta",
+            "theta",
+            "iota",
+            "kappa",
+            "lambda",
+            "mu",
+            "nu",
+            "xi",
+            "omicron",
+            "pi",
+            "rho",
+            "sigma",
+            "tau",
+            "upsilon",
+            "phi",
+            "chi",
+            "psi",
+            "omega",
+        )
+        val operations = listOf(
+            "pm",
+            //"mp",     // Maps to U+2213 (`∓`), but the bundled platf-awt Noto fonts don't have this glyph
+            "times",
+            "div",
+            "cdot",
+        )
+        val relations = emptyList<String>(
+            //"leq",    // The bundled platf-awt Noto fonts don't have this glyph
+            //"geq",    // The bundled platf-awt Noto fonts don't have this glyph
+            //"neq",    // The bundled platf-awt Noto fonts don't have this glyph
+        )
+        val miscellaneous = emptyList<String>(
+            //"infty",  // The bundled platf-awt Noto fonts don't have this glyph
+        )
+        val symbols = greekLetters + operations + relations + miscellaneous
+        val cols = 12
+        val xs = (0 until symbols.size).map { it % cols }
+        val ys = (0 until symbols.size).map { it / cols }
+        val labels = symbols.map { symbol -> """\\( \\$symbol \\)""" }
         val spec = """
             {
               "data": {
-                "x": [
-                  0.0,
-                  1.0,
-                  2.0,
-                  3.0,
-                  4.0,
-                  5.0,
-                  6.0,
-                  7.0,
-                  8.0,
-                  9.0,
-                  10.0,
-                  11.0,
-                  0.0,
-                  1.0,
-                  2.0,
-                  3.0,
-                  4.0,
-                  5.0,
-                  6.0,
-                  7.0,
-                  8.0,
-                  9.0,
-                  10.0,
-                  11.0,
-                  0.0,
-                  1.0,
-                  2.0,
-                  3.0,
-                  4.0,
-                  5.0,
-                  6.0,
-                  7.0,
-                  8.0,
-                  9.0,
-                  10.0,
-                  11.0,
-                  0.0,
-                  1.0,
-                  2.0,
-                  3.0,
-                  4.0,
-                  5.0,
-                  6.0,
-                  7.0,
-                  8.0,
-                  9.0,
-                  10.0,
-                  11.0,
-                  0.0,
-                  1.0,
-                  2.0,
-                  3.0,
-                  4.0,
-                  5.0,
-                  6.0,
-                  7.0,
-                  8.0
-                ],
-                "y": [
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  0.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  1.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  2.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  3.0,
-                  4.0,
-                  4.0,
-                  4.0,
-                  4.0,
-                  4.0,
-                  4.0,
-                  4.0,
-                  4.0,
-                  4.0
-                ],
-                "label": [
-                  "\\( \\Alpha \\)",
-                  "\\( \\Beta \\)",
-                  "\\( \\Gamma \\)",
-                  "\\( \\Delta \\)",
-                  "\\( \\Epsilon \\)",
-                  "\\( \\Zeta \\)",
-                  "\\( \\Eta \\)",
-                  "\\( \\Theta \\)",
-                  "\\( \\Iota \\)",
-                  "\\( \\Kappa \\)",
-                  "\\( \\Lambda \\)",
-                  "\\( \\Mu \\)",
-                  "\\( \\Nu \\)",
-                  "\\( \\Xi \\)",
-                  "\\( \\Omicron \\)",
-                  "\\( \\Pi \\)",
-                  "\\( \\Rho \\)",
-                  "\\( \\Sigma \\)",
-                  "\\( \\Tau \\)",
-                  "\\( \\Upsilon \\)",
-                  "\\( \\Phi \\)",
-                  "\\( \\Chi \\)",
-                  "\\( \\Psi \\)",
-                  "\\( \\Omega \\)",
-                  "\\( \\alpha \\)",
-                  "\\( \\beta \\)",
-                  "\\( \\gamma \\)",
-                  "\\( \\delta \\)",
-                  "\\( \\epsilon \\)",
-                  "\\( \\zeta \\)",
-                  "\\( \\eta \\)",
-                  "\\( \\theta \\)",
-                  "\\( \\iota \\)",
-                  "\\( \\kappa \\)",
-                  "\\( \\lambda \\)",
-                  "\\( \\mu \\)",
-                  "\\( \\nu \\)",
-                  "\\( \\xi \\)",
-                  "\\( \\omicron \\)",
-                  "\\( \\pi \\)",
-                  "\\( \\rho \\)",
-                  "\\( \\sigma \\)",
-                  "\\( \\tau \\)",
-                  "\\( \\upsilon \\)",
-                  "\\( \\phi \\)",
-                  "\\( \\chi \\)",
-                  "\\( \\psi \\)",
-                  "\\( \\omega \\)",
-                  "\\( \\pm \\)",
-                  "\\( \\mp \\)",
-                  "\\( \\times \\)",
-                  "\\( \\div \\)",
-                  "\\( \\cdot \\)",
-                  "\\( \\leq \\)",
-                  "\\( \\geq \\)",
-                  "\\( \\neq \\)",
-                  "\\( \\infty \\)"
-                ]
+                "x": [${xs.joinToString(",")}],
+                "y": [${ys.joinToString(",")}],
+                "label": [${labels.joinToString(",") { "\"$it\"" }}]
               },
               "mapping": {
                 "x": "x",
@@ -539,7 +435,7 @@ class LatexTest : VisualPlotTestBase() {
                       "mapping": {},
                       "data_meta": {},
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 10.0,
                       "color": "blue",
                       "hjust": "left"
@@ -581,7 +477,7 @@ class LatexTest : VisualPlotTestBase() {
                       "mapping": {},
                       "data_meta": {},
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 10.0,
                       "color": "blue",
                       "hjust": "center"
@@ -623,7 +519,7 @@ class LatexTest : VisualPlotTestBase() {
                       "mapping": {},
                       "data_meta": {},
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 10.0,
                       "color": "blue",
                       "hjust": "right"
@@ -2976,7 +2872,7 @@ class LatexTest : VisualPlotTestBase() {
                       "data_meta": {},
                       "nudge_x": -0.2,
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 10.0,
                       "color": "blue"
                     }
@@ -3018,7 +2914,7 @@ class LatexTest : VisualPlotTestBase() {
                       "data_meta": {},
                       "nudge_x": 0.0,
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 10.0,
                       "color": "blue"
                     }
@@ -3060,7 +2956,7 @@ class LatexTest : VisualPlotTestBase() {
                       "data_meta": {},
                       "nudge_x": 0.2,
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 10.0,
                       "color": "blue"
                     }
@@ -5073,7 +4969,7 @@ class LatexTest : VisualPlotTestBase() {
                       "data_meta": {},
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 0.5,
                       "color": "blue",
                       "hjust": "left"
@@ -5124,7 +5020,7 @@ class LatexTest : VisualPlotTestBase() {
                       "data_meta": {},
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 0.5,
                       "color": "blue",
                       "hjust": "center"
@@ -5175,7 +5071,7 @@ class LatexTest : VisualPlotTestBase() {
                       "data_meta": {},
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 0.5,
                       "color": "blue",
                       "hjust": "right"
@@ -7541,7 +7437,7 @@ class LatexTest : VisualPlotTestBase() {
                       "nudge_x": -0.2,
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 0.5,
                       "color": "blue"
                     }
@@ -7592,7 +7488,7 @@ class LatexTest : VisualPlotTestBase() {
                       "nudge_x": 0.0,
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 0.5,
                       "color": "blue"
                     }
@@ -7643,7 +7539,7 @@ class LatexTest : VisualPlotTestBase() {
                       "nudge_x": 0.2,
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                      "label": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                       "size": 0.5,
                       "color": "blue"
                     }
@@ -10016,7 +9912,7 @@ class LatexTest : VisualPlotTestBase() {
                     }
                   },
                   "ggtitle": {
-                    "text": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                    "text": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                     "subtitle": "hjust=0.2"
                   },
                   "kind": "plot",
@@ -10069,7 +9965,7 @@ class LatexTest : VisualPlotTestBase() {
                     }
                   },
                   "ggtitle": {
-                    "text": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                    "text": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                     "subtitle": "hjust=0.5"
                   },
                   "kind": "plot",
@@ -10122,7 +10018,7 @@ class LatexTest : VisualPlotTestBase() {
                     }
                   },
                   "ggtitle": {
-                    "text": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^\\infty\\)",
+                    "text": "\\(\\Alpha\\Beta_{\\gamma\\delta}\\Sigma^8\\)",
                     "subtitle": "hjust=0.8"
                   },
                   "kind": "plot",
@@ -14773,12 +14669,12 @@ class LatexTest : VisualPlotTestBase() {
                 {
                   "data": {
                     "x": [
-                      "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)",
-                      "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)"
+                      "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)",
+                      "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)"
                     ],
                     "g": [
-                      "F1: \\( \\Sigma \\cdot \\frac{ 20 - a^{b_1} }{\\rho} \\geq 1 \\)",
-                      "F2: \\( \\Delta \\cdot \\frac{\\xi}{ 30 - c_{d^2} } \\leq -1 \\)"
+                      "F1: \\( \\Sigma \\cdot \\frac{ 20 - a^{b_1} }{\\rho} > 1 \\)",
+                      "F2: \\( \\Delta \\cdot \\frac{\\xi}{ 30 - c_{d^2} } < -1 \\)"
                     ]
                   },
                   "mapping": {
@@ -14797,11 +14693,11 @@ class LatexTest : VisualPlotTestBase() {
                     ]
                   },
                   "ggtitle": {
-                    "text": "Title: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\"",
-                    "subtitle": "Subtitle: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\""
+                    "text": "Title: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\"",
+                    "subtitle": "Subtitle: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\""
                   },
                   "caption": {
-                    "text": "Caption: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\""
+                    "text": "Caption: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\""
                   },
                   "facet": {
                     "name": "grid",
@@ -14816,11 +14712,11 @@ class LatexTest : VisualPlotTestBase() {
                   "kind": "plot",
                   "scales": [
                     {
-                      "name": "X: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\"",
+                      "name": "X: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\"",
                       "aesthetic": "x"
                     },
                     {
-                      "name": "Y: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\"",
+                      "name": "Y: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\"",
                       "aesthetic": "y",
                       "limits": [
                         0.0,
@@ -14828,7 +14724,7 @@ class LatexTest : VisualPlotTestBase() {
                       ]
                     },
                     {
-                      "name": "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)",
+                      "name": "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)",
                       "aesthetic": "color",
                       "discrete": true
                     }
@@ -14866,12 +14762,12 @@ class LatexTest : VisualPlotTestBase() {
                 {
                   "data": {
                     "x": [
-                      "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)",
-                      "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)"
+                      "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)",
+                      "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)"
                     ],
                     "g": [
-                      "F1: \\( \\Sigma \\cdot \\frac{ 20 - a^{b_1} }{\\rho} \\geq 1 \\)",
-                      "F2: \\( \\Delta \\cdot \\frac{\\xi}{ 30 - c_{d^2} } \\leq -1 \\)"
+                      "F1: \\( \\Sigma \\cdot \\frac{ 20 - a^{b_1} }{\\rho} > 1 \\)",
+                      "F2: \\( \\Delta \\cdot \\frac{\\xi}{ 30 - c_{d^2} } < -1 \\)"
                     ]
                   },
                   "mapping": {
@@ -14890,11 +14786,11 @@ class LatexTest : VisualPlotTestBase() {
                     ]
                   },
                   "ggtitle": {
-                    "text": "Title: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\"",
-                    "subtitle": "Subtitle: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\""
+                    "text": "Title: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\"",
+                    "subtitle": "Subtitle: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\""
                   },
                   "caption": {
-                    "text": "Caption: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\""
+                    "text": "Caption: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\""
                   },
                   "facet": {
                     "name": "grid",
@@ -14912,11 +14808,11 @@ class LatexTest : VisualPlotTestBase() {
                   "kind": "plot",
                   "scales": [
                     {
-                      "name": "X: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\"",
+                      "name": "X: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\"",
                       "aesthetic": "x"
                     },
                     {
-                      "name": "Y: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)\"",
+                      "name": "Y: \"F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)\"",
                       "aesthetic": "y",
                       "limits": [
                         0.0,
@@ -14924,7 +14820,7 @@ class LatexTest : VisualPlotTestBase() {
                       ]
                     },
                     {
-                      "name": "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} \\neq 0 \\) (L)",
+                      "name": "F: \\( \\Omega \\cdot \\frac{ 10 - a^{b_1} }{\\sigma} = 0 \\) (L)",
                       "aesthetic": "color",
                       "discrete": true
                     }
