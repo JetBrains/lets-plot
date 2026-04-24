@@ -64,6 +64,8 @@ project(":demo-svg-browser").projectDir = File("./demo/svg-browser")
 
 include("demo-plot-jvm")
 project(":demo-plot-jvm").projectDir = File("./demo/plot-jvm")
+include("plot-spec-debugger")
+project(":plot-spec-debugger").projectDir = File("./demo/plot-spec-debugger")
 include("demo-plot-browser")
 project(":demo-plot-browser").projectDir = File("./demo/plot-browser")
 
