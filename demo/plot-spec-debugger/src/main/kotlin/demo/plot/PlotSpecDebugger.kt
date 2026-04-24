@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package demo.plot
 
 import demoAndTestShared.parsePlotSpec
@@ -20,154 +25,15 @@ import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import java.util.concurrent.TimeUnit
 import javax.imageio.ImageIO
 import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
-import javax.swing.plaf.basic.BasicButtonUI
 import javax.swing.undo.UndoManager
-
-// --- START OF PYTHON INTEGRATION ---
-object PythonRunner {
-    private const val PREFS_FILE = "python_config.json"
-
-    data class PythonConfig(val pythonPath: String)
-
-
-    fun getPythonPath(): String? {
-        val file = getConfigFile()
-        if (file.exists()) {
-            try {
-                val json = file.readText()
-                val map = JsonSupport.parseJson(json) as Map<*, *>
-                return map["pythonPath"] as? String
-            } catch (e: Exception) {
-                // Ignore
-            }
-        }
-        return null
-    }
-
-    fun setPythonPath(path: String) {
-        val file = getConfigFile()
-        file.parentFile.mkdirs()
-        val json = JsonSupport.formatJson(mapOf("pythonPath" to path))
-        file.writeText(json)
-    }
-
-    private fun getConfigFile(): File {
-        val homeDir = System.getProperty("user.home")
-        val appDir = File(homeDir, ".lets-plot-debugger")
-        return File(appDir, PREFS_FILE)
-    }
-
-    /**
-     * returns Pair(JsonString?, ErrorMessage?)
-     */
-    fun runPythonScript(userCode: String, pythonPath: String): Pair<String?, String?> {
-        // Wrapper script that executes user code and extracts the plot
-        // remove LetsPlot.setup_html() from user code
-        // For terminal use, we force offline mode with no JS to avoid any network calls.
-        val userCode = userCode.replace(Regex("""LetsPlot\.setup_html\([^)]*\)\s*"""), "")
-
-        val wrapperScript = """
-            |import sys
-            |import json
-            |import os
-            |
-            |try:
-            |    from lets_plot import *
-            |    from lets_plot._type_utils import standardize_dict
-            |    LetsPlot.setup_html(offline=True, no_js=True)
-            |except ImportError:
-            |    print("Error: 'lets-plot' library is not installed in this Python environment.", file=sys.stderr)
-            |    sys.exit(1)
-            |
-            |def run_user_code():
-            |    # User code will be injected here via execution
-            |    user_code_path = sys.argv[1]
-            |    
-            |    with open(user_code_path, 'r', encoding='utf-8') as f:
-            |        code = f.read()
-            |
-            |    local_scope = {}
-            |    
-            |    try:
-            |        lp_init = "from lets_plot import *; LetsPlot.setup_html(offline=True, no_js=True)\n"
-            |        exec(lp_init + code, {}, local_scope)
-            |    except Exception as e:
-            |        import traceback
-            |        traceback.print_exc(file=sys.stderr)
-            |        sys.exit(1)
-            |
-            |    # Strategy: 
-            |    # 1. Look for variable named 'p' (convention)
-            |    # 2. Look for any variable that has 'as_dict' method (lets-plot object)
-            |    
-            |    plot_obj = local_scope.get('p')
-            |    
-            |    if plot_obj is None:
-            |        # Fallback: find the last defined object that looks like a plot
-            |        candidates = [v for k, v in local_scope.items() if hasattr(v, 'as_dict')]
-            |        if candidates:
-            |            plot_obj = candidates[-1]
-            |
-            |    if plot_obj and hasattr(plot_obj, 'as_dict'):
-            |        plot_dict = standardize_dict(plot_obj.as_dict())
-            |        plot_json = json.dumps(plot_dict, indent=2)
-            |        print(plot_json)
-            |    else:
-            |        print("Error: No plot object found. Please assign your plot to a variable named 'p'.", file=sys.stderr)
-            |        sys.exit(1)
-            |
-            |if __name__ == "__main__":
-            |    run_user_code()
-            |""".trimMargin()
-
-        try {
-            val wrapperFile = File.createTempFile("lets_plot_wrapper", ".py")
-            wrapperFile.writeText(wrapperScript)
-
-            val userCodeFile = File.createTempFile("user_code", ".py")
-            userCodeFile.writeText(userCode)
-
-            val pb = ProcessBuilder(pythonPath, wrapperFile.absolutePath, userCodeFile.absolutePath)
-            pb.environment()["PYTHONIOENCODING"] = "utf-8"
-
-            val process = pb.start()
-
-            // Read stdout (JSON)
-            val output = process.inputStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
-            // Read stderr (Errors)
-            val errors = process.errorStream.bufferedReader(StandardCharsets.UTF_8).use { it.readText() }
-
-            val exited = process.waitFor(10, TimeUnit.SECONDS)
-
-            wrapperFile.delete()
-            userCodeFile.delete()
-
-            if (!exited) {
-                process.destroy()
-                return Pair(null, "Timeout: Python script took too long to execute.")
-            }
-
-            if (process.exitValue() != 0) {
-                return Pair(null, errors.ifBlank { "Unknown Python error (Exit code ${process.exitValue()})" })
-            }
-
-            return Pair(output, if (errors.isNotBlank()) "Python stderr:\n$errors" else null)
-
-        } catch (e: Exception) {
-            return Pair(null, "Execution failed: ${e.message}")
-        }
-    }
-}
-// --- END OF PYTHON INTEGRATION ---
 
 fun main() {
     val specString = System.getenv("PLOT_SPEC")
-        ?: loadSpecFromFile()
+        ?: SpecStore.load()
         ?: """
         {
             'kind': 'plot',
@@ -178,7 +44,6 @@ fun main() {
         """.trimIndent()
 
     SwingUtilities.invokeLater {
-
         val plotSpecDebugger = PlotSpecDebugger()
         try {
             // Attempt to treat initial load as JSON.
@@ -190,48 +55,44 @@ fun main() {
             } else {
                 specString
             }
-
             plotSpecDebugger.setSpec(specToSet)
             plotSpecDebugger.evaluate()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             plotSpecDebugger.setSpec(specString)
             // If it's not JSON, it might be python. Don't print stacktrace on startup, just let UI handle it.
-            //e.printStackTrace()
         }
-
         plotSpecDebugger.isVisible = true
     }
 }
 
-
-private fun loadSpecFromFile(): String? {
-    val specFile = getSpecFile()
-    return try {
-        if (specFile.isFile && specFile.canRead()) {
-            val content = specFile.readText()
-            if (content.isNotBlank()) content else null
-        } else {
-            null
-        }
-    } catch (e: IOException) {
-        println("Warning: Could not read previous plot spec from ${specFile.absolutePath}")
-        e.printStackTrace()
-        null
-    }
-}
-
-private fun getSpecFile(): File {
-    val homeDir = System.getProperty("user.home")
-    val appDir = File(homeDir, ".lets-plot-debugger")
-    return File(appDir, "last_spec.json")
-}
-
-
 class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
-    private val plotSpecTextArea = JTextArea().apply {
+    private enum class EditorSpecSourceKind {
+        DIRECT,
+        FAVORITE,
+        TEMP
+    }
+
+    private data class EditorSpecSource(
+        val kind: EditorSpecSourceKind,
+        val id: String? = null
+    )
+
+    private val plotSpecTextArea = object : JTextArea() {
+        override fun paste() {
+            val before = text
+            isPasteInProgress = true
+            try {
+                super.paste()
+            } finally {
+                isPasteInProgress = false
+            }
+            if (text != before) {
+                registerPastedSpec(text, resetUndoHistory = false)
+            }
+        }
+    }.apply {
         wrapStyleWord = true
         autoscrolls = true
-        // Set a monospaced font for code
         font = Font("Monospaced", Font.PLAIN, 12)
     }
     private val specEditorPane = JScrollPane(plotSpecTextArea)
@@ -252,13 +113,13 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
     private val pythonConfigButton = JButton("Python Path").apply {
         addActionListener {
-            val current = PythonRunner.getPythonPath() ?: "python"
+            val current = PythonConfigStore.getPythonPath() ?: "python"
             val input = JOptionPane.showInputDialog(this@PlotSpecDebugger,
                 "Enter path to Python executable (must have 'lets-plot' installed):",
                 current
             )
             if (input != null && input.isNotBlank()) {
-                PythonRunner.setPythonPath(input.trim())
+                PythonConfigStore.setPythonPath(input.trim())
             }
         }
     }
@@ -293,31 +154,27 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     private val pixelDensityLabel = JLabel("Pixel Density:").apply { isVisible = false }
     private val pixelDensitySpinner = JSpinner(SpinnerNumberModel(2.0, 0.5, 5.0, 0.1)).apply {
         isVisible = false
-        preferredSize = Dimension(80, this.preferredSize.height) // Set a fixed width
+        preferredSize = Dimension(80, this.preferredSize.height)
         addChangeListener {
-            // Use the debouncer timer
             densityDebouncer.restart()
         }
     }
 
-    // Debouncer timer for pixel density
     private val densityDebouncer = Timer(300) {
         evaluate()
     }.apply {
-        isRepeats = false // Make it a single-shot timer
+        isRepeats = false
     }
 
     private val exportPngButton = JButton("Export PNG").apply {
         addActionListener {
             if (plotPanel.width > 0 && plotPanel.height > 0) {
                 try {
-                    // Create an image of the plotPanel content
                     val image = BufferedImage(plotPanel.width, plotPanel.height, BufferedImage.TYPE_INT_RGB)
                     val g2 = image.createGraphics()
                     plotPanel.paint(g2)
                     g2.dispose()
 
-                    // Show Save Dialog
                     val fileChooser = JFileChooser().apply {
                         dialogTitle = "Save Screenshot"
                         selectedFile = File("plot_screenshot.png")
@@ -349,7 +206,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     val svgCanvasDrawable = canvasComponent.content as SvgCanvasDrawable
                     val svgString = SvgToString.render(svgCanvasDrawable.svgSvgElement)
 
-                    // Show Save Dialog
                     val fileChooser = JFileChooser().apply {
                         dialogTitle = "Save SVG"
                         selectedFile = File("plot_screenshot.svg")
@@ -373,7 +229,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     }
 
 
-    // Frontend panel
     private val frontendPanel = JPanel().apply {
         layout = FlowLayout(FlowLayout.LEFT)
         add(JLabel("Frontend:"))
@@ -384,31 +239,64 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         add(exportPngButton)
         add(exportSvgButton)
         add(Box.createHorizontalStrut(10))
-        add(pythonConfigButton) // Add config button here
+        add(pythonConfigButton)
     }
 
-    // Favorites components
-    private val favorites = mutableMapOf<String, String>()
-    private val favoritesComboBox = JComboBox<String>()
+    private val favoritesStore = FavoritesStore()
+    private val tempStore = TempStore()
+    private val favoritesListModel = DefaultListModel<String>()
+    private val favoritesList = JList(favoritesListModel).apply {
+        cellRenderer = FavoriteCellRenderer { name -> favoritesStore[name] }
+        selectionMode = ListSelectionModel.SINGLE_SELECTION
+        visibleRowCount = 4
+        // Uniform row height — rows without a cached thumbnail stay aligned with rows that have one.
+        fixedCellHeight = PreviewCache.THUMB_HEIGHT + 8
+    }
+    private val tempListModel = DefaultListModel<String>()
+    private val tempList = JList(tempListModel).apply {
+        cellRenderer = TempCellRenderer { id -> tempStore[id] }
+        selectionMode = ListSelectionModel.SINGLE_SELECTION
+        visibleRowCount = 4
+        fixedCellHeight = PreviewCache.THUMB_HEIGHT + 8
+    }
+    private val previewPopup by lazy { PreviewHoverPopup(this) }
+    private var favoritesHoverRowIndex = -1
+    private var tempHoverRowIndex = -1
     private val saveFavoriteButton = JButton("Save")
     private val loadFavoriteButton = JButton("Load")
     private val removeFavoriteButton = JButton("Remove")
+    private val loadTempButton = JButton("Load")
+    private val removeTempButton = JButton("Remove")
+    private var pendingPreviewTimer: Timer? = null
 
-    // Processed spec components
     private val processedSpecTextArea = JTextArea().apply {
         isEditable = false
         font = Font(Font.SANS_SERIF, Font.PLAIN, 12)
         lineWrap = false
     }
     private val processedSpecScrollPane = JScrollPane(processedSpecTextArea)
+    private val toggleFavoritesPanelButton = JToggleButton().apply {
+        isSelected = true
+        text = "_"
+        font = font.deriveFont(Font.BOLD)
+        isFocusPainted = false
+        margin = Insets(0, 6, 6, 6)
+        preferredSize = Dimension(28, 22)
+    }
     private val toggleSpecPanelButton = JToggleButton().apply {
         margin = Insets(5, 2, 5, 2)
     }
+    private val storageTabbedPane: JTabbedPane
+    private val topBottomSplitPane: JSplitPane
     private var mainSplitPane: JSplitPane
+    private var lastStorageDividerLocation: Int = 320
+    private var defaultTopBottomDividerSize: Int = 0
     private var lastProcessedSpecDividerLocation: Int = -1
     private var defaultDividerSize: Int = 0
+    private var editorSpecSource = EditorSpecSource(EditorSpecSourceKind.DIRECT)
+    private var isProgrammaticSpecChange = false
+    private var isPasteInProgress = false
 
-    // Message components
     private val messagesTextArea = JTextArea().apply {
         isEditable = false
         font = Font("Monospaced", Font.PLAIN, 12)
@@ -427,7 +315,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
 
         this.addWindowListener(object : WindowAdapter() {
             override fun windowClosing(e: WindowEvent?) {
-                saveSpecToFile()
+                SpecStore.save(plotSpecTextArea.text)
             }
         })
 
@@ -449,22 +337,41 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             add(removeFavoriteButton)
         }
 
-        val favoritesPanel = JPanel().apply {
-            layout = BoxLayout(this, BoxLayout.Y_AXIS)
-            border = BorderFactory.createTitledBorder("Favorites")
-            favoritesComboBox.alignmentX = LEFT_ALIGNMENT
-            favoriteButtonsPanel.alignmentX = LEFT_ALIGNMENT
-            favoritesComboBox.maximumSize = Dimension(Integer.MAX_VALUE, favoritesComboBox.preferredSize.height)
-            favoriteButtonsPanel.maximumSize = Dimension(Integer.MAX_VALUE, favoriteButtonsPanel.preferredSize.height)
-            add(favoritesComboBox)
-            add(Box.createRigidArea(Dimension(0, 5)))
-            add(favoriteButtonsPanel)
+        val tempButtonsPanel = JPanel(GridLayout(1, 2, 5, 0)).apply {
+            add(loadTempButton)
+            add(removeTempButton)
         }
+
+        val favoritesPanel = JPanel(BorderLayout(0, 5)).apply {
+            add(JScrollPane(favoritesList), BorderLayout.CENTER)
+            add(favoriteButtonsPanel, BorderLayout.SOUTH)
+        }
+
+        val tempPanel = JPanel(BorderLayout(0, 5)).apply {
+            add(JScrollPane(tempList), BorderLayout.CENTER)
+            add(tempButtonsPanel, BorderLayout.SOUTH)
+        }
+
+        storageTabbedPane = JTabbedPane().apply {
+            addTab("Favorites", favoritesPanel)
+            addTab("Temp", tempPanel)
+            setTabComponentAt(0, createFavoritesTabHeader())
+        }
+
+        topBottomSplitPane = JSplitPane(
+            JSplitPane.VERTICAL_SPLIT,
+            storageTabbedPane,
+            specEditorPane
+        ).apply {
+            resizeWeight = 0.0  // keep editor growing when the window grows
+            dividerLocation = 320
+            isContinuousLayout = true
+        }
+        defaultTopBottomDividerSize = topBottomSplitPane.dividerSize
 
         val controlPanel = JPanel(BorderLayout(0, 10)).apply {
             border = BorderFactory.createEmptyBorder(10, 10, 10, 10)
-            add(favoritesPanel, BorderLayout.NORTH)
-            add(specEditorPane, BorderLayout.CENTER)
+            add(topBottomSplitPane, BorderLayout.CENTER)
             add(buttonPanel, BorderLayout.SOUTH)
         }
 
@@ -473,9 +380,9 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             plotPanel,
             messagesScrollPane
         ).apply {
-            resizeWeight = 1.0 // Give all extra space to the plot panel
+            resizeWeight = 1.0
         }
-        messagesScrollPane.isVisible = false // Hide initially
+        messagesScrollPane.isVisible = false
 
         val plotAreaPanel = JPanel(BorderLayout())
         plotAreaPanel.add(sharedToolbar, BorderLayout.NORTH)
@@ -501,11 +408,12 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             resizeWeight = 1.0
         }
 
-        // FIX: Hide splitter and panel by default.
+        // Hide splitter and panel by default.
         processedSpecScrollPane.isVisible = false
         defaultDividerSize = mainSplitPane.dividerSize
         mainSplitPane.dividerSize = 0
 
+        setupFavoritesToggle()
         setupProcessedSpecToggle()
 
         val mainPanel = JPanel(BorderLayout())
@@ -517,8 +425,54 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         pack()
         setLocationRelativeTo(null)
 
-        updateFavoritesComboBox()
+        updateFavoritesList()
+        updateTempList()
         updateSaveButtonState()
+    }
+
+    private fun setupFavoritesToggle() {
+        updateFavoritesToggleButtonText()
+
+        toggleFavoritesPanelButton.addActionListener {
+            if (toggleFavoritesPanelButton.isSelected) {
+                topBottomSplitPane.dividerSize = defaultTopBottomDividerSize
+                SwingUtilities.invokeLater {
+                    topBottomSplitPane.setDividerLocation(lastStorageDividerLocation)
+                }
+            } else {
+                lastStorageDividerLocation = topBottomSplitPane.dividerLocation
+                topBottomSplitPane.dividerSize = 0
+                topBottomSplitPane.setDividerLocation(collapsedStorageHeight())
+            }
+            topBottomSplitPane.revalidate()
+            topBottomSplitPane.repaint()
+            updateFavoritesToggleButtonText()
+        }
+    }
+
+    private fun createFavoritesTabHeader(): JComponent {
+        return JPanel(FlowLayout(FlowLayout.LEFT, 4, 0)).apply {
+            isOpaque = false
+            add(JLabel("Favorites"))
+            add(toggleFavoritesPanelButton)
+        }
+    }
+
+    private fun collapsedStorageHeight(): Int {
+        val tabHeight = if (storageTabbedPane.tabCount > 0) {
+            storageTabbedPane.getBoundsAt(0)?.height ?: 0
+        } else {
+            0
+        }
+        return maxOf(34, tabHeight + 8, toggleFavoritesPanelButton.preferredSize.height + 12)
+    }
+
+    private fun updateFavoritesToggleButtonText() {
+        toggleFavoritesPanelButton.toolTipText = if (toggleFavoritesPanelButton.isSelected) {
+            "Minimize favorites"
+        } else {
+            "Show favorites"
+        }
     }
 
     private fun setupProcessedSpecToggle() {
@@ -552,76 +506,220 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         toggleSpecPanelButton.text = text.toCharArray().joinToString("\n")
     }
 
-    private fun getFavoritesFile(): File {
-        val homeDir = System.getProperty("user.home")
-        val appDir = File(homeDir, ".lets-plot-debugger")
-        return File(appDir, "favorites.json")
-    }
-
-
-    private fun saveFavoritesToFile() {
-        val favoritesFile = getFavoritesFile()
+    private fun saveFavorites() {
         try {
-            favoritesFile.parentFile.mkdirs()
-            val json = JsonSupport.formatJson(favorites)
-            favoritesFile.writeText(json)
+            favoritesStore.save()
         } catch (e: IOException) {
             e.printStackTrace()
-            JOptionPane.showMessageDialog(this, "Error saving favorites: ${e.message}", "Favorites Error", JOptionPane.ERROR_MESSAGE)
+            JOptionPane.showMessageDialog(
+                this,
+                "Error saving favorites: ${e.message}",
+                "Favorites Error",
+                JOptionPane.ERROR_MESSAGE
+            )
         }
     }
 
-    private fun loadFavoritesFromFile() {
-        val favoritesFile = getFavoritesFile()
-        if (favoritesFile.exists()) {
-            try {
-                val jsonText = favoritesFile.readText()
-                if (jsonText.isNotBlank()) {
-                    val parsed = JsonSupport.parseJson(jsonText) as Map<*, *>
-                    favorites.clear()
-                    parsed.forEach { (key, value) ->
-                        if (key is String && value is String) favorites[key] = value
-                    }
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+    private fun updateFavoritesList() {
+        val selected = when (editorSpecSource.kind) {
+            EditorSpecSourceKind.FAVORITE -> editorSpecSource.id
+            else -> null
         }
+        favoritesListModel.clear()
+        favoritesStore.sortedNames().forEach { favoritesListModel.addElement(it) }
+        if (selected != null && favoritesListModel.contains(selected)) {
+            favoritesList.setSelectedValue(selected, true)
+        } else {
+            favoritesList.clearSelection()
+        }
+        updateFavoriteButtonsState()
     }
 
-    private fun updateFavoritesComboBox() {
-        val selected = favoritesComboBox.selectedItem
-        favoritesComboBox.removeAllItems()
-        favorites.keys.sorted().forEach { favoritesComboBox.addItem(it) }
-        favoritesComboBox.selectedItem = selected
-        val hasFavorites = favoritesComboBox.itemCount > 0
-        loadFavoriteButton.isEnabled = hasFavorites
-        removeFavoriteButton.isEnabled = hasFavorites
+    private fun updateTempList() {
+        val selected = when (editorSpecSource.kind) {
+            EditorSpecSourceKind.TEMP -> editorSpecSource.id
+            else -> null
+        }
+        tempListModel.clear()
+        tempStore.ids().forEach { tempListModel.addElement(it) }
+        if (selected != null && tempListModel.contains(selected)) {
+            tempList.setSelectedValue(selected, true)
+        } else {
+            tempList.clearSelection()
+        }
+        updateTempButtonsState()
+    }
+
+    private fun updateFavoriteButtonsState() {
+        val hasSelection = favoritesList.selectedValue != null
+        loadFavoriteButton.isEnabled = hasSelection
+        removeFavoriteButton.isEnabled = hasSelection
+    }
+
+    private fun updateTempButtonsState() {
+        val hasSelection = tempList.selectedValue != null
+        loadTempButton.isEnabled = hasSelection
+        removeTempButton.isEnabled = hasSelection
     }
 
     private fun updateSaveButtonState() {
-        val selectedName = favoritesComboBox.selectedItem as? String
-        if (selectedName == null) {
-            saveFavoriteButton.isEnabled = true
+        val currentContent = plotSpecTextArea.text
+        val favoriteName = if (editorSpecSource.kind == EditorSpecSourceKind.FAVORITE) editorSpecSource.id else null
+        if (favoriteName == null) {
+            saveFavoriteButton.isEnabled = currentContent.isNotBlank()
             return
         }
-        val favoriteContent = favorites[selectedName]
-        val currentContent = plotSpecTextArea.text
-        saveFavoriteButton.isEnabled = (favoriteContent != currentContent)
+        saveFavoriteButton.isEnabled = favoritesStore[favoriteName] != currentContent
+    }
+
+    private fun setEditorSpecSource(source: EditorSpecSource, selectStorageTab: Boolean = false) {
+        editorSpecSource = source
+        when (source.kind) {
+            EditorSpecSourceKind.FAVORITE -> {
+                val favoriteName = source.id
+                if (favoriteName != null && favoritesListModel.contains(favoriteName)) {
+                    favoritesList.setSelectedValue(favoriteName, true)
+                } else {
+                    favoritesList.clearSelection()
+                }
+                tempList.clearSelection()
+                if (selectStorageTab) {
+                    storageTabbedPane.selectedIndex = 0
+                }
+            }
+            EditorSpecSourceKind.TEMP -> {
+                val tempId = source.id
+                favoritesList.clearSelection()
+                if (tempId != null && tempListModel.contains(tempId)) {
+                    tempList.setSelectedValue(tempId, true)
+                } else {
+                    tempList.clearSelection()
+                }
+                if (selectStorageTab) {
+                    storageTabbedPane.selectedIndex = 1
+                }
+            }
+            EditorSpecSourceKind.DIRECT -> {
+                favoritesList.clearSelection()
+                tempList.clearSelection()
+            }
+        }
+        updateFavoriteButtonsState()
+        updateTempButtonsState()
+        updateSaveButtonState()
+    }
+
+    private fun saveTempStore() {
+        try {
+            tempStore.save()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            JOptionPane.showMessageDialog(
+                this,
+                "Error saving temp specs: ${e.message}",
+                "Temp Error",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
+    }
+
+    private fun registerPastedSpec(spec: String, resetUndoHistory: Boolean) {
+        val tempEntry = tempStore.add(spec)
+        saveTempStore()
+        setEditorSpecSource(EditorSpecSource(EditorSpecSourceKind.TEMP, tempEntry.id), selectStorageTab = true)
+        updateTempList()
+        if (resetUndoHistory) {
+            isProgrammaticSpecChange = true
+            try {
+                plotSpecTextArea.text = spec
+                plotSpecTextArea.caretPosition = 0
+            } finally {
+                isProgrammaticSpecChange = false
+            }
+            undoManager.discardAllEdits()
+            updateUndoRedoState()
+        }
+    }
+
+    private fun updateCurrentTempSpec() {
+        val tempId = (if (editorSpecSource.kind == EditorSpecSourceKind.TEMP) editorSpecSource.id else null) ?: return
+        tempStore.update(tempId, plotSpecTextArea.text) ?: return
+        saveTempStore()
+        tempList.repaint()
+    }
+
+    private fun handleEditorTextChanged() {
+        if (isProgrammaticSpecChange || isPasteInProgress) return
+        if (editorSpecSource.kind == EditorSpecSourceKind.TEMP) {
+            updateCurrentTempSpec()
+        }
+        updateSaveButtonState()
+    }
+
+    private fun schedulePreviewCapture(specKey: String) {
+        pendingPreviewTimer?.stop()
+        pendingPreviewTimer = Timer(500) {
+            capturePreview(specKey)
+        }.apply {
+            isRepeats = false
+            start()
+        }
+    }
+
+    private fun capturePreview(specKey: String) {
+        val w = plotPanel.width
+        val h = plotPanel.height
+        if (w <= 0 || h <= 0) return
+        try {
+            val image = BufferedImage(w, h, BufferedImage.TYPE_INT_RGB)
+            val g = image.createGraphics()
+            try {
+                plotPanel.paint(g)
+            } finally {
+                g.dispose()
+            }
+            PreviewCache.save(specKey, image)
+            favoritesList.repaint()
+            tempList.repaint()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun loadSelectedFavorite() {
+        val selectedName = favoritesList.selectedValue ?: return
+        val spec = favoritesStore[selectedName] ?: return
+        setSpec(spec, EditorSpecSource(EditorSpecSourceKind.FAVORITE, selectedName), selectStorageTab = true)
+        evaluate()
+    }
+
+    private fun loadSelectedTemp() {
+        val selectedId = tempList.selectedValue ?: return
+        val spec = tempStore[selectedId]?.spec ?: return
+        setSpec(spec, EditorSpecSource(EditorSpecSourceKind.TEMP, selectedId), selectStorageTab = true)
+        evaluate()
     }
 
     private fun setupFavorites() {
-        loadFavoritesFromFile()
+        favoritesStore.load()
+        tempStore.load()
 
         saveFavoriteButton.addActionListener {
+            val initialName = when (editorSpecSource.kind) {
+                EditorSpecSourceKind.FAVORITE -> editorSpecSource.id
+                else -> null
+            }
             val name = JOptionPane.showInputDialog(
                 this,
                 "Enter a name for the favorite:",
                 "Save Favorite",
-                JOptionPane.PLAIN_MESSAGE
-            )
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                initialName ?: favoritesList.selectedValue ?: ""
+            ) as? String
             if (!name.isNullOrBlank()) {
-                if (favorites.containsKey(name) && favorites[name] != plotSpecTextArea.text) {
+                if (name in favoritesStore && favoritesStore[name] != plotSpecTextArea.text) {
                     val overwrite = JOptionPane.showConfirmDialog(
                         this,
                         "Favorite '$name' already exists. Overwrite it?",
@@ -632,26 +730,19 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                         return@addActionListener
                     }
                 }
-                favorites[name] = plotSpecTextArea.text
-                saveFavoritesToFile()
-                updateFavoritesComboBox()
-                favoritesComboBox.selectedItem = name
+                favoritesStore[name] = plotSpecTextArea.text
+                saveFavorites()
+                setEditorSpecSource(EditorSpecSource(EditorSpecSourceKind.FAVORITE, name), selectStorageTab = true)
+                updateFavoritesList()
             }
         }
 
         loadFavoriteButton.addActionListener {
-            val selectedName = favoritesComboBox.selectedItem as? String
-            if (selectedName != null) {
-                val spec = favorites[selectedName]
-                if (spec != null) {
-                    setSpec(spec)
-                    evaluate()
-                }
-            }
+            loadSelectedFavorite()
         }
 
         removeFavoriteButton.addActionListener {
-            val selectedName = favoritesComboBox.selectedItem as? String
+            val selectedName = favoritesList.selectedValue
             if (selectedName != null) {
                 val confirm = JOptionPane.showConfirmDialog(
                     this,
@@ -660,43 +751,150 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                     JOptionPane.YES_NO_OPTION
                 )
                 if (confirm == JOptionPane.YES_OPTION) {
-                    favorites.remove(selectedName)
-                    saveFavoritesToFile()
-                    updateFavoritesComboBox()
+                    favoritesStore.remove(selectedName)
+                    saveFavorites()
+                    if (editorSpecSource.kind == EditorSpecSourceKind.FAVORITE && editorSpecSource.id == selectedName) {
+                        setEditorSpecSource(EditorSpecSource(EditorSpecSourceKind.DIRECT))
+                    }
+                    updateFavoritesList()
                 }
             }
         }
 
-        favoritesComboBox.addItemListener { e ->
-            if (e.stateChange == ItemEvent.SELECTED) {
+        loadTempButton.addActionListener {
+            loadSelectedTemp()
+        }
+
+        removeTempButton.addActionListener {
+            val selectedId = tempList.selectedValue ?: return@addActionListener
+            tempStore.remove(selectedId)
+            saveTempStore()
+            if (editorSpecSource.kind == EditorSpecSourceKind.TEMP && editorSpecSource.id == selectedId) {
+                setEditorSpecSource(EditorSpecSource(EditorSpecSourceKind.DIRECT))
+            }
+            updateTempList()
+        }
+
+        favoritesList.addListSelectionListener { e ->
+            if (!e.valueIsAdjusting) {
+                updateFavoriteButtonsState()
                 updateSaveButtonState()
             }
         }
+
+        tempList.addListSelectionListener { e ->
+            if (!e.valueIsAdjusting) {
+                updateTempButtonsState()
+            }
+        }
+
+        favoritesList.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (e.clickCount == 2) {
+                    val idx = favoritesList.locationToIndex(e.point)
+                    if (idx >= 0 && favoritesList.getCellBounds(idx, idx)?.contains(e.point) == true) {
+                        favoritesList.selectedIndex = idx
+                        loadSelectedFavorite()
+                    }
+                }
+            }
+
+            override fun mouseExited(e: MouseEvent) {
+                favoritesHoverRowIndex = -1
+                previewPopup.hide()
+            }
+        })
+
+        tempList.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent) {
+                if (e.clickCount == 2) {
+                    val idx = tempList.locationToIndex(e.point)
+                    if (idx >= 0 && tempList.getCellBounds(idx, idx)?.contains(e.point) == true) {
+                        tempList.selectedIndex = idx
+                        loadSelectedTemp()
+                    }
+                }
+            }
+
+            override fun mouseExited(e: MouseEvent) {
+                tempHoverRowIndex = -1
+                previewPopup.hide()
+            }
+        })
+
+        favoritesList.addMouseMotionListener(object : MouseMotionAdapter() {
+            override fun mouseMoved(e: MouseEvent) {
+                val idx = favoritesList.locationToIndex(e.point)
+                val bounds = if (idx >= 0) favoritesList.getCellBounds(idx, idx) else null
+                // Only trigger when the cursor is over the thumbnail column at the left of a cell.
+                // +4 absorbs the JLabel's left border insets so the trigger feels natural.
+                val overThumbnail = idx >= 0
+                        && bounds != null
+                        && bounds.contains(e.point)
+                        && (e.point.x - bounds.x) <= PreviewCache.THUMB_WIDTH + 4
+
+                if (!overThumbnail) {
+                    if (favoritesHoverRowIndex != -1) {
+                        favoritesHoverRowIndex = -1
+                        previewPopup.hide()
+                    }
+                    return
+                }
+                if (idx == favoritesHoverRowIndex) return
+                favoritesHoverRowIndex = idx
+
+                val name = favoritesListModel.getElementAt(idx)
+                val full = favoritesStore[name]?.let { PreviewCache.loadFull(it) }
+                if (full != null) {
+                    previewPopup.show(full, favoritesList, bounds)
+                } else {
+                    previewPopup.hide()
+                }
+            }
+        })
+
+        tempList.addMouseMotionListener(object : MouseMotionAdapter() {
+            override fun mouseMoved(e: MouseEvent) {
+                val idx = tempList.locationToIndex(e.point)
+                val bounds = if (idx >= 0) tempList.getCellBounds(idx, idx) else null
+                val overThumbnail = idx >= 0
+                        && bounds != null
+                        && bounds.contains(e.point)
+                        && (e.point.x - bounds.x) <= PreviewCache.THUMB_WIDTH + 4
+
+                if (!overThumbnail) {
+                    if (tempHoverRowIndex != -1) {
+                        tempHoverRowIndex = -1
+                        previewPopup.hide()
+                    }
+                    return
+                }
+                if (idx == tempHoverRowIndex) return
+                tempHoverRowIndex = idx
+
+                val id = tempListModel.getElementAt(idx)
+                val full = tempStore[id]?.spec?.let { PreviewCache.loadFull(it) }
+                if (full != null) {
+                    previewPopup.show(full, tempList, bounds)
+                } else {
+                    previewPopup.hide()
+                }
+            }
+        })
 
         plotSpecTextArea.document.addDocumentListener(object : DocumentListener {
             override fun insertUpdate(e: DocumentEvent?) {
-                updateSaveButtonState()
+                handleEditorTextChanged()
             }
 
             override fun removeUpdate(e: DocumentEvent?) {
-                updateSaveButtonState()
+                handleEditorTextChanged()
             }
 
             override fun changedUpdate(e: DocumentEvent?) {
-                updateSaveButtonState()
+                handleEditorTextChanged()
             }
         })
-    }
-
-
-    private fun saveSpecToFile() {
-        val specFile = getSpecFile()
-        try {
-            specFile.parentFile.mkdirs()
-            specFile.writeText(plotSpecTextArea.text)
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
     }
 
     private fun setupUndoRedo() {
@@ -751,8 +949,14 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             val clipboard = Toolkit.getDefaultToolkit().systemClipboard
             if (clipboard.isDataFlavorAvailable(DataFlavor.stringFlavor)) {
                 val clipboardText = clipboard.getData(DataFlavor.stringFlavor) as String
-                plotSpecTextArea.text = clipboardText
-                plotSpecTextArea.caretPosition = 0
+                isProgrammaticSpecChange = true
+                try {
+                    plotSpecTextArea.text = clipboardText
+                    plotSpecTextArea.caretPosition = 0
+                } finally {
+                    isProgrammaticSpecChange = false
+                }
+                registerPastedSpec(clipboardText, resetUndoHistory = true)
                 return true
             }
         } catch (e: Exception) {
@@ -762,15 +966,29 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
     }
 
     fun setSpec(spec: String) {
-        plotSpecTextArea.text = spec
-        plotSpecTextArea.caretPosition = 0
+        setSpec(spec, EditorSpecSource(EditorSpecSourceKind.DIRECT))
+    }
+
+    private fun setSpec(
+        spec: String,
+        source: EditorSpecSource,
+        selectStorageTab: Boolean = false
+    ) {
+        isProgrammaticSpecChange = true
+        try {
+            plotSpecTextArea.text = spec
+            plotSpecTextArea.caretPosition = 0
+        } finally {
+            isProgrammaticSpecChange = false
+        }
+        setEditorSpecSource(source, selectStorageTab = selectStorageTab)
         undoManager.discardAllEdits()
         updateUndoRedoState()
     }
 
     fun evaluate() {
         densityDebouncer.stop()
-        saveSpecToFile()
+        SpecStore.save(plotSpecTextArea.text)
 
         messagesTextArea.text = ""
         messagesScrollPane.isVisible = false
@@ -778,10 +996,10 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
         plotPanel.revalidate()
         plotPanel.repaint() // Clear immediately so user sees something is happening
 
-        val rawText = plotSpecTextArea.text.trim()
+        val specKey = plotSpecTextArea.text
+        val rawText = specKey.trim()
         val isJson = rawText.startsWith("{")
 
-        // Helper to update messages UI
         val messageHandler: (List<String>) -> Unit = { messages ->
             if (messages.isNotEmpty()) {
                 SwingUtilities.invokeLater {
@@ -797,7 +1015,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             }
         }
 
-        // Logic to obtain the spec map
         fun processSpec(specMap: Map<String, Any>) {
             try {
                 val processedSpec: Map<String, Any>
@@ -847,6 +1064,8 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 plotPanel.add(newPlotComponent, BorderLayout.CENTER)
                 plotPanel.revalidate()
                 plotPanel.repaint()
+
+                schedulePreviewCapture(specKey)
             } catch (e: Exception) {
                 e.printStackTrace()
                 val errorText = "Error rendering plot:\n${e.message}\n${e.stackTraceToString()}"
@@ -865,13 +1084,11 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             }
         } else {
             // Assume Python
-            val pythonPath = PythonRunner.getPythonPath() ?: "python"
+            val pythonPath = PythonConfigStore.getPythonPath() ?: "python"
 
-            // Show a "Running..." cursor
             cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
             evaluateButton.isEnabled = false
 
-            // Run in background to avoid freezing UI
             val worker = object : SwingWorker<Pair<String?, String?>, Void>() {
                 override fun doInBackground(): Pair<String?, String?> {
                     return PythonRunner.runPythonScript(rawText, pythonPath)
@@ -909,79 +1126,6 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 }
             }
             worker.execute()
-        }
-    }
-
-    private class PasteIcon(private val size: Int = 20) : Icon {
-        override fun paintIcon(c: Component?, g: Graphics, x: Int, y: Int) {
-            val g2d = g.create() as Graphics2D
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-            val boardColor = Color(80, 80, 80)
-            g2d.color = boardColor
-            g2d.fillRoundRect(x + 2, y, size - 4, size, 6, 6)
-            g2d.fillRect(x + 6, y - 1, size - 12, 5)
-            g2d.color = Color(245, 245, 245)
-            g2d.fillRect(x + 4, y + 4, size - 8, size - 7)
-            g2d.stroke = BasicStroke(1.5f)
-            g2d.color = boardColor
-            g2d.drawLine(x + 5, y + 8, x + 14, y + 8)
-            g2d.drawLine(x + 5, y + 11, x + 14, y + 11)
-            g2d.drawLine(x + 5, y + 14, x + 14, y + 14)
-            g2d.dispose()
-        }
-
-        override fun getIconWidth(): Int = size
-        override fun getIconHeight(): Int = size
-    }
-
-    private class VerticalButtonUI : BasicButtonUI() {
-        override fun paint(g: Graphics, c: JComponent) {
-            val button = c as AbstractButton
-            // Call the superclass's paint method to paint the button's background, border, etc.
-            super.paint(g, c)
-
-            val text = button.text
-            if (text == null || text.isEmpty()) {
-                return
-            }
-
-            val g2d = g.create() as Graphics2D
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-            g2d.color = button.foreground
-            g2d.font = button.font
-
-            val fm = g2d.fontMetrics
-            val lines = text.split("\n")
-            val lineHeight = fm.height
-            val totalHeight = lines.size * lineHeight
-
-            // Calculate the starting y-coordinate to center the text vertically
-            var y = (c.height - totalHeight) / 2 + fm.ascent
-
-            for (line in lines) {
-                // Calculate the x-coordinate to center the text horizontally
-                val stringWidth = fm.stringWidth(line)
-                val x = (c.width - stringWidth) / 2
-                g2d.drawString(line, x, y)
-                y += lineHeight
-            }
-            g2d.dispose()
-        }
-
-        override fun getPreferredSize(c: JComponent): Dimension {
-            val text = (c as AbstractButton).text ?: return Dimension(20, 100)
-            val fm = c.getFontMetrics(c.font)
-            val lines = text.split("\n")
-            var maxWidth = 0
-            for (line in lines) {
-                maxWidth = kotlin.math.max(maxWidth, fm.stringWidth(line))
-            }
-            val totalHeight = fm.height * lines.size
-            val insets = c.insets
-            return Dimension(
-                maxWidth + insets.left + insets.right,
-                totalHeight + insets.top + insets.bottom
-            )
         }
     }
 }
