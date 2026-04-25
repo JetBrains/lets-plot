@@ -14,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -66,7 +66,7 @@ class BarPlotResizeDemo private constructor(
             .addConstantAes(Aes.WIDTH, 0.9)
 
         // Add bar plot interactions
-        val geomInteraction = GeomInteractionBuilder.DemoAndTest(
+        val geomInteraction = GeomInteraction.DemoAndTest(
             listOf(
                 Aes.X,
                 Aes.Y,
@@ -74,7 +74,6 @@ class BarPlotResizeDemo private constructor(
             )
         )
             .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-            .build()
 
         val layer = layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())

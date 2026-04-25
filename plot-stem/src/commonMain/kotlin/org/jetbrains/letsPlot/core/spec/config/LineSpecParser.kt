@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -11,12 +11,19 @@ import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.has
 
-open class LineSpecConfig(
+class LineSpecParser(
     opts: Map<String, Any>,
-    val constantsMap: Map<Aes<*>, Any>,
-    val groupingVarNames: List<String>?,
-    private val varBindings: List<VarBinding>,
+    constantsMap: Map<Aes<*>, Any>,
+    groupingVarNames: List<String>?,
+    varBindings: List<VarBinding>,
+    private val customization: Customization = DefaultCustomization,
 ) : OptionsAccessor(opts) {
+    private val context = Context(
+        opts = opts,
+        constantsMap = constantsMap,
+        groupingVarNames = groupingVarNames,
+        varBindings = varBindings
+    )
 
     val lines = if (has(Option.LinesSpec.LINES)) {
         getStringList(Option.LinesSpec.LINES)
@@ -28,8 +35,6 @@ open class LineSpecConfig(
 
     private val titleLine = getString(Option.LinesSpec.TITLE)
 
-    open val sourceRePattern = SOURCE_RE_PATTERN
-
     fun create(): LinesContentSpecification {
         val allLines = parseLines()
         val title = titleLine?.let(::parseLine)
@@ -39,7 +44,7 @@ open class LineSpecConfig(
     private val myValueSources: MutableMap<Field, ValueSource> = prepareFormats(formats)
         .let { specifiedFormats ->
             val valueSources = specifiedFormats.mapValues { (field, format) ->
-                createValueSource(fieldName = field.name, isAes = field.isAes, format = format)
+                customization.createValueSource(this, fieldName = field.name, isAes = field.isAes, format = format)
             }
             // the specified format for the variable should be applied also to the aes (if it doesn't have its own format())
             val aesValueSources = mutableMapOf<Field, ValueSource>()
@@ -50,7 +55,7 @@ open class LineSpecConfig(
         }.toMutableMap()
 
     // Create lines from the given variable list
-    private val myLinesForVariableList: List<LinePattern> = prepareVariables(variables)
+    private val myLinesForVariableList: List<LinePattern> = customization.prepareVariables(this, variables)
 
     private fun parseLines(): List<LinePattern>? {
         val lines = lines?.map(::parseLine)
@@ -66,7 +71,7 @@ open class LineSpecConfig(
         val valueString = line.substringAfter(LABEL_SEPARATOR)
 
         val fieldsInPattern = mutableListOf<ValueSource>()
-        val pattern: String = sourceRePattern.replace(valueString) {
+        val pattern: String = customization.sourceRePattern.replace(valueString) {
             if (it.value == "\\$AES_NAME_PREFIX" || it.value == "\\$VARIABLE_NAME_PREFIX") {
                 // it is a part of the text (not of the name)
                 it.value.removePrefix("\\")
@@ -82,19 +87,19 @@ open class LineSpecConfig(
         )
     }
 
-    open fun createValueSource(fieldName: String, isAes: Boolean, format: String? = null): ValueSource {
+    internal fun createDefaultValueSource(fieldName: String, isAes: Boolean, format: String? = null): ValueSource {
         return when {
             isAes && fieldName == Option.Mapping.GROUP -> {
-                require(groupingVarNames != null) { "Variable name for 'group' is not specified" }
-                require(groupingVarNames.isNotEmpty()) { "Variable name for 'group' is not specified" }
-                require(groupingVarNames.size == 1) { "Multiple variable names for 'group' is specified: $groupingVarNames" }
+                require(context.groupingVarNames != null) { "Variable name for 'group' is not specified" }
+                require(context.groupingVarNames.isNotEmpty()) { "Variable name for 'group' is not specified" }
+                require(context.groupingVarNames.size == 1) { "Multiple variable names for 'group' is specified: ${context.groupingVarNames}" }
 
-                DataFrameField(groupingVarNames[0], format)
+                DataFrameField(context.groupingVarNames[0], format)
             }
 
             isAes -> {
                 val aes = Option.Mapping.toAes(fieldName)
-                when (val constant = constantsMap[aes]) {
+                when (val constant = context.constantsMap[aes]) {
                     null -> MappingField(aes, format = format)
                     else -> ConstantField(aes, constant, format)
                 }
@@ -142,7 +147,7 @@ open class LineSpecConfig(
         return allFormats
     }
 
-    open fun prepareVariables(variables: List<String>): List<LinePattern> {
+    internal fun prepareDefaultVariables(variables: List<String>): List<LinePattern> {
         return variables.map { variableName ->
             val valueSource = getValueSource(varField(variableName))
             LinePattern.defaultLineForValueSource(valueSource)
@@ -158,14 +163,15 @@ open class LineSpecConfig(
             return emptyMap()
         }
 
-        return varBindings
+        return context.varBindings
             .filter { it.variable.name == field.name }
             .map(VarBinding::aes).associate { aes ->
                 val aesField = aesField(aes.name)
                 if (aesField in valueSources)
                     aesField to valueSources[aesField]!!
                 else
-                    aesField to createValueSource(
+                    aesField to customization.createValueSource(
+                        this,
                         fieldName = aes.name,
                         isAes = true,
                         format = format
@@ -189,13 +195,13 @@ open class LineSpecConfig(
                 ?.second
 
             myValueSources[field] =
-                specifiedBefore ?: createValueSource(fieldName = field.name, isAes = field.isAes)
+                specifiedBefore ?: customization.createValueSource(this, fieldName = field.name, isAes = field.isAes)
         }
         return myValueSources[field]!!
     }
 
-    open fun getValueSource(fieldString: String): ValueSource {
-        val field = when {
+    fun getValueSource(fieldString: String): ValueSource {
+        val field = customization.resolveField(this, fieldString) ?: when {
             fieldString.startsWith(AES_NAME_PREFIX) -> {
                 aesField(fieldString.removePrefix(AES_NAME_PREFIX))
             }
@@ -221,10 +227,47 @@ open class LineSpecConfig(
         }
     }
 
-    private fun aesField(aesName: String) = Field(aesName, true)
+    internal fun aesField(aesName: String) = Field(aesName, true)
     internal fun varField(varName: String) = Field(varName, false)
 
+    private data class Context(
+        val opts: Map<String, Any>,
+        val constantsMap: Map<Aes<*>, Any>,
+        val groupingVarNames: List<String>?,
+        val varBindings: List<VarBinding>,
+    )
+
     data class Field(val name: String, val isAes: Boolean)
+
+    interface Customization {
+        val sourceRePattern: Regex
+            get() = SOURCE_RE_PATTERN
+
+        fun createValueSource(
+            parser: LineSpecParser,
+            fieldName: String,
+            isAes: Boolean,
+            format: String? = null
+        ): ValueSource {
+            return parser.createDefaultValueSource(fieldName, isAes, format)
+        }
+
+        fun prepareVariables(
+            parser: LineSpecParser,
+            variables: List<String>,
+        ): List<LinePattern> {
+            return parser.prepareDefaultVariables(variables)
+        }
+
+        fun resolveField(
+            parser: LineSpecParser,
+            fieldString: String
+        ): Field? {
+            return null
+        }
+    }
+
+    private object DefaultCustomization : Customization
 
     companion object {
         private const val AES_NAME_PREFIX = "^"
@@ -233,6 +276,6 @@ open class LineSpecConfig(
 
         // escaping ('\^', '\@') or aes name ('^aesName') or variable name ('@varName', '@{var name with spaces}', '@..stat_var..')
         @Suppress("RegExpRedundantEscape")
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
+        internal val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
     }
 }

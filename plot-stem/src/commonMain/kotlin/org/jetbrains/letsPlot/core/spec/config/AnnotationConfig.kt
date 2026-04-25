@@ -16,16 +16,21 @@ class AnnotationConfig(
     varBindings: List<VarBinding>,
     constantsMap: Map<Aes<*>, Any>,
     groupingVarNames: List<String>?
-) : LineSpecConfig(opts, constantsMap, groupingVarNames, varBindings) {
+) : OptionsAccessor(opts) {
+    private val lineSpecParser = LineSpecParser(
+        opts = opts,
+        constantsMap = constantsMap,
+        groupingVarNames = groupingVarNames,
+        varBindings = varBindings
+    )
 
     fun createAnnotations(): AnnotationSpecification {
-        return create().run {
-            AnnotationSpecification(
-                valueSources = valueSources,
-                linePatterns = linePatterns ?: emptyList(),
-                textSize = getDouble(ANNOTATION_SIZE),
-                useLayerColor = getBoolean(USE_LAYER_COLOR, false)
-            )
-        }
+        val contentSpecification = lineSpecParser.create()
+        return AnnotationSpecification(
+            valueSources = contentSpecification.valueSources,
+            linePatterns = contentSpecification.linePatterns ?: emptyList(),
+            textSize = getDouble(ANNOTATION_SIZE),
+            useLayerColor = getBoolean(USE_LAYER_COLOR, false)
+        )
     }
 }

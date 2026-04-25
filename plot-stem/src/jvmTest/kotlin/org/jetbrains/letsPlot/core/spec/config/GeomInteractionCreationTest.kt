@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
@@ -31,7 +31,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 // TODO: rewrite without using transformToClientPlotConfig and move to plot-base module
-class GeomInteractionBuilderCreationTest {
+class GeomInteractionCreationTest {
 
     private val data = mapOf(
         Aes.X.name to listOf(1.0),
@@ -195,14 +195,21 @@ class GeomInteractionBuilderCreationTest {
         val plotConfig = transformToClientPlotConfig(plotOpts)
         val scaleMap = plotConfig.createScales()
         plotConfig.layerConfigs.forEach { layerConfig ->
-            val builder = GeomInteractionUtil.createGeomInteractionBuilder(
+            val tooltipConfig = layerConfig.tooltips!!
+            val builder = GeomInteractionUtil.createGeomInteraction(
                 bindings = layerConfig.varBindings.associate { it.aes to it.variable },
                 scaleMap = scaleMap,
                 isLiveMap = false,
                 isPolarCoordSystem = false,
                 theme = DefaultTheme.minimal2(),
                 geomKind = layerConfig.geomProto.geomKind,
-                tooltipBehavior1 = layerConfig.tooltips,
+                statKind = layerConfig.statKind,
+                contentSpecification = tooltipConfig.contentSpecification,
+                anchor = tooltipConfig.anchor,
+                minWidth = tooltipConfig.minWidth,
+                disableSplitting = tooltipConfig.disableSplitting,
+                tooltipGroup = tooltipConfig.tooltipGroup,
+                isCrosshairEnabled = tooltipConfig.isCrosshairEnabled,
                 isYOrientation = layerConfig.isYOrientation,
                 constantsMap = layerConfig.constantsMap,
                 renderedAes = layerConfig.renderedAes,
@@ -346,7 +353,7 @@ class GeomInteractionBuilderCreationTest {
         }
 
         run {
-            val builder = createGeomInteractionBuilder(areaRidgePlotOpts(withFillMapping = false))
+            val builder = createGeomInteraction(areaRidgePlotOpts(withFillMapping = false))
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
             assertAesList(
                 listOf(Aes.HEIGHT, Aes.X),
@@ -354,7 +361,7 @@ class GeomInteractionBuilderCreationTest {
             )
         }
         run {
-            val builder = createGeomInteractionBuilder(areaRidgePlotOpts(withFillMapping = true))
+            val builder = createGeomInteraction(areaRidgePlotOpts(withFillMapping = true))
             val aesListForTooltip = getAesListInTooltip(builder.tooltipLines)
             assertAesList(
                 listOf(
@@ -368,7 +375,7 @@ class GeomInteractionBuilderCreationTest {
     }
 
 
-    private fun tileWithBrewerScale(useBrewerScale: Boolean, useContinuousVars: Boolean): GeomInteractionBuilder {
+    private fun tileWithBrewerScale(useBrewerScale: Boolean, useContinuousVars: Boolean): GeomInteraction {
         val mappedData = mapOf(
             Aes.X.name to listOf(0),
             Aes.FILL.name to if (useContinuousVars) {
@@ -397,14 +404,14 @@ class GeomInteractionBuilderCreationTest {
             ),
             SCALES to scales
         )
-        return createGeomInteractionBuilder(plotOpts)
+        return createGeomInteraction(plotOpts)
     }
 
     private fun geomInteractionBuilder(
         mappedData: Map<String, Any>,
         themeOpts: Map<String, Any> = emptyMap(),
         geom: String
-    ): GeomInteractionBuilder {
+    ): GeomInteraction {
         val plotOpts = mutableMapOf(
             Meta.KIND to Meta.Kind.PLOT,
             MAPPING to mappedData,
@@ -414,7 +421,7 @@ class GeomInteractionBuilderCreationTest {
                 )
             )
         )
-        return createGeomInteractionBuilder(
+        return createGeomInteraction(
             plotOpts,
             theme = ThemeConfig(themeOptions = themeOpts, containerTheme = null, DefaultFontFamilyRegistry()).theme
         )
@@ -425,22 +432,29 @@ class GeomInteractionBuilderCreationTest {
         themeOpts: Map<String, Any> = emptyMap()
     ) = geomInteractionBuilder(mappedData, themeOpts, Option.GeomName.HISTOGRAM)
 
-    private fun createGeomInteractionBuilder(
+    private fun createGeomInteraction(
         plotOpts: MutableMap<String, Any>,
         theme: Theme = DefaultTheme.minimal2()
-    ): GeomInteractionBuilder {
+    ): GeomInteraction {
         val plotConfig = transformToClientPlotConfig(plotOpts)
         val scaleMap = plotConfig.createScales()
 
         val layerConfig = plotConfig.layerConfigs.first()
-        return GeomInteractionUtil.createGeomInteractionBuilder(
+        val tooltipConfig = layerConfig.tooltips!!
+        return GeomInteractionUtil.createGeomInteraction(
             bindings = layerConfig.varBindings.associate { it.aes to it.variable },
             scaleMap = scaleMap,
             isLiveMap = false,
             isPolarCoordSystem = false,
             theme,
             layerConfig.geomProto.geomKind,
-            layerConfig.tooltips,
+            layerConfig.statKind,
+            tooltipConfig.contentSpecification,
+            tooltipConfig.anchor,
+            tooltipConfig.minWidth,
+            tooltipConfig.disableSplitting,
+            tooltipConfig.tooltipGroup,
+            tooltipConfig.isCrosshairEnabled,
             layerConfig.isYOrientation,
             layerConfig.constantsMap,
             layerConfig.renderedAes,

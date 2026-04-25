@@ -8,62 +8,40 @@ package org.jetbrains.letsPlot.core.spec.config
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.StatKind
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehaviorFactory
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinesContentSpecification
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.spec.Option.Layer.Tooltips
 
 class TooltipConfig(
     private val geomKind: GeomKind,
-    private val statKind: StatKind,
     opts: Map<String, Any>,
     constantsMap: Map<Aes<*>, Any>,
     groupingVarNames: List<String>?,
     varBindings: List<VarBinding>
-) : LineSpecConfig(opts, constantsMap, groupingVarNames, varBindings) {
+) : OptionsAccessor(opts) {
+    private val lineSpecParser = LineSpecParser(
+        opts = opts,
+        constantsMap = constantsMap,
+        groupingVarNames = groupingVarNames,
+        varBindings = varBindings
+    )
 
+    val contentSpecification: LinesContentSpecification by lazy {
+        lineSpecParser.create()
+    }
     val anchor: TooltipAnchor? = readAnchor()
-    val isCrosshairEnabled = isCrosshairEnabled(geomKind, anchor)
+    val isCrosshairEnabled = isCrosshairEnabled(anchor)
     val minWidth = getDouble(Tooltips.TOOLTIP_MIN_WIDTH)
     val disableSplitting = getBoolean(Tooltips.DISABLE_SPLITTING, def = false)
     val tooltipGroup: String? = getString(Tooltips.TOOLTIP_GROUP) ?: "__auto_line_group__".takeIf { geomKind in LINE_LIKE_GEOMS }
 
-    //val lookupSpec: LookupSpec = readLookupSpec()
-
-    //private fun readLookupSpec(): LookupSpec {
-    //    val lookupSpace = when (getString(Option.Layer.Tooltips.LOOKUP_SPACE)) {
-    //        Option.Layer.Tooltips.LookupSpace.X -> LookupSpace.X
-    //        Option.Layer.Tooltips.LookupSpace.Y -> LookupSpace.Y
-    //        Option.Layer.Tooltips.LookupSpace.XY -> LookupSpace.XY
-    //        else -> defaultLookupSpace()
-    //    }
-    //
-    //    val lookupStrategy = when (getString(Option.Layer.Tooltips.LOOKUP_STRATEGY)) {
-    //        Option.Layer.Tooltips.LookupStrategy.NEAREST -> LookupStrategy.NEAREST
-    //        Option.Layer.Tooltips.LookupStrategy.HOVER -> LookupStrategy.HOVER
-    //        else -> defaultLookupStrategy()
-    //    }
-    //}
-
-    fun createTooltips(): TooltipBehavior {
-        val contentSpecification = create()
-        val tooltipBehavior = TooltipBehavior(
-            valueSources = contentSpecification.valueSources,
-            tooltipLinePatterns = contentSpecification.linePatterns,
-            tooltipTitle = contentSpecification.titleLine,
-
-            anchor = anchor,
-            minWidth = minWidth,
-            disableSplitting = disableSplitting,
-            tooltipGroup = tooltipGroup,
-            isCrosshairEnabled = isCrosshairEnabled,
-        )
-
-        return createTooltipBehavior(geomKind, statKind, isCrosshairEnabled, tooltipBehavior)
-    }
+    val valueSources
+        get() = contentSpecification.valueSources
 
     private fun readAnchor(): TooltipAnchor? {
         if (!has(Tooltips.TOOLTIP_ANCHOR)) {
@@ -95,201 +73,11 @@ class TooltipConfig(
             geomKind: GeomKind,
             statKind: StatKind,
         ): TooltipBehavior {
-            return createTooltipBehavior(geomKind, statKind, false, TooltipBehavior.defaultTooltip())
+            return TooltipBehaviorFactory.defaultTooltip(geomKind, statKind)
         }
 
-        private fun createTooltipBehavior(
-            geomKind: GeomKind,
-            statKind: StatKind,
-            isCrosshairEnabled: Boolean,
-            tooltipBehavior: TooltipBehavior,
-        ): TooltipBehavior {
-            val defaultTooltipBehavior = when {
-                statKind == StatKind.SMOOTH && geomKind in listOf(GeomKind.POINT, GeomKind.CONTOUR) -> {
-                    xUnivariateFunction(
-                        lookupStrategy = LookupStrategy.NEAREST,
-                        tooltipBehavior = tooltipBehavior
-                    )
-                }
-
-                geomKind == GeomKind.RIBBON -> {
-                    xUnivariateFunction(
-                        lookupStrategy = LookupStrategy.NEAREST,
-                        axisTooltipEnabledOverride = true,
-                        tooltipBehavior = tooltipBehavior
-                    )
-                }
-
-                geomKind in listOf(
-                    GeomKind.DENSITY,
-                    GeomKind.FREQPOLY,
-                    GeomKind.HISTOGRAM,
-                    GeomKind.DOT_PLOT,
-                    GeomKind.LINE,
-                    GeomKind.AREA,
-                    GeomKind.BAR,
-                    GeomKind.SEGMENT,
-                    GeomKind.STEP,
-                    GeomKind.POINT_RANGE,
-                    GeomKind.LINE_RANGE,
-                    GeomKind.ERROR_BAR
-                ) -> {
-                    xUnivariateFunction(
-                        lookupStrategy = LookupStrategy.HOVER,
-                        axisTooltipEnabledOverride = true,
-                        tooltipBehavior = tooltipBehavior
-                    )
-                }
-
-                geomKind == GeomKind.SMOOTH -> {
-                    xUnivariateFunction(
-                        //lookupStrategy = if (isCrosshairEnabled) LookupStrategy.NEAREST else LookupStrategy.HOVER,
-                        lookupStrategy = LookupStrategy.HOVER,
-                        tooltipBehavior = tooltipBehavior
-                    )
-                }
-
-                geomKind in listOf(
-                    GeomKind.PIE,
-                    GeomKind.BOX_PLOT,
-                    GeomKind.CROSS_BAR,
-                    GeomKind.Y_DOT_PLOT,
-                    GeomKind.HEX,
-                    GeomKind.BIN_2D,
-                    GeomKind.TILE
-                ) -> {
-                    bivariateFunction(
-                        area = true,
-                        axisTooltipEnabledOverride = true,
-                        tooltipBehavior = tooltipBehavior
-                    )
-                }
-
-                geomKind in listOf(
-                    GeomKind.TEXT,
-                    GeomKind.LABEL,
-                    GeomKind.TEXT_REPEL,
-                    GeomKind.LABEL_REPEL,
-                    GeomKind.POINT,
-                    GeomKind.JITTER,
-                    GeomKind.Q_Q,
-                    GeomKind.Q_Q_2,
-                    GeomKind.CONTOUR,
-                    GeomKind.DENSITY2D,
-                    GeomKind.POINT_DENSITY,
-                    GeomKind.AREA_RIDGES,
-                    GeomKind.VIOLIN,
-                    GeomKind.SINA,
-                    GeomKind.LOLLIPOP,
-                    GeomKind.SPOKE,
-                    GeomKind.CURVE
-                ) -> {
-                    bivariateFunction(area = false, tooltipBehavior)
-                }
-
-                geomKind in listOf(GeomKind.Q_Q_LINE, GeomKind.Q_Q_2_LINE, GeomKind.PATH) -> {
-                    bivariateFunction(
-                        area = statKind !in listOf(StatKind.CONTOUR, StatKind.CONTOURF, StatKind.DENSITY2D),
-                        tooltipBehavior = tooltipBehavior
-                    )
-                }
-
-                geomKind in listOf(
-                    GeomKind.H_LINE,
-                    GeomKind.V_LINE,
-                    GeomKind.BAND,
-                    GeomKind.DENSITY2DF,
-                    GeomKind.CONTOURF,
-                    GeomKind.POLYGON,
-                    GeomKind.MAP,
-                    GeomKind.RECT
-                ) -> bivariateFunction(area = true, tooltipBehavior)
-
-                geomKind == GeomKind.LIVE_MAP -> bivariateFunction(area = false, tooltipBehavior)
-
-                else -> noneTooltipBehavior(tooltipBehavior)
-            }
-
-            if (isCrosshairEnabled) {
-                return defaultTooltipBehavior.copy(lookupSpec = defaultTooltipBehavior.lookupSpec.copy(lookupStrategy = LookupStrategy.NEAREST))
-            } else {
-                return defaultTooltipBehavior
-            }
-        }
-
-        private fun xUnivariateFunction(
-            lookupStrategy: LookupStrategy,
-            axisTooltipEnabledOverride: Boolean? = null,
-            tooltipBehavior: TooltipBehavior,
-        ): TooltipBehavior {
-            return tooltipBehavior.copy(
-                lookupSpec = LookupSpec(LookupSpace.X, lookupStrategy),
-                axisAesFromFunctionKind = listOf(Aes.X),
-                axisTooltipEnabled = axisTooltipEnabledOverride ?: true,
-                ignoreInvisibleTargets = false,
-            )
-        }
-
-        private fun bivariateFunction(
-            area: Boolean,
-            tooltipBehavior: TooltipBehavior,
-            axisTooltipEnabledOverride: Boolean? = null,
-        ): TooltipBehavior {
-            return tooltipBehavior.copy(
-                lookupSpec = LookupSpec(
-                    LookupSpace.XY,
-                    if (area) LookupStrategy.HOVER else LookupStrategy.NEAREST
-                ),
-                axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
-                axisTooltipEnabled = axisTooltipEnabledOverride ?: !area,
-                ignoreInvisibleTargets = false,
-            )
-        }
-
-        private fun noneTooltipBehavior(
-            tooltipBehavior: TooltipBehavior
-        ): TooltipBehavior {
-            return tooltipBehavior.copy(
-                lookupSpec = LookupSpec.NONE,
-                axisAesFromFunctionKind = emptyList(),
-                axisTooltipEnabled = true,
-                ignoreInvisibleTargets = false,
-            )
-        }
-
-        private fun isCrosshairEnabled(geomKind: GeomKind, anchor: TooltipAnchor?): Boolean {
-            if (anchor == null) {
-                return false
-            }
-
-            return true
-
-            return geomKind in setOf(
-                GeomKind.POINT,
-                GeomKind.JITTER,
-                GeomKind.SINA,
-                GeomKind.Q_Q,
-                GeomKind.Q_Q_2,
-                GeomKind.LINE,
-                GeomKind.AREA,
-                GeomKind.TILE,
-                GeomKind.CONTOUR,
-                GeomKind.CONTOURF,
-                GeomKind.BIN_2D,
-                GeomKind.HEX,
-                GeomKind.DENSITY,
-                GeomKind.DENSITY2D,
-                GeomKind.DENSITY2DF,
-                GeomKind.POINT_DENSITY,
-                GeomKind.FREQPOLY,
-                GeomKind.PATH,
-                GeomKind.SEGMENT,
-                GeomKind.CURVE,
-                GeomKind.SPOKE,
-                GeomKind.RIBBON,
-                GeomKind.SMOOTH,
-                GeomKind.STEP
-            )
+        private fun isCrosshairEnabled(anchor: TooltipAnchor?): Boolean {
+            return anchor != null
         }
 
         private val LINE_LIKE_GEOMS = setOf(

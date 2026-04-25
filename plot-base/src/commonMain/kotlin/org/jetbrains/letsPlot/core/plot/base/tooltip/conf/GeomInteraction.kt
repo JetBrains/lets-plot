@@ -9,18 +9,16 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 
-class GeomInteraction(builder: GeomInteractionBuilder) :
-    ContextualMappingProvider {
-
-    private val tooltipBehavior: TooltipBehavior = builder.tooltipBehavior
-    private val tooltipLines: List<LinePattern> = builder.tooltipLines
-    private val tooltipTitle: LinePattern? = builder.tooltipTitle
+class GeomInteraction(
+    private val tooltipBehavior: TooltipBehavior,
+    val tooltipLines: List<LinePattern>,
+) : ContextualMappingProvider {
 
     fun createLookupSpec(): LookupSpec {
         return tooltipBehavior.lookupSpec
@@ -31,20 +29,38 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
         dataFrame: DataFrame
     ): ContextualMapping {
         return createContextualMapping(
-            tooltipTitle?.let(::LinePattern),  // clone tooltip lines to not share DataContext between plots when facet is used
+            tooltipBehavior.tooltipTitle?.let(::LinePattern),  // clone tooltip lines to not share DataContext between plots when facet is used
             // (issue #247 - With facet_grid tooltip shows data from last plot on all plots)
             tooltipLines.map(::LinePattern),
             dataAccess,
             dataFrame,
             tooltipBehavior.anchor,
             tooltipBehavior.minWidth,
-            tooltipBehavior.ignoreInvisibleTargets,
             tooltipBehavior.isCrosshairEnabled,
             tooltipBehavior.tooltipGroup
         )
     }
 
     companion object {
+        fun create(
+            tooltipBehavior: TooltipBehavior,
+            tooltipAes: List<Aes<*>>,
+            tooltipAxisAes: List<Aes<*>>,
+            sideTooltipAes: List<Aes<*>>,
+            tooltipConstants: Map<Aes<*>, Any>? = null,
+        ): GeomInteraction {
+            return GeomInteraction(
+                tooltipBehavior = tooltipBehavior,
+                tooltipLines = GeomInteractionUtil.createTooltipLines(
+                    tooltipBehavior,
+                    tooltipAes = tooltipAes,
+                    tooltipAxisAes = tooltipAxisAes,
+                    sideTooltipAes = sideTooltipAes,
+                    tooltipConstantAes = tooltipConstants
+                )
+            )
+        }
+
         // For tests
         fun createTestContextualMapping(
             aesListForTooltip: List<Aes<*>>,
@@ -54,7 +70,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataFrame: DataFrame,
             userDefinedValueSources: List<ValueSource>? = null
         ): ContextualMapping {
-            val defaultTooltipLines = GeomInteractionBuilderUtil.defaultValueSourceTooltipLines(
+            val defaultTooltipLines = GeomInteractionUtil.defaultValueSourceTooltipLines(
                 aesListForTooltip,
                 axisAes,
                 sideTooltipAes,
@@ -67,7 +83,6 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 dataFrame,
                 anchor = null,
                 minWidth = null,
-                ignoreInvisibleTargets = false,
                 isCrosshairEnabled = false,
                 tooltipGroup = null
             )
@@ -80,7 +95,6 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
             dataFrame: DataFrame,
             anchor: TooltipAnchor?,
             minWidth: Double?,
-            ignoreInvisibleTargets: Boolean,
             isCrosshairEnabled: Boolean,
             tooltipGroup: String?
         ): ContextualMapping {
@@ -92,10 +106,72 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 mappedTooltipLines,
                 anchor,
                 minWidth,
-                ignoreInvisibleTargets,
                 isCrosshairEnabled,
                 tooltipGroup,
                 tooltipTitle
+            )
+        }
+    }
+
+    class DemoAndTest(
+        private val supportedAes: List<Aes<*>>,
+        private val axisAes: List<Aes<*>>? = null,
+    ) {
+        fun xUnivariateFunction(lookupStrategy: LookupStrategy): GeomInteraction {
+            return createInteraction(
+                TooltipBehavior(
+                    lookupSpec = LookupSpec(
+                        LookupSpace.X,
+                        lookupStrategy
+                    ),
+                    axisAesFromFunctionKind = listOf(Aes.X),
+                    axisTooltipEnabled = true,
+                    isCrosshairEnabled = false,
+                    valueSources = emptyList(),
+                    tooltipLinePatterns = null,
+                    anchor = null,
+                    minWidth = null,
+                    tooltipTitle = null,
+                    disableSplitting = false,
+                    tooltipGroup = null,
+                )
+            )
+        }
+
+        fun bivariateFunction(area: Boolean): GeomInteraction {
+            val lookupStrategy = if (area) {
+                LookupStrategy.HOVER
+            } else {
+                LookupStrategy.NEAREST
+            }
+            return createInteraction(
+                TooltipBehavior(
+                    lookupSpec = LookupSpec(
+                        LookupSpace.XY,
+                        lookupStrategy
+                    ),
+                    axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
+                    axisTooltipEnabled = !area,
+                    isCrosshairEnabled = false,
+                    valueSources = emptyList(),
+                    tooltipLinePatterns = null,
+                    anchor = null,
+                    minWidth = null,
+                    tooltipTitle = null,
+                    disableSplitting = false,
+                    tooltipGroup = null,
+                )
+            )
+        }
+
+        private fun createInteraction(tooltipBehavior: TooltipBehavior): GeomInteraction {
+            return create(
+                tooltipBehavior = tooltipBehavior,
+                tooltipAes = supportedAes - tooltipBehavior.axisAesFromFunctionKind,
+                tooltipAxisAes = axisAes
+                    ?: if (!tooltipBehavior.axisTooltipEnabled) emptyList()
+                    else tooltipBehavior.axisAesFromFunctionKind,
+                sideTooltipAes = emptyList()
             )
         }
     }

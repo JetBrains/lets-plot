@@ -14,12 +14,10 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.mockito.Mockito
 import kotlin.test.Test
 import kotlin.test.assertNotNull
-import kotlin.test.assertNull
 
 class LayerTargetCollectorWithLocatorTest {
 
@@ -31,23 +29,6 @@ class LayerTargetCollectorWithLocatorTest {
     }
 
     @Test
-    fun `invisible point should not be added to targets`() {
-        // assert zero radius
-        run {
-            val targetLocator = addPointToTargets(point = POINT, radius = 0.0, color = Color.BLACK)
-            val lookupResult = targetLocator.search(POINT)
-            assertNull(lookupResult)
-        }
-
-        // assert alpha
-        run {
-            val targetLocator = addPointToTargets(point = POINT, radius = 10.0, color = Color.TRANSPARENT)
-            val lookupResult = targetLocator.search(POINT)
-            assertNull(lookupResult)
-        }
-    }
-
-    @Test
     fun `add rectangle to targets`() {
         val targetLocator = addRectangleToTargets(
             rect = DoubleRectangle(POINT, dimension = DoubleVector(10.0, 10.0)),
@@ -55,29 +36,6 @@ class LayerTargetCollectorWithLocatorTest {
         )
         val lookupResult = targetLocator.search(POINT)
         assertNotNull(lookupResult)
-    }
-
-    @Test
-    fun `invisible rect should not be added to targets`() {
-        // assert zero dimension
-        run {
-            val targetLocator = addRectangleToTargets(
-                rect = DoubleRectangle(POINT, dimension = DoubleVector.ZERO),
-                color = Color.BLACK
-            )
-            val lookupResult = targetLocator.search(POINT)
-            assertNull(lookupResult)
-        }
-
-        // assert alpha
-        run {
-            val targetLocator = addRectangleToTargets(
-                rect = DoubleRectangle(POINT, dimension = DoubleVector(10.0, 10.0)),
-                color = Color.TRANSPARENT
-            )
-            val lookupResult = targetLocator.search(POINT)
-            assertNull(lookupResult)
-        }
     }
 
     companion object {
@@ -108,15 +66,13 @@ class LayerTargetCollectorWithLocatorTest {
             }
         }
 
-        private fun createGeomInteractionBuilder(area: Boolean): GeomInteraction {
-            return GeomInteractionBuilder.DemoAndTest(Aes.values())
+        private fun createGeomInteraction(area: Boolean): GeomInteraction {
+            return GeomInteraction.DemoAndTest(Aes.values())
                 .bivariateFunction(area)
-                .ignoreInvisibleTargets(true)
-                .build()
         }
 
         private fun createTargetCollectorWithLocator(geomKind: GeomKind): LayerTargetCollectorWithLocator {
-            val builder = createGeomInteractionBuilder(area = geomKind == GeomKind.RECT)
+            val builder = createGeomInteraction(area = geomKind == GeomKind.RECT)
             val contextualMapping = builder.createContextualMapping(
                 dataAccess = Mockito.mock(MappedDataAccess::class.java),
                 dataFrame = DataFrame.Builder().build()

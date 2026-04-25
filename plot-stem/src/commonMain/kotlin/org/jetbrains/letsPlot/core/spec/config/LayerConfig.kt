@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.commons.data.DataType
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.data.DataFrameUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 import org.jetbrains.letsPlot.core.plot.builder.MarginSide
@@ -167,7 +166,7 @@ class LayerConfig constructor(
     val varBindings: List<VarBinding>
     val constantsMap: Map<Aes<*>, Any>
 
-    val tooltips: TooltipBehavior
+    val tooltips: TooltipConfig?
     val annotations: AnnotationSpecification
 
     private val combinedDiscreteMappings: Map<String, String>
@@ -290,7 +289,6 @@ class LayerConfig constructor(
             constantsMap,
             explicitGroupingVarNames,
             geomKind = geomProto.geomKind,
-            statKind = statKind,
         )
 
         annotations = if (has(ANNOTATIONS)) {
@@ -545,22 +543,20 @@ class LayerConfig constructor(
             constantsMap: Map<Aes<*>, Any>,
             explicitGroupingVarNames: List<String>?,
             geomKind: GeomKind,
-            statKind: StatKind,
-        ): TooltipBehavior {
+        ): TooltipConfig? {
             return when (tooltipOptions) {
                 is Map<*, *> -> {
                     @Suppress("UNCHECKED_CAST")
                     TooltipConfig(
                         geomKind = geomKind,
-                        statKind = statKind,
                         opts = tooltipOptions as Map<String, Any>,
                         constantsMap = constantsMap,
                         groupingVarNames = explicitGroupingVarNames,
                         varBindings = varBindings
-                    ).createTooltips()
+                    )
                 }
 
-                NONE -> TooltipBehavior.NONE
+                NONE -> null
 
                 else -> error("Incorrect tooltips specification")
             }

@@ -15,7 +15,6 @@ open class ContextualMapping(
     private val tooltipLines: List<LinePattern>,
     val tooltipAnchor: TooltipAnchor?,
     val tooltipMinWidth: Double?,
-    val ignoreInvisibleTargets: Boolean,
     val isCrosshairEnabled: Boolean,
     val tooltipGroup: String?,
     private val tooltipTitle: LineSpec?

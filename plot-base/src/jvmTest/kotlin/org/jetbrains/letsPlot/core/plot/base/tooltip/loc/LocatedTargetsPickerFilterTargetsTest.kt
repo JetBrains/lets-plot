@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStr
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccessMock
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -226,9 +226,8 @@ class LocatedTargetsPickerFilterTargetsTest {
     }
 
     private fun createLocator(geomKind: GeomKind, targetPrototypes: List<TargetPrototype>): GeomTargetLocator {
-        val contextualMapping = GeomInteractionBuilder.DemoAndTest(supportedAes = Aes.values())
+        val contextualMapping = GeomInteraction.DemoAndTest(supportedAes = Aes.values())
             .xUnivariateFunction(HOVER)
-            .build()
             .createContextualMapping(
                 MappedDataAccessMock().mappedDataAccess,
                 DataFrame.Builder().build()

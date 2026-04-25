@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -342,12 +342,11 @@ class LocatorByGeneralTooltipTest {
         mappedDataAccessMock: MappedDataAccessMock,
         axisTooltips: Boolean = false
     ): ContextualMapping {
-        val contextualMappingProvider = GeomInteractionBuilder.DemoAndTest(
+        val contextualMappingProvider = GeomInteraction.DemoAndTest(
             supportedAes = Aes.values(),
             axisAes = if (axisTooltips) listOf(Aes.X) else emptyList()
         )
             .bivariateFunction(true)
-            .build()
         return contextualMappingProvider.createContextualMapping(
             mappedDataAccessMock.mappedDataAccess,
             DataFrame.Builder().build()

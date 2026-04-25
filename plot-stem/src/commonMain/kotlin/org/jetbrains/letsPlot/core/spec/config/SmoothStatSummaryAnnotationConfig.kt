@@ -28,64 +28,34 @@ class SmoothStatSummaryAnnotationConfig(
     varBindings: List<VarBinding>,
     constantsMap: Map<Aes<*>, Any>,
     groupingVarNames: List<String>?
-): LineSpecConfig(opts, constantsMap, groupingVarNames, varBindings) {
-    override val sourceRePattern = SOURCE_RE_PATTERN
+) : OptionsAccessor(opts) {
+    private val lineSpecParser = LineSpecParser(
+        opts = opts,
+        constantsMap = constantsMap,
+        groupingVarNames = groupingVarNames,
+        varBindings = varBindings,
+        customization = SmoothLineSpecCustomization
+    )
 
     fun createAnnotations(): PositionedAnnotationSpecification {
-        return create().run {
-            val smoothOption = getMap(Option.LinesSpec.OPTIONS)
+        val contentSpecification = lineSpecParser.create()
+        val smoothOption = getMap(Option.LinesSpec.OPTIONS)
 
-            PositionedAnnotationSpecification(
-                valueSources = valueSources,
-                linePatterns = linePatterns ?: emptyList(),
-                textSize = getDouble(ANNOTATION_SIZE),
-                useLayerColor = getBoolean(USE_LAYER_COLOR, false),
-                horizontalPlacements = labelPositionList(smoothOption[LABEL_X], ::labelHorizontalPlacement),
-                verticalPlacements = labelPositionList(smoothOption[LABEL_Y], ::labelVerticalPlacement)
-            )
-        }
+        return PositionedAnnotationSpecification(
+            valueSources = contentSpecification.valueSources,
+            linePatterns = contentSpecification.linePatterns ?: emptyList(),
+            textSize = getDouble(ANNOTATION_SIZE),
+            useLayerColor = getBoolean(USE_LAYER_COLOR, false),
+            horizontalPlacements = labelPositionList(smoothOption[LABEL_X], ::labelHorizontalPlacement),
+            verticalPlacements = labelPositionList(smoothOption[LABEL_Y], ::labelVerticalPlacement)
+        )
     }
-
-    override fun createValueSource(fieldName: String, isAes: Boolean, format: String?): ValueSource {
-        if (fieldName == EQ_PATTERN) {
-            val eqSpec = getMap(Option.LinesSpec.OPTIONS)
-                .let { options ->
-                    val eq = options[EQ] ?: emptyMap<String, Any>()
-                    require(eq is Map<*, *>) { "Not a Map: " + EQ + ": " + eq::class.simpleName }
-
-                    @Suppress("UNCHECKED_CAST")
-                    EqSpecConfig(eq as Map<String, Any>).create()
-                }
-
-            return EqDataFrameField(fieldName, format, eqSpec)
-        }
-
-        return super.createValueSource(fieldName, isAes, format)
-    }
-
-    override fun getValueSource(fieldString: String): ValueSource {
-        if (fieldString == EQ_PATTERN) {
-            return getValueSource(eqField())
-        }
-
-        return super.getValueSource(fieldString)
-    }
-
-    override fun prepareVariables(variables: List<String>): List<LinePattern> {
-        if (variables.isEmpty() && lines == null) {
-            val valueSource = getValueSource(varField(R2.name))
-            return listOf(LinePattern.defaultLineForSmoothLabels(valueSource))
-        }
-
-        return super.prepareVariables(variables)
-    }
-
-    private fun eqField() = Field(EQ_PATTERN, false)
 
     companion object {
-        private const val EQ_PATTERN = "~eq"
+        internal const val EQ_PATTERN = "~eq"
+
         @Suppress("RegExpRedundantEscape")
-        private val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|~eq|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
+        internal val SOURCE_RE_PATTERN = Regex("""(?:\\\^|\\@)|~eq|(\^\w+)|@(([\w^@]+)|(\{([\s\S]*?)\})|\.{2}\w+\.{2})""")
 
         private fun <T> labelPositionList(v: Any?, mapper: (Any?) -> T): List<T> =
             when (v) {
@@ -123,6 +93,55 @@ class SmoothStatSummaryAnnotationConfig(
                 "center" -> VerticalAnchor.CENTER
                 "bottom" -> VerticalAnchor.BOTTOM
                 else -> VerticalAnchor.TOP
+            }
+        }
+
+        private object SmoothLineSpecCustomization : LineSpecParser.Customization {
+            override val sourceRePattern: Regex = SOURCE_RE_PATTERN
+
+            override fun createValueSource(
+                parser: LineSpecParser,
+                fieldName: String,
+                isAes: Boolean,
+                format: String?
+            ): ValueSource {
+                if (fieldName == EQ_PATTERN) {
+                    val eqSpec = parser.getMap(Option.LinesSpec.OPTIONS)
+                        .let { options ->
+                            val eq = options[EQ] ?: emptyMap<String, Any>()
+                            require(eq is Map<*, *>) { "Not a Map: " + EQ + ": " + eq::class.simpleName }
+
+                            @Suppress("UNCHECKED_CAST")
+                            EqSpecConfig(eq as Map<String, Any>).create()
+                        }
+
+                    return EqDataFrameField(fieldName, format, eqSpec)
+                }
+
+                return parser.createDefaultValueSource(fieldName, isAes, format)
+            }
+
+            override fun resolveField(
+                parser: LineSpecParser,
+                fieldString: String
+            ): LineSpecParser.Field? {
+                return if (fieldString == EQ_PATTERN) {
+                    parser.varField(EQ_PATTERN)
+                } else {
+                    null
+                }
+            }
+
+            override fun prepareVariables(
+                parser: LineSpecParser,
+                variables: List<String>
+            ): List<LinePattern> {
+                if (variables.isEmpty() && parser.lines == null) {
+                    val valueSource = parser.getValueSource(parser.varField(R2.name))
+                    return listOf(LinePattern.defaultLineForSmoothLabels(valueSource))
+                }
+
+                return parser.prepareDefaultVariables(variables)
             }
         }
     }

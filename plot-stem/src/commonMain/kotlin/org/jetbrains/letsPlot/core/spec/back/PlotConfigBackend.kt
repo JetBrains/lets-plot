@@ -364,7 +364,7 @@ open class PlotConfigBackend constructor(
                     GeoConfig.GEO_ID +
                     facets.variables +
                     (layerConfig.explicitGroupingVarNames ?: emptyList()) +
-                    (layerConfig.tooltips.valueSources + layerConfig.annotations.valueSources)
+                    ((layerConfig.tooltips?.valueSources ?: emptyList()) + layerConfig.annotations.valueSources)
                         .filterIsInstance<DataFrameField>()
                         .map(DataFrameField::getVariableName) +
                     layerConfig.orderOptions.mapNotNull(OrderOption::byVariable)

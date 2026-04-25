@@ -17,7 +17,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
@@ -92,22 +91,29 @@ internal object PlotGeomTilesUtil {
                 // marginal layer doesn't have interactions
                 null
             } else {
-                if (layerConfig.tooltips == TooltipBehavior.NONE) {
+                val tooltipConfig = layerConfig.tooltips
+                if (tooltipConfig == null) {
                     null
                 } else {
-                    GeomInteractionUtil.createGeomInteractionBuilder(
+                    GeomInteractionUtil.createGeomInteraction(
                         layerConfig.varBindings.associate { it.aes to it.variable },
                         scaleMapByLayer[layerIndex],
                         isLiveMap,
                         coordProvider.isPolar,
                         theme,
                         layerConfig.geomProto.geomKind,
-                        layerConfig.tooltips,
+                        layerConfig.statKind,
+                        tooltipConfig.contentSpecification,
+                        tooltipConfig.anchor,
+                        tooltipConfig.minWidth,
+                        tooltipConfig.disableSplitting,
+                        tooltipConfig.tooltipGroup,
+                        tooltipConfig.isCrosshairEnabled,
                         layerConfig.isYOrientation,
                         layerConfig.constantsMap,
                         layerConfig.renderedAes,
                         layerConfig::getOriginalVariableName
-                    ).build()
+                    )
                 }
             }
         }

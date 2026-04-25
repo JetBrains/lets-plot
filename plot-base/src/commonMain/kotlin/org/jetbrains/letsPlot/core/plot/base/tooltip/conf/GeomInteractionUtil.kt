@@ -5,32 +5,43 @@
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.*
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 
 
 object GeomInteractionUtil {
-    fun createGeomInteractionBuilder(
+    fun createGeomInteraction(
         bindings: Map<Aes<*>, DataFrame.Variable>,
         scaleMap: Map<Aes<*>, Scale>,
         isLiveMap: Boolean,
         isPolarCoordSystem: Boolean,
         theme: Theme,
         geomKind: GeomKind,
-        tooltipBehavior1: TooltipBehavior,
+        statKind: StatKind,
+        contentSpecification: LinesContentSpecification,
+        anchor: TooltipAnchor?,
+        minWidth: Double?,
+        disableSplitting: Boolean,
+        tooltipGroup: String?,
+        isCrosshairEnabled: Boolean,
         isYOrientation: Boolean,
         constantsMap: Map<Aes<*>, Any>,
         renderedAes: List<Aes<*>>,
         getOriginalVariableName: (Aes<*>) -> String?,
-    ): GeomInteractionBuilder {
-        val tooltipBehavior = createTooltipBehavior(
-            tooltipBehavior = tooltipBehavior1,
-            isPolarCoordSystem = isPolarCoordSystem
+    ): GeomInteraction {
+        val resolvedTooltipBehavior = TooltipBehaviorFactory.create(
+            geomKind = geomKind,
+            statKind = statKind,
+            contentSpecification = contentSpecification,
+            isPolarCoordSystem = isPolarCoordSystem,
+            anchor = anchor,
+            minWidth = minWidth,
+            disableSplitting = disableSplitting,
+            tooltipGroup = tooltipGroup,
+            isCrosshairEnabled = isCrosshairEnabled
         )
 
         val axisWithoutTooltip = HashSet<Aes<*>>()
@@ -41,12 +52,12 @@ object GeomInteractionUtil {
         val axisWithNoLabels = HashSet<Aes<*>>()
         if (!theme.horizontalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.X)
         if (!theme.verticalAxis(flipAxis = false).showLabels()) axisWithNoLabels.add(Aes.Y)
-        val axisAesFromFunctionKind = tooltipBehavior.axisAesFromFunctionKind
-        val isAxisTooltipEnabled = tooltipBehavior.axisTooltipEnabled
+        val axisAesFromFunctionKind = resolvedTooltipBehavior.axisAesFromFunctionKind
+        val isAxisTooltipEnabled = resolvedTooltipBehavior.axisTooltipEnabled
         val hiddenAesList = createHiddenAesList(
             axisAesFromFunctionKind,
             geomKind,
-            tooltipBehavior,
+            resolvedTooltipBehavior,
             renderedAes
         )
             .afterOrientation(isYOrientation) + axisWithoutTooltip
@@ -74,72 +85,26 @@ object GeomInteractionUtil {
         }
 
         val tooltipBehaviorWithVisibleLines = if (theme.tooltips().show()) {
-            tooltipBehavior
+            resolvedTooltipBehavior
         } else {
             // Need to keep specified formats to use for non-hidden tooltips:
-            tooltipBehavior.copy(
+            resolvedTooltipBehavior.copy(
                 tooltipLinePatterns = null,
                 anchor = null,
                 minWidth = null,
                 tooltipTitle = null,
                 disableSplitting = false,
-                tooltipGroup = tooltipBehavior.tooltipGroup,
+                tooltipGroup = resolvedTooltipBehavior.tooltipGroup,
             )
         }
 
-        val builder = GeomInteractionBuilder(
+        return GeomInteraction.create(
             tooltipBehavior = tooltipBehaviorWithVisibleLines,
             tooltipAes = tooltipAes,
             tooltipAxisAes = axisAes,
-            sideTooltipAes = sideTooltipAes
+            sideTooltipAes = sideTooltipAes,
+            tooltipConstants = createConstantAesList(geomKind, constantsMap)
         )
-        return builder.tooltipConstants(createConstantAesList(geomKind, constantsMap))
-    }
-
-    private fun createTooltipBehavior(
-        tooltipBehavior: TooltipBehavior,
-        isPolarCoordSystem: Boolean
-    ): TooltipBehavior {
-        val resolvedTooltipBehavior = if (isPolarCoordSystem) {
-            // Always show axis tooltips for polar coordinate system as all geoms are area-like.
-            bivariateFunction(
-                area = true,
-                isCrosshairEnabled = tooltipBehavior.isCrosshairEnabled,
-                axisTooltipVisibilityFromConfig = true,
-                tooltipBehavior = tooltipBehavior
-            )
-        } else {
-            tooltipBehavior
-        }
-
-        return resolvedTooltipBehavior
-    }
-
-    private fun bivariateFunction(
-        area: Boolean,
-        isCrosshairEnabled: Boolean,
-        tooltipBehavior: TooltipBehavior,
-        axisTooltipVisibilityFromConfig: Boolean? = null,
-    ): TooltipBehavior {
-        val axisTooltipVisibilityFromFunctionKind = !area
-        val lookupStrategy = if (area) LookupStrategy.HOVER else LookupStrategy.NEAREST
-        return tooltipBehavior.copy(
-            lookupSpec = LookupSpec(LookupSpace.XY, lookupStrategy),
-            axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
-            axisTooltipEnabled = isAxisTooltipEnabled(
-                axisTooltipVisibilityFromConfig,
-                axisTooltipVisibilityFromFunctionKind
-            ),
-            isCrosshairEnabled = isCrosshairEnabled,
-            ignoreInvisibleTargets = false,
-        )
-    }
-
-    private fun isAxisTooltipEnabled(
-        axisTooltipVisibilityFromConfig: Boolean?,
-        axisTooltipVisibilityFromFunctionKind: Boolean
-    ): Boolean {
-        return axisTooltipVisibilityFromConfig ?: axisTooltipVisibilityFromFunctionKind
     }
 
     private fun createHiddenAesList(
@@ -292,4 +257,122 @@ object GeomInteractionUtil {
 
     private fun isVariableContinuous(scaleMap: Map<Aes<*>, Scale>, aes: Aes<*>) =
         scaleMap[aes]?.isContinuousDomain ?: false
+
+
+    fun createTooltipLines(
+        tooltipBehavior: TooltipBehavior,
+        tooltipAes: List<Aes<*>>,
+        tooltipAxisAes: List<Aes<*>>,
+        sideTooltipAes: List<Aes<*>>,
+        tooltipConstantAes: Map<Aes<*>, Any>?,
+    ): List<LinePattern> {
+
+        return when {
+            tooltipBehavior.useDefaultTooltips() -> {
+                // No user line patterns => use default tooltips with the given formatted valueSources
+                // and move content of side tooltips to the general tooltip in 'disable_splitting' mode
+                defaultValueSourceTooltipLines(
+                    aesListForTooltip = if (tooltipBehavior.disableSplitting) {
+                        (sideTooltipAes + tooltipAes).distinct()
+                    } else {
+                        tooltipAes
+                    },
+                    tooltipAxisAes,
+                    sideTooltipAes = if (tooltipBehavior.disableSplitting) {
+                        emptyList()
+                    } else {
+                        sideTooltipAes
+                    },
+                    tooltipBehavior.valueSources,
+                    tooltipConstantAes
+                )
+            }
+
+            tooltipBehavior.hideTooltips() -> {
+                // User list is empty => not show tooltips
+                emptyList()
+            }
+
+            else -> {
+                // Form value sources: user list + axis + side tooltips
+
+                val geomSideTooltips = if (tooltipBehavior.disableSplitting) {
+                    // Hide side tooltips in 'disable_splitting' mode with specified lines
+                    emptyList()
+                } else {
+                    sideTooltipAes
+                }.toMutableList()
+
+                // Remove side tooltip if the mappedAes is used in the general tooltip
+                tooltipBehavior.tooltipLinePatterns!!.forEach { line ->
+                    val userDataAesList = line.fields.filterIsInstance<MappingField>().map(MappingField::aes)
+                    geomSideTooltips.removeAll(userDataAesList)
+                }
+                val axisValueSources = tooltipAxisAes.map { aes ->
+                    getMappingValueSource(aes, isSide = true, isAxis = true, tooltipBehavior.valueSources)
+                }
+                val geomSideValueSources = geomSideTooltips.map { aes ->
+                    getMappingValueSource(aes, isSide = true, isAxis = false, tooltipBehavior.valueSources)
+                }
+
+                tooltipBehavior.tooltipLinePatterns +
+                        (axisValueSources + geomSideValueSources)
+                            .map(LinePattern.Companion::defaultLineForValueSource)
+            }
+        }
+    }
+
+
+    internal fun getMappingValueSource(
+        aes: Aes<*>,
+        isSide: Boolean,
+        isAxis: Boolean,
+        userDefinedValueSources: List<ValueSource>?,
+        label: String? = null
+    ): ValueSource {
+        val userDefined = userDefinedValueSources?.filterIsInstance<MappingField>()?.find { it.aes == aes }
+        return userDefined?.withFlags(isSide, isAxis, label) ?: MappingField(
+            aes,
+            isSide = isSide,
+            isAxis = isAxis,
+            label = label
+        )
+    }
+
+    internal fun defaultValueSourceTooltipLines(
+        aesListForTooltip: List<Aes<*>>,
+        axisAes: List<Aes<*>>,
+        sideTooltipAes: List<Aes<*>>,
+        userDefinedValueSources: List<ValueSource>? = null,
+        constantsMap: Map<Aes<*>, Any>? = null
+    ): List<LinePattern> {
+        val axisValueSources = axisAes.map { aes ->
+            getMappingValueSource(aes, isSide = true, isAxis = true, userDefinedValueSources)
+        }
+        val sideValueSources = sideTooltipAes.map { aes ->
+            getMappingValueSource(aes, isSide = true, isAxis = false, userDefinedValueSources)
+        }
+
+        // will use empty label in one-line tooltip for positional aes and constants
+        val aesForGeneralTooltip = aesListForTooltip - sideTooltipAes + (constantsMap?.keys ?: emptyList())
+        val isOneLineTooltip = aesForGeneralTooltip.size == 1
+
+        val aesValueSources = aesListForTooltip.map { aes ->
+            val label = if (isOneLineTooltip && aes in listOf(
+                    Aes.X,
+                    Aes.Y
+                )
+            ) "" else null
+            getMappingValueSource(aes, isSide = false, isAxis = false, userDefinedValueSources, label)
+        }
+        val constantFields = constantsMap?.map { (aes, value) ->
+            val label = if (isOneLineTooltip) "" else null
+            val userDefined = userDefinedValueSources?.filterIsInstance<ConstantField>()?.find { it.aes == aes }
+            userDefined?.withLabel(label) ?: ConstantField(aes, value, format = null, label = label)
+        } ?: emptyList()
+
+        return (aesValueSources + axisValueSources + sideValueSources + constantFields).map(LinePattern.Companion::defaultLineForValueSource)
+    }
+
+
 }

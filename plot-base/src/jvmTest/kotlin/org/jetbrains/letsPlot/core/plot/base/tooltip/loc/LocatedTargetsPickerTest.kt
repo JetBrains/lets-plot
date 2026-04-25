@@ -384,7 +384,6 @@ class LocatedTargetsPickerTest {
                     tooltipLines = listOf(LinePattern(null, "", fields)),
                     tooltipAnchor = null,
                     tooltipMinWidth = null,
-                    ignoreInvisibleTargets = false,
                     isCrosshairEnabled = myIsCrosshairEnabled,
                     tooltipGroup = myTooltipGroup ?: defaultTooltipGroup(requireNotNull(myGeomKind)),
                     tooltipTitle = null

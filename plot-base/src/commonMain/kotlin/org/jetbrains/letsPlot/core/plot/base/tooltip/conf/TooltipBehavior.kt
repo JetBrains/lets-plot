@@ -16,7 +16,6 @@ data class TooltipBehavior(
     val axisAesFromFunctionKind: List<Aes<*>> = emptyList(),
     val axisTooltipEnabled: Boolean = true,
     val isCrosshairEnabled: Boolean = false,
-    val ignoreInvisibleTargets: Boolean = false,
     val valueSources: List<ValueSource>,
     val tooltipLinePatterns: List<LinePattern>?,
     val anchor: TooltipAnchor?,

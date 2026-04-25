@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.createTooltipModels
 import org.jetbrains.letsPlot.core.plot.base.tooltip.mockito.ReturnsNotNullValuesAnswer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
@@ -69,25 +69,22 @@ internal class TestingTooltipModelsBuilder private constructor(
 
         fun univariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
             return TestingTooltipModelsBuilder(
-                GeomInteractionBuilder.DemoAndTest(displayableAesList)
+                GeomInteraction.DemoAndTest(displayableAesList)
                     .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-                    .build()
             )
         }
 
         fun bivariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
             return TestingTooltipModelsBuilder(
-                GeomInteractionBuilder.DemoAndTest(displayableAesList)
+                GeomInteraction.DemoAndTest(displayableAesList)
                     .bivariateFunction(false)
-                    .build()
             )
         }
 
         fun areaFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
             return TestingTooltipModelsBuilder(
-                GeomInteractionBuilder.DemoAndTest(displayableAesList)
+                GeomInteraction.DemoAndTest(displayableAesList)
                     .bivariateFunction(true)
-                    .build()
             )
         }
 
