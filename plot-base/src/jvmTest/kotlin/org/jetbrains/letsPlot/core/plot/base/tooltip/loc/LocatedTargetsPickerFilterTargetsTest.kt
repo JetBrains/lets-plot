@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -11,10 +11,12 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
 import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccessMock
@@ -52,10 +54,17 @@ class LocatedTargetsPickerFilterTargetsTest {
         val lineLookupResult = lineTargetLocator.search(cursorCoord)!!
         val pointLookupResult = pointTargetLocator.search(cursorCoord)!!
 
-        LocatedTargetsPicker(flippedAxis = false, cursorCoord).apply {
+        LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = cursorCoord,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext
+        ).apply {
                 addLookupResult(lineLookupResult)
                 addLookupResult(pointLookupResult)
-            }.chooseBestResult().let { picked ->
+            }.chooseBestLookupResults().let { picked ->
             assertThat(picked).hasSize(1)
             assertThat(picked[0].geomKind).isEqualTo(GeomKind.POINT)
         }
@@ -93,6 +102,59 @@ class LocatedTargetsPickerFilterTargetsTest {
         assertTargets(
             findTargets(locator, cursor = DoubleVector(2.5, 0.0)),
             pathKey1, pathKey2
+        )
+    }
+
+    @Test
+    fun `line plot - remove duplicate hit indices among closest targets`() {
+        val duplicatedHitIndex = 42
+        val targetPrototypes = listOf(
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 0.0), DoubleVector(2.0, 0.0)), indexMapper = { duplicatedHitIndex }),
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 1.0), DoubleVector(2.0, 1.0)), indexMapper = { duplicatedHitIndex }),
+        )
+        val locator = createLocator(GeomKind.LINE, targetPrototypes)
+
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(1.0, 0.0)),
+            duplicatedHitIndex
+        )
+    }
+
+    @Test
+    fun `line plot - choose targets closest to cursor by y when axis is flipped`() {
+        val pathKey1 = 1
+        val pathKey2 = 2
+        val pathKey3 = 3
+
+        val targetPrototypes = listOf(
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 0.0), DoubleVector(3.0, 0.0)), indexMapper = { pathKey1 }),
+            TestUtil.pathTarget(listOf(DoubleVector(1.0, 1.0), DoubleVector(3.0, 1.0)), indexMapper = { pathKey2 }),
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 2.0), DoubleVector(2.0, 2.0)), indexMapper = { pathKey3 }),
+        )
+        val locator = createLocator(GeomKind.LINE, targetPrototypes)
+
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(1.5, 0.9), flippedAxis = true),
+            pathKey2
+        )
+    }
+
+    @Test
+    fun `step plot - choose targets closest to cursor by x`() {
+        val pathKey1 = 1
+        val pathKey2 = 2
+        val pathKey3 = 3
+
+        val targetPrototypes = listOf(
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 0.0), DoubleVector(3.0, 0.0)), indexMapper = { pathKey1 }),
+            TestUtil.pathTarget(listOf(DoubleVector(1.0, 1.0), DoubleVector(3.0, 1.0)), indexMapper = { pathKey2 }),
+            TestUtil.pathTarget(listOf(DoubleVector(0.0, 2.0), DoubleVector(2.0, 2.0)), indexMapper = { pathKey3 }),
+        )
+        val locator = createLocator(GeomKind.STEP, targetPrototypes)
+
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(1.5, 0.0)),
+            pathKey2
         )
     }
 
@@ -136,16 +198,43 @@ class LocatedTargetsPickerFilterTargetsTest {
         }
     }
 
+    @Test
+    fun `histogram plot - cap visible tooltips before x filtering`() {
+        val targetPrototypes = (0..5)
+            .map { y -> DoubleRectangle(DoubleVector(0.0, y.toDouble()), DoubleVector(1.0, 1.0)) }
+            .mapIndexed { index, rect -> TestUtil.rectTarget(index, rect) }
+
+        val locator = createLocator(GeomKind.HISTOGRAM, targetPrototypes)
+
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(0.5, 4.6)),
+            5
+        )
+    }
+
+    @Test
+    fun `large non bar layer - cap visible tooltips to closest target`() {
+        val targetPrototypes = (0..10)
+            .map { index -> TestUtil.pointTarget(index, DoubleVector(0.0, index.toDouble()), radius = 1.0) }
+
+        val locator = createLocator(GeomKind.POINT, targetPrototypes)
+
+        assertTargets(
+            findTargets(locator, cursor = DoubleVector(0.0, 6.2)),
+            6
+        )
+    }
+
     private fun createLocator(geomKind: GeomKind, targetPrototypes: List<TargetPrototype>): GeomTargetLocator {
         val contextualMapping = GeomInteractionBuilder.DemoAndTest(supportedAes = Aes.values())
-            .xUnivariateFunction(LookupStrategy.HOVER)
+            .xUnivariateFunction(HOVER)
             .build()
             .createContextualMapping(
                 MappedDataAccessMock().mappedDataAccess,
                 DataFrame.Builder().build()
             )
         return TestUtil.createLocator(
-            lookupSpec = LookupSpec(LookupSpace.X, LookupStrategy.HOVER),
+            lookupSpec = LookupSpec(LookupSpace.X, HOVER),
             contextualMapping = contextualMapping,
             targets = targetPrototypes,
             geomKind = geomKind
@@ -154,11 +243,19 @@ class LocatedTargetsPickerFilterTargetsTest {
 
     private fun findTargets(
         locator: GeomTargetLocator,
-        cursor: DoubleVector
+        cursor: DoubleVector,
+        flippedAxis: Boolean = false
     ): List<GeomTarget> {
-        return LocatedTargetsPicker(flippedAxis = false, cursor)
+        return LocatedTargetsPicker(
+            flippedAxis = flippedAxis,
+            cursorCoord = cursor,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext
+        )
                 .apply { locator.search(cursor)?.let(::addLookupResult) }
-            .chooseBestResult()
+            .chooseBestLookupResults()
             .singleOrNull()
             ?.targets
             ?: emptyList()

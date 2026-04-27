@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
@@ -13,7 +18,7 @@ import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy.Companion.keepFigure
 import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import kotlin.test.Test
 
-class InteractivityTest : VisualPlotTestBase() {
+class InteractivityTest : VisualPlotTestBase(expectedImagesSubdir = "tooltips") {
     @Test
     fun `simple tooltip`() {
         val spec = """

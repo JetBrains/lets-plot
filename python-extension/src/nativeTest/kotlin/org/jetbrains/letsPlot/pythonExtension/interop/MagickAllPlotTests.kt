@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.pythonExtension.interop
 
 import org.jetbrains.letsPlot.imagick.canvas.MagickCanvasPeer
@@ -14,7 +19,7 @@ class MagickAllPlotTests {
     @Test
     fun runAllPlotTests() {
         val canvasPeer = MagickCanvasPeer(pixelDensity = 1.0, fontManager = embeddedFontsManager)
-        val imageComparer = ImageComparer(canvasPeer, NativeBitmapIO(subdir = "plot"), silent = true)
+        val imageComparer = ImageComparer(canvasPeer, NativeBitmapIO(subdir = "visual-testing/plot"), silent = true)
 
         AllPlotTests.runAllTests(canvasPeer, imageComparer)
     }

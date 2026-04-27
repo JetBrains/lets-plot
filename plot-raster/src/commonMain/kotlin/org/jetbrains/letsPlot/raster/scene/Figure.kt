@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -85,7 +85,7 @@ internal abstract class Figure : Node() {
 
             val paint = Paint()
             paint.isStroke = true
-            paint.color = stroke.changeAlpha(strokeOpacity)
+            paint.color = stroke.multiplyAlpha(strokeOpacity.toDouble())
             paint.strokeWidth = strokeWidth
             strokeMiter?.let { paint.strokeMiter = it }
             strokeDashArray.let { paint.strokeDashList = it.toDoubleArray() }
@@ -97,7 +97,8 @@ internal abstract class Figure : Node() {
             if (fill == null) return null
 
             return Paint().also { paint ->
-                paint.color = fill.changeAlpha(fillOpacity)
+                // opacity and alpha should be multiplied
+                paint.color = fill.multiplyAlpha(fillOpacity.toDouble())
             }
         }
 

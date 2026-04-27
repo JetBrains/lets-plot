@@ -12,14 +12,14 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertTrue
 
-class CameraUpdateDetectionSystemTest : org.jetbrains.letsPlot.livemap.LiveMapTestBase() {
+class CameraUpdateDetectionSystemTest : LiveMapTestBase() {
 
     override val systemsOrder= listOf(CameraInputSystem::class)
 
     @Before
     override fun setUp() {
         super.setUp()
-        addSystem(CameraInputSystem(componentManager))
+        addSystem(CameraInputSystem(componentManager, true))
     }
 
     @Test

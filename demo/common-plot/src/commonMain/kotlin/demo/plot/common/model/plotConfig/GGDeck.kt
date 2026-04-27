@@ -43,8 +43,9 @@ open class GGDeck {
     private fun deckOfTwo(): MutableMap<String, Any> {
         val data = randomData(50)
 
+//        'theme': {'axis_line_x': {'color': 'transparent'}},
         val lineSpecRaw = """
-            {   
+            {
                'mapping': {'x': 'x', 'y': 'y1'},
                'guides': {'y': {'title': 'Line (left)'}},
                'kind': 'plot',
@@ -65,9 +66,9 @@ open class GGDeck {
                'mapping': {'x': 'x', 'y': 'y2'},
                'guides': {'y': {'title': 'Points (right)'}},
                'theme': {
-                    'axis_text': {'color': 'blue'},
-                    'axis_ticks': {'color': 'blue'},
-                    'axis_line': {'color': 'blue'}
+                    'axis_text_y': {'color': 'blue'},
+                    'axis_ticks_y': {'color': 'blue'},
+                    'axis_line_y': {'color': 'blue'}
                 },  
                'kind': 'plot',
                'scales': [{'aesthetic': 'y', 'position': 'right'}],
@@ -82,6 +83,8 @@ open class GGDeck {
 
         val pointsPlotSpec = HashMap(parsePlotSpec(pointsSpecRaw))
         pointsPlotSpec["data"] = data
+
+//        'theme': {'name': 'classic', 'axis_title_x': 'blank'},
 
         val deckSpecRaw = """
             {

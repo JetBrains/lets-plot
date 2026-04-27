@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style.AXIS_TOOLTIP_TEXT
@@ -45,7 +45,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         return myTooltipList.map(::tooltip)
     }
 
-    private fun tooltip(spec: MyTooltipSpec): Pair<GroupComponent, () -> Unit> {
+    private fun tooltip(spec: MyTooltipModel): Pair<GroupComponent, () -> Unit> {
         val groupComponent = GroupComponent()
         val tooltipBox = TooltipBox(Style.default())
         groupComponent.add(tooltipBox.rootGroup)
@@ -54,7 +54,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
     private fun with(
         tooltipBox: TooltipBox,
-        spec: MyTooltipSpec,
+        spec: MyTooltipModel,
     ): () -> Unit = {
         with(spec) {
             tooltipBox.update(
@@ -83,19 +83,19 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         const val TOOLTIP_TEXT_CLASS = "tooltip-text"
         private val DEMO_BOX_SIZE = DoubleVector(250.0, 150.0)
 
-        private val WITH_LABEL = TooltipSpec.Line.withLabelAndValue("some label:", "value")
-        private val WITH_HYPERLINK = TooltipSpec.Line.withLabelAndValue("It's a <a href=\"https://lets-plot.org/\">link</a>!", "")
-        private val STATIC_TEXT = TooltipSpec.Line.withValue("only value")
-        private val SPLITTED_TEXT = TooltipSpec.Line.withValue("Line #1\nand\nLine #2")
-        private val EMPTY_LINE = TooltipSpec.Line.withValue("")
+        private val WITH_LABEL = TooltipModel.Line.withLabelAndValue("some label:", "value")
+        private val WITH_HYPERLINK = TooltipModel.Line.withLabelAndValue("It's a <a href=\"https://lets-plot.org/\">link</a>!", "")
+        private val STATIC_TEXT = TooltipModel.Line.withValue("only value")
+        private val SPLITTED_TEXT = TooltipModel.Line.withValue("Line #1\nand\nLine #2")
+        private val EMPTY_LINE = TooltipModel.Line.withValue("")
 
-        private class MyTooltipSpec(
+        private class MyTooltipModel(
             val fillColor: Color = Color.WHITE,
             val textColor: Color? = Color.BLACK,
             val borderColor: Color = Color.BLACK,
             val strokeWidth: Double = 2.0,
             val lineType: LineType = NamedLineType.SOLID,
-            val lines: List<TooltipSpec.Line>,
+            val lines: List<TooltipModel.Line>,
             val title: String? = null,
             val textClassName: String = TOOLTIP_TEXT_CLASS,
             val rotate: Boolean = false,
@@ -108,7 +108,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
         private val myTooltipList = listOf(
             // general tooltip
-            MyTooltipSpec(
+            MyTooltipModel(
                 fillColor = Color.LIGHT_YELLOW,
                 textColor = Color.BLUE,
                 borderColor = Color.BLACK,
@@ -117,7 +117,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 pointerCoord = DoubleVector(83.0, 90.0)
             ),
             // with hyperlink
-            MyTooltipSpec(
+            MyTooltipModel(
                 fillColor = Color.LIGHT_YELLOW,
                 textColor = Color.BLUE,
                 borderColor = Color.BLACK,
@@ -126,7 +126,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 pointerCoord = DoubleVector(37.0, 40.0)
             ),
            // with horizontal orientation
-            MyTooltipSpec(
+            MyTooltipModel(
                 fillColor = Color.LIGHT_BLUE,
                 textColor = Color.BLUE,
                 borderColor = Color.BLUE,
@@ -136,14 +136,14 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 orientation = TooltipBox.Orientation.HORIZONTAL
             ),
             // with title
-            MyTooltipSpec(
+            MyTooltipModel(
                 lines = listOf(WITH_LABEL, STATIC_TEXT),
                 title = "Title",
                 markerColors = listOf(Color.LIGHT_PINK, Color.DARK_BLUE),
                 pointerCoord = DoubleVector(100.0, 120.0)
             ),
             // with multiline title and lines
-            MyTooltipSpec(
+            MyTooltipModel(
                 lines = listOf(SPLITTED_TEXT),
                 title = "Title #1\nand\nTitle #2",
                 pointerCoord = DoubleVector(120.0, 50.0),
@@ -151,18 +151,18 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 orientation = TooltipBox.Orientation.HORIZONTAL
             ),
             // with empty line
-            MyTooltipSpec(
+            MyTooltipModel(
                 lines = listOf(WITH_LABEL, EMPTY_LINE, STATIC_TEXT),
                 pointerCoord = DoubleVector(100.0, 120.0)
             ),
             /*
             // with splitted text
-            MyTooltipSpec(
+            MyTooltipModel(
                 lines = listOf(WITH_LABEL, SPLITTED_TEXT),
                 pointerCoord = DoubleVector(83.0, 90.0)
             ),*/
             // axis tooltip
-            MyTooltipSpec(
+            MyTooltipModel(
                 fillColor = Color.GRAY,
                 textColor = Color.WHITE,
                 borderColor = Color.BLACK,
@@ -171,13 +171,13 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 borderRadius = 0.0
             ),
             // rotated tooltip
-            MyTooltipSpec(
+            MyTooltipModel(
                 lines = listOf(STATIC_TEXT),
                 rotate = true,
                 pointerCoord = DoubleVector(30.0, 100.0)
             ),
             // rotated multiline tooltip
-            MyTooltipSpec(
+            MyTooltipModel(
                 lines = listOf(SPLITTED_TEXT),
                 rotate = true,
                 pointerCoord = DoubleVector(30.0, 80.0)

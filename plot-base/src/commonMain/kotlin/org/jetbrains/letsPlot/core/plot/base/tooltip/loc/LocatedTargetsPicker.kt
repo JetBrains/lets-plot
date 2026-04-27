@@ -6,16 +6,26 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.intern.math.distance
+import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
+import org.jetbrains.letsPlot.commons.intern.removeDuplicates
+import org.jetbrains.letsPlot.commons.values.Color.Companion.WHITE
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
-import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
+import org.jetbrains.letsPlot.core.plot.base.PlotContext
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.X_AXIS
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.Y_AXIS
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import kotlin.math.abs
 
-class LocatedTargetsPicker(
+internal class LocatedTargetsPicker(
     private val flippedAxis: Boolean,
-    private val cursorCoord: DoubleVector
+    private val cursorCoord: DoubleVector,
+    private val axisOrigin: DoubleVector,
+    private val xAxisTheme: AxisTheme,
+    private val yAxisTheme: AxisTheme,
+    private val ctx: PlotContext
 ) {
     private val allLookupResults = ArrayList<LookupResult>()
 
@@ -25,11 +35,13 @@ class LocatedTargetsPicker(
             || result.targets.size > EXPECTED_TARGETS_MAX_COUNT // perf: when LP is used by vis tools with raw data
         ) {
             val closestTarget = result.targets
-                .minBy { target -> cursorCoord.distanceTo(target.tipLayoutHint.coord) }
+                .minBy { target -> cursorCoord.distanceTo(target.tooltipHint.coord) }
 
             result.copy(targets = listOf(closestTarget))
-        } else if (result.geomKind in setOf(DENSITY, HISTOGRAM, FREQPOLY, LINE, AREA, SEGMENT, SPOKE, RIBBON)) {
-            // Get the closest targets and remove duplicates
+        } else if (result.lookupSpec.lookupSpace.isUnivariate() && result.hitShapeKind == HitShape.Kind.PATH) {
+            // Univariate hover on grouped path-like geoms can return several hits from the same layer
+            // because the cursor only has to match the lookup axis range.
+            // Keep only the hits aligned with the cursor on that axis and drop duplicate hits for the same datum.
             val minXDistanceToTarget = result.targets
                 .map { target -> xDistanceToCoord(target, cursorCoord, flippedAxis) }
                 .minByOrNull(::abs)
@@ -46,14 +58,40 @@ class LocatedTargetsPicker(
         allLookupResults.add(lookupResult)
     }
 
-    fun chooseBestResult(): List<LookupResult> {
-        // TODO: take into account LookupSpace and LookupStrategy, i.e. first check XY target to fall into CUTOFF_DISTANCE
-        // then check distance. This will allow to use bar-alike geoms to use their X lookup strategy and to not win
-        // every distance checks as the distance between them and the cursor is an order of magnitude smaller than for XY
+    fun chooseBestResult(): List<TooltipModel> {
+        val bestLookupResults = chooseBestLookupResults()
+
+        val tooltipModels = bestLookupResults.associateWith { chooseTooltipModels(it) }
+
+        // Filter axis tooltips
+        val xAxisTooltips = tooltipModels
+            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == X_AXIS } }
+            .filterNotNullValues()
+
+        val yAxisTooltips = tooltipModels
+            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == Y_AXIS } }
+            .filterNotNullValues()
+
+        val closestXAxisTooltip = xAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }
+        val closestYAxisTooltip = yAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }
+
+        val finalTooltips = tooltipModels.values.flatten() - xAxisTooltips.values - yAxisTooltips.values +
+                closestXAxisTooltip?.value +
+                closestYAxisTooltip?.value
+
+        return finalTooltips.filterNotNull()
+    }
+
+
+    internal fun chooseBestLookupResults(): List<LookupResult> {
         val withDistances = allLookupResults
-            .map { lookupResult -> lookupResult to distance(lookupResult, cursorCoord) }
+            .map { lookupResult -> lookupResult to distance(cursorCoord, lookupResult) }
             .filter { (lookupResult, distance) ->
-                lookupResult.isCrosshairEnabled || distance <= CUTOFF_DISTANCE
+                when {
+                    lookupResult.isCrosshairEnabled -> true                          // crosshair always snaps to nearest
+                    lookupResult.lookupSpec.lookupSpace.isUnivariate() -> true       // X-range containment is the trigger — 2D distance is used for ordering only, not for cutoff
+                    else -> distance <= CUTOFF_DISTANCE                              // drop XY targets that are too far
+                }
             }
 
         val minDistance = withDistances.minByOrNull { (_, distance) -> distance }?.second ?: 0.0
@@ -76,34 +114,183 @@ class LocatedTargetsPicker(
             }
 
         val allConsideredResults = withDistances.map { (lookupResult, _) -> lookupResult }
+        val sortedResults = withDistances
+            .sortedByDescending { (_, distance) -> distance }
+            .map { (lookupResult, _) -> lookupResult }
 
         val picked = when {
             candidates.any { it.hasGeneralTooltip && hasAxisTooltip(it) } -> candidates
             allConsideredResults.none { it.hasGeneralTooltip } -> candidates
             allConsideredResults.any { it.hasGeneralTooltip && hasAxisTooltip(it) } -> {
                 listOf(
-                    withDistances
-                        .sortedByDescending { (_, distance) -> distance }
-                        .map { (lookupResult, _) -> lookupResult }
-                        .last { it.hasGeneralTooltip && hasAxisTooltip(it) }
+                    sortedResults.last { it.hasGeneralTooltip && hasAxisTooltip(it) }
                 )
             }
 
             else -> {
-                with(
-                    withDistances
-                        .sortedByDescending { (_, distance) -> distance }
-                        .map { (lookupResult, _) -> lookupResult }
-                ) {
-                    listOfNotNull(
-                        lastOrNull { it.hasGeneralTooltip },
-                        lastOrNull(::hasAxisTooltip)
-                    )
-                }
+                listOfNotNull(
+                    sortedResults.lastOrNull { it.hasGeneralTooltip },
+                    sortedResults.lastOrNull(::hasAxisTooltip)
+                )
             }
         }
 
         return expandWithGroupTooltips(picked)
+    }
+
+    private fun chooseTooltipModels(lookupResult: LookupResult): List<TooltipModel> {
+        val tooltipModels = chooseTooltipModels(lookupResult.targets, lookupResult.contextualMapping)
+            .filter { it.lines.isNotEmpty() }
+
+        return tooltipModels
+            .removeDuplicates { it.tooltipHint.placement == X_AXIS }
+            .removeDuplicates { it.tooltipHint.placement == Y_AXIS }
+    }
+
+    internal fun chooseTooltipModels(
+        geomTargets: List<GeomTarget>,
+        contextualMapping: ContextualMapping
+    ): List<TooltipModel> {
+        val tooltipModels = ArrayList<TooltipModel>()
+        geomTargets.forEach { geomTarget ->
+            val dataPoints = contextualMapping.getDataPoints(geomTarget.hitIndex, ctx)
+            tooltipModels += axisTooltipModels(geomTarget, dataPoints)
+            tooltipModels += sideTooltipModels(geomTarget, dataPoints)
+            tooltipModels += generalTooltipModels(geomTarget, contextualMapping, dataPoints)
+        }
+        return tooltipModels
+    }
+
+    private fun sideTooltipModels(
+        geomTarget: GeomTarget,
+        dataPoints: List<DataPoint>
+    ): List<TooltipModel> {
+        val tooltipModels = ArrayList<TooltipModel>()
+        val sideDataPoints = sideDataPoints(dataPoints)
+
+        geomTarget.aesTooltipHint.forEach { (aes, hint) ->
+            val linesForAes = sideDataPoints
+                .filter { aes == it.aes }
+                .map(DataPoint::value)
+                .map(TooltipModel.Line.Companion::withValue)
+            if (linesForAes.isNotEmpty()) {
+                tooltipModels.add(
+                    TooltipModel(
+                        tooltipHint = hint,
+                        title = null,
+                        lines = linesForAes,
+                        fill = hint.fillColor ?: geomTarget.tooltipHint.fillColor
+                            ?: geomTarget.tooltipHint.markerColors.firstOrNull() ?: WHITE,
+                        markerColors = emptyList(),
+                        isSide = true
+                    )
+                )
+            }
+        }
+
+        return tooltipModels
+    }
+
+    private fun axisTooltipModels(
+        geomTarget: GeomTarget,
+        dataPoints: List<DataPoint>
+    ): List<TooltipModel> {
+        val tooltipModels = ArrayList<TooltipModel>()
+        val axis = mapOf(
+            Aes.X to axisDataPoints(dataPoints).filter { Aes.X == it.aes }
+                .map(DataPoint::value)
+                .map(TooltipModel.Line.Companion::withValue),
+            Aes.Y to axisDataPoints(dataPoints).filter { Aes.Y == it.aes }
+                .map(DataPoint::value)
+                .map(TooltipModel.Line.Companion::withValue)
+        )
+
+        axis.forEach { (aes, lines) ->
+            if (lines.isNotEmpty()) {
+                val hint = createHintForAxis(aes, geomTarget.tooltipHint)
+                tooltipModels.add(
+                    TooltipModel(
+                        tooltipHint = hint,
+                        title = null,
+                        lines = lines,
+                        fill = hint.fillColor!!,
+                        markerColors = emptyList(),
+                        isSide = true
+                    )
+                )
+            }
+        }
+
+        return tooltipModels
+    }
+
+    private fun generalTooltipModels(
+        geomTarget: GeomTarget,
+        contextualMapping: ContextualMapping,
+        dataPoints: List<DataPoint>
+    ): List<TooltipModel> {
+        val generalLines = generalDataPoints(dataPoints).map {
+            TooltipModel.Line.withLabelAndValue(it.label, it.value)
+        }
+
+        return if (generalLines.isNotEmpty()) {
+            listOf(
+                TooltipModel(
+                    tooltipHint = geomTarget.tooltipHint,
+                    title = contextualMapping.getTitle(geomTarget.hitIndex, ctx),
+                    lines = generalLines,
+                    fill = null,
+                    markerColors = geomTarget.tooltipHint.markerColors,
+                    isSide = false,
+                    anchor = contextualMapping.tooltipAnchor,
+                    minWidth = contextualMapping.tooltipMinWidth,
+                    isCrosshairEnabled = contextualMapping.isCrosshairEnabled
+                )
+            )
+        } else {
+            emptyList()
+        }
+    }
+
+    private fun sideDataPoints(dataPoints: List<DataPoint>) = dataPoints.filter { it.isSide && !it.isAxis }
+
+    private fun axisDataPoints(dataPoints: List<DataPoint>) = dataPoints.filter(DataPoint::isAxis)
+
+    private fun generalDataPoints(dataPoints: List<DataPoint>): List<DataPoint> {
+        val nonSideDataPoints = dataPoints.filterNot(DataPoint::isSide)
+        val sideAes = sideDataPoints(dataPoints).mapNotNull(DataPoint::aes)
+        val generalAesList = nonSideDataPoints.mapNotNull(DataPoint::aes) - sideAes
+        return nonSideDataPoints.filter { dataPoint ->
+            when (dataPoint.aes) {
+                null -> true
+                in generalAesList -> true
+                else -> false
+            }
+        }
+    }
+
+    private fun createHintForAxis(aes: Aes<*>, tooltipHint: TooltipHint): TooltipHint {
+        val axis = when {
+            flippedAxis && aes == Aes.X -> Aes.Y
+            flippedAxis && aes == Aes.Y -> Aes.X
+            else -> aes
+        }
+
+        return when (axis) {
+            Aes.X -> TooltipHint.xAxisTooltip(
+                coord = DoubleVector(tooltipHint.coord.x, axisOrigin.y),
+                axisRadius = xAxisTheme.lineWidth() / 2,
+                fillColor = xAxisTheme.tooltipFill()
+            )
+
+            Aes.Y -> TooltipHint.yAxisTooltip(
+                coord = DoubleVector(axisOrigin.x, tooltipHint.coord.y),
+                axisRadius = yAxisTheme.lineWidth() / 2,
+                fillColor = yAxisTheme.tooltipFill()
+            )
+
+            else -> error("Not an axis aes: $axis")
+        }
     }
 
     private fun expandWithGroupTooltips(picked: List<LookupResult>): List<LookupResult> {
@@ -125,20 +312,20 @@ class LocatedTargetsPicker(
         // User won't get much info from it anyway.
         private const val EXPECTED_TARGETS_MAX_COUNT = 10
 
-        private fun distance(lookupResult: LookupResult, coord: DoubleVector): Double {
+        private fun distance(cursor: DoubleVector, lookupResult: LookupResult): Double {
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance
             // between cursor is zero). Fake the distance to give a chance for tooltips from other layers.
             return when {
-                lookupResult.distance != 0.0 -> lookupResult.distance
+                // HOVER over polygon/boxplot/histogram - give chance for points or lines to show tooltips
+                (lookupResult.hitShapeKind == HitShape.Kind.POLYGON ||
+                lookupResult.hitShapeKind == HitShape.Kind.RECT) &&
+                        lookupResult.lookupDistance == 0.0 -> FAKE_DISTANCE
                 lookupResult.isCrosshairEnabled -> {
-                    // use XY distance for tooltips with crosshair to avoid giving them priority
                     lookupResult.targets
-                        .minOfOrNull { target -> distance(coord, target.tipLayoutHint.coord) }
+                        .minOfOrNull { target -> cursor.distanceTo(target.tooltipHint.coord) }
                         ?: FAKE_DISTANCE
                 }
-
-                lookupResult.hitShapeKind == HitShape.Kind.POINT -> 0.0 // Points are small; on hovering over them, we don't want to give priority to other tooltips by faking distance.
-                else -> FAKE_DISTANCE // fake distance to give a chance for tooltips from other layers
+                else -> lookupResult.lookupDistance // fake distance to give a chance for tooltips from other layers
             }
         }
 
@@ -153,11 +340,28 @@ class LocatedTargetsPicker(
         }
 
         fun xDistanceToCoord(target: GeomTarget, coord: DoubleVector, flippedAxis: Boolean): Double {
-            val distance = target.tipLayoutHint.coord.subtract(coord)
-            return when (flippedAxis) {
-                true -> distance.y
-                false -> distance.x
-            }
+            val offset = target.tooltipHint.coord.subtract(coord)
+            return offset.flipIf(flippedAxis).x
         }
     }
+}
+
+fun createTooltipModels(
+    geomTarget: GeomTarget,
+    contextualMapping: ContextualMapping,
+    axisOrigin: DoubleVector,
+    flippedAxis: Boolean,
+    xAxisTheme: AxisTheme,
+    yAxisTheme: AxisTheme,
+    ctx: PlotContext
+): List<TooltipModel> {
+    return LocatedTargetsPicker(
+        flippedAxis = flippedAxis,
+        cursorCoord = DoubleVector.ZERO,
+        axisOrigin = axisOrigin,
+        xAxisTheme = xAxisTheme,
+        yAxisTheme = yAxisTheme,
+        ctx = ctx
+    )
+        .chooseTooltipModels(listOf(geomTarget), contextualMapping)
 }

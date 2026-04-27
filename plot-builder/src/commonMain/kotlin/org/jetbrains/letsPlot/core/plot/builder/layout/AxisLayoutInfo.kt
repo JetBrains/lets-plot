@@ -17,6 +17,7 @@ class AxisLayoutInfo constructor(
     val axisDomain: DoubleSpan,
     val orientation: Orientation,
     val axisBreaks: ScaleBreaks,
+    val axisLineWidth: Double,
 
     val tickLabelsBounds: DoubleRectangle,
     val tickLabelRotationAngle: Double,
@@ -33,6 +34,7 @@ class AxisLayoutInfo constructor(
             axisDomain = axisDomain,
             orientation = orientation,
             axisBreaks = axisBreaks,
+            axisLineWidth = axisLineWidth,
             tickLabelsBounds = tickLabelsBounds,
             tickLabelRotationAngle = tickLabelRotationAngle,
             tickLabelHorizontalAnchor = tickLabelHorizontalAnchor,
@@ -44,7 +46,19 @@ class AxisLayoutInfo constructor(
     }
 
     fun axisBounds(): DoubleRectangle {
-        return tickLabelsBounds.union(DoubleRectangle.ZERO)
+        var bounds = tickLabelsBounds.union(DoubleRectangle.ZERO)
+        if (axisLineWidth > 0.0) {
+            val halfWidth = axisLineWidth / 2
+            val mid = axisLength / 2
+            val outwardPoint = when (orientation) {
+                Orientation.BOTTOM -> DoubleVector(mid, halfWidth)
+                Orientation.TOP -> DoubleVector(mid, -halfWidth)
+                Orientation.LEFT -> DoubleVector(-halfWidth, mid)
+                Orientation.RIGHT -> DoubleVector(halfWidth, mid)
+            }
+            bounds = bounds.include(outwardPoint)
+        }
+        return bounds
     }
 
     fun axisBoundsAbsolute(geomBounds: DoubleRectangle): DoubleRectangle {

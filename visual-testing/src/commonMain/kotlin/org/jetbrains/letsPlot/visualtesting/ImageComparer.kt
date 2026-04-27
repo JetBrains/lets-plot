@@ -95,7 +95,7 @@ class ImageComparer(
                 return
             }
             log("Failed to read expected image.\n${it.message}\n Actual image saved to ${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}")
-            error("Failed to read expected image.\n${it.message}\nActual image saved to '${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}'")
+            error("Failed to read expected image.\n${it.message}\nActual image saved to ${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}")
         }
 
         val profile = profileAdjuster(

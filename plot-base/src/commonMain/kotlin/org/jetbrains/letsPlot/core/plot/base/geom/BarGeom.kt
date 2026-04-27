@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -29,7 +29,7 @@ open class BarGeom : GeomBase() {
     ) {
         val binSpan = getBinSpanCalculator(ctx)
         val helper = RectanglesHelper(aesthetics, pos, coord, ctx, visualRectByDataPoint(binSpan))
-        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx)
+        val tooltipHelper = RectangleTooltipHelper(pos, coord, ctx, snapToBarTip = true)
         val rectangles = mutableListOf<SvgNode>()
         if (coord.isLinear) {
             helper.createRectangles { _, svgNode, _ -> rectangles.add(svgNode) }
@@ -88,12 +88,7 @@ open class BarGeom : GeomBase() {
         // May return rect with negative height to make the tooltip snap to the bottom side.
         private fun hintRectByDataPoint(binSpan: (DataPointAesthetics) -> DoubleSpan?): (DataPointAesthetics) -> DoubleRectangle? {
             fun factory(p: DataPointAesthetics): DoubleRectangle? {
-                val y = p.finiteOrNull(Aes.Y) ?: return null
-
-                val span = binSpan(p) ?: return null
-                val origin = DoubleVector(span.lowerEnd, y)
-                val dimension = DoubleVector(span.length, 0.0)
-                return DoubleRectangle(origin, dimension)
+                return rectByDataPoint(p, binSpan)
             }
 
             return ::factory

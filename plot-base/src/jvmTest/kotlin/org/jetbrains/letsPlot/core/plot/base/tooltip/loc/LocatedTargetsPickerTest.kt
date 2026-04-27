@@ -7,12 +7,15 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupResult
-import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
+import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -208,6 +211,7 @@ class LocatedTargetsPickerTest {
             .generalTooltip(true)
         secondLookupResultConfig!!
             .distanceToTarget(0.0)
+            .generalTooltip(false)
             .axisTooltip(true)
 
         assertTargetFrom(firstLookupResultConfig, secondLookupResultConfig!!)
@@ -258,10 +262,17 @@ class LocatedTargetsPickerTest {
     }
 
     private fun assertTargetFrom(vararg expected: LookupResultConfig?, addResults: LocatedTargetsPicker.() -> Unit) {
-        val targetsPicker = LocatedTargetsPicker(flippedAxis = false, DoubleVector.ZERO)
+        val targetsPicker = LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext
+        )
         targetsPicker.addResults()
 
-        val lookupResults = targetsPicker.chooseBestResult()
+        val lookupResults = targetsPicker.chooseBestLookupResults()
 
         if (expected.isEmpty() || expected.all { layerConfig -> layerConfig == null }) {
             assertThat<LookupResult>(lookupResults).isEmpty()
@@ -276,7 +287,8 @@ class LocatedTargetsPickerTest {
     private fun assertLookupResult(actual: LookupResult, expected: LookupResultConfig) {
         val expectedResult = expected.build()!!
         assertThat(actual.geomKind).isEqualTo(expectedResult.geomKind)
-        assertThat(actual.distance).isEqualTo(expectedResult.distance)
+        assertThat(actual.lookupDistance).isEqualTo(expectedResult.lookupDistance)
+        assertThat(actual.ownerDistance).isEqualTo(expectedResult.ownerDistance)
         assertThat(actual.hasGeneralTooltip).isEqualTo(expectedResult.hasGeneralTooltip)
         assertThat(actual.hasAxisTooltip).isEqualTo(expectedResult.hasAxisTooltip)
         assertThat(actual.isCrosshairEnabled).isEqualTo(expectedResult.isCrosshairEnabled)
@@ -291,6 +303,8 @@ class LocatedTargetsPickerTest {
         internal var myResult: LookupResult? = null
         private var myGeomKind: GeomKind? = null
         private var myDistance: Double = 0.toDouble()
+        private var myOwnerDistance: Double? = null
+        private var myLookupSpec: GeomTargetLocator.LookupSpec = GeomTargetLocator.LookupSpec.NONE
         private var myHasTarget: Boolean = true
         private var myHasGeneralTooltip: Boolean = false
         private var myHasAxisTooltip: Boolean = false
@@ -305,6 +319,16 @@ class LocatedTargetsPickerTest {
 
         fun geomKind(v: GeomKind): LookupResultConfig {
             myGeomKind = v
+            return this
+        }
+
+        fun ownerDistance(v: Double): LookupResultConfig {
+            myOwnerDistance = v
+            return this
+        }
+
+        fun lookupSpec(v: GeomTargetLocator.LookupSpec): LookupResultConfig {
+            myLookupSpec = v
             return this
         }
 
@@ -344,20 +368,32 @@ class LocatedTargetsPickerTest {
                 return null
             }
             if (myResult == null) {
+                val fields = mutableListOf<ValueSource>()
+
+                fields += if (myHasGeneralTooltip) {
+                    MappingField(Aes.X, isSide = false, isAxis = false)
+                } else {
+                    MappingField(Aes.X, isSide = true, isAxis = false)
+                }
+
+                if (myHasAxisTooltip) {
+                    fields += MappingField(Aes.Y, isSide = false, isAxis = true)
+                }
+
                 val contextualMapping = ContextualMapping(
-                    tooltipLines = emptyList(),
+                    tooltipLines = listOf(LinePattern(null, "", fields)),
                     tooltipAnchor = null,
                     tooltipMinWidth = null,
                     ignoreInvisibleTargets = false,
-                    hasGeneralTooltip = myHasGeneralTooltip,
-                    hasAxisTooltip = myHasAxisTooltip,
                     isCrosshairEnabled = myIsCrosshairEnabled,
                     tooltipGroup = myTooltipGroup ?: defaultTooltipGroup(requireNotNull(myGeomKind)),
                     tooltipTitle = null
                 )
                 myResult = LookupResult(
                     targets = emptyList(),
-                    distance = myDistance,
+                    lookupDistance = myDistance,
+                    ownerDistance = myOwnerDistance ?: myDistance,
+                    lookupSpec = myLookupSpec,
                     geomKind = requireNotNull(myGeomKind),
                     contextualMapping = contextualMapping,
                     hitShapeKind = myHitShapeKind

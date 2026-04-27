@@ -232,7 +232,16 @@ internal class PlotTile constructor(
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
         val metricsByLine = labelSpec.lineMetrics(label)
         val className = if (isColumnLabel) "x" else "y"
-        val rotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
+        val themeAngle = theme.stripTextAngle()
+        val defaultRotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
+        val rotation = if (themeAngle.isNaN()) {
+            defaultRotation
+        } else when (themeAngle) {
+            90.0 -> TextRotation.CLOCKWISE
+            -90.0, 270.0 -> TextRotation.ANTICLOCKWISE
+            0.0 -> null
+            else -> defaultRotation  // Fallback for unsupported angles
+        }
 
         val lab = Label(label)
         lab.addClassName("${Style.FACET_STRIP_TEXT}-$className")
@@ -250,7 +259,11 @@ internal class PlotTile constructor(
         lab.setFontSize(labelSpec.font.size.toDouble())
         lab.setLineMetrics(metricsByLine)
         lab.moveTo(pos)
-        rotation?.let { lab.rotate(it.angle) }
+        if (!themeAngle.isNaN() && themeAngle != 0.0) {
+            lab.rotate(themeAngle)
+        } else {
+            rotation?.let { lab.rotate(it.angle) }
+        }
 
         add(lab)
     }

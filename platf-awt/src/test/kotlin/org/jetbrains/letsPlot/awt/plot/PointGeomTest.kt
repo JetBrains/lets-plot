@@ -1,9 +1,15 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.awt.plot
 
+import demoAndTestShared.parsePlotSpec
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.junit.Test
 
-class PointGeomTest: VisualPlotTestBase() {
+class PointGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
     @Test
     fun sizeUnit() {
         val spec = """
@@ -74,5 +80,63 @@ class PointGeomTest: VisualPlotTestBase() {
         """.trimMargin()
 
         assertPlot("geom_point_default_scale_size.png", parseJson(spec))
+    }
+
+    @Test
+    fun `geom_point with stroke`() {
+        val spec = """
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 1.0, 2.0, 3.0, 4.0, 5.0 ],
+            |    "y": [ 5.0, 3.0, 4.0, 2.0, 1.0 ]
+            |  },
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "mapping": { "x": "x", "y": "y" },
+            |      "size": 20.0,
+            |      "stroke": 8.0,
+            |      "color": "blue",
+            |      "fill": "red",
+            |      "shape": 21
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        assertPlot("plot_geom_point_with_stroke_test.png", parsePlotSpec(spec))
+    }
+
+    @Test
+    fun `shape with 90 degree rotation`() {
+        val spec = parsePlotSpec(
+            """
+            |{
+            |  "kind": "plot",
+            |  "data": {
+            |    "x": [ 1.0 ],
+            |    "y": [ 1.0 ],
+            |    "angle": [ -30.0 ]
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      { "type": "int", "column": "x" },
+            |      { "type": "int", "column": "y" },
+            |      { "type": "int", "column": "angle" }
+            |    ]
+            |  },
+            |  "layers": [
+            |    { "geom": "point", "mapping": { "x": "x", "y": "y", "angle": "angle" }, "size": 20.0, "shape": 2.0 },
+            |    { "geom": "point", "x": 5.0, "y": 1.0, "angle": 90.0, "size": 20.0, "shape": 2.0, "color": "red" },
+            |    { "geom": "blank", "mapping": { "x": [0.0, 6.0], "y": [null, null] }, "inherit_aes": false, "tooltips": "none" }
+            |  ],
+            |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
+            |  "ggsize": { "width": 200.0, "height": 200.0 }
+            |}
+        """.trimMargin()
+        )
+
+        assertPlot("plot_constant_stroke_size_test.png", spec, scale = 1.0)
     }
 }

@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 @file:Suppress("FunctionName")
 
 package org.jetbrains.letsPlot.visualtesting.canvas
 
 import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.canvas.Font
 import org.jetbrains.letsPlot.core.canvas.FontStyle
@@ -22,6 +28,7 @@ class CanvasTextTest(
         registerTest(::canvas_path_monospaceItalic)
         registerTest(::canvas_path_monospaceBold)
         registerTest(::canvas_path_monospaceBoldItalic)
+        registerTest(::canvas_text_transparent)
     }
 
     fun canvas_path_monospace(): Bitmap {
@@ -78,4 +85,12 @@ class CanvasTextTest(
         return paint(canvas)
     }
 
+    fun canvas_text_transparent(): Bitmap {
+        val (canvas, ctx) = createCanvas()
+
+        ctx.fillStyle = Color.TRANSPARENT
+        ctx.fillText("transparent", 5.0, 30.0)
+
+        return paint(canvas)
+    }
 }

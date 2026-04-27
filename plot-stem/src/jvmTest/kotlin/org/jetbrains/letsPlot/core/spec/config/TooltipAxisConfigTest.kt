@@ -310,6 +310,31 @@ class TooltipAxisConfigTest {
         }
     }
 
+    @Test
+    fun `dateTime with milliseconds`() {
+        val instant = DateTime(
+            Date(1, Month.JANUARY, 2021),
+            Time(0, 0, 0, 123)
+        ).toEpochMilliseconds(TZ_UTC).toDouble()
+        val dtData = mapOf("date" to listOf(instant), "v" to listOf(0))
+        val dtMapping = mapOf(
+            org.jetbrains.letsPlot.core.plot.base.Aes.X.name to "v",
+            org.jetbrains.letsPlot.core.plot.base.Aes.Y.name to "date"
+        )
+
+        val geomLayer = geomLayer(
+            dtData,
+            dtMapping,
+            additionalScaleOption = Scale.DATE_TIME to true,
+            scaleFormat = "%H:%M:%S.%f",
+            tooltipFormat = "%H:%M:%S.%f"
+        )
+
+        assertGeneralTooltip(geomLayer, "00:00:00.123")
+        assertYAxisTooltip(geomLayer, "00:00:00.123")
+        assertEquals("00:00:00.123", getYTick(geomLayer, DoubleSpan(instant, instant)))
+    }
+
     companion object {
         private val TZ_UTC = TimeZone.UTC
 

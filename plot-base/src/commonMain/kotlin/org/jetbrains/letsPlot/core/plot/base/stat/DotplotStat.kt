@@ -28,6 +28,9 @@ class DotplotStat(
         if (!hasRequiredValues(data, Aes.X)) {
             return withEmptyStatValues()
         }
+        val valuesX = data.getNumeric(TransformVar.X)
+        emitRemovedNonFiniteValuesMessage(valuesX.count { it?.isFinite() != true }, valuesX.size, messageConsumer)
+
         val statX = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
@@ -36,8 +39,8 @@ class DotplotStat(
         val rangeX = statCtx.overallXRange()
         if (rangeX != null) { // null means all input values are null
             val binsData = when (method) {
-                Method.DOTDENSITY -> BinStatUtil.computeDotdensityStatSeries(rangeX, data.getNumeric(TransformVar.X), binOptions)
-                Method.HISTODOT -> BinStatUtil.computeHistogramStatSeries(data, rangeX, data.getNumeric(TransformVar.X), xPosKind, xPos, binOptions)
+                Method.DOTDENSITY -> BinStatUtil.computeDotdensityStatSeries(rangeX, valuesX, binOptions)
+                Method.HISTODOT -> BinStatUtil.computeHistogramStatSeries(data, rangeX, valuesX, xPosKind, xPos, binOptions)
             }
             statX.addAll(binsData.x)
             statCount.addAll(binsData.count)

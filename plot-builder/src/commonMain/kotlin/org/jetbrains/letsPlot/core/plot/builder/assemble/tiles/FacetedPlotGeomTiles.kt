@@ -41,8 +41,8 @@ class FacetedPlotGeomTiles constructor(
         }
     }
 
-    override fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?> {
-        check(!containsLiveMap) { "Not applicable to LiveMap." }
+    override fun overallXYContinuousDomains(withExpand: Boolean): Pair<DoubleSpan?, DoubleSpan?> {
+        check(!containsLiveMap) { "Not applicable to Faceted plot." }
         // Not implemented -:was not yet needed.
         return Pair(null, null)
     }

@@ -40,7 +40,7 @@ internal class TestingPlotGeomTiles(
         return listOf(scalesBeforeFacets.getValue(Aes.Y))
     }
 
-    override fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?> {
+    override fun overallXYContinuousDomains(withExpand: Boolean): Pair<DoubleSpan?, DoubleSpan?> {
         UNSUPPORTED("Not yet implemented")
     }
 }

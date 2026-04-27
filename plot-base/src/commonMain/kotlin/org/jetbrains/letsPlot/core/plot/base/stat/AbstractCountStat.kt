@@ -33,6 +33,9 @@ abstract class AbstractCountStat(
             getPositional(data, TransformVar.X)
         }
 
+        val droppedPointCount = locations.count { it == null }
+        emitRemovedNonFiniteValuesMessage(droppedPointCount, data.rowCount(), messageConsumer)
+
         val summary = groupAndSum(locations, weights)
 
         val statDf = DataFrame.Builder()

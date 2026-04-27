@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.PositionedTooltip
 import kotlin.math.PI
 import kotlin.math.cos
@@ -137,7 +137,7 @@ internal class VerticalTooltipRotatingExpander(
         }
 
         fun rotate(alpha: Double): DoubleRectangle {
-            val r = TipLayoutHint.StemLength.NORMAL.value
+            val r = TooltipHint.StemLength.NORMAL.value
             val newAttachmentCoord = DoubleVector(r * cos(alpha), r * sin(alpha)).add(myTargetCoord)
 
             val newTooltipCoord = when {

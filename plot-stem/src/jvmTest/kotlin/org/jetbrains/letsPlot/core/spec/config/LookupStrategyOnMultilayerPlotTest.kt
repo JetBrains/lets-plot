@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -44,7 +44,7 @@ class LookupStrategyOnMultilayerPlotTest {
         val pointLayer = "'geom': 'point'"
         val layers = createSingleTileGeomLayers(parsePlotSpec(makePlotSpec(pointLayer)))
         assertEquals(2, layers.size)
-        assertLookup_NearestXY(layers.first())
+        assertLookup_HoverX(layers.first())
     }
 
     @Test
@@ -68,7 +68,7 @@ class LookupStrategyOnMultilayerPlotTest {
         val pointLayer = "'geom': 'point', 'x': 1, 'y': 0.8, 'tooltips': { 'lines': ['Tooltip'] }"
         val layers = createSingleTileGeomLayers(parsePlotSpec(makePlotSpec(pointLayer)))
         assertEquals(2, layers.size)
-        assertLookup_NearestXY(layers.first())
+        assertLookup_HoverX(layers.first())
     }
 
     @Test

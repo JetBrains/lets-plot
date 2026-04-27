@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.core.plot.base.stat.DotplotStat.Method
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -142,10 +142,10 @@ open class DotplotGeom : GeomBase(), WithWidth {
             GeomTargetCollector.TooltipParams(
                 markerColors = colorMarkerMapper(p)
             ),
-            tooltipKind = if (ctx.flipped) {
-                TipLayoutHint.Kind.VERTICAL_TOOLTIP
+            tooltipPlacement = if (ctx.flipped) {
+                TooltipHint.Placement.VERTICAL
             } else {
-                TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
+                TooltipHint.Placement.HORIZONTAL
             }
         )
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -11,8 +11,8 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection.HintConfi
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.HORIZONTAL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
 
 class SmoothGeom : GeomBase() {
 
@@ -75,7 +75,7 @@ class SmoothGeom : GeomBase() {
                 val hint = HintConfigFactory()
                     .defaultObjectRadius(objectRadius)
                     .defaultCoord(p1.x)
-                    .defaultKind(if (ctx.flipped) VERTICAL_TOOLTIP else HORIZONTAL_TOOLTIP)
+                    .defaultKind(if (ctx.flipped) VERTICAL else HORIZONTAL)
                     .defaultColor(fill, aes1.alpha())
 
                 val hintsCollection = HintsCollection(aes1, helper)
@@ -87,7 +87,7 @@ class SmoothGeom : GeomBase() {
                     points = listOf(client1, client2),
                     localToGlobalIndex = { aes1.index() },
                     GeomTargetCollector.TooltipParams(
-                        tipLayoutHints = hintsCollection.hints,
+                        tooltipHints = hintsCollection.hints,
                         markerColors = colorsByDataPoint(aes1)
                     )
                 )

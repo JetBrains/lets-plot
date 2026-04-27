@@ -5,7 +5,10 @@
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 
-import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.DataFrame
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
@@ -15,12 +18,10 @@ object GeomInteractionUtil {
     fun createGeomInteractionBuilder(
         bindings: Map<Aes<*>, DataFrame.Variable>,
         scaleMap: Map<Aes<*>, Scale>,
-        multilayerWithTooltips: Boolean,
         isLiveMap: Boolean,
         isPolarCoordSystem: Boolean,
         theme: Theme,
         geomKind: GeomKind,
-        statKind: StatKind,
         tooltipBehavior1: TooltipBehavior,
         isYOrientation: Boolean,
         constantsMap: Map<Aes<*>, Any>,
@@ -28,11 +29,8 @@ object GeomInteractionUtil {
         getOriginalVariableName: (Aes<*>) -> String?,
     ): GeomInteractionBuilder {
         val tooltipBehavior = createTooltipBehavior(
-            geomKind = geomKind,
-            statKind = statKind,
             tooltipBehavior = tooltipBehavior1,
-            isPolarCoordSystem = isPolarCoordSystem,
-            multilayerWithTooltips = multilayerWithTooltips,
+            isPolarCoordSystem = isPolarCoordSystem
         )
 
         val axisWithoutTooltip = HashSet<Aes<*>>()
@@ -99,11 +97,8 @@ object GeomInteractionUtil {
     }
 
     private fun createTooltipBehavior(
-        geomKind: GeomKind,
-        statKind: StatKind,
         tooltipBehavior: TooltipBehavior,
-        isPolarCoordSystem: Boolean,
-        multilayerWithTooltips: Boolean,
+        isPolarCoordSystem: Boolean
     ): TooltipBehavior {
         val resolvedTooltipBehavior = if (isPolarCoordSystem) {
             // Always show axis tooltips for polar coordinate system as all geoms are area-like.
@@ -115,26 +110,6 @@ object GeomInteractionUtil {
             )
         } else {
             tooltipBehavior
-        }.let {
-            var multilayerLookup = false
-            if (multilayerWithTooltips && !it.isCrosshairEnabled) {
-                // Only these kinds of geoms should be switched to NEAREST XY strategy on a multilayer plot,
-                // and tooltips should not be disabled in other layers.
-                // Rect, histogram and other column alike geoms should not switch searching strategy, otherwise
-                // tooltips behaviour becomes unexpected(histogram shows tooltip when cursor is close enough,
-                // but not above a column).
-                if (geomKind in setOf(GeomKind.LINE, GeomKind.DENSITY, GeomKind.AREA, GeomKind.FREQPOLY, GeomKind.RIBBON)) {
-                    multilayerLookup = true
-                } else if (statKind === StatKind.SMOOTH) {
-                    multilayerLookup = geomKind in listOf(GeomKind.POINT, GeomKind.CONTOUR)
-                }
-            }
-
-            if (multilayerLookup) {
-                it.copy(lookupSpec = LookupSpec(LookupSpace.XY, LookupStrategy.NEAREST))
-            } else {
-                it
-            }
         }
 
         return resolvedTooltipBehavior
@@ -266,7 +241,7 @@ object GeomInteractionUtil {
 
                     !isVariableContinuous(scaleMap, mappingToShow) && isVariableContinuous(scaleMap, aes) -> {
                         // If the same variable is mapped twice as continuous and discrete - use the continuous value
-                        // (ex TooltipSpecFactory::removeDiscreteDuplicatedMappings method)
+                        // (ex TooltipModelFactory::removeDiscreteDuplicatedMappings method)
                         mappingsToShow[variable] = aes
                     }
 

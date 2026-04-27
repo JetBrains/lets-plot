@@ -43,6 +43,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                map=None, map_join=None, use_crs=None,
                size_unit=None,
                color_by=None, fill_by=None,
+               na_rm=None,
                **other_args):
     """
     Draw points defined by x and y coordinates, as for a scatter plot.
@@ -103,6 +104,8 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -232,6 +235,7 @@ def geom_point(mapping=None, *, data=None, stat=None, position=None, show_legend
                  map=map, map_join=map_join, use_crs=use_crs,
                  size_unit=size_unit,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -241,6 +245,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
               map=None, map_join=None, use_crs=None,
               flat=None, geodesic=None,
               color_by=None,
+              na_rm=None,
               **other_args):
     """
     Connect observations in the order they appear in the data.
@@ -297,6 +302,8 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Draw geodesic. Coordinates expected to be in WGS84. Works only with `geom_livemap() <https://lets-plot.org/python/pages/api/lets_plot.geom_livemap.html>`__.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -420,6 +427,7 @@ def geom_path(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  map=map, map_join=map_join, use_crs=use_crs,
                  flat=flat, geodesic=geodesic,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -427,6 +435,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
               manual_key=None, sampling=None,
               tooltips=None,
               color_by=None,
+              na_rm=None,
               **other_args):
     """
     Connect points in the order of the variable on the x-axis.
@@ -469,6 +478,8 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -571,6 +582,7 @@ def geom_line(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -588,6 +600,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                 seed=None,
                 max_n=None,
                 color_by=None, fill_by=None,
+                na_rm=None,
                 **other_args):
     """
     Add a smoothed conditional mean.
@@ -656,6 +669,8 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -768,6 +783,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                          seed=seed,
                          max_n=max_n,
                          color_by=color_by, fill_by=fill_by,
+                         na_rm=na_rm,
                          **other_args)
 
     if labels is not None and isinstance(labels, smooth_labels) and (stat is None or stat == "smooth"):
@@ -775,12 +791,10 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                               mapping=mapping,
                               data=data,
                               stat="smooth_summary",
-                              position=position,
-                              show_legend=show_legend,
                               inherit_aes=inherit_aes,
-                              manual_key=manual_key,
                               sampling=sampling,
                               labels=labels,
+                              show_legend=False,
                               orientation=orientation,
                               method=method,
                               level=level,
@@ -789,6 +803,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                               seed=seed,
                               max_n=max_n,
                               color_by=color_by, fill_by=fill_by,
+                              na_rm=True,
                               **other_args)
 
     return smooth_layer
@@ -799,6 +814,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              tooltips=None, labels=None,
              orientation=None,
              color_by=None, fill_by=None,
+             na_rm=None,
              **other_args):
     """
     Display a bar chart which makes the height of the bar proportional to the
@@ -849,6 +865,8 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -957,6 +975,7 @@ def geom_bar(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  labels=labels,
                  orientation=orientation,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -970,6 +989,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                    boundary=None,
                    breaks=None,
                    color_by=None, fill_by=None,
+                   na_rm=None,
                    **other_args):
     """
     Display a 1D distribution by dividing the variable mapped to the x-axis into bins
@@ -1035,6 +1055,8 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1154,6 +1176,7 @@ def geom_histogram(mapping=None, *, data=None, stat=None, position=None, show_le
                  boundary=boundary,
                  breaks=breaks,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -1169,6 +1192,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
                  center=None,
                  boundary=None,
                  color_by=None, fill_by=None,
+                 na_rm=None,
                  **other_args):
     """
     Dotplot represents individual observations in a batch of data with circular dots.
@@ -1223,6 +1247,8 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1325,6 +1351,7 @@ def geom_dotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None,
                  center=center,
                  boundary=boundary,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -1335,6 +1362,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                binwidth=None,
                drop=None,
                color_by=None, fill_by=None,
+               na_rm=None,
                **other_args):
     """
     Apply a rectangular grid to the plane, count observations in each cell (bin) of the grid,
@@ -1380,6 +1408,8 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1500,6 +1530,7 @@ def geom_bin2d(mapping=None, *, data=None, stat=None, position=None, show_legend
                  binwidth=binwidth,
                  drop=drop,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -1511,6 +1542,7 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              drop=None,
              width_unit=None, height_unit=None,
              color_by=None, fill_by=None,
+             na_rm=None,
              **other_args):
     """
     Apply a hexagonal grid to the plane, count observations in each cell (hexagonal bin) of the grid,
@@ -1574,6 +1606,8 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1697,6 +1731,7 @@ def geom_hex(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  drop=drop,
                  width_unit=width_unit, height_unit=height_unit,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -1705,6 +1740,7 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
               tooltips=None,
               width_unit=None, height_unit=None,
               color_by=None, fill_by=None,
+              na_rm=None,
               **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
@@ -1760,6 +1796,8 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1870,12 +1908,14 @@ def geom_tile(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  width_unit=width_unit,
                  height_unit=height_unit,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
 def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                 manual_key=None, sampling=None,
                 fill_by=None,
+                na_rm=None,
                 **other_args):
     """
     Display rectangles with x, y values mapped to the center of the tile.
@@ -1909,6 +1949,8 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
         To prevent any sampling for this layer pass value "none" (string "none").
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -1965,6 +2007,7 @@ def geom_raster(mapping=None, *, data=None, stat=None, position=None, show_legen
                  manual_key=manual_key,
                  sampling=sampling,
                  fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -1973,6 +2016,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                   sampling=None, tooltips=None,
                   width_unit=None,
                   color_by=None,
+                  na_rm=None,
                   **other_args):
     """
     Display error bars defined by the upper and lower values.
@@ -2022,6 +2066,8 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2136,6 +2182,7 @@ def geom_errorbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  tooltips=tooltips,
                  width_unit=width_unit,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -2145,6 +2192,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                   fatten=None,
                   width_unit=None,
                   color_by=None, fill_by=None,
+                  na_rm=None,
                   **other_args):
     """
     Display bars with horizontal median line.
@@ -2201,6 +2249,8 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2296,6 +2346,7 @@ def geom_crossbar(mapping=None, *, data=None, stat=None, position=None, show_leg
                  fatten=fatten,
                  width_unit=width_unit,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -2303,6 +2354,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                     manual_key=None, sampling=None, tooltips=None,
                     fatten=None,
                     color_by=None, fill_by=None,
+                    na_rm=None,
                     **other_args):
     """
     Add a vertical line defined by upper and lower value with midpoint at y location.
@@ -2347,6 +2399,8 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2437,6 +2491,7 @@ def geom_pointrange(mapping=None, *, data=None, stat=None, position=None, show_l
                  tooltips=tooltips,
                  fatten=fatten,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -2444,6 +2499,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
                    manual_key=None,
                    sampling=None, tooltips=None,
                    color_by=None,
+                   na_rm=None,
                    **other_args):
     """
     Display a line range defined by an upper and lower value.
@@ -2484,6 +2540,8 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
         Set tooltips='none' to hide tooltips from the layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2567,6 +2625,7 @@ def geom_linerange(mapping=None, *, data=None, stat=None, position=None, show_le
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -2576,6 +2635,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  bins=None,
                  binwidth=None,
                  color_by=None,
+                 na_rm=None,
                  **other_args):
     """
     Display contours of a 3d surface in 2d.
@@ -2615,6 +2675,8 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
         Distance between levels.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2721,6 +2783,7 @@ def geom_contour(mapping=None, *, data=None, stat=None, position=None, show_lege
                  tooltips=tooltips,
                  bins=bins, binwidth=binwidth,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -2730,6 +2793,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                   bins=None,
                   binwidth=None,
                   color_by=None, fill_by=None,
+                  na_rm=None,
                   **other_args):
     """
     Fill contours of a 3d surface in 2d.
@@ -2771,6 +2835,8 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -2872,6 +2938,7 @@ def geom_contourf(mapping=None, *, data=None, stat=None, position=None, show_leg
                  bins=bins,
                  binwidth=binwidth,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -2880,6 +2947,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  tooltips=None,
                  map=None, map_join=None, use_crs=None,
                  color_by=None, fill_by=None,
+                 na_rm=None,
                  **other_args):
     """
     Display a filled closed path defined by the vertex coordinates of individual polygons.
@@ -2928,6 +2996,8 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3060,6 +3130,7 @@ def geom_polygon(mapping=None, *, data=None, stat=None, position=None, show_lege
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -3067,6 +3138,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              manual_key=None, sampling=None, tooltips=None,
              map=None, map_join=None, use_crs=None,
              color_by=None, fill_by=None,
+             na_rm=None,
              **other_args):
     """
     Display polygons from a reference map.
@@ -3120,6 +3192,8 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3237,6 +3311,7 @@ def geom_map(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -3245,6 +3320,7 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                 slope=None,
                 intercept=None,
                 color_by=None,
+                na_rm=None,
                 **other_args):
     """
     Add a straight line with specified slope and intercept to the plot.
@@ -3280,6 +3356,8 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
         The value of y at the point where the line crosses the y-axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3354,12 +3432,14 @@ def geom_abline(mapping=None, *, data=None, stat=None, position=None, show_legen
                  slope=slope,
                  intercept=intercept,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
 def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
               sampling=None, tooltips=None,
               color_by=None, fill_by=None,
+              na_rm=None,
               **other_args):
     """
     Add a straight vertical or horizontal band to the plot.
@@ -3394,6 +3474,8 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3466,6 +3548,7 @@ def geom_band(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  tooltips=tooltips,
                  color_by=color_by,
                  fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -3474,6 +3557,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                tooltips=None,
                yintercept=None,
                color_by=None,
+               na_rm=None,
                **other_args):
     """
     Add a straight horizontal line to the plot.
@@ -3511,6 +3595,8 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
         The value of y at the point where the line crosses the y-axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3591,6 +3677,7 @@ def geom_hline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  tooltips=tooltips,
                  yintercept=yintercept,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -3599,6 +3686,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                tooltips=None,
                xintercept=None,
                color_by=None,
+               na_rm=None,
                **other_args):
     """
     Add a straight vertical line to the plot.
@@ -3636,6 +3724,8 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
         The value of x at the point where the line crosses the x-axis.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3716,6 +3806,7 @@ def geom_vline(mapping=None, *, data=None, stat=None, position=None, show_legend
                  tooltips=tooltips,
                  xintercept=xintercept,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -3729,6 +3820,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                  whisker_width=None,
                  width_unit=None,
                  color_by=None, fill_by=None,
+                 na_rm=None,
                  **other_args):
     """
     Display the distribution of data based on a five number summary
@@ -3798,6 +3890,8 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -3933,6 +4027,7 @@ def geom_boxplot(mapping=None, *, data=None, stat=None, position=None, show_lege
                           whisker_width=whisker_width,
                           width_unit=width_unit,
                           color_by=color_by, fill_by=fill_by,
+                          na_rm=na_rm,
                           **other_args)
     if stat is None or stat == 'boxplot':
         outlier_param = lambda name, value: value if value is not None else other_args.get(name)
@@ -3968,6 +4063,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                 quantiles=None, quantile_lines=None,
                 scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
                 color_by=None, fill_by=None,
+                na_rm=None,
                 **other_args):
     """
     A violin plot is a mirrored density plot with an additional grouping as for a boxplot.
@@ -4039,6 +4135,8 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4188,6 +4286,7 @@ def geom_violin(mapping=None, *, data=None, stat=None, position=None, show_legen
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
                  fs_max=fs_max,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -4200,6 +4299,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
               quantiles=None,
               scale=None, trim=None, tails_cutoff=None, kernel=None, bw=None, adjust=None, n=None, fs_max=None,
               color_by=None, fill_by=None,
+              na_rm=None,
               **other_args):
     """
     A sina plot visualizes a single variable across classes, with jitter width reflecting the data density in each class.
@@ -4272,6 +4372,8 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4391,6 +4493,7 @@ def geom_sina(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  scale=scale, trim=trim, tails_cutoff=tails_cutoff, kernel=kernel, bw=bw, adjust=adjust, n=n,
                  fs_max=fs_max,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -4408,6 +4511,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
                   center=None,
                   boundary=None,
                   color_by=None, fill_by=None,
+                  na_rm=None,
                   **other_args):
     """
     Dotplot represents individual observations in a batch of data with circular dots.
@@ -4470,6 +4574,8 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4585,6 +4691,7 @@ def geom_ydotplot(mapping=None, *, data=None, show_legend=None, inherit_aes=None
                  center=center,
                  boundary=boundary,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -4594,6 +4701,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                      trim=None, tails_cutoff=None, kernel=None, adjust=None, bw=None, n=None, fs_max=None,
                      min_height=None, scale=None, quantiles=None, quantile_lines=None,
                      color_by=None, fill_by=None,
+                     na_rm=None,
                      **other_args):
     """
     Plot the sum of the ``y`` and ``height`` aesthetics versus ``x``. Heights of the ridges are relatively scaled.
@@ -4663,6 +4771,8 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4777,6 +4887,7 @@ def geom_area_ridges(mapping=None, *, data=None, stat=None, position=None, show_
                  quantiles=quantiles,
                  quantile_lines=quantile_lines,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -4784,6 +4895,7 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
                 manual_key=None, sampling=None,
                 tooltips=None,
                 color_by=None, fill_by=None,
+                na_rm=None,
                 **other_args):
     """
     Display a y interval defined by ``ymin`` and ``ymax``.
@@ -4821,6 +4933,8 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -4903,12 +5017,14 @@ def geom_ribbon(mapping=None, *, data=None, stat=None, position=None, show_legen
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
 def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
               manual_key=None, sampling=None, tooltips=None,
               flat=None, color_by=None, fill_by=None,
+              na_rm=None,
               **other_args):
     """
     Display the development of quantitative values over an interval.
@@ -4955,6 +5071,8 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5039,6 +5157,7 @@ def geom_area(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  tooltips=tooltips,
                  flat=flat,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -5055,6 +5174,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  quantiles=None,
                  quantile_lines=None,
                  color_by=None, fill_by=None,
+                 na_rm=None,
                  **other_args):
     """
     Display kernel density estimate, which is a smoothed version of the histogram.
@@ -5121,6 +5241,8 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5268,6 +5390,7 @@ def geom_density(mapping=None, *, data=None, stat=None, position=None, show_lege
                  trim=trim, kernel=kernel, adjust=adjust, bw=bw, n=n, fs_max=fs_max,
                  quantiles=quantiles, quantile_lines=quantile_lines,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -5280,6 +5403,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                    bins=None,
                    binwidth=None,
                    color_by=None,
+                   na_rm=None,
                    **other_args):
     """
     Display density function contour.
@@ -5331,6 +5455,8 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
         Distance between levels.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5502,6 +5628,7 @@ def geom_density2d(mapping=None, *, data=None, stat=None, position=None, show_le
                  tooltips=tooltips,
                  kernel=kernel, adjust=adjust, bw=bw, n=n, bins=bins, binwidth=binwidth,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -5515,6 +5642,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                     bins=None,
                     binwidth=None,
                     color_by=None, fill_by=None,
+                    na_rm=None,
                     **other_args):
     """
     Fill density function contour.
@@ -5568,6 +5696,8 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5737,6 +5867,7 @@ def geom_density2df(mapping=None, *, data=None, stat=None, position=None, show_l
                  bins=bins,
                  binwidth=binwidth,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -5750,6 +5881,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
                       n=None,
                       map=None, map_join=None, use_crs=None,
                       color_by=None, fill_by=None,
+                      na_rm=None,
                       **other_args):
     """
     Plot data points and color each point by the local density of nearby points.
@@ -5819,6 +5951,8 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -5961,6 +6095,7 @@ def geom_pointdensity(mapping=None, *, data=None, stat=None, position=None, show
                  bw=bw, n=n,
                  map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -5970,6 +6105,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                 width=None, height=None,
                 color_by=None, fill_by=None,
                 seed=None,
+                na_rm=None,
                 **other_args):
     """
     Display jittered points, especially for discrete plots or dense plots.
@@ -6021,6 +6157,8 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
     seed : int
         A random seed to make the jitter reproducible.
         If None (the default value), the seed is initialised with a random value.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -6104,6 +6242,7 @@ def geom_jitter(mapping=None, *, data=None, stat=None, position=None, show_legen
                  width=width, height=height,
                  color_by=color_by, fill_by=fill_by,
                  seed=seed,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -6113,6 +6252,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
             distribution=None,
             dparams=None,
             color_by=None, fill_by=None,
+            na_rm=None,
             **other_args):
     """
     Display quantile-quantile plot.
@@ -6166,6 +6306,8 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -6248,6 +6390,7 @@ def geom_qq(mapping=None, *, data=None, stat=None, position=None, show_legend=No
                  distribution=distribution,
                  dparams=dparams,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -6255,6 +6398,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              manual_key=None, sampling=None,
              tooltips=None,
              color_by=None, fill_by=None,
+             na_rm=None,
              **other_args):
     """
     Display quantile-quantile plot.
@@ -6298,6 +6442,8 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -6363,6 +6509,7 @@ def geom_qq2(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -6373,6 +6520,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  dparams=None,
                  quantiles=None,
                  color_by=None,
+                 na_rm=None,
                  **other_args):
     """
     Display quantile-quantile fitting line.
@@ -6426,6 +6574,8 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
         Pair of quantiles to use when fitting the Q-Q line.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -6500,6 +6650,7 @@ def geom_qq_line(mapping=None, *, data=None, stat=None, position=None, show_lege
                  dparams=dparams,
                  quantiles=quantiles,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -6508,6 +6659,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                   sampling=None, tooltips=None,
                   quantiles=None,
                   color_by=None,
+                  na_rm=None,
                   **other_args):
     """
     Display quantile-quantile fitting line.
@@ -6551,6 +6703,8 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
         Pair of quantiles to use when fitting the Q-Q line.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -6604,6 +6758,7 @@ def geom_qq2_line(mapping=None, *, data=None, stat=None, position=None, show_leg
                  tooltips=tooltips,
                  quantiles=quantiles,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -6611,6 +6766,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                   manual_key=None, sampling=None, tooltips=None,
                   orientation=None,
                   color_by=None,
+                  na_rm=None,
                   **other_args):
     """
     Display a line chart which makes the y value proportional to the number
@@ -6655,6 +6811,8 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
         Possible values: 'x', 'y'.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -6733,6 +6891,7 @@ def geom_freqpoly(mapping=None, *, data=None, stat=None, position=None, show_leg
                  tooltips=tooltips,
                  orientation=orientation,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -6741,6 +6900,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
               tooltips=None,
               direction=None,
               color_by=None,
+              na_rm=None,
               **other_args):
     """
     Connect observations in the order in which they appear in the data by stairs.
@@ -6784,6 +6944,8 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
         'vh' or 'VH' stands for vertical then horizontal.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -6860,6 +7022,7 @@ def geom_step(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  tooltips=tooltips,
                  direction=direction,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -6868,6 +7031,7 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
               tooltips=None,
               map=None, map_join=None, use_crs=None,
               color_by=None, fill_by=None,
+              na_rm=None,
               **other_args):
     """
     Display an axis-aligned rectangle defined by two corners.
@@ -6916,6 +7080,8 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -7037,12 +7203,14 @@ def geom_rect(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  tooltips=tooltips,
                  map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
 def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_legend=None, inherit_aes=None,
                  manual_key=None, sampling=None,
                  tooltips=None,
+                 na_rm=None,
                  arrow=None, flat=None, geodesic=None, spacer=None, color_by=None, **other_args):
     """
     Draw a straight line segment between two points.
@@ -7092,6 +7260,8 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
         Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -7196,6 +7366,7 @@ def geom_segment(mapping=None, *, data=None, stat=None, position=None, show_lege
                  geodesic=geodesic,
                  spacer=spacer,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -7205,6 +7376,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                arrow=None,
                curvature=None, angle=None, ncp=None,
                spacer=None,
+               na_rm=None,
                color_by=None, **other_args):
     """
     Draw a curved line.
@@ -7259,6 +7431,8 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
         Pixels to shorten segment, creating gaps at start/end points.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -7358,6 +7532,7 @@ def geom_curve(mapping=None, *, data=None, stat=None, position=None, show_legend
                  curvature=curvature, angle=angle, ncp=ncp,
                  spacer=spacer,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -7365,6 +7540,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
                manual_key=None, sampling=None,
                tooltips=None,
                arrow=None, pivot=None,
+               na_rm=None,
                color_by=None, **other_args):
     """
     Draw a straight line segment with given length and angle from the starting point.
@@ -7402,6 +7578,8 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
         The part of the segment that is anchored to the plane. The segment rotates about this point.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -7496,6 +7674,7 @@ def geom_spoke(mapping=None, *, data=None, position=None, show_legend=None, inhe
                  arrow=arrow,
                  pivot=pivot,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -7510,6 +7689,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
               nudge_unit=None,
               check_overlap=None,
               color_by=None,
+              na_rm=None,
               **other_args):
     """
     Add a text directly to the plot.
@@ -7592,6 +7772,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         If True, skip plotting text that overlaps previous text in the same layer.
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -7744,6 +7926,7 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  nudge_unit=nudge_unit,
                  check_overlap=check_overlap,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -7760,6 +7943,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                nudge_unit=None,
                check_overlap=None,
                color_by=None, fill_by=None,
+               na_rm=None,
                **other_args):
     """
     Add a text directly to the plot with a rectangle behind the text.
@@ -7852,6 +8036,8 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -8010,6 +8196,7 @@ def geom_label(mapping=None, *, data=None, stat=None, position=None, show_legend
                  nudge_unit=nudge_unit,
                  check_overlap=check_overlap,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -8033,6 +8220,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
                     max_overlaps=None,
                     min_segment_length=None,
                     arrow=None,
+                    na_rm=None,
                     **other_args):
     """
     Add repelling text labels that avoid overlapping with other labels and data points.
@@ -8135,6 +8323,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
     arrow : ``FeatureSpec``
         Specification for arrow head, as created by `arrow() <https://lets-plot.org/python/pages/api/lets_plot.arrow.html>`__ function.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -8224,6 +8414,7 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
                  max_overlaps=max_overlaps,
                  min_segment_length=min_segment_length,
                  arrow=arrow,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -8249,6 +8440,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                      max_overlaps=None,
                      min_segment_length=None,
                      arrow=None,
+                     na_rm=None,
                      **other_args):
     """
     Add repelling text labels with background boxes that avoid overlapping with other labels and data points.
@@ -8361,6 +8553,8 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
         Minimum length of the line connecting the label to the point. Shorter segments will be omitted.
     arrow : ``FeatureSpec``
         Specification for arrow head, as created by `arrow() <https://lets-plot.org/python/pages/api/lets_plot.arrow.html>`__ function.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -8456,6 +8650,7 @@ def geom_label_repel(mapping=None, *, data=None, stat=None, position=None, show_
                  max_overlaps=max_overlaps,
                  min_segment_length=min_segment_length,
                  arrow=arrow,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -8469,6 +8664,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
              start=None, direction=None,
              size_unit=None,
              color_by=None, fill_by=None,
+             na_rm=None,
              **other_args):
     """
     Draw pie chart.
@@ -8543,6 +8739,8 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the source aesthetic for geometry filling.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -8724,6 +8922,7 @@ def geom_pie(mapping=None, *, data=None, stat=None, position=None, show_legend=N
                  start=start, direction=direction,
                  size_unit=size_unit,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -8732,6 +8931,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                   orientation=None,
                   dir=None, fatten=None, slope=None, intercept=None,
                   color_by=None, fill_by=None,
+                  na_rm=None,
                   **other_args):
     """
     Draw lollipop chart.
@@ -8787,6 +8987,8 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -8886,6 +9088,7 @@ def geom_lollipop(mapping=None, *, data=None, stat=None, position=None, show_leg
                  orientation=orientation,
                  dir=dir, fatten=fatten, slope=slope, intercept=intercept,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -8893,6 +9096,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                manual_key=None, sampling=None,
                tooltips=None,
                color_by=None, fill_by=None,
+               na_rm=None,
                **other_args):
     """
     Sum unique values.
@@ -8930,6 +9134,8 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -9010,6 +9216,7 @@ def geom_count(mapping=None, *, data=None, stat=None, position=None, show_legend
                  sampling=sampling,
                  tooltips=tooltips,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -9022,6 +9229,7 @@ def geom_bracket(mapping=None, *, data=None, stat=None, position=None, show_lege
                  size_unit=None,
                  bracket_shorten=None, tiplength_unit=None,
                  color_by=None,
+                 na_rm=None,
                  **other_args):
     """
     Annotate a plot with labeled brackets to highlight relationships or groupings between categories or ranges.
@@ -9101,6 +9309,8 @@ def geom_bracket(mapping=None, *, data=None, stat=None, position=None, show_lege
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -9215,6 +9425,7 @@ def geom_bracket(mapping=None, *, data=None, stat=None, position=None, show_lege
                  bracket_shorten=bracket_shorten,
                  tiplength_unit=tiplength_unit,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -9228,6 +9439,7 @@ def geom_bracket_dodge(mapping=None, *, data=None, stat=None, position=None, sho
                        bracket_shorten=None, tiplength_unit=None,
                        dodge_width=None, ngroup=None,
                        color_by=None,
+                       na_rm=None,
                        **other_args):
     """
     Annotate a plot with labeled brackets connecting dodged groups inside each category.
@@ -9313,6 +9525,8 @@ def geom_bracket_dodge(mapping=None, *, data=None, stat=None, position=None, sho
 
     color_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='color'
         Define the color aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -9406,6 +9620,7 @@ def geom_bracket_dodge(mapping=None, *, data=None, stat=None, position=None, sho
                  dodge_width=dodge_width,
                  ngroup=ngroup,
                  color_by=color_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -9414,6 +9629,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
                sampling=None,
                map=None, map_join=None, use_crs=None,
                color_by=None, fill_by=None,
+               na_rm=None,
                **other_args):
     """
     Draw nothing, but can be a useful way of ensuring common scales between different plots
@@ -9466,6 +9682,8 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
         Define the color aesthetic for the geometry.
     fill_by : {'fill', 'color', 'paint_a', 'paint_b', 'paint_c'}, default='fill'
         Define the fill aesthetic for the geometry.
+    na_rm : bool, default=False
+        If True, silently removes missing values. If False, missing values are removed with a warning.
     other_args
         Other arguments passed on to the layer.
         These are often aesthetics settings used to set an aesthetic to a fixed value,
@@ -9535,6 +9753,7 @@ def geom_blank(mapping=None, *, data=None, stat=None, position=None, show_legend
                  tooltips='none',
                  map=map, map_join=map_join, use_crs=use_crs,
                  color_by=color_by, fill_by=fill_by,
+                 na_rm=na_rm,
                  **other_args)
 
 
@@ -9545,6 +9764,7 @@ def _geom(name, *,
           position=None,
           show_legend=None,
           inherit_aes=None,
+          na_rm=None,
           manual_key=None,
           sampling=None,
           tooltips=None,
@@ -9575,6 +9795,7 @@ def _geom(name, *,
                      position=position,
                      show_legend=show_legend,
                      inherit_aes=inherit_aes,
+                     na_rm=na_rm,
                      manual_key=manual_key,
                      sampling=sampling,
                      tooltips=tooltips,

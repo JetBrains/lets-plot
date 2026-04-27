@@ -24,12 +24,12 @@ import org.jetbrains.letsPlot.core.spec.Option.Meta
 import org.jetbrains.letsPlot.core.spec.Option.Meta.DATA_META
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION
 import org.jetbrains.letsPlot.core.spec.Option.Plot.CAPTION_TEXT
-import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG
-import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.FACET
 import org.jetbrains.letsPlot.core.spec.Option.Plot.LAYERS
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SCALES
 import org.jetbrains.letsPlot.core.spec.Option.Plot.SUBTITLE_TEXT
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG
+import org.jetbrains.letsPlot.core.spec.Option.Plot.TAG_TEXT
 import org.jetbrains.letsPlot.core.spec.Option.Plot.THEME
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE
 import org.jetbrains.letsPlot.core.spec.Option.Plot.TITLE_TEXT
@@ -43,6 +43,7 @@ abstract class PlotConfig(
     opts: Map<String, Any>,
     containerTheme: Theme?,
     private val isClientSide: Boolean,
+    private val isInDeck: Boolean,
 ) : OptionsAccessor(opts, DEF_OPTIONS) {
 
     val theme: Theme
@@ -83,7 +84,8 @@ abstract class PlotConfig(
         theme = ThemeConfig(
             themeOptions = getMap(THEME),
             containerTheme = containerTheme,
-            fontFamilyRegistry
+            fontFamilyRegistry = fontFamilyRegistry,
+            isInDeck = isInDeck
         ).theme
 
         aopConversion = AesOptionConversion(

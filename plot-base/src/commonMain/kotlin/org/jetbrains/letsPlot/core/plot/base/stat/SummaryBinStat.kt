@@ -36,6 +36,8 @@ class SummaryBinStat(
         } else {
             List(ys.size) { 0.0 }
         }
+        val filteredSize = xs.zip(ys).count { (x, y) -> x?.isFinite() == true && y?.isFinite() == true }
+        emitRemovedNonFiniteValuesMessage(data.rowCount() - filteredSize, data.rowCount(), messageConsumer)
 
         val aggFunctions = mapOf(
             Stats.Y to yAggFunction,

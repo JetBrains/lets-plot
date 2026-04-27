@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -11,50 +11,51 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape.Kind.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.cursorTooltip
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.horizontalTooltip
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.rotatedTooltip
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.verticalTooltip
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.cursorTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.horizontalTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.rotatedTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.verticalTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
 
 class TargetPrototype(
     internal val hitShape: HitShape,
     internal val indexMapper: (Int) -> Int,
     private val tooltipParams: TooltipParams,
-    internal val tooltipKind: TipLayoutHint.Kind
+    internal val tooltipPlacement: TooltipHint.Placement,
+    internal val tooltipAnchor: DoubleVector? = null
 ) {
 
     internal fun createGeomTarget(hitCoord: DoubleVector, hitIndex: Int, objectRadius: Double = 0.0): GeomTarget {
         return GeomTarget(
             hitIndex,
-            createTipLayoutHint(
+            createTooltipHint(
                 hitCoord = hitCoord,
                 hitShapeKind = hitShape.kind,
-                tooltipKind = tooltipKind,
+                tooltipPlacement = tooltipPlacement,
                 stemLength = tooltipParams.stemLength,
                 fillColor = tooltipParams.fillColorFactory(hitIndex),
                 markerColors = tooltipParams.markerColorsFactory(hitIndex),
                 objectRadius = objectRadius
             ),
-            tooltipParams.tipLayoutHints
+            tooltipParams.tooltipHints
         )
     }
 
     companion object {
-        fun createTipLayoutHint(
+        fun createTooltipHint(
             hitCoord: DoubleVector,
             hitShapeKind: HitShape.Kind,
-            tooltipKind: TipLayoutHint.Kind,
-            stemLength: TipLayoutHint.StemLength,
+            tooltipPlacement: TooltipHint.Placement,
+            stemLength: TooltipHint.StemLength,
             fillColor: Color?,
             markerColors: List<Color>,
             objectRadius: Double
-        ): TipLayoutHint {
+        ): TooltipHint {
 
             return when (hitShapeKind) {
-                POINT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP ->
+                POINT -> when (tooltipPlacement) {
+                    VERTICAL ->
                         verticalTooltip(
                             hitCoord,
                             objectRadius,
@@ -63,12 +64,12 @@ class TargetPrototype(
                             markerColors
                         )
 
-                    CURSOR_TOOLTIP -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
-                    else -> error("Wrong TipLayoutHint.kind = $tooltipKind for POINT")
+                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
+                    else -> error("Wrong TooltipHint.placement = $tooltipPlacement for POINT")
                 }
 
-                RECT -> when (tooltipKind) {
-                    VERTICAL_TOOLTIP -> verticalTooltip(
+                RECT -> when (tooltipPlacement) {
+                    VERTICAL -> verticalTooltip(
                         hitCoord,
                         objectRadius,
                         stemLength,
@@ -76,7 +77,7 @@ class TargetPrototype(
                         markerColors
                     )
 
-                    HORIZONTAL_TOOLTIP -> horizontalTooltip(
+                    HORIZONTAL -> horizontalTooltip(
                         hitCoord,
                         objectRadius,
                         stemLength,
@@ -84,13 +85,13 @@ class TargetPrototype(
                         markerColors
                     )
 
-                    CURSOR_TOOLTIP -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
-                    ROTATED_TOOLTIP -> rotatedTooltip(hitCoord, objectRadius = 0.0, color = null, stemLength)
-                    else -> error("Wrong TipLayoutHint.kind = $tooltipKind for RECT")
+                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
+                    ROTATED -> rotatedTooltip(hitCoord, objectRadius = 0.0, color = null, stemLength)
+                    else -> error("Wrong TooltipHint.placement = $tooltipPlacement for RECT")
                 }
 
-                PATH -> when (tooltipKind) {
-                    HORIZONTAL_TOOLTIP -> horizontalTooltip(
+                PATH -> when (tooltipPlacement) {
+                    HORIZONTAL -> horizontalTooltip(
                         hitCoord,
                         objectRadius = 0.0,
                         stemLength,
@@ -98,7 +99,7 @@ class TargetPrototype(
                         markerColors
                     )
 
-                    VERTICAL_TOOLTIP -> verticalTooltip(
+                    VERTICAL -> verticalTooltip(
                         hitCoord,
                         objectRadius = 0.0,
                         stemLength,
@@ -106,12 +107,12 @@ class TargetPrototype(
                         markerColors
                     )
 
-                    else -> error("Wrong TipLayoutHint.kind = $tooltipKind for PATH")
+                    else -> error("Wrong TooltipHint.placement = $tooltipPlacement for PATH")
                 }
 
-                POLYGON -> when (tooltipKind) {
-                    CURSOR_TOOLTIP -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
-                    else -> error("Wrong TipLayoutHint.kind = $tooltipKind for POLYGON")
+                POLYGON -> when (tooltipPlacement) {
+                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
+                    else -> error("Wrong TooltipHint.placement = $tooltipPlacement for POLYGON")
                 }
             }
         }

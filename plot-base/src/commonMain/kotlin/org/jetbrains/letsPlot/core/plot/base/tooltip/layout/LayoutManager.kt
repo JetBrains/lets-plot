@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,10 +9,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
 import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.VerticalAlignment.*
 import kotlin.math.max
@@ -47,7 +47,7 @@ class LayoutManager(
 
         // x-axis tooltip
         tooltips
-            .firstOrNull { it.hintKind === X_AXIS_TOOLTIP }
+            .firstOrNull { it.hintKind === X_AXIS }
             ?.let { xAxisTooltip ->
                 val positionedTooltip = calculateVerticalTooltipPosition(
                     xAxisTooltip,
@@ -92,7 +92,7 @@ class LayoutManager(
 
         // y-axis tooltip
         tooltips
-            .firstOrNull { it.hintKind === Y_AXIS_TOOLTIP }
+            .firstOrNull { it.hintKind === Y_AXIS }
             ?.let {
                 val preferredAlignment = when {
                     vAxisTooltipPosition.isLeft -> HorizontalAlignment.LEFT
@@ -114,7 +114,7 @@ class LayoutManager(
         desiredPosition += calculateDataTooltipsPosition(
             tooltips,
             // limit horizontal tooltips by y-axis tooltips
-            desiredPosition.select(Y_AXIS_TOOLTIP).map(PositionedTooltip::rect)
+            desiredPosition.select(Y_AXIS).map(PositionedTooltip::rect)
         )
             .filter { positionedTooltip ->
                 // Select tooltips within the visibility bounds
@@ -131,9 +131,9 @@ class LayoutManager(
 
     private fun isTooltipWithinBounds(tooltip: PositionedTooltip, bounds: DoubleRectangle): Boolean {
         return when (tooltip.hintKind) {
-            X_AXIS_TOOLTIP -> bounds.xRange().contains(tooltip.stemCoord.x)
-            Y_AXIS_TOOLTIP -> bounds.yRange().contains(tooltip.stemCoord.y)
-            VERTICAL_TOOLTIP, HORIZONTAL_TOOLTIP, CURSOR_TOOLTIP, ROTATED_TOOLTIP -> bounds.contains(tooltip.stemCoord)
+            X_AXIS -> bounds.xRange().contains(tooltip.stemCoord.x)
+            Y_AXIS -> bounds.yRange().contains(tooltip.stemCoord.y)
+            VERTICAL, HORIZONTAL, CURSOR, ROTATED -> bounds.contains(tooltip.stemCoord)
         }
     }
 
@@ -149,7 +149,7 @@ class LayoutManager(
                 continue
 
             when (measuredTooltip.hintKind) {
-                VERTICAL_TOOLTIP -> placementList.add(
+                VERTICAL -> placementList.add(
                     calculateVerticalTooltipPosition(
                         measuredTooltip,
                         preferredAlignment = TOP,
@@ -157,7 +157,7 @@ class LayoutManager(
                     )
                 )
 
-                HORIZONTAL_TOOLTIP -> placementList.add(
+                HORIZONTAL -> placementList.add(
                     calculateHorizontalTooltipPosition(
                         measuredTooltip,
                         myPreferredHorizontalAlignment,
@@ -165,14 +165,14 @@ class LayoutManager(
                     )
                 )
 
-                CURSOR_TOOLTIP -> placementList.add(
+                CURSOR -> placementList.add(
                     calculateCursorTooltipPosition(
                         measuredTooltip,
                         restrictions
                     )
                 )
 
-                ROTATED_TOOLTIP -> placementList.add(
+                ROTATED -> placementList.add(
                     calculateVerticalTooltipPosition(
                         measuredTooltip,
                         preferredAlignment = BOTTOM,
@@ -181,12 +181,12 @@ class LayoutManager(
                     )
                 )
 
-                X_AXIS_TOOLTIP ->
+                X_AXIS ->
                     // X_AXIS should be processed separately to configure vertical space. If process axis tooltip with narrowed space
                     // Y coords will be moved too far from axis.
                     Unit
 
-                Y_AXIS_TOOLTIP ->
+                Y_AXIS ->
                     // Y_AXIS should be processed separately to configure horizontal space. If process axis tooltip with narrowed space
                     // X coords will be moved too far from axis.
                     Unit
@@ -201,7 +201,7 @@ class LayoutManager(
 
         tooltips
             .filter(::isCorner) // has an anchor
-            .groupBy { it.tooltipSpec.anchor!! }
+            .groupBy { it.tooltipModel.anchor!! }
             .forEach { (tooltipAnchor, cornerTooltips) ->
                 val tooltipsHeight = cornerTooltips.sumOf { it.size.y } + margin * cornerTooltips.size
                 val verticalTooltipRange = when (tooltipAnchor.verticalAnchor) {
@@ -255,14 +255,14 @@ class LayoutManager(
         }
 
         // First add tooltips with pre-arranged position
-        tooltips.select(CURSOR_TOOLTIP, X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP).forEach(::fixate)
+        tooltips.select(CURSOR, X_AXIS, Y_AXIS).forEach(::fixate)
 
         // Now try to space out other tooltips.
         // Order matters - vertical tooltips should be added last, because it's easier to space them out.
         // Include overlapped corner tooltips.
 
         val horizontalsWithOverlappedCorners =
-            tooltips.select(HORIZONTAL_TOOLTIP).withOverlapped(tooltips.selectCorner())
+            tooltips.select(HORIZONTAL).withOverlapped(tooltips.selectCorner())
         horizontalsWithOverlappedCorners
             .let { horizontalTooltips ->
                 if (horizontalTooltips.sumOf(PositionedTooltip::height) < myVerticalSpace.length) {
@@ -285,7 +285,7 @@ class LayoutManager(
         // Add corner tooltips
         (tooltips.selectCorner() - horizontalsWithOverlappedCorners).forEach(::fixate)
 
-        (tooltips.select(VERTICAL_TOOLTIP, ROTATED_TOOLTIP) - tooltips.selectCorner())
+        (tooltips.select(VERTICAL, ROTATED) - tooltips.selectCorner())
             .let { verticalTooltips ->
                 if (verticalTooltips.sumOf(PositionedTooltip::width) < myHorizontalSpace.length) {
                     fixOverlappingWithShifting(
@@ -376,7 +376,7 @@ class LayoutManager(
             }
 
             when {
-                measuredTooltip.hintKind == X_AXIS_TOOLTIP && preferredAlignment == TOP -> {
+                measuredTooltip.hintKind == X_AXIS && preferredAlignment == TOP -> {
                     tooltipY = if (topTooltipRange in myVerticalSpace) {
                         topTooltipRange.lowerEnd
                     } else {
@@ -385,7 +385,7 @@ class LayoutManager(
                     stemY = targetTopPoint
                 }
 
-                measuredTooltip.hintKind == X_AXIS_TOOLTIP && preferredAlignment == BOTTOM -> {
+                measuredTooltip.hintKind == X_AXIS && preferredAlignment == BOTTOM -> {
                     tooltipY = if (bottomTooltipRange in myVerticalSpace) {
                         bottomTooltipRange.lowerEnd
                     } else {
@@ -449,7 +449,7 @@ class LayoutManager(
             // Also the coordinate pointed to by the tooltip should be inside the geometry space.
             // Don't change canFitRight as it is not affected by restrictions (as long as y-axis is on the left side).
             val canFitLeft = leftTooltipPlacement in myHorizontalSpace &&
-                    (measuredTooltip.hintKind == Y_AXIS_TOOLTIP || myHorizontalTooltipSpace.contains(targetLeftPoint)) &&
+                    (measuredTooltip.hintKind == Y_AXIS || myHorizontalTooltipSpace.contains(targetLeftPoint)) &&
                     restrictions.all {
                         val tooltipRect = DoubleRectangle(
                             DoubleVector(leftTooltipPlacement.lowerEnd, tooltipY), measuredTooltip.size
@@ -459,13 +459,13 @@ class LayoutManager(
             val canFitRight = rightTooltipPlacement in myHorizontalSpace
 
             when {
-                measuredTooltip.hintKind == Y_AXIS_TOOLTIP && preferredAlignment == HorizontalAlignment.LEFT && !canFitLeft -> {
+                measuredTooltip.hintKind == Y_AXIS && preferredAlignment == HorizontalAlignment.LEFT && !canFitLeft -> {
                     // move axis tooltip to the border if it doesn't fit
                     tooltipX = myHorizontalSpace.lowerEnd
                     stemX = targetLeftPoint
                 }
 
-                measuredTooltip.hintKind == Y_AXIS_TOOLTIP && preferredAlignment == HorizontalAlignment.RIGHT && !canFitRight -> {
+                measuredTooltip.hintKind == Y_AXIS && preferredAlignment == HorizontalAlignment.RIGHT && !canFitRight -> {
                     // move axis tooltip to the border if it doesn't fit
                     tooltipX = myHorizontalSpace.upperEnd - tooltipWidth
                     stemX = targetLeftPoint
@@ -593,15 +593,15 @@ class LayoutManager(
         return verticalTooltipRange.connected(cursorVerticalRange)
     }
 
-    private fun isCorner(tooltipSpec: TooltipSpec) = tooltipSpec.anchor != null
-    private fun isCorner(tooltip: MeasuredTooltip) = isCorner(tooltip.tooltipSpec)
-    private fun isCorner(tooltip: PositionedTooltip) = isCorner(tooltip.tooltipSpec)
+    private fun isCorner(tooltipModel: TooltipModel) = tooltipModel.anchor != null
+    private fun isCorner(tooltip: MeasuredTooltip) = isCorner(tooltip.tooltipModel)
+    private fun isCorner(tooltip: PositionedTooltip) = isCorner(tooltip.tooltipModel)
 
-    private fun isAxisTooltip(tooltipSpec: TooltipSpec) =
-        tooltipSpec.layoutHint.kind in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP)
+    private fun isAxisTooltip(tooltipModel: TooltipModel) =
+        tooltipModel.tooltipHint.placement in listOf(X_AXIS, Y_AXIS)
 
-    private fun isAxisTooltip(tooltip: MeasuredTooltip) = isAxisTooltip(tooltip.tooltipSpec)
-    private fun isAxisTooltip(tooltip: PositionedTooltip) = isAxisTooltip(tooltip.tooltipSpec)
+    private fun isAxisTooltip(tooltip: MeasuredTooltip) = isAxisTooltip(tooltip.tooltipModel)
+    private fun isAxisTooltip(tooltip: PositionedTooltip) = isAxisTooltip(tooltip.tooltipModel)
 
     private fun List<PositionedTooltip>.selectCorner(): List<PositionedTooltip> {
         return this.filter(::isCorner)
@@ -629,7 +629,7 @@ class LayoutManager(
 
     class PositionedTooltip {
         internal val tooltipSize: DoubleVector
-        val tooltipSpec: TooltipSpec
+        val tooltipModel: TooltipModel
         val tooltipCoord: DoubleVector
         val stemCoord: DoubleVector
 
@@ -639,17 +639,17 @@ class LayoutManager(
         internal val height get() = tooltipSize.y
         internal val bottom get() = tooltipCoord.y + height
         internal val right get() = tooltipCoord.x + width
-        val hintKind get() = tooltipSpec.layoutHint.kind
+        val hintKind get() = tooltipModel.tooltipHint.placement
 
         constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
-            tooltipSpec = measuredTooltip.tooltipSpec
+            tooltipModel = measuredTooltip.tooltipModel
             tooltipSize = measuredTooltip.size
             this.tooltipCoord = tooltipCoord
             this.stemCoord = stemCoord
         }
 
         private constructor(positionedTooltip: PositionedTooltip, newTooltipCoord: DoubleVector) {
-            tooltipSpec = positionedTooltip.tooltipSpec
+            tooltipModel = positionedTooltip.tooltipModel
             tooltipSize = positionedTooltip.tooltipSize
             stemCoord = positionedTooltip.stemCoord
             tooltipCoord = newTooltipCoord
@@ -665,14 +665,14 @@ class LayoutManager(
     }
 
     class MeasuredTooltip(
-        internal val tooltipSpec: TooltipSpec,
+        internal val tooltipModel: TooltipModel,
         internal val size: DoubleVector,
         private val strokeWidth: Double
     ) {
-        internal val hintCoord get() = tooltipSpec.layoutHint.coord
-        internal val hintKind get() = tooltipSpec.layoutHint.kind
-        internal val hintRadius get() = tooltipSpec.layoutHint.objectRadius + strokeWidth / 2
-        internal val stemLength get() = tooltipSpec.layoutHint.stemLength.value
+        internal val hintCoord get() = tooltipModel.tooltipHint.coord
+        internal val hintKind get() = tooltipModel.tooltipHint.placement
+        internal val hintRadius get() = tooltipModel.tooltipHint.objectRadius + strokeWidth / 2
+        internal val stemLength get() = tooltipModel.tooltipHint.stemLength.value
     }
 
     companion object {
@@ -708,8 +708,8 @@ class LayoutManager(
             return moveIntoLimit(centered(position, size), range).lowerEnd
         }
 
-        private fun List<PositionedTooltip>.select(vararg kinds: Kind): List<PositionedTooltip> {
-            return this.filter { kinds.contains(it.hintKind) }
+        private fun List<PositionedTooltip>.select(vararg placements: Placement): List<PositionedTooltip> {
+            return this.filter { placements.contains(it.hintKind) }
         }
 
         private fun List<PositionedTooltip>.isOverlapped(tooltip: PositionedTooltip): Boolean {

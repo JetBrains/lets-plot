@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -74,13 +74,13 @@ class LayerTargetLocatorTwoPathsTest {
         // Interpolate the point.
         locator.search(TestUtil.point(112.5, 117.5))!!.targets[0].let {
             assertThat(it.hitIndex).isEqualTo(101)
-            assertThat(it.tipLayoutHint.coord).isEqualTo(DoubleVector(115, 115))
+            assertThat(it.tooltipHint.coord).isEqualTo(DoubleVector(115, 115))
         }
 
         // Snap to the nearest point.
         locator.search(TestUtil.point(90.0, 90.0))!!.targets[0].let {
             assertThat(it.hitIndex).isEqualTo(100)
-            assertThat(it.tipLayoutHint.coord).isEqualTo(DoubleVector(100, 100))
+            assertThat(it.tooltipHint.coord).isEqualTo(DoubleVector(100, 100))
         }
     }
 

@@ -30,7 +30,7 @@ interface PlotGeomTiles {
     fun scaleYByTile(): List<Scale>
 
     fun overallTransformedDomain(aes: Aes<*>): DoubleSpan
-    fun overallXYContinuousDomains(): Pair<DoubleSpan?, DoubleSpan?>
+    fun overallXYContinuousDomains(withExpand: Boolean): Pair<DoubleSpan?, DoubleSpan?>
 
     //    fun coreLayerInfos(): List<GeomLayerInfo>
     fun layerInfos(): List<GeomLayerInfo>

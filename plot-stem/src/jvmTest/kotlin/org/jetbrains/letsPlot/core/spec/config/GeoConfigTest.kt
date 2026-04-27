@@ -181,7 +181,7 @@ class GeoConfigTest {
 
     private fun singleGeomLayer(spec: String): GeomLayer {
         val plotSpec = MonolithicCommon.processRawSpecs(parsePlotSpec(spec))
-        val frontendConfig = PlotConfigFrontend.create(plotSpec) { _ -> }
+        val frontendConfig = PlotConfigFrontend.createForTesting(plotSpec) { _ -> }
         return createPlotGeomTiles(frontendConfig).coreLayersByTile().single().single()
     }
 
@@ -230,7 +230,7 @@ class GeoConfigTest {
             |}""".trimMargin()
 
         val plotSpec = MonolithicCommon.processRawSpecs(parsePlotSpec(spec))
-        val e = runCatching { PlotConfigFrontend.create(plotSpec) { } }.exceptionOrNull()
+        val e = runCatching { PlotConfigFrontend.createForTesting(plotSpec) { } }.exceptionOrNull()
 
         assertThat(e).hasMessage(MAP_JOIN_REQUIRED_MESSAGE)
     }
@@ -363,7 +363,7 @@ class GeoConfigTest {
         val barQux = """{\"type\": \"Point\", \"coordinates\": [3.0, 4.0]}"""
         val bazQux = """{\"type\": \"Point\", \"coordinates\": [5.0, 6.0]}"""
 
-        // county is not unique so to get unique color use special variable __geo_id__
+        // county is not unique so to get unique color, use special variable __geo_id__
 
         singleGeomLayer(
             """
@@ -428,7 +428,7 @@ class GeoConfigTest {
             |}
             |""".trimMargin()
         )
-            .assertBinding(Aes.X, "price") // was not rebind to gdf
+            .assertBinding(Aes.X, "price") // was not rebound to gdf
     }
 
     @Test
@@ -473,7 +473,7 @@ class GeoConfigTest {
         assertThat(processedSpec.has("layers", 0, "data", POINT_Y)).isFalse
         assertThat(processedSpec.getList("layers", 0, "data", "coord")).hasSize(6)
 
-        val plotConfig = PlotConfigFrontend.create(processedSpec){}
+        val plotConfig = PlotConfigFrontend.createForTesting(processedSpec) {}
         val layerData = plotConfig.layerConfigs.single().combinedData
 
         val x = findVariableOrFail(layerData, POINT_X)
@@ -526,7 +526,7 @@ class GeoConfigTest {
         assertThat(processedSpec.getList("layers", 0, "data", POINT_X)).containsExactly(-5.0, 3.0, 6.0)
         assertThat(processedSpec.getList("layers", 0, "data", POINT_Y)).containsExactly(17.0, 15.0, 13.0)
 
-        val plotConfig = PlotConfigFrontend.create(processedSpec){}
+        val plotConfig = PlotConfigFrontend.createForTesting(processedSpec) {}
         val layerData = plotConfig.layerConfigs.single().combinedData
 
         val x = findVariableOrFail(layerData, POINT_X)

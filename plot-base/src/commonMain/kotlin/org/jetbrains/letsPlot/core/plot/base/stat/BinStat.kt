@@ -46,6 +46,9 @@ open class BinStat(
             return withEmptyStatValues()
         }
 
+        val valuesX = data.getNumeric(TransformVar.X)
+        emitRemovedNonFiniteValuesMessage(valuesX.count { it?.isFinite() != true }, valuesX.size, messageConsumer)
+
         val statX = ArrayList<Double>()
         val statCount = ArrayList<Double>()
         val statDensity = ArrayList<Double>()
@@ -57,7 +60,7 @@ open class BinStat(
         when {
             filteredBreaks.isNotEmpty() -> {
                 BinStatUtil.computeHistogramBins(
-                    data.getNumeric(TransformVar.X),
+                    valuesX,
                     filteredBreaks,
                     BinStatUtil.weightAtIndex(data)
                 )
@@ -65,7 +68,7 @@ open class BinStat(
             rangeX != null -> BinStatUtil.computeHistogramStatSeries(
                 data,
                 rangeX,
-                data.getNumeric(TransformVar.X),
+                valuesX,
                 xPosKind,
                 xPos,
                 binOptions

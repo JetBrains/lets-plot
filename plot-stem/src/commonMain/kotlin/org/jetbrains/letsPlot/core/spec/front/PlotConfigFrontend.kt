@@ -18,11 +18,13 @@ import org.jetbrains.letsPlot.core.spec.front.PlotConfigFrontendUtil.createGuide
 
 class PlotConfigFrontend private constructor(
     opts: Map<String, Any>,
-    containerTheme: Theme?
+    containerTheme: Theme?,
+    isInDeck: Boolean
 ) : PlotConfig(
     opts,
     containerTheme,
-    isClientSide = true
+    isClientSide = true,
+    isInDeck = isInDeck
 ) {
 
     val specId: String? = opts[Option.Plot.SPEC_ID] as? String
@@ -44,16 +46,35 @@ class PlotConfigFrontend private constructor(
             return plotSpec
         }
 
-        fun create(
+        fun createForTesting(
             plotSpec: Map<String, Any>,
             containerTheme: Theme? = null,
+            isInDeck: Boolean = false,
+            computationMessagesHandler: ((List<String>) -> Unit)
+        ): PlotConfigFrontend {
+            return create(
+                plotSpec,
+                containerTheme,
+                isInDeck = isInDeck,
+                computationMessagesHandler
+            )
+        }
+
+        fun create(
+            plotSpec: Map<String, Any>,
+            containerTheme: Theme?,
+            isInDeck: Boolean,
             computationMessagesHandler: ((List<String>) -> Unit)
         ): PlotConfigFrontend {
             val computationMessages = PlotConfigUtil.findComputationMessages(plotSpec)
             if (computationMessages.isNotEmpty()) {
                 computationMessagesHandler(computationMessages)
             }
-            return PlotConfigFrontend(plotSpec, containerTheme)
+            return PlotConfigFrontend(
+                plotSpec,
+                containerTheme,
+                isInDeck = isInDeck
+            )
         }
     }
 }

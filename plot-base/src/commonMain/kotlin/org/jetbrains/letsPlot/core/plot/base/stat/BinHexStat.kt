@@ -36,6 +36,14 @@ class BinHexStat(
             return withEmptyStatValues()
         }
 
+        val xs = data.getNumeric(TransformVar.X)
+        val ys = data.getNumeric(TransformVar.Y)
+        emitRemovedNonFiniteValuesMessage(
+            xs.zip(ys).count { (x, y) -> !SeriesUtil.allFinite(x, y) },
+            data.rowCount(),
+            messageConsumer
+        )
+
         val xRange = statCtx.overallXRange()
         val yRange = statCtx.overallYRange()
         if (xRange == null || yRange == null) {
@@ -82,8 +90,8 @@ class BinHexStat(
         // If the hexagons are too flattened, floating-point arithmetic errors can occur, so computeBins() assumes the hexagons are regular
         val ratio = xCountAndWidthFinal.width / height
         val binsData = computeBins(
-            data.getNumeric(TransformVar.X),
-            data.getNumeric(TransformVar.Y).map { y -> y?.let { it * ratio} },
+            xs,
+            ys.map { y -> y?.let { it * ratio} },
             xRangeFinal.lowerEnd,
             yRangeFinal.lowerEnd * ratio,
             xCountAndWidthFinal.count,

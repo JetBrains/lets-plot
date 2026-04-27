@@ -79,6 +79,7 @@ class DateTimeFormat(private val spec: List<SpecPart>) {
         private fun getValueForPattern(type: Pattern, dateTime: DateTime): String =
             when (type) {
                 Pattern.SECOND -> leadZero(dateTime.seconds)
+                Pattern.MILLISECONDS -> leadZero(dateTime.milliseconds, 3)
                 Pattern.MINUTE -> leadZero(dateTime.minutes)
                 Pattern.HOUR_12 -> getHours12(dateTime).toString()
                 Pattern.HOUR_12_LEADING_ZERO -> leadZero(getHours12(dateTime))

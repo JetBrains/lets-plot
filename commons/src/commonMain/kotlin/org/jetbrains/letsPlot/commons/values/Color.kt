@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -18,9 +18,9 @@ class Color @JvmOverloads constructor(
     init {
         require(
             red in 0..255 &&
-            green in 0..255 &&
-            blue in 0..255 &&
-            alpha in 0..255
+                    green in 0..255 &&
+                    blue in 0..255 &&
+                    alpha in 0..255
         ) { "Color components out of range: $this" }
     }
 
@@ -31,6 +31,11 @@ class Color @JvmOverloads constructor(
     fun changeAlpha(newAlpha: Double): Color {
         val alphaInt = (newAlpha * 255).roundToInt()
         return changeAlpha(alphaInt)
+    }
+
+    fun multiplyAlpha(mulAlpha: Double): Color {
+        val newAlpha = alpha / 255.0 * mulAlpha
+        return changeAlpha(newAlpha)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -52,7 +57,12 @@ class Color @JvmOverloads constructor(
     }
 
     fun toHexColor(): String {
-        return "#" + toColorPart(red) + toColorPart(green) + toColorPart(blue)
+        val rgb = "#" + toColorPart(red) + toColorPart(green) + toColorPart(blue)
+        if (alpha == 255) {
+            return rgb
+        } else {
+            return rgb + toColorPart(alpha)
+        }
     }
 
     override fun hashCode(): Int {
@@ -276,19 +286,33 @@ class Color @JvmOverloads constructor(
             @Suppress("NAME_SHADOWING")
             var hexColor = hexColor
 
-            require(hexColor.startsWith("#") && (hexColor.length == 4 || hexColor.length == 7)) {
+            require(
+                hexColor.startsWith("#") &&
+                        (hexColor.length == 4 || // #RGB
+                                hexColor.length == 5 || // #RGBA
+                                hexColor.length == 7 || // #RRGGBB
+                                hexColor.length == 9) // #RRGGBBAA
+
+            ) {
                 "Not a valid HEX value: $hexColor"
             }
 
             hexColor = hexColor.substring(1)
-            if (hexColor.length == 3) {
+            if (hexColor.length == 3 || hexColor.length == 4) {
                 hexColor = hexColor.map { "$it$it" }.joinToString("")
             }
 
             val r = hexColor.substring(0, 2).toInt(16)
             val g = hexColor.substring(2, 4).toInt(16)
             val b = hexColor.substring(4, 6).toInt(16)
-            return Color(r, g, b)
+
+            val a = if (hexColor.length == 8) {
+                hexColor.substring(6, 8).toInt(16)
+            } else {
+                255
+            }
+
+            return Color(r, g, b, a)
         }
 
         private fun toColorPart(value: Int): String {

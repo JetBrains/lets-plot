@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -14,6 +14,26 @@ class ColorTest {
     @Test
     fun parseHex() {
         assertEquals(Color.RED, Color.parseHex(Color.RED.toHexColor()))
+    }
+
+    @Test
+    fun parseHexRRGGBBAA() {
+        assertEquals(Color(0, 255, 0, 37), Color.parseHex("#00FF0025"))
+    }
+
+    @Test
+    fun parseHexRGBA() {
+        assertEquals(Color(0x11, 0x22, 0x33, 0x44), Color.parseHex("#1234"))
+    }
+
+    @Test
+    fun parseHexRGB() {
+        assertEquals(Color(0x11, 0x22, 0x33), Color.parseHex("#123"))
+    }
+
+    @Test
+    fun toHexColorWithAlpha() {
+        assertEquals("#11223344", Color(0x11, 0x22, 0x33, 0x44).toHexColor())
     }
 
     @Test

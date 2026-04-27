@@ -23,10 +23,15 @@ class QQ2LineStat(
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(
-            data.getNumeric(TransformVar.X),
-            data.getNumeric(TransformVar.Y)
+        val xs = data.getNumeric(TransformVar.X)
+        val ys = data.getNumeric(TransformVar.Y)
+        emitRemovedNonFiniteValuesMessage(
+            xs.zip(ys).count { (x, y) -> x?.isFinite() != true && y?.isFinite() != true },
+            data.rowCount(),
+            messageConsumer
         )
+
+        val statData = buildStat(xs, ys)
 
         return DataFrame.Builder()
             .putNumeric(Stats.X, statData.getValue(Stats.X))

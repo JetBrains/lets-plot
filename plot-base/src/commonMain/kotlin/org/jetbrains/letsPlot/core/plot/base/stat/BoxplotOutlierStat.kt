@@ -31,6 +31,8 @@ class BoxplotOutlierStat(
         } else {
             List(ys.size) { 0.0 }
         }
+        val filteredSize = xs.zip(ys).count { (x, y) -> SeriesUtil.allFinite(x, y) }
+        emitRemovedNonFiniteValuesMessage(data.rowCount() - filteredSize, data.rowCount(), messageConsumer)
 
         val statData = buildStat(xs, ys, whiskerIQRRatio)
 

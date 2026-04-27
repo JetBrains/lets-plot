@@ -264,6 +264,35 @@ class ScaleConfigLabelsTest {
     }
 
     @Test
+    fun `datetime with milliseconds`() {
+        val instant = DateTime(
+            Date(1, Month.JANUARY, 2021),
+            Time(10, 10, 10, 123)
+        ).toEpochMilliseconds(TZ).toDouble()
+
+        val scaleMap = getScaleMap(
+            data = mapOf(
+                "value" to listOf(instant)
+            ),
+            mapping = mappingXY,
+            scales = listOf(
+                mapOf(
+                    Option.Scale.AES to Aes.X.name,
+                    DATE_TIME to true,
+                    FORMAT to "%H:%M:%S.%f"
+                )
+            )
+        )
+
+        val xLabels = getScaleLabels(
+            scaleMap.getValue(Aes.X),
+            targetCount = 1,
+            closeRange = DoubleSpan(instant, instant)
+        )
+        assertEquals(listOf("10:10:10.123"), xLabels)
+    }
+
+    @Test
     fun `DateTime format should be applied to the breaks`() {
         val instants = List(3) {
             DateTime(Date(1, Month.JANUARY, 2021)).add(Duration.DAY.mul(it), TZ)

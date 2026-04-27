@@ -6,12 +6,12 @@
 package org.jetbrains.letsPlot.core.plot.base.stat
 
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
+import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
 import org.jetbrains.letsPlot.core.plot.base.stat.DensityStat.BandWidthMethod.NRD0
-import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 
 /**
  * Computes kernel density estimate for 'n' values evenly distributed throughout the range of the input series.
@@ -43,6 +43,7 @@ class DensityStat(
             return withEmptyStatValues()
         }
 
+        val totalCount = data.rowCount()
         val xs: List<Double>
         val weights: List<Double>
         if (data.has(TransformVar.WEIGHT)) {
@@ -65,6 +66,8 @@ class DensityStat(
                 .sorted()
             weights = List(xs.size) { 1.0 }
         }
+
+        emitRemovedNonFiniteValuesMessage(totalCount - xs.size, totalCount, messageConsumer)
 
         if (xs.isEmpty()) return withEmptyStatValues()
 

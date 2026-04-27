@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil.size
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
 import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.HorizontalAlignment.LEFT
@@ -32,7 +32,7 @@ internal open class TooltipLayoutTestBase {
         this.myArrangedTooltips = ArrayList()
 
         for (tooltipEntry in layoutManagerController.arrange()) {
-            val measuredTooltip = myTooltipDataProvider[tooltipEntry.tooltipSpec.lines]!!
+            val measuredTooltip = myTooltipDataProvider[tooltipEntry.tooltipModel.lines]!!
             myArrangedTooltips.add(TooltipHelper(tooltipEntry, measuredTooltip))
         }
     }
@@ -206,7 +206,7 @@ internal open class TooltipLayoutTestBase {
     }
 
     internal interface TooltipDataProvider {
-        operator fun get(lines: List<TooltipSpec.Line>): MeasuredTooltip?
+        operator fun get(lines: List<TooltipModel.Line>): MeasuredTooltip?
     }
 
     internal class TipLayoutManagerBuilder(private val myViewport: DoubleRectangle) : TooltipDataProvider {
@@ -273,9 +273,9 @@ internal open class TooltipLayoutTestBase {
             }
         }
 
-        override fun get(lines: List<TooltipSpec.Line>): MeasuredTooltip? {
+        override fun get(lines: List<TooltipModel.Line>): MeasuredTooltip? {
             for (measuredTooltip in myTooltipData) {
-                if (measuredTooltip.tooltipSpec.lines == lines) {
+                if (measuredTooltip.tooltipModel.lines == lines) {
                     return measuredTooltip
                 }
             }
@@ -291,8 +291,7 @@ internal open class TooltipLayoutTestBase {
         private val myTooltipRect: DoubleRectangle =
             DoubleRectangle(myTooltipEntry.tooltipCoord, myMeasuredTooltip.size)
 
-        val text get() = myTooltipEntry.tooltipSpec.lines.map(TooltipSpec.Line::toString)
-        val fill get() = myTooltipEntry.tooltipSpec.fill
+        val text get() = myTooltipEntry.tooltipModel.lines.map(TooltipModel.Line::toString)
         fun coord() = myTooltipEntry.tooltipCoord
         fun stemCoord() = myTooltipEntry.stemCoord
         fun rect() = myTooltipRect
@@ -384,8 +383,8 @@ internal open class TooltipLayoutTestBase {
         const val DEFAULT_OBJECT_RADIUS = 40.0
         private const val DOUBLE_COMPARE_EPSILON = 0.01
 
-        val NORMAL_STEM_LENGTH = TipLayoutHint.StemLength.NORMAL.value
-        val AXIS_STEM_LENGTH = TipLayoutHint.StemLength.NONE.value
+        val NORMAL_STEM_LENGTH = TooltipHint.StemLength.NORMAL.value
+        val AXIS_STEM_LENGTH = TooltipHint.StemLength.NONE.value
 
         fun makeText(text: String): List<String> {
             return listOf(text)

@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
+package org.jetbrains.letsPlot.core.plot.base.tooltip
+
+import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.X_AXIS
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+
+class TooltipModelAxisTooltipTest : TooltipModelTestHelper() {
+
+    @BeforeTest
+    fun setUp() {
+        init()
+        setAxisTooltipEnabled(true)
+    }
+
+    @Test
+    fun whenXIsNotMapped_ShouldNotThrowException() {
+        createTooltipModels(geomTargetBuilder.withPointHitShape(TARGET_HIT_COORD, 0.0).build())
+    }
+
+    @Test
+    fun shouldNotAddLabel_WhenMappedToYAxisVar() {
+        val v = MappedDataAccessMock.variable().name("var_for_y").value("sedan")
+
+        val fillMapping = addMappedData(v.mapping(Aes.FILL))
+        val yMapping = addMappedData(v.mapping(Aes.Y))
+
+        createTooltipModels(
+            geomTargetBuilder.withPathHitShape()
+                .withLayoutHint(
+                    Aes.FILL,
+                    TooltipHint.verticalTooltip(
+                        TARGET_HIT_COORD,
+                        OBJECT_RADIUS,
+                        markerColors = emptyList()
+                    )
+                )
+                .build()
+        )
+
+        assertLines(0, fillMapping.shortTooltipText())
+        assertLines(1, yMapping.shortTooltipText())
+    }
+
+    @Test
+    fun whenXIsMapped_AndAxisTooltipEnabled_ShouldAddTooltipModel() {
+        val variable = MappedDataAccessMock.variable().name("some label").value("some value").isContinuous(true)
+        val xMapping = addMappedData(variable.mapping(Aes.X))
+
+        buildTooltipModels()
+
+        assertHint(
+            expectedHintPlacement = X_AXIS,
+            expectedHintCoord = TARGET_X_AXIS_COORD,
+            expectedObjectRadius = 0.5
+        )
+        assertFill(TooltipDefaults.AXIS_TOOLTIP_COLOR)
+        assertLines(0, xMapping.shortTooltipText())
+    }
+
+
+    @Test
+    fun shouldNotAddLabel_When_MappedToYAxisVar_And_OneLineTooltip() {
+        val v = MappedDataAccessMock.variable().name("var_for_y").value("sedan")
+        val yMapping = addMappedData(v.mapping(Aes.Y))
+
+        buildTooltipModels()
+        assertLines(0, yMapping.shortTooltipText())
+    }
+
+    @Test
+    fun multilineTooltip_shouldAddLabels() {
+        val v = MappedDataAccessMock.variable().name("var_for_y").value("sedan")
+        val fillMapping = addMappedData(v.mapping(Aes.FILL))
+        val yMapping = addMappedData(v.mapping(Aes.Y))
+
+        buildTooltipModels()
+        assertLines(0, fillMapping.longTooltipText(), yMapping.longTooltipText())
+    }
+}

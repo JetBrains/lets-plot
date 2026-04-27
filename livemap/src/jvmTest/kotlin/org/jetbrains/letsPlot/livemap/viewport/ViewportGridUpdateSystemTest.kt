@@ -7,9 +7,7 @@ package org.jetbrains.letsPlot.livemap.viewport
 
 import org.jetbrains.letsPlot.commons.intern.spatial.LonLat
 import org.jetbrains.letsPlot.commons.intern.spatial.QuadKey
-import org.jetbrains.letsPlot.livemap.LiveMapTestBase
 import org.jetbrains.letsPlot.livemap.Mocks
-import org.jetbrains.letsPlot.livemap.WorldPoint
 import org.jetbrains.letsPlot.livemap.config.createMapProjection
 import org.jetbrains.letsPlot.livemap.core.Projections
 import org.jetbrains.letsPlot.livemap.mapengine.camera.CameraInputSystem
@@ -38,7 +36,7 @@ class ViewportGridUpdateSystemTest : org.jetbrains.letsPlot.livemap.LiveMapTestB
 
         Mockito.`when`(liveMapContext.mapProjection).thenReturn(mapProjection)
 
-        addSystem(CameraInputSystem(componentManager))
+        addSystem(CameraInputSystem(componentManager, true))
         addSystem(ViewportPositionUpdateSystem(componentManager))
         addSystem(ViewportGridUpdateSystem(componentManager))
     }

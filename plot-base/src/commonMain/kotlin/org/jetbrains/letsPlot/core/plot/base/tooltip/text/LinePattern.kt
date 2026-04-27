@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.core.plot.base.tooltip.text
 
 import org.jetbrains.letsPlot.commons.formatting.string.StringFormat
@@ -27,7 +32,7 @@ class LinePattern(
         return myLineFormatter!!
     }
 
-    fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
+    internal fun initDataContext(data: DataFrame, mappedDataAccess: MappedDataAccess) {
         fields.forEach { it.initDataContext(data, mappedDataAccess) }
     }
 

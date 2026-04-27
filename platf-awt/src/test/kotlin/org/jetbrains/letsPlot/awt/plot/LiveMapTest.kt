@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
@@ -8,7 +13,7 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 
 @Ignore("WIP - enable and adjust tests when the feature is ready")
-class LiveMapTest : VisualPlotTestBase() {
+class LiveMapTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
     @Ignore("External service - may cause test instability. Enable for debugging purposes only.")
     @Test
     fun `geom_livemap prod vector tiles`() {

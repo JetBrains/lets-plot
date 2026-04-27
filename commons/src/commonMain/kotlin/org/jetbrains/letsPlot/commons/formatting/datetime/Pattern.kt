@@ -35,7 +35,8 @@ enum class Pattern(val string: String, val kind: Kind) {
     MINUTE("%M", Kind.TIME),
     MERIDIAN_LOWER("%P", Kind.TIME),
     MERIDIAN_UPPER("%p", Kind.TIME),
-    SECOND("%S", Kind.TIME);
+    SECOND("%S", Kind.TIME),
+    MILLISECONDS("%f", Kind.TIME);
     //LOCALE_TIME("%X", Kind.TIME),
     //TIME_ZONE("%Z", Kind.TIME),
 
@@ -44,7 +45,7 @@ enum class Pattern(val string: String, val kind: Kind) {
 
 
     companion object {
-        val PATTERN_REGEX = "(%[aAbBdejmwyYHIlMpPS])".toRegex()
+        val PATTERN_REGEX = "(%[aAbBdejmwyYHIlMpPSf])".toRegex()
 
         enum class Kind {
             DATE,

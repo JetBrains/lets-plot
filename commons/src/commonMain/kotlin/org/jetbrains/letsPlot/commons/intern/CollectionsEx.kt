@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -17,6 +17,22 @@ fun <K, V> Map<K, V?>.filterNotNullValues(): Map<K, V> {
         .asSequence()
         .mapNotNull { (k, v) -> v?.let { k to v } }
         .toMap()
+}
+
+fun <T> Collection<T>.removeDuplicates(predicate: (T) -> Boolean): List<T> {
+    var found = false
+    return filter {
+        if (predicate(it)) {
+            if (found) {
+                return@filter false
+            } else {
+                found = true
+                return@filter true
+            }
+        } else {
+            return@filter true
+        }
+    }
 }
 
 fun <T> Collection<T>.splitBy(comp: Comparator<T>): List<List<T>> {

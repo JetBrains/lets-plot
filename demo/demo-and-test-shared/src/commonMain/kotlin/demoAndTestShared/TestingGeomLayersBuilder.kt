@@ -16,7 +16,7 @@ object TestingGeomLayersBuilder {
     fun createMultiTileGeomLayers(plotSpec: MutableMap<String, Any>): List<List<GeomLayer>> {
         val transformed = MonolithicCommon.processRawSpecs(plotSpec)
         require(!PlotConfig.isFailure(transformed)) { PlotConfig.getErrorMessage(transformed) }
-        val config = PlotConfigFrontend.create(transformed) {}
+        val config = PlotConfigFrontend.createForTesting(transformed) {}
         return PlotConfigFrontendUtil.createPlotGeomTiles(config).coreLayersByTile()
     }
 

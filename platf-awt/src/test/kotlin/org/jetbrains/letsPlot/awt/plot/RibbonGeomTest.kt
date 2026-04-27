@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.awt.plot
 import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
-class RibbonGeomTest: VisualPlotTestBase() {
+class RibbonGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
 
     @Test
     fun `#1 example from alternating_ribbon_fill`() {

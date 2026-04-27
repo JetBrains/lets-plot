@@ -26,7 +26,13 @@ class QQStat(
         }
 
         val sampleSeries = data.getNumeric(TransformVar.SAMPLE)
+        emitRemovedNonFiniteValuesMessage(
+            sampleSeries.count { it?.isFinite() != true },
+            sampleSeries.size,
+            messageConsumer
+        )
         val (indices, statSample) = sampleSeries
+            .asSequence()
             .withIndex()
             .filter { it.value?.isFinite() == true }
             .sortedBy { it.value }

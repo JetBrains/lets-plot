@@ -45,6 +45,11 @@ internal class DefaultFacetStripTheme(
 
     override fun stripTextJustification() = getTextJustification(getElemValue(textKey))
 
+    override fun stripTextAngle(): Double {
+        val elem = getElemValue(textKey)
+        return if (Elem.ANGLE in elem) getNumber(elem, Elem.ANGLE) else Double.NaN
+    }
+
     override fun stripSpacing(): DoubleVector {
         val spacingX = getNumber(listOf(FACET_STRIP_SPACING_X, FACET_STRIP_SPACING))
         val spacingY = getNumber(listOf(FACET_STRIP_SPACING_Y, FACET_STRIP_SPACING))

@@ -284,21 +284,14 @@ class LayerConfig constructor(
         )
 
         // tooltip list
-        tooltips = if (has(TOOLTIPS)) {
-            initTooltipsSpec(
-                tooltipOptions = getSafe(TOOLTIPS),
-                varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
-                constantsMap,
-                explicitGroupingVarNames,
-                geomKind = geomProto.geomKind,
-                statKind = statKind,
-            )
-        } else {
-            TooltipConfig.defaultTooltip(
-                geomKind = geomProto.geomKind,
-                statKind = statKind,
-            )
-        }
+        tooltips = initTooltipsSpec(
+            tooltipOptions = get(TOOLTIPS) ?: emptyMap<String, Any>(),
+            varBindings = varBindings.filter { it.aes in renderedAes }, // use rendered only (without stat.consumes())
+            constantsMap,
+            explicitGroupingVarNames,
+            geomKind = geomProto.geomKind,
+            statKind = statKind,
+        )
 
         annotations = if (has(ANNOTATIONS)) {
             initAnnotationSpec(
@@ -405,6 +398,7 @@ class LayerConfig constructor(
             geomProto.geomKind == GeomKind.BRACKET -> {
                 isYOrientedByAes(setOf(Aes.XMIN, Aes.XMAX))
             }
+
             geomProto.geomKind == GeomKind.BRACKET_DODGE -> {
                 !isAesDiscrete(Aes.X) && isAesDiscrete(Aes.Y)
             }

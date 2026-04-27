@@ -64,7 +64,7 @@ internal object TestingPlotBuilder {
             throw IllegalArgumentException(errorMessage)
         }
 
-        val config = PlotConfigFrontend.create(plotSpec) { messages ->
+        val config = PlotConfigFrontend.createForTesting(plotSpec) { messages ->
             if (computationMessagesHandler != null && messages.isNotEmpty()) {
                 computationMessagesHandler(messages)
             }

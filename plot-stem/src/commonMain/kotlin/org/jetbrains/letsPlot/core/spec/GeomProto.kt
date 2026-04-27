@@ -231,7 +231,7 @@ class GeomProto(val geomKind: GeomKind) {
         private fun commonDefaults(): Map<String, Any> {
             val defaults = HashMap<String, Any>()
             defaults[Layer.STAT] = "identity"
-            defaults[Layer.NA_RM] = true // hide NA messages by default
+            defaults[Layer.NA_RM] = false // show NA messages by default
             return defaults
         }
 

@@ -33,19 +33,28 @@ abstract class TestSuit {
         var failedTestsCount = 0
         println("'$name' - running ${tests.size} tests...\n")
         for ((test, profile) in tests) {
-            val res = runCatching {
-                val expectedFileName = test.name.replace(" ", "_").replace(".", "_")
-                val actual = test.invoke()
-                imageComparer.assertBitmapEquals(expectedFileName, actual, profile, testSuiteClass, test)
-            }
-            if (res.isFailure) {
-                println("[FAILED]: '${test.name}' - ${res.exceptionOrNull()?.message}\n")
-                failedTestsCount++
-            } else {
-                println("[PASSED]: '${test.name}'\n")
-            }
+            failedTestsCount += runTest(test, profile)
         }
 
         return failedTestsCount
+    }
+
+    fun assertTest(test: KFunction0<Bitmap>, profile: ComparisonProfile? = null) {
+        val expectedFileName = test.name.replace(" ", "_").replace(".", "_")
+        val actual = test.invoke()
+        imageComparer.assertBitmapEquals(expectedFileName, actual, profile, testSuiteClass, test)
+    }
+
+    private fun runTest(test: KFunction0<Bitmap>, profile: ComparisonProfile?): Int {
+        val res = runCatching {
+            assertTest(test, profile)
+        }
+        if (res.isFailure) {
+            println("[FAILED]: '${test.name}' - ${res.exceptionOrNull()?.message}\n")
+            return 1
+        } else {
+            println("[PASSED]: '${test.name}'\n")
+        }
+        return 0
     }
 }

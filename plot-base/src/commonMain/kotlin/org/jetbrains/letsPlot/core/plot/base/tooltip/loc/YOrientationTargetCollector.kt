@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil.flipAesKeys
 
 internal class YOrientationTargetCollector(
@@ -20,14 +20,14 @@ internal class YOrientationTargetCollector(
         point: DoubleVector,
         radius: Double,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         targetCollector.addPoint(
             index,
             point,
             radius,
             afterYOrientation(tooltipParams),
-            tooltipKind
+            tooltipPlacement
         )
     }
 
@@ -35,13 +35,15 @@ internal class YOrientationTargetCollector(
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement,
+        tooltipAnchor: DoubleVector?
     ) {
         targetCollector.addRectangle(
             index,
             rectangle,
             afterYOrientation(tooltipParams),
-            tooltipKind
+            tooltipPlacement,
+            tooltipAnchor
         )
     }
 
@@ -49,13 +51,13 @@ internal class YOrientationTargetCollector(
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         targetCollector.addPath(
             points,
             localToGlobalIndex,
             afterYOrientation(tooltipParams),
-            tooltipKind
+            tooltipPlacement
         )
     }
 
@@ -63,13 +65,13 @@ internal class YOrientationTargetCollector(
         points: List<DoubleVector>,
         index: Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         targetCollector.addPolygon(
             points,
             index,
             afterYOrientation(tooltipParams),
-            tooltipKind
+            tooltipPlacement
         )
     }
 
@@ -85,7 +87,7 @@ internal class YOrientationTargetCollector(
     companion object {
         private fun afterYOrientation(tooltipParams: GeomTargetCollector.TooltipParams): GeomTargetCollector.TooltipParams {
             return GeomTargetCollector.TooltipParams(
-                tipLayoutHints = flipAesKeys(tooltipParams.tipLayoutHints),
+                tooltipHints = flipAesKeys(tooltipParams.tooltipHints),
                 stemLength = tooltipParams.stemLength,
                 fillColorFactory = tooltipParams.fillColorFactory,
                 markerColorsFactory = tooltipParams.markerColorsFactory

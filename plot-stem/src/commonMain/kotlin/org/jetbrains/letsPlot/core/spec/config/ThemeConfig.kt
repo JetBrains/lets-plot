@@ -6,11 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.config
 
 import org.jetbrains.letsPlot.commons.intern.filterNotNullValues
-import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
-import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
-import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
-import org.jetbrains.letsPlot.core.plot.base.theme.TagLocation
+import org.jetbrains.letsPlot.core.plot.base.theme.*
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
@@ -21,17 +17,19 @@ import org.jetbrains.letsPlot.core.spec.Option
 class ThemeConfig constructor(
     themeOptions: Map<String, Any>,
     containerTheme: Theme?,
-    fontFamilyRegistry: FontFamilyRegistry
+    fontFamilyRegistry: FontFamilyRegistry,
+    isInDeck: Boolean = false
 ) {
 
     val theme: Theme
 
     init {
         val userOptions: Map<String, Any> = mergeUserOptions(
-            themeOptions.mapValues { (key, value) ->
+            isInDeck = isInDeck,
+            ownThemeUserOptions = themeOptions.mapValues { (key, value) ->
                 standardizeThemeOptionValue(key, value)
             },
-            containerTheme
+            containerTheme = containerTheme
         )
         val themeName = userOptions.getOrElse(Option.Meta.NAME) { ThemeOption.Name.LP_MINIMAL }.toString()
         theme = ThemeUtil.buildTheme(themeName, userOptions, fontFamilyRegistry)
@@ -288,6 +286,7 @@ class ThemeConfig constructor(
         }
 
         private fun mergeUserOptions(
+            isInDeck: Boolean,
             ownThemeUserOptions: Map<String, Any>,
             containerTheme: Theme?
         ): Map<String, Any> {
@@ -299,22 +298,42 @@ class ThemeConfig constructor(
                         containerTheme.options
                     }
 
-                    else -> {
-                        // Take only a few container options.
+                    isInDeck -> {
+                        // Prpagate all container options except for a few that control the container appearance.
+                        // E.g., plot border, margins, title, etc.
+                        val excudedContainerOptions = setOf(
+                            ThemeOption.PLOT_BKGR_RECT,
+                            ThemeOption.PLOT_CAPTION,
+                            ThemeOption.PLOT_CAPTION_POSITION,
+                            ThemeOption.PLOT_INSET,
+                            ThemeOption.PLOT_MARGIN,
+                            ThemeOption.PLOT_SUBTITLE,
+                            ThemeOption.PLOT_TITLE,
+                            ThemeOption.PLOT_TITLE_POSITION,
+                        )
+
                         containerTheme.options.filterKeys { key ->
-                            key in setOf(
-                                Option.Meta.NAME,                  // a name of a predefined theme.
-                                ThemeOption.FLAVOR,
-                                ThemeOption.LEGEND_POSITION,       // for 'guide collect' in the container feature.
-                                ThemeOption.LEGEND_JUSTIFICATION,
-                                ThemeOption.LEGEND_DIRECTION,
-                                ThemeOption.LEGEND_BOX_JUST,
-                                ThemeOption.PLOT_TAG_POSITION,
-                                ThemeOption.PLOT_TAG_LOCATION,
-                                ThemeOption.PLOT_TAG,
-                                ThemeOption.PLOT_TAG_PREFIX,
-                                ThemeOption.PLOT_TAG_SUFFIX
-                            )
+                            key !in excudedContainerOptions
+                        }
+                    }
+
+                    else -> {
+                        // Propagate only a few container options.
+                        val includedContainerOption = setOf(
+                            Option.Meta.NAME,                  // a name of a predefined theme.
+                            ThemeOption.FLAVOR,
+                            ThemeOption.LEGEND_POSITION,       // for 'guide collect' in the container feature.
+                            ThemeOption.LEGEND_JUSTIFICATION,
+                            ThemeOption.LEGEND_DIRECTION,
+                            ThemeOption.LEGEND_BOX_JUST,
+                            ThemeOption.PLOT_TAG_POSITION,
+                            ThemeOption.PLOT_TAG_LOCATION,
+                            ThemeOption.PLOT_TAG,
+                            ThemeOption.PLOT_TAG_PREFIX,
+                            ThemeOption.PLOT_TAG_SUFFIX,
+                        )
+                        containerTheme.options.filterKeys { key ->
+                            key in includedContainerOption
                         }
                     }
                 }

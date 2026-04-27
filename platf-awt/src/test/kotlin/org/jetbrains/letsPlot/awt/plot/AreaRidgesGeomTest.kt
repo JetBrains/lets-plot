@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.awt.plot
 import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
-class AreaRidgesGeomTest: VisualPlotTestBase() {
+class AreaRidgesGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
 
     @Test
     fun `example from #674 Area ridges fill overlaps geometry borders when colors are repeated`() {
@@ -212,5 +212,55 @@ class AreaRidgesGeomTest: VisualPlotTestBase() {
         """.trimMargin())
 
         assertPlot("area_ridges_geom_4.png", spec)
+    }
+
+    @Test
+    fun `area ridges with none`() {
+        val spec = parsePlotSpec(
+            """
+            |{
+            |  "data": {
+            |    "x": [ null, -1.0, -0.5, 0.0, 0.5, 1.0, null, -1.0, -0.5, 0.0, null, 0.5, 1.0, 2.0 ],
+            |    "g": [ "A", "A", "A", "A", "A", "A", "A", "B", "B", "B", "B", "B", "B", "B" ],
+            |    "h": [ null, 0.0, 0.6, 1.0, 0.6, 0.0, null, 0.0, 0.5, 0.8, null, 0.4, 0.0, 0.0 ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "g",
+            |    "height": "h",
+            |    "group": "g"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      {
+            |        "type": "float",
+            |        "column": "x"
+            |      },
+            |      {
+            |        "type": "str",
+            |        "column": "g"
+            |      },
+            |      {
+            |        "type": "float",
+            |        "column": "h"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [],
+            |  "layers": [
+            |    {
+            |      "geom": "area_ridges",
+            |      "stat": "identity",
+            |      "mapping": {},
+            |      "data_meta": {}
+            |    }
+            |  ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin()
+        )
+
+        assertPlot("area_ridges_with_none.png", spec)
     }
 }

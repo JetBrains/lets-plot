@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
@@ -29,17 +30,6 @@ class LayerTargetLocatorTwoRectsTest {
     fun hoverX() {
         val locator = createLocator(LookupStrategy.HOVER, LookupSpace.X)
 
-        assertCoordInsideXRangeIgnoresY(locator)
-    }
-
-    @Test
-    fun nearestX() {
-        val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.X)
-
-        assertCoordInsideXRangeIgnoresY(locator)
-    }
-
-    private fun assertCoordInsideXRangeIgnoresY(locator: GeomTargetLocator) {
         TestUtil.assertObjects(locator, TestUtil.inside(FIRST_RECT), FIRST_RECT_KEY)
         TestUtil.assertObjects(locator, TestUtil.outsideY(FIRST_RECT), FIRST_RECT_KEY)
         TestUtil.assertObjects(locator, TestUtil.outsideY(SECOND_RECT), SECOND_RECT_KEY)
@@ -52,8 +42,22 @@ class LayerTargetLocatorTwoRectsTest {
         TestUtil.assertEmpty(locator, TestUtil.outsideXY(SECOND_RECT))
     }
 
+    @Test
+    fun nearestX() {
+        val locator = createLocator(LookupStrategy.NEAREST, LookupSpace.X)
+
+        TestUtil.assertObjects(locator, TestUtil.inside(FIRST_RECT), FIRST_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.outsideY(FIRST_RECT), FIRST_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.outsideY(SECOND_RECT), SECOND_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.inside(SECOND_RECT), SECOND_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.outsideX(FIRST_RECT), FIRST_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.outsideXY(FIRST_RECT), SECOND_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.outsideX(SECOND_RECT), SECOND_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.outsideXY(SECOND_RECT), SECOND_RECT_KEY)
+    }
+
     private fun createLocator(strategy: LookupStrategy, space: LookupSpace): GeomTargetLocator {
-        return TestUtil.createLocator(strategy, space, FIRST_TARGET, SECOND_TARGET)
+        return TestUtil.createLocator(strategy, space, GeomKind.POINT_RANGE, FIRST_TARGET, SECOND_TARGET)
     }
 
     companion object {

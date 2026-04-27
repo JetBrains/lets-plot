@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,7 +8,9 @@ package org.jetbrains.letsPlot.commons.intern.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.distance
 
-class ClosestPointChecker(val target: DoubleVector) {
+class ClosestPointChecker(
+    val target: DoubleVector
+) {
     var distance = -1.0
         private set
     var coord: DoubleVector? = null
@@ -27,21 +29,17 @@ class ClosestPointChecker(val target: DoubleVector) {
     }
 
     private fun compare(coord: DoubleVector, newDistance: Double): COMPARISON_RESULT {
-        if (distance < 0) {
+        return if (distance < 0) {
             setNewClosestCoord(coord, newDistance)
-            return COMPARISON_RESULT.NEW_CLOSER
+            COMPARISON_RESULT.NEW_CLOSER
+        } else if (distance < newDistance) {
+            COMPARISON_RESULT.NEW_FARTHER
+        } else if (distance == newDistance) {
+            COMPARISON_RESULT.EQUAL
+        } else {
+            setNewClosestCoord(coord, newDistance)
+            COMPARISON_RESULT.NEW_CLOSER
         }
-
-        if (distance < newDistance) {
-            return COMPARISON_RESULT.NEW_FARTHER
-        }
-
-        if (distance == newDistance) {
-            return COMPARISON_RESULT.EQUAL
-        }
-
-        setNewClosestCoord(coord, newDistance)
-        return COMPARISON_RESULT.NEW_CLOSER
     }
 
     private fun setNewClosestCoord(coord: DoubleVector, distance: Double) {

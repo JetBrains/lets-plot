@@ -305,6 +305,8 @@ class PlotSvgComponent constructor(
 
         if (DEBUG_DRAWING) {
             drawDebugRect(overallTileBounds, Color.DARK_MAGENTA, "DARK_MAGENTA: overallTileBounds")
+            val plotAreaWithInsets = DoubleRectangle(plotAreaOrigin, layoutInfo.size)
+            drawDebugRect(plotAreaWithInsets, Color.GREEN, "GREEN: plotAreaWithInsets")
         }
 
         // add axis titles

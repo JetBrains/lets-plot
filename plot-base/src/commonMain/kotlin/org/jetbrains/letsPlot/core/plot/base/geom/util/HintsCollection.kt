@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,18 +10,18 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection.HintConfigFactory.HintConfig
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.cursorTooltip
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.horizontalTooltip
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.rotatedTooltip
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Companion.verticalTooltip
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.cursorTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.horizontalTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.rotatedTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.verticalTooltip
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement
 
 
 class HintsCollection(private val myPoint: DataPointAesthetics, private val myHelper: GeomHelper) {
-    private val _hints = HashMap<Aes<*>, TipLayoutHint>()
+    private val _hints = HashMap<Aes<*>, TooltipHint>()
 
-    val hints: Map<Aes<*>, TipLayoutHint>
+    val hints: Map<Aes<*>, TooltipHint>
         get() = _hints
 
     fun addHint(hintConfig: HintConfig): HintsCollection {
@@ -58,7 +58,7 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         }
     }
 
-    private fun createHint(hintConfig: HintConfig, coord: DoubleVector): TipLayoutHint {
+    private fun createHint(hintConfig: HintConfig, coord: DoubleVector): TooltipHint {
         val objectRadius = hintConfig.objectRadius
         val color = hintConfig.color
 
@@ -66,18 +66,18 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
             throw IllegalArgumentException("object radius is not set")
         }
 
-        return when (hintConfig.kind) {
-            Kind.VERTICAL_TOOLTIP -> verticalTooltip(coord, objectRadius, fillColor = color, markerColors = emptyList())
-            Kind.HORIZONTAL_TOOLTIP -> horizontalTooltip(
+        return when (hintConfig.placement) {
+            Placement.VERTICAL -> verticalTooltip(coord, objectRadius, fillColor = color, markerColors = emptyList())
+            Placement.HORIZONTAL -> horizontalTooltip(
                 coord,
                 objectRadius,
                 fillColor = color,
                 markerColors = emptyList()
             )
 
-            Kind.CURSOR_TOOLTIP -> cursorTooltip(coord, markerColors = emptyList())
-            Kind.ROTATED_TOOLTIP -> rotatedTooltip(coord, objectRadius, color)
-            else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.kind)
+            Placement.CURSOR -> cursorTooltip(coord, markerColors = emptyList())
+            Placement.ROTATED -> rotatedTooltip(coord, objectRadius, color)
+            else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.placement)
         }
     }
 
@@ -86,7 +86,7 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         private var myDefaultObjectRadius: Double? = null
         private var myDefaultBaseCoord: Double? = null
         private var myDefaultColor: Color? = null
-        private var myDefaultKind: Kind? = null
+        private var myDefaultPlacement: Placement? = null
 
         fun defaultObjectRadius(defaultObjectRadius: Double): HintConfigFactory {
             myDefaultObjectRadius = defaultObjectRadius
@@ -112,13 +112,13 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
             return HintConfig(aes)
         }
 
-        fun defaultKind(kind: Kind): HintConfigFactory {
-            myDefaultKind = kind
+        fun defaultKind(placement: Placement): HintConfigFactory {
+            myDefaultPlacement = placement
             return this
         }
 
         inner class HintConfig internal constructor(val aes: Aes<Double>) {
-            val kind: Kind?
+            val placement: Placement?
             var objectRadius: Double? = null
                 private set
             var baseCoord: Double? = null
@@ -129,7 +129,7 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
             init {
                 objectRadius = myDefaultObjectRadius
                 baseCoord = myDefaultBaseCoord
-                kind = myDefaultKind
+                placement = myDefaultPlacement
                 color = myDefaultColor
             }
 

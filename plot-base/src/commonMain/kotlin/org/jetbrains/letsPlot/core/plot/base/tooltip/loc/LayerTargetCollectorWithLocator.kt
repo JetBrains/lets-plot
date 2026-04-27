@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -24,7 +24,7 @@ class LayerTargetCollectorWithLocator(
         point: DoubleVector,
         radius: Double,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
             if (radius == 0.0 || tooltipParams.markerColorsFactory(index).all { it.alpha == 0 }) {
@@ -36,7 +36,7 @@ class LayerTargetCollectorWithLocator(
                 HitShape.point(point, radius),
                 { index },
                 tooltipParams,
-                tooltipKind
+                tooltipPlacement
             )
         )
     }
@@ -45,7 +45,8 @@ class LayerTargetCollectorWithLocator(
         index: Int,
         rectangle: DoubleRectangle,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement,
+        tooltipAnchor: DoubleVector?
     ) {
         if (contextualMapping.ignoreInvisibleTargets) {
             if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerColorsFactory(index)
@@ -59,7 +60,8 @@ class LayerTargetCollectorWithLocator(
                 HitShape.rect(rectangle),
                 { index },
                 tooltipParams,
-                tooltipKind
+                tooltipPlacement,
+                tooltipAnchor
             )
         )
     }
@@ -68,14 +70,14 @@ class LayerTargetCollectorWithLocator(
         points: List<DoubleVector>,
         localToGlobalIndex: (Int) -> Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         addTarget(
             TargetPrototype(
                 HitShape.path(points),
                 localToGlobalIndex,
                 tooltipParams,
-                tooltipKind
+                tooltipPlacement
             )
         )
     }
@@ -84,14 +86,14 @@ class LayerTargetCollectorWithLocator(
         points: List<DoubleVector>,
         index: Int,
         tooltipParams: GeomTargetCollector.TooltipParams,
-        tooltipKind: TipLayoutHint.Kind
+        tooltipPlacement: TooltipHint.Placement
     ) {
         addTarget(
             TargetPrototype(
                 HitShape.polygon(points),
                 { index },
                 tooltipParams,
-                tooltipKind
+                tooltipPlacement
             )
         )
     }
@@ -109,7 +111,7 @@ class LayerTargetCollectorWithLocator(
         myLocator = null
     }
 
-    override fun search(coord: DoubleVector): GeomTargetLocator.LookupResult? {
+    override fun search(coord: DoubleVector): LookupResult? {
         if (myLocator == null) {
             myLocator = LayerTargetLocator(
                 geomKind,

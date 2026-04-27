@@ -5,17 +5,16 @@
 
 package org.jetbrains.letsPlot.commons.formatting.datetime
 
-import org.jetbrains.letsPlot.commons.formatting.datetime.DateTimeFormat
-import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.Date
 import org.jetbrains.letsPlot.commons.intern.datetime.DateTime
+import org.jetbrains.letsPlot.commons.intern.datetime.Month
 import org.jetbrains.letsPlot.commons.intern.datetime.Time
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class FormatDateTimeTest {
     private val date = Date(6, Month.AUGUST, 2019)
-    private val time = Time(4, 46, 35)
+    private val time = Time(4, 46, 35, 7)
     private val dateTime = DateTime(date, time)
 
     @Test
@@ -42,6 +41,7 @@ class FormatDateTimeTest {
         assertEquals("am", DateTimeFormat("%P").apply(dateTime))
         assertEquals("AM", DateTimeFormat("%p").apply(dateTime))
         assertEquals("35", DateTimeFormat("%S").apply(dateTime))
+        assertEquals("007", DateTimeFormat("%f").apply(dateTime))
     }
 
     @Test
@@ -63,8 +63,14 @@ class FormatDateTimeTest {
 
     @Test
     fun isoFormat() {
-        val f = DateTimeFormat("%Y-%m-%dT%H:%M:%S")
-        assertEquals("2019-08-06T04:46:35", f.apply(dateTime))
+        val f = DateTimeFormat("%Y-%m-%dT%H:%M:%S.%f")
+        assertEquals("2019-08-06T04:46:35.007", f.apply(dateTime))
+    }
+
+    @Test
+    fun milliseconds() {
+        val dateTime = DateTime(date, Time(4, 46, 35, 123))
+        assertEquals("04:46:35.123", DateTimeFormat("%H:%M:%S.%f").apply(dateTime))
     }
 
     @Test

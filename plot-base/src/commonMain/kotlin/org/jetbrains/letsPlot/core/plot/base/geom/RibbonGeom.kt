@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -13,11 +13,10 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YM
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMAX_WITH_FINITE_YMIN
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMIN
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMIN_WITH_FINITE_YMAX
-import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_ZERO
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.HORIZONTAL_TOOLTIP
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.VERTICAL_TOOLTIP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.HORIZONTAL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
 
 class RibbonGeom : GeomBase() {
 
@@ -57,12 +56,12 @@ class RibbonGeom : GeomBase() {
         val colorMapper = HintColorUtil.createColorMarkerMapper(ctx)
         val hint = HintsCollection.HintConfigFactory()
             .defaultObjectRadius(0.0)
-            .defaultKind(HORIZONTAL_TOOLTIP.takeUnless { ctx.flipped } ?: VERTICAL_TOOLTIP)
+            .defaultKind(HORIZONTAL.takeUnless { ctx.flipped } ?: VERTICAL)
 
         for (p in aesthetics.dataPoints()) {
-            val x = TO_LOCATION_X_ZERO(p)?.let { helper.toClient(it, p) }?.x ?: continue
-            val top = TO_LOCATION_X_YMAX(p)?.let { helper.toClient(it, p) }?.y
-            val bottom = TO_LOCATION_X_YMIN(p)?.let { helper.toClient(it, p) }?.y
+            val x = p.finiteOrNull(Aes.X) ?: continue
+            val ymin = p.finiteOrNull(Aes.YMIN) ?: continue
+            val ymax = p.finiteOrNull(Aes.YMAX) ?: continue
 
             hint.defaultCoord(p[Aes.X]!!)
                 .defaultColor(p.fill()!!, alpha = null)
@@ -72,16 +71,12 @@ class RibbonGeom : GeomBase() {
                 .addHint(hint.create(Aes.YMIN))
 
             val tooltipParams = GeomTargetCollector.TooltipParams(
-                tipLayoutHints = hintsCollection.hints,
+                tooltipHints = hintsCollection.hints,
                 markerColors = colorMapper(p)
             )
 
-            if (top != null) {
-                ctx.targetCollector.addPoint(p.index(), DoubleVector(x, top), 0.0, tooltipParams)
-            }
-
-            if (bottom != null) {
-                ctx.targetCollector.addPoint(p.index(), DoubleVector(x, bottom), 0.0, tooltipParams)
+            helper.toClient(DoubleVector(x, (ymin + ymax) / 2.0), p)?.let { center ->
+                ctx.targetCollector.addPoint(p.index(), center, 0.0, tooltipParams)
             }
         }
     }

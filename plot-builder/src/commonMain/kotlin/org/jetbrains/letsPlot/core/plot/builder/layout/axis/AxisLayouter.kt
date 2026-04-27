@@ -28,11 +28,13 @@ internal class AxisLayouter private constructor(
         val labelsInfo = labelsLayout.doLayout(axisDomain, axisLength)
         val axisBreaks = labelsInfo.breaks!!
         val labelsBounds = labelsInfo.bounds!!
+        val axisLineWidth = if (labelsLayout.theme.showLine()) labelsLayout.theme.lineWidth() else 0.0
         return AxisLayoutInfo(
             axisLength = axisLength,
             axisDomain = axisDomain, //domainRange,
             orientation = orientation,
             axisBreaks = axisBreaks,
+            axisLineWidth = axisLineWidth,
             tickLabelsBounds = labelsBounds,
             tickLabelRotationAngle = labelsInfo.labelRotationAngle,
             tickLabelHorizontalAnchor = labelsInfo.labelHorizontalAnchor,

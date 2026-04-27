@@ -178,6 +178,7 @@ class SquareFrameOfReferenceGridTest {
                         axisDomain = domain,
                         orientation = Orientation.LEFT,
                         axisBreaks = scaleBreaks,
+                        axisLineWidth = theme.verticalAxis(flipAxis = false).lineWidth(),
                         tickLabelRotationAngle = 0.0,
                         tickLabelsBounds = unusedRect,
                     ),

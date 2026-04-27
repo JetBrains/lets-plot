@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.awt.plot
 import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
-class AreaGeomTest : VisualPlotTestBase() {
+class AreaGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
 
     @Test
     fun `example from #1295 Incorrectly rendered Area chart`() {

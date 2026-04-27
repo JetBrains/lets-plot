@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -10,11 +10,9 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccessMock
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -359,11 +357,18 @@ class LocatorByGeneralTooltipTest {
     private fun findTargets(
         targetLocators: List<GeomTargetLocator>
     ): List<LookupResult> {
-        val targetsPicker = LocatedTargetsPicker(flippedAxis = false, COORD)
+        val targetsPicker = LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = COORD,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext
+        )
         targetLocators.forEach { locator ->
             locator.search(COORD)?.let(targetsPicker::addLookupResult)
         }
-        return targetsPicker.chooseBestResult()
+        return targetsPicker.chooseBestLookupResults()
     }
 
     private fun assertLookupResults(results: List<LookupResult>, vararg expected: Int) {

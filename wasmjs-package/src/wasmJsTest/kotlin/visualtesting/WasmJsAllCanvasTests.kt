@@ -36,9 +36,9 @@ class WasmJsAllCanvasTests {
         fontManager.installAllFontFaces()
 
         return documentFontsReady().then {
-            WasmBitmapIO.preloadExpectedImages("canvas").then {
+            WasmBitmapIO.preloadExpectedImages("visual-testing/canvas").then {
                 val canvasPeer = DomCanvasPeer(fontManager)
-                val bitmapIO = WasmBitmapIO(subdir = "canvas")
+                val bitmapIO = WasmBitmapIO(subdir = "visual-testing/canvas")
                 val imageComparer = ImageComparer(
                     canvasPeer,
                     bitmapIO,

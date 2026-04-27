@@ -107,6 +107,7 @@ class LiveMapBuilder {
                     )
                 ),
             myZoom = zoom,
+            myInteractive = interactive,
             myAttribution = attribution,
             myShowCoordPickTools = showCoordPickTools,
             myCursorService = cursorService

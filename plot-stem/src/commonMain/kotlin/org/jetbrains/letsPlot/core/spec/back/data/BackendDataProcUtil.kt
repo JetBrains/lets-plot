@@ -85,14 +85,10 @@ internal object BackendDataProcUtil {
 
     internal fun createLayerMessage(message: String, layerConfig: LayerConfig): String {
         val geomKind = layerConfig.geomProto.geomKind.name.lowercase()
-        val stat = getStatName(layerConfig)
-        return "[$geomKind/$stat] $message"
+        return "[$geomKind] $message"
     }
 
     private fun createStatMessage(statInfo: String, layerConfig: LayerConfig): String {
-        val geomKind = layerConfig.geomProto.geomKind.name.lowercase()
-        val stat = getStatName(layerConfig)
-
-        return "$statInfo in [$geomKind/$stat] layer"
+        return statInfo.removeSuffix(".") + " by stat '${getStatName(layerConfig)}'."
     }
 }

@@ -12,7 +12,7 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 import kotlin.test.Test
 
-class TextRepelGeomTest: VisualPlotTestBase() {
+class TextRepelGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
 
     data class PointRow(
         val x: Double,

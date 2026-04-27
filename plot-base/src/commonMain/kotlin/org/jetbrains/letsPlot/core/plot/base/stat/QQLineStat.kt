@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.StatContext
 import org.jetbrains.letsPlot.core.plot.base.data.TransformVar
-import kotlin.math.min
 import kotlin.math.max
+import kotlin.math.min
 
 class QQLineStat(
     private val distribution: QQStat.Distribution,
@@ -27,7 +27,13 @@ class QQLineStat(
             return withEmptyStatValues()
         }
 
-        val statData = buildStat(data.getNumeric(TransformVar.SAMPLE))
+        val sampleSeries = data.getNumeric(TransformVar.SAMPLE)
+        emitRemovedNonFiniteValuesMessage(
+            sampleSeries.count { it?.isFinite() != true },
+            sampleSeries.size,
+            messageConsumer
+        )
+        val statData = buildStat(sampleSeries)
 
         return DataFrame.Builder()
             .putNumeric(Stats.THEORETICAL, statData.getValue(Stats.THEORETICAL))

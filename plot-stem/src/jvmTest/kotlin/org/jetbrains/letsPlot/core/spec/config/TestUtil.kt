@@ -32,7 +32,7 @@ object TestUtil {
     }
 
     fun createPlotConfigFrontend(plotSpecProcessed: Map<String, Any>): PlotConfigFrontend {
-        return PlotConfigFrontend.create(plotSpecProcessed) {}
+        return PlotConfigFrontend.createForTesting(plotSpecProcessed) {}
     }
 
     fun getPlotData(plotSpec: Map<String, Any>): Map<String, Any> {

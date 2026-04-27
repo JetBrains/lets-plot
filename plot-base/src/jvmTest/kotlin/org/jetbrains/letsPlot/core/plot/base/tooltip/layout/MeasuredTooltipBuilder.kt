@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -7,15 +7,15 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.MeasuredTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.TooltipLayoutTestBase.Companion.makeText
 
 internal class MeasuredTooltipBuilder private constructor(
-    private val myLayoutHint: Kind,
+    private val myLayoutHint: Placement,
     private val myCoord: DoubleVector
 ) {
     private var mySize: DoubleVector? = null
@@ -56,10 +56,10 @@ internal class MeasuredTooltipBuilder private constructor(
     fun buildTooltip(): MeasuredTooltip {
         val hint = createHint()
         return MeasuredTooltip(
-            TooltipSpec(
-                layoutHint = hint,
+            TooltipModel(
+                tooltipHint = hint,
                 title = null,
-                lines = makeText(myText!!).map(TooltipSpec.Line.Companion::withValue),
+                lines = makeText(myText!!).map(TooltipModel.Line.Companion::withValue),
                 fill = myFillColor!!,
                 markerColors = emptyList(),
                 isSide = true,
@@ -69,14 +69,14 @@ internal class MeasuredTooltipBuilder private constructor(
         )
     }
 
-    private fun createHint(): TipLayoutHint {
+    private fun createHint(): TooltipHint {
         return when (myLayoutHint) {
-            Kind.ROTATED_TOOLTIP -> TipLayoutHint.rotatedTooltip(myCoord, myObjectRadius!!, myFillColor)
-            Kind.VERTICAL_TOOLTIP -> TipLayoutHint.verticalTooltip(myCoord, myObjectRadius!!)
-            Kind.HORIZONTAL_TOOLTIP -> TipLayoutHint.horizontalTooltip(myCoord, myObjectRadius!!)
-            Kind.CURSOR_TOOLTIP -> TipLayoutHint.cursorTooltip(myCoord)
-            Kind.X_AXIS_TOOLTIP -> TipLayoutHint.xAxisTooltip(myCoord, fillColor = myFillColor)
-            Kind.Y_AXIS_TOOLTIP -> TipLayoutHint.yAxisTooltip(myCoord, fillColor = myFillColor)
+            Placement.ROTATED -> TooltipHint.rotatedTooltip(myCoord, myObjectRadius!!, myFillColor)
+            Placement.VERTICAL -> TooltipHint.verticalTooltip(myCoord, myObjectRadius!!)
+            Placement.HORIZONTAL -> TooltipHint.horizontalTooltip(myCoord, myObjectRadius!!)
+            Placement.CURSOR -> TooltipHint.cursorTooltip(myCoord)
+            Placement.X_AXIS -> TooltipHint.xAxisTooltip(myCoord, fillColor = myFillColor)
+            Placement.Y_AXIS -> TooltipHint.yAxisTooltip(myCoord, fillColor = myFillColor)
         }
     }
 
@@ -150,27 +150,27 @@ internal class MeasuredTooltipBuilder private constructor(
     companion object {
 
         private fun rotatedTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
-            return MeasuredTooltipBuilder(Kind.ROTATED_TOOLTIP, coord)
+            return MeasuredTooltipBuilder(Placement.ROTATED, coord)
         }
 
         private fun verticalTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
-            return MeasuredTooltipBuilder(Kind.VERTICAL_TOOLTIP, coord)
+            return MeasuredTooltipBuilder(Placement.VERTICAL, coord)
         }
 
         private fun horizontalTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
-            return MeasuredTooltipBuilder(Kind.HORIZONTAL_TOOLTIP, coord)
+            return MeasuredTooltipBuilder(Placement.HORIZONTAL, coord)
         }
 
         private fun cursorTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
-            return MeasuredTooltipBuilder(Kind.CURSOR_TOOLTIP, coord)
+            return MeasuredTooltipBuilder(Placement.CURSOR, coord)
         }
 
         private fun xAxisTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
-            return MeasuredTooltipBuilder(Kind.X_AXIS_TOOLTIP, coord)
+            return MeasuredTooltipBuilder(Placement.X_AXIS, coord)
         }
 
         private fun yAxisTooltip(coord: DoubleVector): MeasuredTooltipBuilder {
-            return MeasuredTooltipBuilder(Kind.Y_AXIS_TOOLTIP, coord)
+            return MeasuredTooltipBuilder(Placement.Y_AXIS, coord)
         }
     }
 }

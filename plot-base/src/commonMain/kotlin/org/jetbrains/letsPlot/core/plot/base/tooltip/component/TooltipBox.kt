@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox.Orientation.HORIZONTAL
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox.Orientation.VERTICAL
@@ -75,7 +75,7 @@ class TooltipBox(
         borderColor: Color,
         strokeWidth: Double,
         lineType: LineType,
-        lines: List<TooltipSpec.Line>,
+        lines: List<TooltipModel.Line>,
         title: String?,
         textClassName: String,
         tooltipMinWidth: Double? = null,
@@ -334,7 +334,7 @@ class TooltipBox(
         }
 
         fun update(
-            lines: List<TooltipSpec.Line>,
+            lines: List<TooltipModel.Line>,
             title: String?,
             valueTextColor: Color?,
             tooltipMinWidth: Double?,
@@ -558,7 +558,7 @@ class TooltipBox(
         }
 
         private fun layoutLines(
-            lines: List<TooltipSpec.Line>,
+            lines: List<TooltipModel.Line>,
             valueTextColor: Color?,
             tooltipMinWidth: Double?,
             textClassName: String

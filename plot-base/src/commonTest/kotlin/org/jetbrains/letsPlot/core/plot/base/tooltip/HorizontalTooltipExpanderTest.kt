@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
@@ -195,7 +200,7 @@ class HorizontalTooltipExpanderTest {
     }
 
     private fun List<LayoutManager.PositionedTooltip>.findTooltip(text: String): LayoutManager.PositionedTooltip {
-        return first { it.tooltipSpec.lines.map(TooltipSpec.Line::toString) == listOf(text) }
+        return first { it.tooltipModel.lines.map(TooltipModel.Line::toString) == listOf(text) }
     }
 
     private fun newTooltip(
@@ -204,11 +209,11 @@ class HorizontalTooltipExpanderTest {
         position: DoubleVector,
         pointer: DoubleVector
     ): LayoutManager.PositionedTooltip {
-        val spec = TooltipSpec(
-            layoutHint = TipLayoutHint.cursorTooltip(DoubleVector.Companion.ZERO),
+        val spec = TooltipModel(
+            tooltipHint = TooltipHint.cursorTooltip(DoubleVector.ZERO),
             title = null,
-            lines = listOf(TooltipSpec.Line.withValue(text)),
-            fill = Color.Companion.BLACK,
+            lines = listOf(TooltipModel.Line.withValue(text)),
+            fill = Color.BLACK,
             markerColors = emptyList(),
             isSide = true
         )

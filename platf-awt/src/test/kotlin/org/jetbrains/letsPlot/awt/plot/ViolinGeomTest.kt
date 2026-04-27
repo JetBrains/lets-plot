@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.awt.plot
 import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
-class ViolinGeomTest: VisualPlotTestBase() {
+class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
 
     @Test
     fun `example from #1381 support for group aesthetic mapping parameter unclear`() {
@@ -340,5 +340,40 @@ class ViolinGeomTest: VisualPlotTestBase() {
         """.trimMargin())
 
         assertPlot("violin_geom_6.png", spec)
+    }
+
+    @Test
+    fun `violin with none`() {
+        val spec = parsePlotSpec(
+            """
+            |{
+            |  "data": {
+            |    "grp": [ null, "A", "A", "A", "A", "B", "B", "B", "C", "C", "C", "D" ],
+            |    "y": [ 0.3, null, 0.2, 0.5, 0.8, null, 0.4, 0.6, 0.1, null, 0.9, 0.7 ]
+            |  },
+            |  "mapping": {
+            |    "y": "y"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      {
+            |        "type": "str",
+            |        "column": "grp"
+            |      },
+            |      {
+            |        "type": "float",
+            |        "column": "y"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [],
+            |  "layers": [ { "geom": "violin", "mapping": {}, "data_meta": {} } ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin()
+        )
+
+        assertPlot("violin_with_none.png", spec)
     }
 }

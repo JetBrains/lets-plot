@@ -1106,6 +1106,7 @@ def scale_x_datetime(name=None, *,
         - '%d.%m.%y' -> '06.08.19'
         - '%B %Y' -> 'August 2019'
         - '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
+        - '%H:%M:%S.%f' -> '04:46:35.123'
 
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str
@@ -1204,6 +1205,7 @@ def scale_y_datetime(name=None, *,
         - '%d.%m.%y' -> '06.08.19'
         - '%B %Y' -> 'August 2019'
         - '%a, %e %b %Y %H:%M:%S' -> 'Tue, 6 Aug 2019 04:46:35'
+        - '%H:%M:%S.%f' -> '04:46:35.123'
 
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     position : str

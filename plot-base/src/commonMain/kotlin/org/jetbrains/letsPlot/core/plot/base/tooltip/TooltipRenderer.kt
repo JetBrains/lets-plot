@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TipLayoutHint.Kind.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.CrosshairComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.SvgComponentPool
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox
@@ -100,11 +100,11 @@ class TooltipRenderer(
         regs.dispose()
     }
 
-    private fun measureTooltip(tooltipSpec: TooltipSpec): MeasuredTooltip {
-        applySpec(measuringTooltipBox, tooltipSpec)
+    private fun measureTooltip(tooltipModel: TooltipModel): MeasuredTooltip {
+        applySpec(measuringTooltipBox, tooltipModel)
         return MeasuredTooltip(
-            tooltipSpec = tooltipSpec,
-            strokeWidth = getStrokeWidth(tooltipSpec),
+            tooltipModel = tooltipModel,
+            strokeWidth = getStrokeWidth(tooltipModel),
             size = measuringTooltipBox.contentRect.dimension
         )
     }
@@ -118,11 +118,7 @@ class TooltipRenderer(
 
         val lookupResults = tileInfo.findTargets(cursor)
 
-        val tooltips = lookupResults
-            .flatMap { tooltipSpecFromLookupResult(it, tileInfo.axisOrigin) }
-            .filter { it.lines.isNotEmpty() }
-
-        val measuredTooltips = tooltips.map(::measureTooltip)
+        val measuredTooltips = lookupResults.map(::measureTooltip)
 
         val positionedTooltips = myLayoutManager.arrange(
             measuredTooltips,
@@ -137,12 +133,12 @@ class TooltipRenderer(
         tooltipStorage.provide(positionedTooltips.size)
             .zip(positionedTooltips)
             .forEach { (tooltipComponent, info) ->
-                applySpec(tooltipComponent, info.tooltipSpec)
+                applySpec(tooltipComponent, info.tooltipModel)
                 tooltipComponent.setPosition(
                     info.tooltipCoord,
                     info.stemCoord,
                     info.orientation,
-                    info.tooltipSpec.layoutHint.kind == ROTATED_TOOLTIP
+                    info.tooltipModel.tooltipHint.placement == ROTATED
                 )
             }
     }
@@ -153,15 +149,15 @@ class TooltipRenderer(
     }
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
-        val showVertical = tooltips.any { it.hintKind == X_AXIS_TOOLTIP }
-        val showHorizontal = tooltips.any { it.hintKind == Y_AXIS_TOOLTIP }
+        val showVertical = tooltips.any { it.hintKind == X_AXIS }
+        val showHorizontal = tooltips.any { it.hintKind == Y_AXIS }
         if (!showVertical && !showHorizontal) {
             crosshairStorage.provide(0)
             return
         }
         val coords = tooltips
-            .filter { tooltip -> tooltip.tooltipSpec.isCrosshairEnabled }
-            .map { tooltip -> tooltip.tooltipSpec.layoutHint.coord }
+            .filter { tooltip -> tooltip.tooltipModel.isCrosshairEnabled }
+            .map { tooltip -> tooltip.tooltipModel.tooltipHint.coord }
             .toList()
 
         val crosshairComponents = crosshairStorage.provide(coords.size)
@@ -256,6 +252,9 @@ class TooltipRenderer(
             layerYOrientations,
             flippedAxis,
             axisOrigin,
+            xAxisTheme,
+            yAxisTheme,
+            plotContext,
             hAxisTooltipPosition,
             vAxisTooltipPosition
         )
@@ -277,6 +276,9 @@ class TooltipRenderer(
         layerYOrientations: List<Boolean>,
         private val flippedAxis: Boolean,
         val axisOrigin: DoubleVector,
+        private val xAxisTheme: AxisTheme,
+        private val yAxisTheme: AxisTheme,
+        private val plotContext: PlotContext,
         val hAxisTooltipPosition: HorizontalAxisTooltipPosition,
         val vAxisTooltipPosition: VerticalAxisTooltipPosition
     ) {
@@ -290,8 +292,15 @@ class TooltipRenderer(
                 }
             }
 
-        fun findTargets(plotCoord: DoubleVector): List<GeomTargetLocator.LookupResult> {
-            val targetsPicker = LocatedTargetsPicker(flippedAxis, plotCoord).apply {
+        fun findTargets(plotCoord: DoubleVector): List<TooltipModel> {
+            val targetsPicker = LocatedTargetsPicker(
+                flippedAxis = flippedAxis,
+                cursorCoord = plotCoord,
+                axisOrigin = axisOrigin,
+                xAxisTheme = xAxisTheme,
+                yAxisTheme = yAxisTheme,
+                ctx = plotContext
+            ).apply {
                 for (locator in transformedLocators) {
                     val result = locator.search(plotCoord)
                     if (result != null) {
@@ -323,39 +332,39 @@ class TooltipRenderer(
 
     private fun Color.isDark() = Colors.luminance(this) < 0.5
 
-    private val TooltipSpec.style
+    private val TooltipModel.style
         get() =
-            when (layoutHint.kind) {
-                X_AXIS_TOOLTIP -> "${TooltipStyle.AXIS_TOOLTIP_TEXT}-${xAxisTheme.axis}"
-                Y_AXIS_TOOLTIP -> "${TooltipStyle.AXIS_TOOLTIP_TEXT}-${yAxisTheme.axis}"
-                VERTICAL_TOOLTIP -> TooltipStyle.TOOLTIP_TEXT
-                HORIZONTAL_TOOLTIP -> TooltipStyle.TOOLTIP_TEXT
-                CURSOR_TOOLTIP -> TooltipStyle.TOOLTIP_TEXT
-                ROTATED_TOOLTIP -> TooltipStyle.TOOLTIP_TEXT
+            when (tooltipHint.placement) {
+                X_AXIS -> "${TooltipStyle.AXIS_TOOLTIP_TEXT}-${xAxisTheme.axis}"
+                Y_AXIS -> "${TooltipStyle.AXIS_TOOLTIP_TEXT}-${yAxisTheme.axis}"
+                VERTICAL -> TooltipStyle.TOOLTIP_TEXT
+                HORIZONTAL -> TooltipStyle.TOOLTIP_TEXT
+                CURSOR -> TooltipStyle.TOOLTIP_TEXT
+                ROTATED -> TooltipStyle.TOOLTIP_TEXT
             }
 
     private val LayoutManager.PositionedTooltip.orientation
         get() =
             when (hintKind) {
-                HORIZONTAL_TOOLTIP -> Orientation.HORIZONTAL
-                Y_AXIS_TOOLTIP -> Orientation.HORIZONTAL
-                VERTICAL_TOOLTIP -> Orientation.VERTICAL
-                CURSOR_TOOLTIP -> Orientation.VERTICAL
-                X_AXIS_TOOLTIP -> Orientation.VERTICAL
-                ROTATED_TOOLTIP -> Orientation.VERTICAL
+                HORIZONTAL -> Orientation.HORIZONTAL
+                Y_AXIS -> Orientation.HORIZONTAL
+                VERTICAL -> Orientation.VERTICAL
+                CURSOR -> Orientation.VERTICAL
+                X_AXIS -> Orientation.VERTICAL
+                ROTATED -> Orientation.VERTICAL
             }
 
-    private fun applySpec(tooltipBox: TooltipBox, spec: TooltipSpec) {
+    private fun applySpec(tooltipBox: TooltipBox, spec: TooltipModel) {
         val fillColor = when {
-            spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipFill()
-            spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipFill()
+            spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipFill()
+            spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipFill()
             spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
             else -> tooltipsTheme.tooltipFill()
         }
 
         val borderColor = when {
-            spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipColor()
-            spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipColor()
+            spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipColor()
+            spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipColor()
             spec.isSide -> if (fillColor.isDark()) TooltipDefaults.LIGHT_TEXT_COLOR else TooltipDefaults.DARK_TEXT_COLOR
             else -> tooltipsTheme.tooltipColor()
         }
@@ -363,21 +372,21 @@ class TooltipRenderer(
         // Text color is set by element class name,
         // but for side tooltips the color is not constant - it depends on the fill color
         val textColor = when {
-            spec.layoutHint.kind !in listOf(X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP) && spec.isSide -> borderColor
+            spec.tooltipHint.placement !in listOf(X_AXIS, Y_AXIS) && spec.isSide -> borderColor
             else -> null
         }
 
         val strokeWidth = getStrokeWidth(spec)
 
         val lineType = when {
-            spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipLineType()
-            spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipLineType()
+            spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipLineType()
+            spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipLineType()
             spec.isSide -> NamedLineType.SOLID
             else -> tooltipsTheme.tooltipLineType()
         }
 
-        val borderRadius = when (spec.layoutHint.kind) {
-            X_AXIS_TOOLTIP, Y_AXIS_TOOLTIP -> 0.0
+        val borderRadius = when (spec.tooltipHint.placement) {
+            X_AXIS, Y_AXIS -> 0.0
             else -> TooltipDefaults.BORDER_RADIUS
         }
 
@@ -398,24 +407,10 @@ class TooltipRenderer(
             )
     }
 
-    private fun getStrokeWidth(spec: TooltipSpec): Double = when {
-        spec.layoutHint.kind == X_AXIS_TOOLTIP -> xAxisTheme.tooltipStrokeWidth()
-        spec.layoutHint.kind == Y_AXIS_TOOLTIP -> yAxisTheme.tooltipStrokeWidth()
+    private fun getStrokeWidth(spec: TooltipModel): Double = when {
+        spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipStrokeWidth()
+        spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipStrokeWidth()
         spec.isSide -> 1.0
         else -> tooltipsTheme.tooltipStrokeWidth()
-    }
-
-    private fun tooltipSpecFromLookupResult(
-        lookupResult: GeomTargetLocator.LookupResult,
-        axisOrigin: DoubleVector,
-    ): List<TooltipSpec> {
-        return TooltipSpecFactory(
-            lookupResult.contextualMapping,
-            axisOrigin,
-            flippedAxis,
-            xAxisTheme,
-            yAxisTheme,
-            plotContext
-        ).let { lookupResult.targets.flatMap(it::create) }
     }
 }

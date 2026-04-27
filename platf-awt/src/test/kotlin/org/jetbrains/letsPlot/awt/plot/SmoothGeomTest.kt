@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.awt.plot
 import demoAndTestShared.parsePlotSpec
 import kotlin.test.Test
 
-class SmoothGeomTest: VisualPlotTestBase() {
+class SmoothGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
 
     @Test
     fun `example from #143 Broken colors with scale_color_discrete and groups`() {
@@ -277,5 +277,53 @@ class SmoothGeomTest: VisualPlotTestBase() {
         """.trimMargin())
 
         assertPlot("smooth_geom_5.png", spec)
+    }
+
+    @Test
+    fun `smooth with none`() {
+        val spec = parsePlotSpec(
+            """
+            |{
+            |  "data": {
+            |    "x": [ null, -2.0, -1.0, 0.0, 1.0, 2.0, null, 3.0, 4.0, 5.0, null, 6.0 ],
+            |    "y": [ null, 1.5, 0.5, 0.0, 0.6, 1.0, null, 1.2, 1.0, 0.8, null, 0.7 ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y"
+            |  },
+            |  "data_meta": {
+            |    "series_annotations": [
+            |      {
+            |        "type": "int",
+            |        "column": "x"
+            |      },
+            |      {
+            |        "type": "float",
+            |        "column": "y"
+            |      }
+            |    ]
+            |  },
+            |  "kind": "plot",
+            |  "scales": [],
+            |  "layers": [
+            |    {
+            |      "geom": "smooth",
+            |      "mapping": {},
+            |      "data_meta": {},
+            |      "method": "loess"
+            |    },
+            |    {
+            |      "geom": "point",
+            |      "mapping": {},
+            |      "data_meta": {}
+            |    }
+            |  ],
+            |  "metainfo_list": []
+            |}
+        """.trimMargin()
+        )
+
+        assertPlot("smooth_with_none.png", spec)
     }
 }
