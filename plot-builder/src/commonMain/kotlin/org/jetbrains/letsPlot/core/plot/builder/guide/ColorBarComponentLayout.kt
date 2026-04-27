@@ -52,11 +52,16 @@ abstract class ColorBarComponentLayout(
 
     internal abstract fun createBreakInfo(tickLocation: Double): BreakInfo
 
+    internal enum class LabelVerticalPlacement {
+        TOP,
+        CENTER,
+    }
+
     internal class BreakInfo(
         val tickLocation: Double,
         val labelLocation: DoubleVector,
         val labelHorizontalAnchor: Text.HorizontalAnchor,
-        val labelVerticalAnchor: Text.VerticalAnchor
+        val labelVerticalPlacement: LabelVerticalPlacement
     )
 
     private class HorizontalLayout(
@@ -93,7 +98,7 @@ abstract class ColorBarComponentLayout(
                 tickLocation,
                 labelLocation,
                 Text.HorizontalAnchor.MIDDLE,
-                Text.VerticalAnchor.TOP
+                LabelVerticalPlacement.TOP
             )
         }
     }
@@ -132,7 +137,7 @@ abstract class ColorBarComponentLayout(
                 tickLocation,
                 labelLocation,
                 Text.HorizontalAnchor.LEFT,
-                Text.VerticalAnchor.CENTER
+                LabelVerticalPlacement.CENTER
             )
         }
     }
