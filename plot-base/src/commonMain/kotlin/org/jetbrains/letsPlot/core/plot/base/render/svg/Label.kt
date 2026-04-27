@@ -16,7 +16,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
 
@@ -171,19 +174,15 @@ class Label(
         }
     }
 
-    // After changing some font properties, some SVG text attributes (like x) may change.
-    // So, we need to recalculate them and update the original elements.
+    // After changing some font properties, RichText may regenerate the line subtree
+    // with updated tspan x/text values. Keep the original line elements, but replace
+    // their direct children so line-level state (style, classes, y, text-anchor) stays intact.
     private fun horizontalRepositionLines(updateHorizontalAnchor: Boolean = false) {
-        // Update tspan elements in lines
+        // Update rendered subtree inside each line.
         val recalculatedLines = getLines()
         require(myLines.size == recalculatedLines.size) { "Line counts must be the same." }
         (myLines zip recalculatedLines).forEach { (originalLine, recalculatedLine) ->
-            walkPair(originalLine, recalculatedLine) { originalNode, recalculatedNode ->
-                if (originalNode is SvgTSpanElement && recalculatedNode is SvgTSpanElement) {
-                    originalNode.x().set(recalculatedNode.x().get()) // x-attribute of tspan's in fraction may change
-                    originalNode.copyText(recalculatedNode) // count of fraction bar symbols "–" may change
-                }
-            }
+            originalLine.replaceChildrenFrom(recalculatedLine)
         }
         // Update x-attribute of lines
         xStart?.let { newX -> myLines.forEach { line -> line.x().set(newX) } }
@@ -228,42 +227,18 @@ class Label(
 
         fun splitLines(text: String) = text.split('\n').map(String::trim)
 
-        private fun walkPair(
-            node1: SvgNode,
-            node2: SvgNode,
-            action: (SvgNode, SvgNode) -> Unit
-        ) {
-            require(node1::class == node2::class) { "Node classes must be the same: ${node1::class} != ${node2::class}" }
-            val children1 = node1.children()
-            val children2 = node2.children()
-            require(children1.size == children2.size) { "Node lists must have the same size." }
-            (children1 zip children2).forEach { (child1, child2) ->
-                walkPair(child1, child2, action)
-            }
-            action(node1, node2)
-        }
-
         private fun findFirstTSpan(root: SvgNode): SvgTSpanElement? =
             when (root) {
                 is SvgTSpanElement -> root
                 else -> root.children().firstNotNullOfOrNull { findFirstTSpan(it) }
             }
 
-        // Copy text content from another tspan element, or clear text if other has no text node.
-        // Does not copy any attributes, and does not change any attributes of this element.
-        // Uses the fact that tspan has either 0 or 1 text node of type SvgTextNode, see SvgTSpanElement.setText()/addText().
-        fun SvgTSpanElement.copyText(other: SvgTSpanElement) {
-            val otherTextNode = other.children().singleOrNull() as? SvgTextNode
-            if (otherTextNode == null) {
-                children().clear()
-                return
-            }
-            val text = otherTextNode.textContent().get()
-            val textNode = children().singleOrNull() as? SvgTextNode
-            if (textNode == null) {
-                setText(text)
-            } else {
-                textNode.textContent().set(text)
+        private fun SvgTextElement.replaceChildrenFrom(other: SvgTextElement) {
+            val newChildren = other.children().toList()
+            children().clear()
+            newChildren.forEach { child ->
+                child.removeFromParent()
+                children().add(child)
             }
         }
     }
