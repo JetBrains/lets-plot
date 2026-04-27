@@ -794,6 +794,7 @@ def geom_smooth(mapping=None, *, data=None, stat=None, position=None, show_legen
                               inherit_aes=inherit_aes,
                               sampling=sampling,
                               labels=labels,
+                              show_legend=False,
                               orientation=orientation,
                               method=method,
                               level=level,
