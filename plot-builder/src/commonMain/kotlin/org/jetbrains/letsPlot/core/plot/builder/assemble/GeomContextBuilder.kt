@@ -17,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
+import kotlin.math.roundToInt
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
     private var flipped: Boolean = false
@@ -168,7 +169,7 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
                     family = family,
                     // PlotLabelSpec measures text with integer font sizes, so fractional sizes
                     // (for example, geom_text with size_unit = "x") may shift multiline text slightly.
-                    size = size.toInt(),
+                    size = size.roundToInt(),
                     isBold = isBold,
                     isItalic = isItalic
                 ),
