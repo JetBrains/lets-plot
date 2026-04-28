@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 
 class TileLayoutInfo constructor(
     val offset: DoubleVector,  // A value to take into account when translating relative tile bounds to absolute ones.
@@ -27,6 +28,8 @@ class TileLayoutInfo constructor(
     val facetYLabel: Pair<String, Double>? = null,
 
     val trueIndex: Int,     // tile index before re-ordering (in facet wrap)
+
+    val axisSpacers: Thickness = Thickness.ZERO,  // additional spacing to avoid axis overlap in ggdeck
 ) {
     val hAxisShown: Boolean = (axisInfos.top != null || axisInfos.bottom != null) && hAxisShown
     val vAxisShown: Boolean = (axisInfos.left != null || axisInfos.right != null) && vAxisShown
@@ -72,7 +75,8 @@ class TileLayoutInfo constructor(
             this.axisInfos,
             this.hAxisShown, this.vAxisShown,
             this.facetXLabels, this.facetYLabel,
-            this.trueIndex
+            this.trueIndex,
+            this.axisSpacers
         )
     }
 
@@ -86,7 +90,8 @@ class TileLayoutInfo constructor(
             this.axisInfos,
             hAxisShown, vAxisShown,
             this.facetXLabels, this.facetYLabel,
-            this.trueIndex
+            this.trueIndex,
+            this.axisSpacers
         )
     }
 
@@ -107,7 +112,8 @@ class TileLayoutInfo constructor(
             this.axisInfos,
             this.hAxisShown, this.vAxisShown,
             this.facetXLabels, this.facetYLabel,
-            this.trueIndex
+            this.trueIndex,
+            this.axisSpacers
         )
     }
 }

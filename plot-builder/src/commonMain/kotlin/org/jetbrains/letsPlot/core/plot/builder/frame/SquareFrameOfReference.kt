@@ -92,7 +92,7 @@ internal class SquareFrameOfReference(
                 layoutInfo.geomInnerBounds,
                 axisInfo.orientation,
                 coord.isPolar,
-                theme.panel().inset()
+                theme.panel().inset() + layoutInfo.axisSpacers
             )
             axisComponent.moveTo(axisOrigin)
             parent.add(axisComponent)
@@ -122,7 +122,7 @@ internal class SquareFrameOfReference(
                 layoutInfo.geomInnerBounds,
                 axisInfo.orientation,
                 coord.isPolar,
-                theme.panel().inset()
+                theme.panel().inset() + layoutInfo.axisSpacers
             )
             axisComponent.moveTo(axisOrigin)
             parent.add(axisComponent)

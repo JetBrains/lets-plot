@@ -66,5 +66,14 @@ class Thickness(
         val ZERO = Thickness()
 
         fun uniform(value: Double) = Thickness(value, value, value, value)
+
+        fun diff(from: DoubleRectangle, to: DoubleRectangle): Thickness {
+            return Thickness(
+                top = to.top - from.top,
+                right = from.right - to.right,
+                bottom = from.bottom - to.bottom,
+                left = to.left - from.left,
+            )
+        }
     }
 }

@@ -39,7 +39,7 @@ internal class FacetedPlotLayout(
         require(facets.isDefined) { "Undefined facets." }
     }
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, axisSpacer: Thickness): PlotLayoutInfo {
         val plotLayoutMargins = plotTheme.layoutMargins()
         var tilesAreaSize = DoubleVector(
             preferredSize.x - (insets.left + insets.right),

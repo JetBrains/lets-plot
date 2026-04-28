@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerUtil
@@ -81,10 +82,9 @@ internal class PlotFigureLayouter(
         )
     }
 
-    fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
+    fun layoutByGeomSize(geomSize: DoubleVector, axisSpacer: Thickness): PlotFigureLayoutInfo {
         val plotLayout = createPlotLayout(insideOut = true)
-        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider)
-
+        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider, axisSpacer)
         return createFigureLayoutInfo(
             figurePreferredSize = null,
             layoutInfo

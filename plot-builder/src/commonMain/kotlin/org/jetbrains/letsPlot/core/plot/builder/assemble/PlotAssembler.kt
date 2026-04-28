@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.Scale
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.ExponentFormat
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
@@ -159,8 +160,8 @@ class PlotAssembler constructor(
         return layouter.layoutByOuterSize(size)
     }
 
-    fun layoutByGeomSize(size: DoubleVector): PlotFigureLayoutInfo {
-        return layouter.layoutByGeomSize(size)
+    fun layoutByGeomSize(size: DoubleVector, axisSpacer: Thickness): PlotFigureLayoutInfo {
+        return layouter.layoutByGeomSize(size, axisSpacer)
     }
 
     fun createPlot(figureLayoutInfo: PlotFigureLayoutInfo): PlotSvgComponent {

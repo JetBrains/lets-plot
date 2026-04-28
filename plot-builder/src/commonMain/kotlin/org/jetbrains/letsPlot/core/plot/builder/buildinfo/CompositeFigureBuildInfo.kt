@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.buildinfo
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
@@ -134,7 +135,7 @@ class CompositeFigureBuildInfo constructor(
         }
     }
 
-    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): CompositeFigureBuildInfo {
+    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle, axisSpacers: Thickness): CompositeFigureBuildInfo {
         UNSUPPORTED("Composite figure does not support layouting by \"geometry bounds\".")
     }
 

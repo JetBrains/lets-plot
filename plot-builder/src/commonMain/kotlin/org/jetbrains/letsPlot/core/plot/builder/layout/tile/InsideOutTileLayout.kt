@@ -22,7 +22,7 @@ internal class InsideOutTileLayout(
     private val panelInset: Thickness,
 ) {
 
-    fun doLayout(geomContentSize: DoubleVector, coordProvider: CoordProvider): TileLayoutInfo {
+    fun doLayout(geomContentSize: DoubleVector, coordProvider: CoordProvider, axisSpacer: Thickness = Thickness.ZERO): TileLayoutInfo {
 
         // Input is the geom *content* dimension (actual plotting area).
         // Compute outer dimensions by working outwardly.
@@ -31,7 +31,8 @@ internal class InsideOutTileLayout(
             max(MIN_GEOM_CONTENT_SIZE, geomContentSize.y)
         )
         val geomContentBounds = DoubleRectangle(DoubleVector.ZERO, geomContentSizeSafe)
-        val geomInnerBounds = panelInset.inflateRect(geomContentBounds)
+        val effectiveInset = panelInset + axisSpacer
+        val geomInnerBounds = effectiveInset.inflateRect(geomContentBounds)
         val geomOuterBounds = marginsLayout.toOuterBounds(geomInnerBounds)
 
         var axisInfos = computeAxisInfos(
@@ -59,7 +60,8 @@ internal class InsideOutTileLayout(
             axisInfos = axisInfos,
             hAxisShown = true,
             vAxisShown = true,
-            trueIndex = 0
+            trueIndex = 0,
+            axisSpacers = axisSpacer
         )
     }
 

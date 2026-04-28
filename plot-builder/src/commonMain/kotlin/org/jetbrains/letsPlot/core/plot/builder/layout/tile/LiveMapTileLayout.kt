@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.tile
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.AxisLayoutInfoQuad
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayout
@@ -22,7 +23,8 @@ internal class LiveMapTileLayout : TileLayout {
 
     override fun doInsideOutLayout(
         geomContentSize: DoubleVector,
-        coordProvider: CoordProvider
+        coordProvider: CoordProvider,
+        axisSpacer: Thickness
     ): TileLayoutInfo {
         return doLayout(geomContentSize, coordProvider)
     }

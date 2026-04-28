@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.buildinfo
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -66,9 +67,9 @@ class PlotFigureBuildInfo constructor(
         }
     }
 
-    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle): PlotFigureBuildInfo {
+    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle, axisSpacer: Thickness): FigureBuildInfo {
         // `geomBounds` is the target *content* area (actual plotting area).
-        val layoutInfo = plotAssembler.layoutByGeomSize(geomBounds.dimension)
+        val layoutInfo = plotAssembler.layoutByGeomSize(geomBounds.dimension, axisSpacer)
         val oldCenter = geomBounds.center
         val newCenter = layoutInfo.geomContentBounds.center
         val delta = newCenter.subtract(oldCenter)

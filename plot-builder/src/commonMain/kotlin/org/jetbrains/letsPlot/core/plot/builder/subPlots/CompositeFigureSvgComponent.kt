@@ -52,7 +52,7 @@ class CompositeFigureSvgComponent constructor(
 
         if (DEBUG_DRAWING) {
             drawDebugRect(outerBounds, Color.BLUE, "BLUE: plotOuterBounds")
-            drawDebugRect(outerBounds, Color.BLUE, "BLUE: contentAreaBounds")
+//            drawDebugRect(outerBounds, Color.BLUE, "BLUE: contentAreaBounds")
             drawDebugRect(elementsAreaBounds, Color.RED, "RED: elementsAreaBounds")
         }
 

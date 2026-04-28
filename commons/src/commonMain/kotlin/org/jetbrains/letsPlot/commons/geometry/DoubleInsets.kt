@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.commons.geometry
 
+// TODO: merge with thickness.
 class DoubleInsets(
     val leftTop: DoubleVector,
     val rightBottom: DoubleVector,
