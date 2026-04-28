@@ -107,9 +107,6 @@ class LayerTooltipsSpec(FeatureSpec):
         self._tooltip_variables = variables
         self._tooltip_title = None
         self._disable_splitting = None
-        self._tooltip_group = None
-        self._tooltip_lookup_space = None
-        self._tooltip_lookup_strategy = None
         super().__init__('tooltips', name=None)
 
     def as_dict(self):
@@ -144,7 +141,6 @@ class LayerTooltipsSpec(FeatureSpec):
         d['variables'] = self._tooltip_variables
         d['title'] = self._tooltip_title
         d['disable_splitting'] = self._disable_splitting
-        d['tooltip_group'] = self._tooltip_group
         return _filter_none(d)
 
     def format(self, field=None, format=None):
@@ -506,16 +502,4 @@ class LayerTooltipsSpec(FeatureSpec):
 
         """
         self._disable_splitting = True
-        return self
-
-    def group(self, value):
-        self._tooltip_group = value
-        return self
-
-    def lookup_space(self, value):
-        self._tooltip_lookup_space = value
-        return self
-
-    def lookup_strategy(self, value):
-        self._tooltip_lookup_strategy = value
         return self
