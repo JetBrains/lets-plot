@@ -3,14 +3,42 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.awt.plot
+@file:Suppress("FunctionName")
 
-import demoAndTestShared.parsePlotSpec
-import kotlin.test.Test
+package org.jetbrains.letsPlot.visualtesting.plot
 
-class LatexTest : VisualPlotTestBase() {
-    @Test
-    fun `latex symbols`() {
+import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
+import org.jetbrains.letsPlot.commons.values.Bitmap
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+
+class LatexTest(
+    override val canvasPeer: CanvasPeer,
+    override val imageComparer: ImageComparer,
+) : PlotTestBase() {
+    init {
+        registerTest(::`latex symbols`)
+        registerTest(::`geom_label renders latex formulas for different hjust values`)
+        registerTest(::`geom_label renders regression latex formulas for different hjust values`)
+        registerTest(::`geom_label renders latex formulas for different nudge_x values`)
+        registerTest(::`geom_text renders latex formulas for different hjust values`)
+        registerTest(::`geom_text renders latex formulas for different nudge_x values`)
+        registerTest(::`plot title renders latex formulas for different hjust values`)
+        registerTest(::`geom_label renders multiline latex formulas for different line counts and formula combinations`)
+        registerTest(::`geom_label renders multiline labels with latex formulas for different vjust and lineheight values`)
+        registerTest(::`latex formulas render consistently across plot title axis labels and geom_text`)
+        registerTest(::`text geoms render long multiline labels with mixed text and latex formulas`)
+        registerTest(::`facet strip labels render latex formulas`)
+        registerTest(::`discrete legend labels render latex formulas`)
+        registerTest(::`continuous legend labels render latex formulas`)
+        registerTest(::`geom_text renders latex formulas for different appearance settings`)
+        registerTest(::`latex formulas embedded in plain text render consistently across plot elements`)
+        registerTest(::`latex formulas in plot elements respect global and element_specific theme text settings`)
+        registerTest(::`geom_label aligns mixed text and inline latex formulas correctly`)
+        registerTest(::`geom_text renders multiline labels with latex formulas for different vjust values`)
+        registerTest(::`geom_label renders multiline labels with latex formulas for different vjust values`)
+    }
+    fun `latex symbols`(): Bitmap {
         val greekLetters = listOf(
             "Alpha",
             "Beta",
@@ -134,12 +162,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("latex_symbols.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_label renders latex formulas for different hjust values`() {
+    fun `geom_label renders latex formulas for different hjust values`(): Bitmap {
         val spec = """
             {
               "kind": "subplots",
@@ -2169,12 +2195,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_label_renders_latex_formulas_for_different_hjust_values_test.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_label renders regression latex formulas for different hjust values`() {
+    fun `geom_label renders regression latex formulas for different hjust values`(): Bitmap {
         val spec = """
             {
               "ggsize": {
@@ -2570,12 +2594,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_label_renders_regression_latex_formulas_for_different_hjust_values.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_label renders latex formulas for different nudge_x values`() {
+    fun `geom_label renders latex formulas for different nudge_x values`(): Bitmap {
         val spec = """
             {
               "kind": "subplots",
@@ -4605,12 +4627,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_label_renders_latex_formulas_for_different_nudge_x_values_test.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_text renders latex formulas for different hjust values`() {
+    fun `geom_text renders latex formulas for different hjust values`(): Bitmap {
         val spec = """
             {
               "kind": "subplots",
@@ -7072,12 +7092,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_text_renders_latex_formulas_for_different_hjust_values_test.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_text renders latex formulas for different nudge_x values`() {
+    fun `geom_text renders latex formulas for different nudge_x values`(): Bitmap {
         val spec = """
             {
               "kind": "subplots",
@@ -9539,12 +9557,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_text_renders_latex_formulas_for_different_nudge_x_values_test.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `plot title renders latex formulas for different hjust values`() {
+    fun `plot title renders latex formulas for different hjust values`(): Bitmap {
         val spec = """
             {
               "ggsize": {
@@ -12742,12 +12758,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("plot_title_renders_latex_formulas_for_different_hjust_values_test.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_label renders multiline latex formulas for different line counts and formula combinations`() {
+    fun `geom_label renders multiline latex formulas for different line counts and formula combinations`(): Bitmap {
         val spec = """
             {
               "data": {
@@ -12900,12 +12914,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_label_renders_multiline_latex_formulas_for_different_line_counts_and_formula_combinations.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_label renders multiline labels with latex formulas for different vjust and lineheight values`() {
+    fun `geom_label renders multiline labels with latex formulas for different vjust and lineheight values`(): Bitmap {
         val spec = """
             {
               "kind": "subplots",
@@ -13547,12 +13559,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_label_renders_multiline_labels_with_latex_formulas_for_different_vjust_and_lineheight_values.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `latex formulas render consistently across plot title axis labels and geom_text`() {
+    fun `latex formulas render consistently across plot title axis labels and geom_text`(): Bitmap {
         val spec = """
             {
               "kind": "subplots",
@@ -13742,12 +13752,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("latex_formulas_render_consistently_across_plot_title_axis_labels_and_geom_text.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `text geoms render long multiline labels with mixed text and latex formulas`() {
+    fun `text geoms render long multiline labels with mixed text and latex formulas`(): Bitmap {
         val spec = """
             {
               "mapping": {},
@@ -13811,12 +13819,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("text_geoms_render_long_multiline_labels_with_mixed_text_and_latex_formulas.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `facet strip labels render latex formulas`() {
+    fun `facet strip labels render latex formulas`(): Bitmap {
         val spec = """
             {
               "data": {
@@ -13866,12 +13872,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("facet_strip_labels_render_latex_formulas.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `discrete legend labels render latex formulas`() {
+    fun `discrete legend labels render latex formulas`(): Bitmap {
         val spec = """
             {
               "kind": "subplots",
@@ -14245,12 +14249,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("discrete_legend_labels_render_latex_formulas.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `continuous legend labels render latex formulas`() {
+    fun `continuous legend labels render latex formulas`(): Bitmap {
         val spec = """
             {
               "data": {
@@ -14308,12 +14310,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("continuous_legend_labels_render_latex_formulas.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_text renders latex formulas for different appearance settings`() {
+    fun `geom_text renders latex formulas for different appearance settings`(): Bitmap {
         val spec = """
             {
               "kind": "subplots",
@@ -14647,12 +14647,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_text_renders_latex_formulas_for_different_appearance_settings.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `latex formulas embedded in plain text render consistently across plot elements`() {
+    fun `latex formulas embedded in plain text render consistently across plot elements`(): Bitmap {
         val spec = """
             {
               "ggsize": {
@@ -14859,12 +14857,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("latex_formulas_embedded_in_plain_text_render_consistently_across_plot_elements.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `latex formulas in plot elements respect global and element-specific theme text settings`() {
+    fun `latex formulas in plot elements respect global and element_specific theme text settings`(): Bitmap {
         val spec = """
             {
               "ggsize": {
@@ -15610,12 +15606,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("latex_formulas_in_plot_elements_respect_global_and_element_specific_theme_text_settings.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_label aligns mixed text and inline latex formulas correctly`() {
+    fun `geom_label aligns mixed text and inline latex formulas correctly`(): Bitmap {
         val spec = """
             {
               "ggsize": {
@@ -15926,12 +15920,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_label_aligns_mixed_text_and_inline_latex_formulas_correctly.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_text renders multiline labels with latex formulas for different vjust values`() {
+    fun `geom_text renders multiline labels with latex formulas for different vjust values`(): Bitmap {
         val spec = """
             {
               "ggsize": {
@@ -17731,12 +17723,10 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_text_renders_multiline_labels_with_latex_formulas_for_different_vjust_values.png", plotSpec)
+        return paint(parseJson(spec))
     }
 
-    @Test
-    fun `geom_label renders multiline labels with latex formulas for different vjust values`() {
+    fun `geom_label renders multiline labels with latex formulas for different vjust values`(): Bitmap {
         val spec = """
             {
               "ggsize": {
@@ -19536,7 +19526,6 @@ class LatexTest : VisualPlotTestBase() {
             }
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-        assertPlot("geom_label_renders_multiline_labels_with_latex_formulas_for_different_vjust_values.png", plotSpec)
+        return paint(parseJson(spec))
     }
 }

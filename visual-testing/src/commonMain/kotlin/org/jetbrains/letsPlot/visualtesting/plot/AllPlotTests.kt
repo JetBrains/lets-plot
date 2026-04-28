@@ -15,6 +15,7 @@ object AllPlotTests {
         failedTestsCount += PlotCompositeTest(canvasPeer, imageComparer).runTests()
         failedTestsCount += PlotInteractivityTest(canvasPeer, imageComparer).runTests()
         failedTestsCount += PlotThemeTest(canvasPeer, imageComparer).runTests()
+        failedTestsCount += LatexTest(canvasPeer, imageComparer).runTests()
         //failedTestsCount += PlotAxisTest().runTests()
         //failedTestsCount += PlotFacetTest().runTests()
         //failedTestsCount += PlotThemeTest().runTests()
