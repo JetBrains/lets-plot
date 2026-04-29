@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
-import org.jetbrains.letsPlot.core.plot.builder.presentation.maxWidth
+import org.jetbrains.letsPlot.core.plot.builder.presentation.width
 
 abstract class LegendComponentLayout(
     title: String,
@@ -74,7 +74,7 @@ abstract class LegendComponentLayout(
 
     private fun doLayout() {
         val labelSpec = PlotLabelSpecFactory.legendItem(theme)
-        val keyLabelGap = labelSpec.maxWidth(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2.0
+        val keyLabelGap = labelSpec.width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2.0
         val minVerticalDistanceBetweenLabels = labelSpec.defaultLine().height / 3.0
 
         val colWidths = DoubleArray(colCount)

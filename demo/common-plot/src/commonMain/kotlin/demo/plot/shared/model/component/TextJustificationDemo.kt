@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
-import org.jetbrains.letsPlot.core.plot.builder.presentation.maxWidth
+import org.jetbrains.letsPlot.core.plot.builder.presentation.width
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
@@ -107,7 +107,7 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val lineHeight = FONT_SIZE
             val lineFont = Font(FontFamily(FONT_FAMILY_NORMAL, false), FONT_SIZE.toInt())
             val textSize = DoubleVector(
-                PlotLabelSpec(lineFont).maxWidth(text),
+                PlotLabelSpec(lineFont).width(text),
                 lineHeight * label.linesCount()
             )
             val (position, hAnchor) = applyJustification(

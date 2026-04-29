@@ -31,5 +31,5 @@ fun LabelSpec.totalDimensions(labelText: String): DoubleVector =
         )
     }
 
-fun LabelSpec.maxWidth(labelText: String): Double =
+fun LabelSpec.width(labelText: String): Double =
     lineDimensions(labelText).maxOfOrNull(LineDimensions::width) ?: 0.0

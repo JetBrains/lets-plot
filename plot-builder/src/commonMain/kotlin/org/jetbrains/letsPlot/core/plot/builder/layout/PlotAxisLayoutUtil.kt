@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
-import org.jetbrains.letsPlot.core.plot.builder.presentation.maxWidth
+import org.jetbrains.letsPlot.core.plot.builder.presentation.width
 
 internal object PlotAxisLayoutUtil {
 
@@ -34,6 +34,6 @@ internal object PlotAxisLayoutUtil {
         return if (orientation.isHorizontal)
             tickLabelSpec.lineMetrics(INITIAL_TICK_LABEL_IN_CHARS).single().height
         else
-            tickLabelSpec.maxWidth(INITIAL_TICK_LABEL_IN_CHARS)
+            tickLabelSpec.width(INITIAL_TICK_LABEL_IN_CHARS)
     }
 }
