@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 
 class PlotFigureLayoutInfo constructor(
     val figureLayoutedBounds: DoubleRectangle,
-    val figureBoundsWithoutTitleAndCaption: DoubleRectangle,
+    val figureBoundsWithoutTitlesTagsAndMargins: DoubleRectangle,
     /**
      * Origin of the plot area: geoms, axis and facet labels.
      * I.e., the inner bounds origin - all without titles and legends.

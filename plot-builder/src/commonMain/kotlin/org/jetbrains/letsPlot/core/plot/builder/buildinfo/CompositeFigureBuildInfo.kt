@@ -139,15 +139,15 @@ class CompositeFigureBuildInfo constructor(
         UNSUPPORTED("Composite figure does not support layouting by \"geometry bounds\".")
     }
 
-    override fun withPreferredSize(size: DoubleVector): FigureBuildInfo {
-        return CompositeFigureBuildInfo(
-            elements,
-            layout,
-            DoubleRectangle(DoubleVector.Companion.ZERO, size),
-            title, subtitle, caption, tag,
-            theme,
-            computationMessages,
-            legendBlocks
-        )
-    }
+//    override fun withPreferredSize(size: DoubleVector): FigureBuildInfo {
+//        return CompositeFigureBuildInfo(
+//            elements,
+//            layout,
+//            DoubleRectangle(DoubleVector.Companion.ZERO, size),
+//            title, subtitle, caption, tag,
+//            theme,
+//            computationMessages,
+//            legendBlocks
+//        )
+//    }
 }

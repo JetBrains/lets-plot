@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.buildinfo
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.FigureSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
@@ -29,5 +28,5 @@ interface FigureBuildInfo {
 
     fun layoutedByGeomBounds(geomBounds: DoubleRectangle, axisSpacers: Thickness = Thickness.ZERO): FigureBuildInfo
 
-    fun withPreferredSize(size: DoubleVector): FigureBuildInfo
+//    fun withPreferredSize(size: DoubleVector): FigureBuildInfo
 }

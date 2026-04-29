@@ -68,7 +68,7 @@ class CompositeFigureDeckLayout(
         val axisThicknessByPlot = plotElements.mapIndexed { index, plotInfo ->
             val geomContentBounds = plotInfo.layoutInfo.geomContentBounds
             // inflated geom bounds = geom bounds + panel insets + axis + axis titles
-            val geomContentBoundsInflated = plotInfo.layoutInfo.figureBoundsWithoutTitleAndCaption
+            val geomContentBoundsInflated = plotInfo.layoutInfo.figureBoundsWithoutTitlesTagsAndMargins
             val layoutInsets = Thickness.diff(from = geomContentBoundsInflated, to = geomContentBounds)
             val axisMask = axisMaskByPlot[index]
             Thickness(

@@ -29,11 +29,9 @@ internal class SingleTilePlotLayout constructor(
     }
 
     private fun layoutOuterSize(outerSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-        val plotLayoutMargins = plotTheme.layoutMargins()
         val geomWithAxisSize = outerSize
             .subtract(insets.leftTop)
             .subtract(insets.rightBottom)
-            .subtract(DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height))
 
         val tileInfo = tileLayout
             .doTopDownLayout(geomWithAxisSize, coordProvider)

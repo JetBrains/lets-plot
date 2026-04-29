@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
@@ -19,7 +20,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil.geo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FixedScalesTilesLayouter
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FreeScalesTilesLayouter
-import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import kotlin.math.max
 
 internal class FacetedPlotLayout(
@@ -39,13 +39,15 @@ internal class FacetedPlotLayout(
         require(facets.isDefined) { "Undefined facets." }
     }
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, axisSpacer: Thickness): PlotLayoutInfo {
-        val plotLayoutMargins = plotTheme.layoutMargins()
+    override fun doLayout(
+        preferredSize: DoubleVector,
+        coordProvider: CoordProvider,
+        axisSpacer: Thickness
+    ): PlotLayoutInfo {
         var tilesAreaSize = DoubleVector(
             preferredSize.x - (insets.left + insets.right),
             preferredSize.y - (insets.top + insets.bottom)
         )
-            .subtract(DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height))
 
         val facetTiles = facets.tileInfos()
 

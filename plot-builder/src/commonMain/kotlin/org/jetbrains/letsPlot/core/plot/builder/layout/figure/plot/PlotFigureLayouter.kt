@@ -56,7 +56,7 @@ internal class PlotFigureLayouter(
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
 
-        val plotPreferredSize = PlotLayoutUtil.subtractTitlesAndLegends(
+        val plotPreferredSize = PlotLayoutUtil.subtractTitlesLegendsTagsAndMargins(
             baseSize = outerSize,
             title,
             subtitle,
@@ -136,7 +136,7 @@ internal class PlotFigureLayouter(
     ): PlotFigureLayoutInfo {
         // Plot size includes geoms, axis and facet labels (no titles, legends).
         val plotSize = plotLayoutInfo.size
-        val figureLayoutedSize = PlotLayoutUtil.addTitlesAndLegends(
+        val figureLayoutedSize = PlotLayoutUtil.addTitlesLegendsTagsAndMargins(
             base = plotSize,
             title,
             subtitle,
@@ -151,45 +151,35 @@ internal class PlotFigureLayouter(
         )
 
         // Position the "entire" plot rect in the center of the "overall" rect.
+        // figureLayoutedSize already includes plot margins (via addTitlesAndLegends).
         val figureLayoutedBounds = if (figurePreferredSize == null) {
             DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
         } else {
-            val plotLayoutMargins = theme.plot().layoutMargins()
-
             val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
-            // center the overall rect (without margins)
-            val figureOverallSize = figureLayoutedSize.add(
-                DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height)
-            )
             val delta = figurePreferredBounds.center.subtract(
-                DoubleRectangle(figurePreferredBounds.origin, figureOverallSize).center
+                DoubleRectangle(figurePreferredBounds.origin, figureLayoutedSize).center
             )
             val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
-            val plotOuterOrigin = figurePreferredBounds.origin
-                .add(deltaApplied)
-                .add(
-                    DoubleVector(
-                        plotLayoutMargins.left,
-                        plotLayoutMargins.top
-                    )
-                ) // apply margins inside the overall rect
 
             DoubleRectangle(
-                plotOuterOrigin,
+                figurePreferredBounds.origin.add(deltaApplied),
                 figureLayoutedSize
             )
         }
 
-        val figureBoundsWithoutTitleCaptionAndMargin = run {
+        val figureBoundsWithoutTitlesTagsAndMargins = run {
+            val plotMargins = theme.plot().layoutMargins()
             val titleDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
             val captionDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
             val tagThickness = PlotLayoutUtil.tagMarginThickness(tag, theme.plot())
 
             val origin = figureLayoutedBounds.origin
+                .add(plotMargins.leftTop)
                 .add(titleDelta)
                 .add(tagThickness.leftTop)
 
             val dimension = figureLayoutedBounds.dimension
+                .subtract(plotMargins.size)
                 .subtract(titleDelta)
                 .subtract(captionDelta)
                 .subtract(tagThickness.size)
@@ -197,9 +187,9 @@ internal class PlotFigureLayouter(
             DoubleRectangle(origin, dimension)
         }
 
-        // Inner bounds - all without titles and legends.
+        // Inner bounds - all without titles, tags, legends and margins.
         // Plot origin: the origin of the plot area: geoms, axis and facet labels (no titles, legends).
-        val plotOrigin = figureBoundsWithoutTitleCaptionAndMargin.origin
+        val plotOrigin = figureBoundsWithoutTitlesTagsAndMargins.origin
             .add(legendsSpaceLeftTopDelta(listOfNotNull(legendsBlockInfo), theme.legend()))
             .add(
                 axisTitlesOriginOffset(
@@ -222,7 +212,7 @@ internal class PlotFigureLayouter(
 
         return PlotFigureLayoutInfo(
             figureLayoutedBounds = figureLayoutedBounds,
-            figureBoundsWithoutTitleAndCaption = figureBoundsWithoutTitleCaptionAndMargin,
+            figureBoundsWithoutTitlesTagsAndMargins = figureBoundsWithoutTitlesTagsAndMargins,
             plotAreaOrigin = plotOrigin,
             geomOuterBounds = geomOuterBounds,
             geomContentBounds = geomContentBounds,

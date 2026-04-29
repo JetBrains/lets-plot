@@ -86,6 +86,7 @@ class CompositeFigureConfig constructor(
             }
             if (!compositeThemeOptions.containsKey(ThemeOption.PLOT_MARGIN)) {
                 compositeThemeOptions[ThemeOption.PLOT_MARGIN] = 0
+//                    listOf(3, 0, 0, 0) // keep upper margin for title, remove others
             }
         }
 
