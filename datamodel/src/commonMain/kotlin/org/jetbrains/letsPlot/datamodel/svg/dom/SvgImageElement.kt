@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -16,22 +16,15 @@ open class SvgImageElement() : SvgGraphicsElement(),
     SvgTransformable {
 
     companion object {
-        val X: SvgAttributeSpec<Double> =
-            SvgAttributeSpec.createSpec("x")
-        val Y: SvgAttributeSpec<Double> =
-            SvgAttributeSpec.createSpec("y")
-        val WIDTH: SvgAttributeSpec<Double> =
-            SvgAttributeSpec.createSpec(SvgConstants.WIDTH)
-        val HEIGHT: SvgAttributeSpec<Double> =
-            SvgAttributeSpec.createSpec(SvgConstants.HEIGHT)
-        val HREF: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpecNS(
-                "href",
-                XLINK_PREFIX,
-                XLINK_NAMESPACE_URI
-            )
-        val PRESERVE_ASPECT_RATIO: SvgAttributeSpec<String> =
-            SvgAttributeSpec.createSpec("preserveAspectRatio")
+        val X = SvgAttributeSpec.createSpec<Double>("x")
+        val Y = SvgAttributeSpec.createSpec<Double>("y")
+        val WIDTH = SvgAttributeSpec.createSpec<Double>(SvgConstants.WIDTH)
+        val HEIGHT = SvgAttributeSpec.createSpec<Double>(SvgConstants.HEIGHT)
+        val HREF = SvgAttributeSpec.createSpecNS<String>("href", XLINK_PREFIX, XLINK_NAMESPACE_URI)
+        val PRESERVE_ASPECT_RATIO = SvgAttributeSpec.createSpec<String>("preserveAspectRatio")
+
+        // optimizeSpeed | optimizeQuality
+        val IMAGE_RENDERING = SvgAttributeSpec.createSpec<String>("image-rendering")
     }
 
     override val elementName = "image"

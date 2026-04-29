@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -20,6 +20,7 @@ interface Context2d : Disposable {
 
     fun clearRect(rect: DoubleRectangle)
     fun clearRect(x: Double, y: Double, w: Double, h: Double)
+    fun setImageSmoothingEnabled(enabled: Boolean)
     fun drawImage(snapshot: Snapshot)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double)
     fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double)

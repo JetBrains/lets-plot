@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -28,6 +28,7 @@ open class ContextStateDelegate(
         fillColor = Color.TRANSPARENT,
         strokeColor = Color.TRANSPARENT,
         strokeWidth = 1.0,
+        imageSmoothingEnabled = false,
         lineDashPattern = emptyList(),
         lineDashOffset = 0.0,
         miterLimit = 10.0,
@@ -87,6 +88,15 @@ open class ContextStateDelegate(
 
     fun getLineWidth(): Double {
         return currentState.strokeWidth
+    }
+
+    fun getImageSmoothingEnabled(): Boolean {
+        return currentState.imageSmoothingEnabled
+    }
+
+    override fun setImageSmoothingEnabled(enabled: Boolean) {
+        log { "setImageSmoothingEnabled($enabled)" }
+        currentState.imageSmoothingEnabled = enabled
     }
 
 
@@ -296,6 +306,7 @@ open class ContextStateDelegate(
     private data class StateEntry(
         var strokeColor: Color,
         var strokeWidth: Double,
+        var imageSmoothingEnabled: Boolean,
         var lineDashPattern: List<Double>,
         var lineDashOffset: Double,
         var miterLimit: Double,

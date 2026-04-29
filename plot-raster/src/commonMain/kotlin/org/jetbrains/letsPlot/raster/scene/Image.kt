@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.canvas.Context2d
 
 internal class Image : Node() {
     var preserveRatio: Boolean by variableAttr(false)
+    var imageSmoothingEnabled: Boolean by variableAttr(false)
     var x: Float by variableAttr(0f)
     var y: Float by variableAttr(0f)
     var width: Float by variableAttr(0f)
@@ -29,6 +30,7 @@ internal class Image : Node() {
 
     override fun render(ctx: Context2d) {
         val snapshot = snapshot ?: return
+        ctx.setImageSmoothingEnabled(imageSmoothingEnabled)
         if (preserveRatio) {
             ctx.drawImage(snapshot, x.toDouble(), y.toDouble())
         } else {
@@ -48,6 +50,7 @@ internal class Image : Node() {
         val CLASS = ATTRIBUTE_REGISTRY.addClass(Image::class)
 
         val PreserveRatioAttrSpec = CLASS.registerVariableAttr(Image::preserveRatio, affectsBBox = false)
+        val ImageSmoothingEnabledAttrSpec = CLASS.registerVariableAttr(Image::imageSmoothingEnabled, affectsBBox = false)
         val XAttrSpec = CLASS.registerVariableAttr(Image::x, affectsBBox = true)
         val YAttrSpec = CLASS.registerVariableAttr(Image::y, affectsBBox = true)
         val WidthAttrSpec = CLASS.registerVariableAttr(Image::width, affectsBBox = true)

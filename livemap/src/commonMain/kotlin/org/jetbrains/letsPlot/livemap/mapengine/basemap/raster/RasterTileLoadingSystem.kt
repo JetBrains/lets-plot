@@ -107,6 +107,7 @@ class RasterTileLoadingSystem(
                 // Scale the image to fit the tile size, e.g.:
                 // For DPI=2 and image 256x256, the resulting tile will be 512x512 pixels.
                 // For DPI=1 and image 512x512, the resulting tile will be 256x256 pixels.
+                tileCanvas.context2d.setImageSmoothingEnabled(true)
                 tileCanvas.context2d.drawImage(
                     snapshot = imageSnapshot,
                     x = 0.0,
