@@ -16,4 +16,8 @@ internal class BlankLegendKeyElementFactory() :
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
         return SvgGElement()
     }
+
+    override fun minimumKeySize(p: DataPointAesthetics): DoubleVector {
+        return DoubleVector.ZERO
+    }
 }

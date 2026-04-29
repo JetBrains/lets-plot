@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.legend.GenericLegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 
@@ -17,7 +16,7 @@ class LiveMapGeom : Geom {
     private var liveMapData: LiveMapProvider.LiveMapData? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = GenericLegendKeyElementFactory()
+        get() = BlankLegendKeyElementFactory()
 
     override fun build(
         root: SvgRoot,
