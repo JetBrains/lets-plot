@@ -38,6 +38,7 @@ class LatexTest(
         registerTest(::`geom_text renders multiline labels with latex formulas for different vjust values`)
         registerTest(::`geom_label renders multiline labels with latex formulas for different vjust values`)
     }
+
     fun `latex symbols`(): Bitmap {
         val greekLetters = listOf(
             "Alpha",
@@ -91,18 +92,18 @@ class LatexTest(
         )
         val operations = listOf(
             "pm",
-            //"mp",     // Maps to U+2213 (`∓`), but the bundled platf-awt Noto fonts don't have this glyph
+            //"mp",     // Maps to U+2213 (`∓`), but the bundled Noto fonts used by the AWT and Magick backends don't have this glyph
             "times",
             "div",
             "cdot",
         )
         val relations = emptyList<String>(
-            //"leq",    // The bundled platf-awt Noto fonts don't have this glyph
-            //"geq",    // The bundled platf-awt Noto fonts don't have this glyph
-            //"neq",    // The bundled platf-awt Noto fonts don't have this glyph
+            //"leq",    // The bundled Noto fonts used by the AWT and Magick backends don't have this glyph
+            //"geq",    // The bundled Noto fonts used by the AWT and Magick backends don't have this glyph
+            //"neq",    // The bundled Noto fonts used by the AWT and Magick backends don't have this glyph
         )
         val miscellaneous = emptyList<String>(
-            //"infty",  // The bundled platf-awt Noto fonts don't have this glyph
+            //"infty",  // The bundled Noto fonts used by the AWT and Magick backends don't have this glyph
         )
         val symbols = greekLetters + operations + relations + miscellaneous
         val cols = 12
