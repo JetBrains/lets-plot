@@ -37,7 +37,7 @@ class RichTextLineMetricsTest {
 
         assertThat(lineMetrics).containsExactly(
             LineMetrics(16.0, 0.0),
-            LineMetrics(24.0, 8.0)
+            LineMetrics(23.36, 12.16)
         )
     }
 
@@ -49,7 +49,7 @@ class RichTextLineMetricsTest {
         ).map(LineDimensions::metrics)
 
         assertThat(lineMetrics).containsExactly(
-            LineMetrics(24.0, 8.0),
+            LineMetrics(23.36, 12.16),
             LineMetrics(16.0, 0.0)
         )
     }

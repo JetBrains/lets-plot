@@ -214,16 +214,16 @@ object TestUtil {
                     }
                     Shift.NUMERATOR -> {
                         size = sizeByLevel(level)
-                        dy = -0.5
+                        dy = -0.46
                     }
                     Shift.DENOMINATOR -> {
                         size = sizeByLevel(level)
-                        dy = 1.0
+                        dy = 1.22
                     }
                     Shift.FRACTION_BAR -> {
                         shiftsStack.addLast(Shift.FRACTION_BAR)
                         size = sizeByLevel(level)
-                        dy = -0.5
+                        dy = -0.66
                     }
                     Shift.REVERT -> {
                         size = sizeByLevel(level)
@@ -237,7 +237,7 @@ object TestUtil {
                                 dy = -0.4
                             }
                             Shift.FRACTION_BAR -> {
-                                dy = null
+                                dy = -0.1
                             }
                             else -> IllegalStateException("Unbalanced shift stack")
                         }

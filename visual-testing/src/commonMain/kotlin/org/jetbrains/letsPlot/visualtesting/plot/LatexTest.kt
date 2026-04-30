@@ -714,7 +714,7 @@ class LatexTest(
                       "mapping": {},
                       "data_meta": {},
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 10.0,
                       "color": "blue",
                       "hjust": "left"
@@ -756,7 +756,7 @@ class LatexTest(
                       "mapping": {},
                       "data_meta": {},
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 10.0,
                       "color": "blue",
                       "hjust": "center"
@@ -798,7 +798,7 @@ class LatexTest(
                       "mapping": {},
                       "data_meta": {},
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 10.0,
                       "color": "blue",
                       "hjust": "right"
@@ -3147,7 +3147,7 @@ class LatexTest(
                       "data_meta": {},
                       "nudge_x": -0.2,
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 10.0,
                       "color": "blue"
                     }
@@ -3189,7 +3189,7 @@ class LatexTest(
                       "data_meta": {},
                       "nudge_x": 0.0,
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 10.0,
                       "color": "blue"
                     }
@@ -3231,7 +3231,7 @@ class LatexTest(
                       "data_meta": {},
                       "nudge_x": 0.2,
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 10.0,
                       "color": "blue"
                     }
@@ -5296,7 +5296,7 @@ class LatexTest(
                       "data_meta": {},
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 0.5,
                       "color": "blue",
                       "hjust": "left"
@@ -5347,7 +5347,7 @@ class LatexTest(
                       "data_meta": {},
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 0.5,
                       "color": "blue",
                       "hjust": "center"
@@ -5398,7 +5398,7 @@ class LatexTest(
                       "data_meta": {},
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 0.5,
                       "color": "blue",
                       "hjust": "right"
@@ -7762,7 +7762,7 @@ class LatexTest(
                       "nudge_x": -0.2,
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 0.5,
                       "color": "blue"
                     }
@@ -7813,7 +7813,7 @@ class LatexTest(
                       "nudge_x": 0.0,
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 0.5,
                       "color": "blue"
                     }
@@ -7864,7 +7864,7 @@ class LatexTest(
                       "nudge_x": 0.2,
                       "size_unit": "y",
                       "x": 0.0,
-                      "label": "\\(\\frac{a}{b}\\)",
+                      "label": "\\(\\frac{g}{h}\\)",
                       "size": 0.5,
                       "color": "blue"
                     }
@@ -10247,7 +10247,7 @@ class LatexTest(
                     }
                   },
                   "ggtitle": {
-                    "text": "\\(\\frac{a}{b}\\)",
+                    "text": "\\(\\frac{g}{h}\\)",
                     "subtitle": "hjust=0.2"
                   },
                   "kind": "plot",
@@ -10300,7 +10300,7 @@ class LatexTest(
                     }
                   },
                   "ggtitle": {
-                    "text": "\\(\\frac{a}{b}\\)",
+                    "text": "\\(\\frac{g}{h}\\)",
                     "subtitle": "hjust=0.5"
                   },
                   "kind": "plot",
@@ -10353,7 +10353,7 @@ class LatexTest(
                     }
                   },
                   "ggtitle": {
-                    "text": "\\(\\frac{a}{b}\\)",
+                    "text": "\\(\\frac{g}{h}\\)",
                     "subtitle": "hjust=0.8"
                   },
                   "kind": "plot",

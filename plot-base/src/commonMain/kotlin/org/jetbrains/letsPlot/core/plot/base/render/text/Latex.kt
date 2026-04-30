@@ -362,6 +362,18 @@ internal class Latex(
         private val denominator: LatexNode,
         level: Int
     ) : LatexNode(listOf(numerator, denominator), level) {
+        private val barGlyphOffset = 0.25
+        // Clearance between the bar and the nearest edge of numerator/denominator (when barBaselineShift == 0).
+        private val fractionGap = 0.01
+        // Workaround: numerator descent is approximated by this constant because LineMetrics.plainText
+        // currently reports (font.size, 0) — i.e. zero descent — for plain text. Once LineMetrics
+        // returns a real descent, replace usages with numerator.estimateLineMetrics(font).descent and
+        // drop this constant.
+        private val empiricalNumeratorDescent = 0.2
+        // Shift the bar baseline below the original line baseline by this amount (em). Redistributes
+        // gap from the numerator side to the denominator side without changing total fraction height.
+        private val barBaselineShift = 0.1
+
         override val visualCharCount: Int = max(numerator.visualCharCount, denominator.visualCharCount)
         override fun estimateNodeWidth(font: Font): Double {
             return max(numerator.estimateWidth(font), denominator.estimateWidth(font))
@@ -370,10 +382,11 @@ internal class Latex(
         override fun estimateLineMetrics(font: Font): LineMetrics {
             val numeratorMetrics = numerator.estimateLineMetrics(font)
             val denominatorMetrics = denominator.estimateLineMetrics(font)
-            val fractionShift = FRACTION_RELATIVE_SHIFT * font.size
+            val numeratorBaselineShift = (barGlyphOffset + fractionGap + empiricalNumeratorDescent) * font.size
+            val denominatorBaselineShift = denominatorMetrics.ascent + (fractionGap - barGlyphOffset) * font.size
             return LineMetrics(
-                ascent = numeratorMetrics.ascent + fractionShift,
-                descent = denominatorMetrics.height - fractionShift
+                ascent = numeratorMetrics.ascent + numeratorBaselineShift,
+                descent = denominatorMetrics.descent + denominatorBaselineShift
             )
         }
 
@@ -382,6 +395,17 @@ internal class Latex(
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font)
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
+
+            // Baseline positions relative to the original line baseline.
+            val numeratorBaselineEm = -(barGlyphOffset + fractionGap + empiricalNumeratorDescent)
+            val denominatorAscentEm = denominator.estimateLineMetrics(font).ascent / max(1, font.size)
+            val denominatorBaselineEm = denominatorAscentEm + fractionGap - barGlyphOffset
+            val numeratorDy = formatEm(numeratorBaselineEm)
+            val denominatorDy = formatEm(denominatorBaselineEm - numeratorBaselineEm)
+            // Bar baseline lands at y = barBaselineShift instead of 0; restoreBaselineTSpan undoes it.
+            val barDy = formatEm(barBaselineShift - denominatorBaselineEm)
+            val restoreDy = formatEm(-barBaselineShift)
+
             // The following 'tspan' element marks the current baseline before the fraction
             val setBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 // The baseline marker should stay at the current x instead of using the fraction center
@@ -391,7 +415,7 @@ internal class Latex(
                 wrappedElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
-                        setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
+                        setAttribute(SvgTextContent.TEXT_DY, numeratorDy)
                     }
                 }.wrap(if (i == 0) { fractionCenter } else { wrappedElement.x })
             }
@@ -399,18 +423,24 @@ internal class Latex(
                 wrappedElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
-                        setAttribute(SvgTextContent.TEXT_DY, "${2 * FRACTION_RELATIVE_SHIFT}em")
+                        setAttribute(SvgTextContent.TEXT_DY, denominatorDy)
                     }
                 }.wrap(if (i == 0) { fractionCenter } else { wrappedElement.x })
             }
             val fractionBarTSpanElement = context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
-                setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
+                setAttribute(SvgTextContent.TEXT_DY, barDy)
                 setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
             }).wrap(fractionCenter)
             val restoreBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
+                setAttribute(SvgTextContent.TEXT_DY, restoreDy)
             }).wrap(prefixWidth + fractionWidth)
             return listOf(setBaselineTSpan) + numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
+        }
+
+        private fun formatEm(value: Double): String {
+            // Round to 4 decimals to keep emitted SVG tidy despite float arithmetic noise.
+            return "${(value * 10000).roundToInt() / 10000.0}em"
         }
     }
 
@@ -447,7 +477,6 @@ internal class Latex(
         private const val INDENT_SIZE_FACTOR = 0.1
         private const val INDEX_SIZE_FACTOR = 0.7
         private const val INDEX_RELATIVE_SHIFT = 0.4
-        private const val FRACTION_RELATIVE_SHIFT = 0.5
         private const val FRACTION_BAR_SYMBOL = "–"
 
         private val GREEK_LETTERS = mapOf(
