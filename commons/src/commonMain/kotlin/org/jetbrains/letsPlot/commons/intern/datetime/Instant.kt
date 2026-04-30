@@ -1,26 +1,26 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.commons.intern.datetime
 
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.Instant as KotlinxInstant
+import kotlin.time.Instant as KotlinInstant
 
 /**
  * Represents specific points in time as milliseconds from the epoch and is timezone-agnostic.
  */
 class Instant : Comparable<Instant> {
     constructor(epochMillis: Long) {
-        this.kotlinxInstant = KotlinxInstant.fromEpochMilliseconds(epochMillis)
+        this.kotlinxInstant = KotlinInstant.fromEpochMilliseconds(epochMillis)
     }
 
-    internal constructor(kotlinxInstant: KotlinxInstant) {
+    internal constructor(kotlinxInstant: KotlinInstant) {
         this.kotlinxInstant = kotlinxInstant
     }
 
-    internal val kotlinxInstant: KotlinxInstant
+    internal val kotlinxInstant: KotlinInstant
 
     fun toEpochMilliseconds(): Long = kotlinxInstant.toEpochMilliseconds()
 

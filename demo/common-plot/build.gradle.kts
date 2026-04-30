@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 @file:OptIn(ExperimentalWasmDsl::class)
 
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
@@ -22,8 +27,6 @@ kotlin {
 
     applyDefaultHierarchyTemplate()
 
-    val kotlinxDatetimeVersion = project.extra["kotlinx.datetime.version"] as String
-
     sourceSets {
         commonMain {
             dependencies {
@@ -35,8 +38,6 @@ kotlin {
                 implementation(project(":plot-builder"))
                 implementation(project(":plot-stem"))
                 implementation(project(":demo-and-test-shared"))
-
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinxDatetimeVersion")
             }
         }
     }

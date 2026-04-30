@@ -1,14 +1,11 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.commons.intern.datetime
 
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.daysUntil
-import kotlinx.datetime.minus
-import kotlinx.datetime.plus
+import kotlinx.datetime.*
 import kotlinx.datetime.LocalDate as KotlinxLocalDate
 
 /**
@@ -30,8 +27,8 @@ class Date : Comparable<Date> {
 
     internal val kotlinxLocalDate: KotlinxLocalDate
 
-    val day: Int get() = kotlinxLocalDate.dayOfMonth
-    val month: Month get() = Month.of(kotlinxLocalDate.monthNumber)
+    val day: Int get() = kotlinxLocalDate.day
+    val month: Month get() = Month.of(kotlinxLocalDate.month.number)
     val year: Int get() = kotlinxLocalDate.year
     val weekDay: WeekDay get() = WeekDay.entries[kotlinxLocalDate.dayOfWeek.ordinal]
 
@@ -67,7 +64,7 @@ class Date : Comparable<Date> {
 
     fun daysFromYearStart(): Int {
         val yearStart = KotlinxLocalDate(year, 1, 1)
-        return kotlinxLocalDate.toEpochDays() - yearStart.toEpochDays()
+        return (kotlinxLocalDate.toEpochDays() - yearStart.toEpochDays()).toInt()
     }
 
     fun daysUntil(other: Date): Int {

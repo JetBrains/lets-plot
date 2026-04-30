@@ -1,14 +1,12 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package demo.plot.shared.model.scale
 
 import demoAndTestShared.parsePlotSpec
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
+import org.jetbrains.letsPlot.commons.intern.datetime.*
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -25,9 +23,10 @@ class DateTimeAnnotation {
     companion object {
         private val TZ = TimeZone.UTC
 
-        private val startInstantMillis = LocalDateTime(2003, 2, 1, 0, 0)
-            .toInstant(TZ)
-            .toEpochMilliseconds()
+        private val startInstantMillis = DateTime(
+            Date(1, Month.FEBRUARY, 2003),
+            Time(0, 0)
+        ).toEpochMilliseconds(TZ)
 
         fun plot(period: Duration): MutableMap<String, Any> {
             val rnd = Random(0)
