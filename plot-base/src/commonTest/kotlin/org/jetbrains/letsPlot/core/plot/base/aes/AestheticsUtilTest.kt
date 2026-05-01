@@ -54,14 +54,14 @@ class AestheticsUtilTest {
     // --- alpha() ---
 
     @Test
-    fun `alpha() with no aesthetic alpha falls back to the color's own alpha`() {
+    fun `no aesthetic alpha falls back to the color's own alpha`() {
         val color = Color(255, 0, 0, 128)
         val p = point(color = color)   // no explicit alpha set
         assertEquals(SvgUtils.alpha2opacity(128), AestheticsUtil.alpha(color, p))
     }
 
     @Test
-    fun `alpha() with explicit aesthetic alpha overrides the color's alpha`() {
+    fun `explicit aesthetic alpha overrides the color's alpha`() {
         val color = Color(255, 0, 0, 128)   // color has its own alpha
         val p = point(color = color, alpha = 0.25)
         assertEquals(0.25, AestheticsUtil.alpha(color, p))
