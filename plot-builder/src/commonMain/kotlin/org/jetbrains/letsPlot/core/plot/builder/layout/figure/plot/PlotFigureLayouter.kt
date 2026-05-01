@@ -78,16 +78,22 @@ internal class PlotFigureLayouter(
 
         return createFigureLayoutInfo(
             figurePreferredSize = outerSize,
-            plotLayoutInfo = layoutInfo
+            plotLayoutInfo = layoutInfo,
+            figureSvgPadding = Thickness.ZERO
         )
     }
 
-    fun layoutByGeomSize(geomSize: DoubleVector, axisSpacer: Thickness): PlotFigureLayoutInfo {
+    fun layoutByGeomSize(
+        geomSize: DoubleVector,
+        axisSpacer: Thickness,
+        figureSvgPadding: Thickness = Thickness.ZERO
+    ): PlotFigureLayoutInfo {
         val plotLayout = createPlotLayout(insideOut = true)
         val layoutInfo = plotLayout.doLayout(geomSize, coordProvider, axisSpacer)
         return createFigureLayoutInfo(
             figurePreferredSize = null,
-            layoutInfo
+            layoutInfo,
+            figureSvgPadding
         )
     }
 
@@ -132,7 +138,8 @@ internal class PlotFigureLayouter(
 
     private fun createFigureLayoutInfo(
         figurePreferredSize: DoubleVector?,
-        plotLayoutInfo: PlotLayoutInfo
+        plotLayoutInfo: PlotLayoutInfo,
+        figureSvgPadding: Thickness
     ): PlotFigureLayoutInfo {
         // Plot size includes geoms, axis and facet labels (no titles, legends).
         val plotSize = plotLayoutInfo.size
@@ -152,8 +159,13 @@ internal class PlotFigureLayouter(
 
         // Position the "entire" plot rect in the center of the "overall" rect.
         // figureLayoutedSize already includes plot margins (via addTitlesAndLegends).
-        val figureLayoutedBounds = if (figurePreferredSize == null) {
-            DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
+        val figureLayoutedBounds: DoubleRectangle
+        val svgBounds: DoubleRectangle
+        if (figurePreferredSize == null) {
+            // The 'inside-out' mode. Offset figureLayoutedBounds by 'svg padding'
+            // so the subplot content is positioned within the larger SVG viewport.
+            svgBounds = DoubleRectangle(DoubleVector.ZERO, figureSvgPadding.inflateSize(figureLayoutedSize))
+            figureLayoutedBounds = DoubleRectangle(figureSvgPadding.leftTop, figureLayoutedSize)
         } else {
             val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
             val delta = figurePreferredBounds.center.subtract(
@@ -161,10 +173,11 @@ internal class PlotFigureLayouter(
             )
             val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
 
-            DoubleRectangle(
+            figureLayoutedBounds = DoubleRectangle(
                 figurePreferredBounds.origin.add(deltaApplied),
                 figureLayoutedSize
             )
+            svgBounds = figureLayoutedBounds
         }
 
         val figureBoundsWithoutTitlesTagsAndMargins = run {
@@ -213,12 +226,13 @@ internal class PlotFigureLayouter(
         return PlotFigureLayoutInfo(
             figureLayoutedBounds = figureLayoutedBounds,
             figureBoundsWithoutTitlesTagsAndMargins = figureBoundsWithoutTitlesTagsAndMargins,
+            figureSvgBounds = svgBounds,
             plotAreaOrigin = plotOrigin,
             geomOuterBounds = geomOuterBounds,
             geomContentBounds = geomContentBounds,
-            figurePreferredSize = figurePreferredSize ?: figureLayoutedBounds.dimension,
+            figurePreferredSize = figurePreferredSize ?: svgBounds.dimension,
             plotLayoutInfo = plotLayoutInfo,
-            legendsBlockInfo = legendsBlockInfo
+            legendsBlockInfo = legendsBlockInfo,
         )
     }
 }

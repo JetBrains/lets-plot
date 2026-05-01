@@ -16,6 +16,7 @@ class PlotFigureBuildInfo constructor(
     private val plotAssembler: PlotAssembler,
     private val processedPlotSpec: Map<String, Any>,
     override val bounds: DoubleRectangle,
+    override val svgBounds: DoubleRectangle,
     override val computationMessages: List<String>,
 ) : FigureBuildInfo {
 
@@ -45,7 +46,7 @@ class PlotFigureBuildInfo constructor(
         return PlotSvgRoot(
             plotSvgComponent,
             liveMapCursorServiceConfig = if (containsLiveMap) liveMapCursorServiceConfig else null,
-            bounds.origin
+            svgBounds.origin
         )
     }
 
@@ -54,7 +55,10 @@ class PlotFigureBuildInfo constructor(
             this
         } else {
             // this drops 'layout info' if initialized.
-            makeCopy(bounds)
+            makeCopy(
+                newBounds = bounds,
+                newSvgBounds = bounds
+            )
         }
     }
 
@@ -66,26 +70,41 @@ class PlotFigureBuildInfo constructor(
         }
     }
 
-    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle, axisSpacer: Thickness): FigureBuildInfo {
+    override fun layoutedByGeomBounds(
+        geomBounds: DoubleRectangle,
+        axisSpacer: Thickness,
+        figureSvgPadding: Thickness
+    ): PlotFigureBuildInfo {
         // `geomBounds` is the target *content* area (actual plotting area).
-        val layoutInfo = plotAssembler.layoutByGeomSize(geomBounds.dimension, axisSpacer)
+        val layoutInfo = plotAssembler.layoutByGeomSize(geomBounds.dimension, axisSpacer, figureSvgPadding)
         val oldCenter = geomBounds.center
         val newCenter = layoutInfo.geomContentBounds.center
         val delta = newCenter.subtract(oldCenter)
-        val newOrigin = this.bounds.origin.subtract(delta)
-        val newSize = layoutInfo.figureLayoutedBounds.dimension
-        val newBounds = DoubleRectangle(newOrigin, newSize)
+        val newBounds = DoubleRectangle(
+            origin = this.bounds.origin.subtract(delta),
+            dimension = layoutInfo.figureLayoutedBounds.dimension
+        )
+        val newSvgBounds = DoubleRectangle(
+            origin = this.svgBounds.origin.subtract(delta),
+            dimension = layoutInfo.figureSvgBounds.dimension
+        )
 
-        return makeCopy(newBounds).apply {
+        return makeCopy(newBounds, newSvgBounds).apply {
             this._layoutInfo = layoutInfo
         }
     }
 
-    private fun makeCopy(newBounds: DoubleRectangle? = null): PlotFigureBuildInfo {
+    private fun makeCopy(
+        newBounds: DoubleRectangle? = null,
+        newSvgBounds: DoubleRectangle? = null
+    ): PlotFigureBuildInfo {
+        val bounds = newBounds ?: this.bounds
+        val svgBounds = newSvgBounds ?: this.svgBounds
         val newBuildInfo = PlotFigureBuildInfo(
             plotAssembler,
             processedPlotSpec,
-            newBounds ?: this.bounds,
+            bounds = bounds,
+            svgBounds = svgBounds,
             computationMessages,
         )
 

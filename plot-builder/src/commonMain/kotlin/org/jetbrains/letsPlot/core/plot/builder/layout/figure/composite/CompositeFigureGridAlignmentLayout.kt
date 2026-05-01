@@ -37,8 +37,12 @@ class CompositeFigureGridAlignmentLayout(
     scaleShareX = scaleShareX,
     scaleShareY = scaleShareY,
 ) {
-    override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
-        val elementsWithBounds = toElelemtsWithInitialBounds(bounds, elements)
+    override fun doLayout(
+        elementsSpace: DoubleRectangle,
+        elements: List<FigureBuildInfo?>,
+        outerBounds: DoubleRectangle
+    ): List<FigureBuildInfo?> {
+        val elementsWithBounds = toElementsWithInitialBounds(elementsSpace, elements)
 
         val elementsLayoutedByBounds = elementsWithBounds.map {
             it?.layoutedByOuterSize()

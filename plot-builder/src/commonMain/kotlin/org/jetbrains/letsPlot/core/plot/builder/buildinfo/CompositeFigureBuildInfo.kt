@@ -35,6 +35,7 @@ class CompositeFigureBuildInfo constructor(
 ) : FigureBuildInfo {
 
     override val isComposite: Boolean = true
+    override val svgBounds: DoubleRectangle = bounds
 
     override val layoutInfo: CompositeFigureLayoutInfo
         get() = _layoutInfo
@@ -67,7 +68,7 @@ class CompositeFigureBuildInfo constructor(
             theme = theme,
             styleSheet = Style.fromTheme(theme, flippedAxis = false),
         )
-        return CompositeFigureSvgRoot(svgComponent, bounds, isDeck = layout is CompositeFigureDeckLayout)
+        return CompositeFigureSvgRoot(svgComponent, svgBounds, isDeck = layout is CompositeFigureDeckLayout)
     }
 
     override fun withBounds(bounds: DoubleRectangle): CompositeFigureBuildInfo {
@@ -111,7 +112,7 @@ class CompositeFigureBuildInfo constructor(
             theme = theme.legend()
         )
 
-        val layoutedElements = layout.doLayout(elementsAreaBounds, elements)
+        val layoutedElements = layout.doLayout(elementsAreaBounds, elements, outerBounds = outerBounds)
         val layoutedElementsAreaBounds = layoutedElements.filterNotNull()
             .map { it.bounds }
             .reduceOrNull { acc, el -> acc.union(el) }
@@ -135,7 +136,7 @@ class CompositeFigureBuildInfo constructor(
         }
     }
 
-    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle, axisSpacers: Thickness): CompositeFigureBuildInfo {
+    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle, axisSpacer: Thickness, figureSvgPadding: Thickness): CompositeFigureBuildInfo {
         UNSUPPORTED("Composite figure does not support layouting by \"geometry bounds\".")
     }
 

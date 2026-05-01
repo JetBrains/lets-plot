@@ -15,6 +15,12 @@ class PlotFigureLayoutInfo constructor(
     val figureLayoutedBounds: DoubleRectangle,
     val figureBoundsWithoutTitlesTagsAndMargins: DoubleRectangle,
     /**
+     * Physical SVG viewport bounds.
+     * For ggdeck subplots, this covers the entire deck area.
+     * For all other cases, equals `figureLayoutedBounds`.
+     */
+    val figureSvgBounds: DoubleRectangle,
+    /**
      * Origin of the plot area: geoms, axis and facet labels.
      * I.e., the inner bounds origin - all without titles and legends.
      * Relative to the figure origin (see `figureLayoutedBounds`)

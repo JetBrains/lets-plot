@@ -160,8 +160,8 @@ class PlotAssembler constructor(
         return layouter.layoutByOuterSize(size)
     }
 
-    fun layoutByGeomSize(size: DoubleVector, axisSpacer: Thickness): PlotFigureLayoutInfo {
-        return layouter.layoutByGeomSize(size, axisSpacer)
+    fun layoutByGeomSize(size: DoubleVector, axisSpacer: Thickness, figureSvgPadding: Thickness = Thickness.ZERO): PlotFigureLayoutInfo {
+        return layouter.layoutByGeomSize(size, axisSpacer, figureSvgPadding)
     }
 
     fun createPlot(figureLayoutInfo: PlotFigureLayoutInfo): PlotSvgComponent {

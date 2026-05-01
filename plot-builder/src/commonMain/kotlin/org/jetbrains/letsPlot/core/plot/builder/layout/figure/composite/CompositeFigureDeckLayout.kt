@@ -36,10 +36,14 @@ class CompositeFigureDeckLayout(
 
     override fun defaultSize(): DoubleVector = DEF_PLOT_SIZE
 
-    override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
+    override fun doLayout(
+        elementsSpace: DoubleRectangle,
+        elements: List<FigureBuildInfo?>,
+        outerBounds: DoubleRectangle
+    ): List<FigureBuildInfo?> {
         // Initial layout: all elements get the same outer bounds.
         val layouted = elements.map { element ->
-            element?.withBounds(bounds)?.layoutedByOuterSize()
+            element?.withBounds(elementsSpace)?.layoutedByOuterSize()
         }
 
         // Compute the common geom content area as the intersection of all plot geom content bounds.
@@ -112,15 +116,28 @@ class CompositeFigureDeckLayout(
         }
         val adjustedGeomContentBounds = totalSpacer.shrinkRect(commonGeomContentBounds)
 
-        // Re-layout each plot element so its content area matches the adjusted common rect.
+        // Re-layout each plot element so its content area matches the adjusted common rect,
+        // and inflate each subplot's SVG to fill the entire deck bounds.
         var plotIdx = 0
-        return layouted.map { buildInfo ->
+        val axisSpacerByElement = layouted.map { buildInfo ->
+            if (buildInfo is PlotFigureBuildInfo) axisSpacerByPlot[plotIdx++] else Thickness.ZERO
+        }
+        return layouted.mapIndexed { i, buildInfo ->
             when (buildInfo) {
                 null -> null
-                is PlotFigureBuildInfo -> buildInfo.layoutedByGeomBounds(
-                    geomBounds = adjustedGeomContentBounds,
-                    axisSpacer = axisSpacerByPlot[plotIdx++]
-                )
+                is PlotFigureBuildInfo -> {
+                    val layoutedByGeomBounds = buildInfo.layoutedByGeomBounds(
+                        geomBounds = adjustedGeomContentBounds,
+                        axisSpacer = axisSpacerByElement[i]
+                    )
+                    // Inflate each subplot's SVG
+                    val svgPadding = Thickness.diff(from = outerBounds, to = layoutedByGeomBounds.bounds)
+                    buildInfo.layoutedByGeomBounds(
+                        geomBounds = adjustedGeomContentBounds,
+                        axisSpacer = axisSpacerByElement[i],
+                        figureSvgPadding = svgPadding
+                    )
+                }
 
                 else -> buildInfo
             }
