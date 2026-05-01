@@ -401,8 +401,8 @@ open class GeomHelper(
             p: DataPointAesthetics,
             applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH
         ) {
-            val resolvedStroke = AestheticsUtil.resolveColor(p.color()!!, p, applyAlphaToAll)
-            val resolvedFill = AestheticsUtil.resolveColor(p.fill()!!, p, applyAlpha = true)
+            val resolvedStroke = AestheticsUtil.resolveColor(p, applyAlphaToAll)
+            val resolvedFill = AestheticsUtil.resolveFill(p)
 
             shape.setFill(resolvedFill.color, resolvedFill.opacity)
             shape.setStroke(resolvedStroke.color, resolvedStroke.opacity)

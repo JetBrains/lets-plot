@@ -72,28 +72,28 @@ class AestheticsUtilTest {
     @Test
     fun `resolveColor always strips alpha from the returned color object`() {
         val color = Color(255, 0, 0, 128)
-        val resolved = AestheticsUtil.resolveColor(color, point(color = color), applyAlpha = true)
+        val resolved = AestheticsUtil.resolveColor(point(color = color), applyAlpha = true)
         assertEquals(255, resolved.color.alpha)
     }
 
     @Test
     fun `resolveColor applyAlpha=true no explicit alpha - opacity comes from color`() {
         val color = Color(255, 0, 0, 128)
-        val resolved = AestheticsUtil.resolveColor(color, point(color = color), applyAlpha = true)
+        val resolved = AestheticsUtil.resolveColor(point(color = color), applyAlpha = true)
         assertEquals(SvgUtils.alpha2opacity(128), resolved.opacity)
     }
 
     @Test
     fun `resolveColor applyAlpha=true explicit alpha - opacity comes from aesthetic`() {
         val color = Color(255, 0, 0, 128)
-        val resolved = AestheticsUtil.resolveColor(color, point(color = color, alpha = 0.25), applyAlpha = true)
+        val resolved = AestheticsUtil.resolveColor(point(color = color, alpha = 0.25), applyAlpha = true)
         assertEquals(0.25, resolved.opacity)
     }
 
     @Test
     fun `resolveColor applyAlpha=false always uses color's alpha regardless of aesthetic`() {
         val color = Color(255, 0, 0, 128)
-        val resolved = AestheticsUtil.resolveColor(color, point(color = color, alpha = 0.25), applyAlpha = false)
+        val resolved = AestheticsUtil.resolveColor(point(color = color, alpha = 0.25), applyAlpha = false)
         assertEquals(SvgUtils.alpha2opacity(128), resolved.opacity)
     }
 
