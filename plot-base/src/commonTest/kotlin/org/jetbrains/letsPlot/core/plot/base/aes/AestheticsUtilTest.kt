@@ -70,54 +70,23 @@ class AestheticsUtilTest {
     // --- resolveColor() ---
 
     @Test
-    fun `resolveColor always strips alpha from the returned color object`() {
+    fun `resolveColor applyAlpha=true no explicit alpha - alpha comes from color`() {
         val color = Color(255, 0, 0, 128)
         val resolved = AestheticsUtil.resolveColor(point(color = color), applyAlpha = true)
-        assertEquals(255, resolved.color.alpha)
+        assertEquals(128, resolved.alpha)
     }
 
     @Test
-    fun `resolveColor applyAlpha=true no explicit alpha - opacity comes from color`() {
-        val color = Color(255, 0, 0, 128)
-        val resolved = AestheticsUtil.resolveColor(point(color = color), applyAlpha = true)
-        assertEquals(SvgUtils.alpha2opacity(128), resolved.opacity)
-    }
-
-    @Test
-    fun `resolveColor applyAlpha=true explicit alpha - opacity comes from aesthetic`() {
+    fun `resolveColor applyAlpha=true explicit alpha - alpha comes from aesthetic`() {
         val color = Color(255, 0, 0, 128)
         val resolved = AestheticsUtil.resolveColor(point(color = color, alpha = 0.25), applyAlpha = true)
-        assertEquals(0.25, resolved.opacity)
+        assertEquals(64, resolved.alpha)
     }
 
     @Test
     fun `resolveColor applyAlpha=false always uses color's alpha regardless of aesthetic`() {
         val color = Color(255, 0, 0, 128)
         val resolved = AestheticsUtil.resolveColor(point(color = color, alpha = 0.25), applyAlpha = false)
-        assertEquals(SvgUtils.alpha2opacity(128), resolved.opacity)
-    }
-
-    // --- composeColor() ---
-
-    @Test
-    fun `composeColor encodes opacity back into the alpha channel`() {
-        val resolved = AestheticsUtil.ResolvedColor(color = Color.RED, opacity = 0.5)
-        val composed = AestheticsUtil.composeColor(resolved)
-        assertEquals(128, composed.alpha)   // roundToInt(0.5 * 255) = 128
-        assertEquals(Color.RED.red, composed.red)
-        assertEquals(Color.RED.green, composed.green)
-        assertEquals(Color.RED.blue, composed.blue)
-    }
-
-    @Test
-    fun `composeColor with opacity 0 gives fully transparent color`() {
-        val resolved = AestheticsUtil.ResolvedColor(color = Color.RED, opacity = 0.0)
-        assertEquals(0, AestheticsUtil.composeColor(resolved).alpha)
-    }
-
-    @Test
-    fun `composeColor with opacity 1 gives fully opaque color`() {
-        val resolved = AestheticsUtil.ResolvedColor(color = Color(255, 0, 0, 0), opacity = 1.0)
-        assertEquals(255, AestheticsUtil.composeColor(resolved).alpha)
+        assertEquals(128, resolved.alpha)
     }
 }

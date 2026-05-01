@@ -116,15 +116,15 @@ object DemoModelA {
         var i = 20.0
         while (i < 400) {
             val line = SvgSlimElements.line(i, 0.0, i, 200.0)
-            line.setStroke(Color.LIGHT_GREEN, 1.0)
+            line.setStroke(Color.LIGHT_GREEN)
             line.setStrokeWidth(20.0)
             line.appendTo(slimGroup)
             i += 40
         }
 
         val ellipse = SvgSlimElements.circle(300.0, 60.0, 50.0)
-        ellipse.setFill(Color.LIGHT_YELLOW, 1.0)
-        ellipse.setStroke(Color.DARK_BLUE, 1.0)
+        ellipse.setFill(Color.LIGHT_YELLOW)
+        ellipse.setStroke(Color.DARK_BLUE)
         ellipse.setStrokeWidth(3.0)
         ellipse.appendTo(slimGroup)
 
@@ -134,14 +134,14 @@ object DemoModelA {
                 175.0
             )
         )
-        path.setFill(Color.CYAN, 1.0)
-        path.setStroke(Color.DARK_GREEN, 1.0)
+        path.setFill(Color.CYAN)
+        path.setStroke(Color.DARK_GREEN)
         path.setStrokeWidth(2.0)
         path.appendTo(slimGroup)
 
         val rect = SvgSlimElements.rect(160.0, 50.0, 80.0, 50.0)
-        rect.setFill(Color.LIGHT_MAGENTA, 1.0)
-        rect.setStroke(Color.DARK_MAGENTA, 1.0)
+        rect.setFill(Color.LIGHT_MAGENTA)
+        rect.setStroke(Color.DARK_MAGENTA)
         rect.setStrokeWidth(1.0)
         rect.appendTo(slimGroup)
 

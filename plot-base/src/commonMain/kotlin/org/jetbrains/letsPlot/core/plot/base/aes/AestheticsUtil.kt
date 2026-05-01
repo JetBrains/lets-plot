@@ -16,11 +16,6 @@ object AestheticsUtil {
     //affects bar, smooth, area and ribbon
     internal const val ALPHA_CONTROLS_BOTH = false
 
-    data class ResolvedColor(
-        val color: Color,
-        val opacity: Double
-    )
-
     fun isExplicitAlphaValue(alpha: Double?): Boolean {
         return alpha != null && alpha != AesInitValue.DEFAULT_ALPHA
     }
@@ -50,46 +45,38 @@ object AestheticsUtil {
         strokeWidth: Double,
         transform: SvgTransform?
     ) {
-        val fill = fill(filled, solid, p)
         val stroke = p.color()!!
 
-        var fillAlpha = 0.0
-        if (filled || solid) {
-            fillAlpha = alpha(fill, p)
+        val resolvedFill = if (filled || solid) {
+            applyAlpha(fill(filled, solid, p), p)
+        } else {
+            Color.TRANSPARENT
         }
 
-        var strokeAlpha = 0.0
-        if (strokeWidth > 0) {
-            strokeAlpha = alpha(stroke, p)
+        val resolvedStroke = if (strokeWidth > 0) {
+            applyAlpha(stroke, p)
+        } else {
+            stroke.changeAlpha(0)
         }
 
-        shape.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
+        shape.update(resolvedFill, resolvedStroke, strokeWidth, transform)
     }
 
     fun alpha(color: Color, p: DataPointAesthetics): Double {
         return explicitAlpha(p) ?: SvgUtils.alpha2opacity(color.alpha)
     }
 
-    private fun resolveColor(color: Color, explicitAlpha: Double?): ResolvedColor {
-        return ResolvedColor(
-            color = color.changeAlpha(255),
-            opacity = explicitAlpha ?: SvgUtils.alpha2opacity(color.alpha)
-        )
+    fun applyAlpha(color: Color, p: DataPointAesthetics): Color {
+        return explicitAlpha(p)?.let(color::changeAlpha) ?: color
     }
 
-    fun resolveColor(p: DataPointAesthetics, applyAlpha: Boolean): ResolvedColor {
-        return resolveColor(
-            color = p.color()!!,
-            explicitAlpha = if (applyAlpha) explicitAlpha(p) else null
-        )
+    fun resolveColor(p: DataPointAesthetics, applyAlpha: Boolean): Color {
+        val color = p.color()!!
+        return if (applyAlpha) applyAlpha(color, p) else color
     }
 
-    fun resolveFill(p: DataPointAesthetics): ResolvedColor {
-        return resolveColor(p.fill()!!, explicitAlpha(p))
-    }
-
-    fun composeColor(resolvedColor: ResolvedColor): Color {
-        return resolvedColor.color.changeAlpha(resolvedColor.opacity)
+    fun resolveFill(p: DataPointAesthetics): Color {
+        return applyAlpha(p.fill()!!, p)
     }
 
     fun strokeWidth(p: DataPointAesthetics) = AesScaling.strokeWidth(p)
@@ -110,13 +97,11 @@ object AestheticsUtil {
 
     fun updateStroke(shape: SvgShape, p: DataPointAesthetics, applyAlpha: Boolean) {
         val resolvedStroke = resolveColor(p, applyAlpha)
-        shape.strokeColor().set(resolvedStroke.color)
-        shape.strokeOpacity().set(resolvedStroke.opacity)
+        shape.strokeColor().set(resolvedStroke)
     }
 
     fun updateFill(shape: SvgShape, p: DataPointAesthetics) {
         val resolvedFill = resolveFill(p)
-        shape.fillColor().set(resolvedFill.color)
-        shape.fillOpacity().set(resolvedFill.opacity)
+        shape.fillColor().set(resolvedFill)
     }
 }

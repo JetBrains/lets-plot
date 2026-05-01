@@ -26,14 +26,12 @@ abstract class SingletonGlyph : Glyph {
 
     override fun update(
         fill: Color,
-        fillAlpha: Double,
         stroke: Color,
-        strokeAlpha: Double,
         strokeWidth: Double,
         transform: SvgTransform?
     ) {
-        myShape.setFill(fill, fillAlpha)
-        myShape.setStroke(stroke, strokeAlpha)
+        myShape.setFill(fill)
+        myShape.setStroke(stroke)
         myShape.setStrokeWidth(strokeWidth)
         transform?.let { myShape.setTransform(it) }
     }

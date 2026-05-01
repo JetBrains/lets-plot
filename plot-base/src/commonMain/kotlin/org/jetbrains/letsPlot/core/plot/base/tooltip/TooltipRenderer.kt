@@ -83,7 +83,7 @@ class TooltipRenderer(
         fadeEffectRect = SvgRectElement().apply {
             width().set(0.0)
             height().set(0.0)
-            fillColor().set(plotBackground.changeAlpha((255 * 0.7).toInt()))
+            fillColor().set(plotBackground.changeAlpha(0.7))
             visibility().set(Visibility.HIDDEN)
             decorationLayer.children().add(0, this)
         }

@@ -100,7 +100,7 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
 
         fun defaultColor(v: Color, alpha: Double?): HintConfigFactory {
             myDefaultColor = if (alpha != null) {
-                v.changeAlpha((255 * alpha).toInt())
+                v.changeAlpha(alpha)
             } else {
                 v
             }

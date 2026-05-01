@@ -151,8 +151,7 @@ object TextUtil {
 
     fun decorate(label: Label, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
         val resolvedColor = AestheticsUtil.resolveColor(p, applyAlpha)
-        label.textColor().set(resolvedColor.color)
-        label.setTextOpacity(resolvedColor.opacity)
+        label.textColor().set(resolvedColor)
 
         label.setFontSize(fontSize(p, scale))
         label.setLineHeight(lineheight(p, scale))

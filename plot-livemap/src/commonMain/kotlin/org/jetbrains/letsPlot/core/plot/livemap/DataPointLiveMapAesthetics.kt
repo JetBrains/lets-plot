@@ -109,7 +109,7 @@ internal class DataPointLiveMapAesthetics {
     val angle get() = myP.angle()!!
     val shape get() = myP.shape()!!.code
     val size get() = AestheticsUtil.textSize(myP)
-    val fillColor get() = colorWithAlpha(myP.fill()!!)
+    val fillColor get() = AestheticsUtil.resolveFill(myP)
     val label get() = myP.label()?.toString() ?: "n/a"
     val lineheight get() = myP.lineheight()!!
 
@@ -179,7 +179,7 @@ internal class DataPointLiveMapAesthetics {
     val strokeColor
         get() = when (myLayerKind) {
             POLYGON, PIE -> myP.color()!!
-            else -> colorWithAlpha(myP.color()!!)
+            else -> AestheticsUtil.resolveColor(myP, applyAlpha = true)
         }
 
     private fun pointRadius(size: Double) = ceil(size / 2.0)
@@ -200,7 +200,7 @@ internal class DataPointLiveMapAesthetics {
         }
 
     val fillArray: List<Color>
-        get() = myFillArray.map(::colorWithAlpha)
+        get() = myFillArray.map { AestheticsUtil.applyAlpha(it, myP) }
 
     val sizeStart
         get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeStart)).px * 2.0
@@ -243,10 +243,6 @@ internal class DataPointLiveMapAesthetics {
 
     val clockwise: Boolean
         get() = myPieOptions?.clockwise != false
-
-    private fun colorWithAlpha(color: Color): Color {
-        return color.changeAlpha((AestheticsUtil.alpha(color, myP) * 255).toInt())
-    }
 
     fun setArrowSpec(arrowSpec: ArrowSpec?): DataPointLiveMapAesthetics {
         myPlotArrowSpec = arrowSpec

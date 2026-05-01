@@ -92,8 +92,7 @@ class RasterGeom : GeomBase() {
         for (p in dataPoints) {
             val x = p.x()
             val y = p.y()
-            val color = p.fill()!!
-            val alpha = AestheticsUtil.alpha(color, p)
+            val color = AestheticsUtil.resolveFill(p)
 
             var col = round((x!! - x0) / stepX).toInt()
             var row = round((y!! - y0) / stepY).toInt()
@@ -106,7 +105,7 @@ class RasterGeom : GeomBase() {
                 row = rows - (row + 1)
             }
 
-            argbValues[row * cols + col] = SvgUtils.toARGB(color, alpha)
+            argbValues[row * cols + col] = SvgUtils.toARGB(color)
         }
 
         val bitmap = Bitmap(cols, rows, argbValues)

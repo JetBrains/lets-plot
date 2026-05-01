@@ -41,17 +41,17 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
         internal val ATTR_COUNT = ATTR_KEYS.size
     }
 
-    override fun setFill(c: Color, alpha: Double) {
+    override fun setFill(c: Color) {
         setAttribute(fill, c.toHexColorNoAlpha())
-        if (alpha < 1.0) {
-            setAttribute(fillOpacity, alpha.toString())
+        if (c.alpha < 255 || hasAttribute(fillOpacity)) {
+            setAttribute(fillOpacity, c.toSvgOpacityString())
         }
     }
 
-    override fun setStroke(c: Color, alpha: Double) {
+    override fun setStroke(c: Color) {
         setAttribute(stroke, c.toHexColorNoAlpha())
-        if (alpha < 1.0) {
-            setAttribute(strokeOpacity, alpha.toString())
+        if (c.alpha < 255 || hasAttribute(strokeOpacity)) {
+            setAttribute(strokeOpacity, c.toSvgOpacityString())
         }
     }
 

@@ -349,11 +349,9 @@ open class LinesHelper(
         filled: Boolean,
         strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
     ) {
-        val resolvedStroke = AestheticsUtil.resolveColor(p, applyAlpha = true)
-        path.color().set(AestheticsUtil.composeColor(resolvedStroke))
-        if (!AestheticsUtil.ALPHA_CONTROLS_BOTH && (filled || !myAlphaEnabled)) {
-            path.color().set(p.color())
-        }
+        val applyStrokeAlpha = AestheticsUtil.ALPHA_CONTROLS_BOTH || (!filled && myAlphaEnabled)
+        val resolvedStroke = AestheticsUtil.resolveColor(p, applyAlpha = applyStrokeAlpha)
+        path.color().set(resolvedStroke)
 
         if (filled) {
             decorateFillingPart(path, p)
@@ -368,7 +366,7 @@ open class LinesHelper(
 
     private fun decorateFillingPart(path: LinePath, p: DataPointAesthetics) {
         val resolvedFill = AestheticsUtil.resolveFill(p)
-        path.fill().set(AestheticsUtil.composeColor(resolvedFill))
+        path.fill().set(resolvedFill)
     }
 
     companion object {

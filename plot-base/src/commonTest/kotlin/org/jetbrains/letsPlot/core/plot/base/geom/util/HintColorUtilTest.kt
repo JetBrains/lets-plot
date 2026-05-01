@@ -21,8 +21,7 @@ class HintColorUtilTest {
     @Test
     fun `explicit alpha 0_5 is applied to the color`() {
         val result = HintColorUtil.applyAlpha(Color.RED, 0.5)
-        // (255 * 0.5).toInt() = 127
-        assertEquals(127, result.alpha)
+        assertEquals(128, result.alpha)
         assertEquals(Color.RED.red, result.red)
         assertEquals(Color.RED.green, result.green)
         assertEquals(Color.RED.blue, result.blue)
@@ -36,7 +35,6 @@ class HintColorUtilTest {
     @Test
     fun `explicit alpha 1_0 makes the color fully opaque`() {
         val color = Color(255, 0, 0, 50)
-        // (255 * 1.0).toInt() = 255
         assertEquals(255, HintColorUtil.applyAlpha(color, 1.0).alpha)
     }
 

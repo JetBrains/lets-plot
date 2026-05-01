@@ -404,8 +404,8 @@ open class GeomHelper(
             val resolvedStroke = AestheticsUtil.resolveColor(p, applyAlphaToAll)
             val resolvedFill = AestheticsUtil.resolveFill(p)
 
-            shape.setFill(resolvedFill.color, resolvedFill.opacity)
-            shape.setStroke(resolvedStroke.color, resolvedStroke.opacity)
+            shape.setFill(resolvedFill)
+            shape.setStroke(resolvedStroke)
             shape.setStrokeWidth(AesScaling.strokeWidth(p))
             StrokeDashArraySupport.apply(shape, AesScaling.strokeWidth(p), p.lineType())
         }
