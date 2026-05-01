@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.intern.splitByNull
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.*
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.PIXEL_PRECISION
 import org.jetbrains.letsPlot.commons.intern.util.VectorAdapter
-import org.jetbrains.letsPlot.commons.values.Colors.withOpacity
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.DOUGLAS_PEUCKER_PIXEL_THRESHOLD
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier.Companion.douglasPeucker
 import org.jetbrains.letsPlot.core.plot.base.*
@@ -350,11 +349,10 @@ open class LinesHelper(
         filled: Boolean,
         strokeScaler: (DataPointAesthetics) -> Double = AesScaling::strokeWidth
     ) {
-        val stroke = p.color()
-        val strokeAlpha = AestheticsUtil.alpha(stroke!!, p)
-        path.color().set(withOpacity(stroke, strokeAlpha))
+        val resolvedStroke = AestheticsUtil.resolveColor(p.color()!!, p, applyAlpha = true)
+        path.color().set(AestheticsUtil.composeColor(resolvedStroke))
         if (!AestheticsUtil.ALPHA_CONTROLS_BOTH && (filled || !myAlphaEnabled)) {
-            path.color().set(stroke)
+            path.color().set(p.color())
         }
 
         if (filled) {
@@ -369,9 +367,8 @@ open class LinesHelper(
     }
 
     private fun decorateFillingPart(path: LinePath, p: DataPointAesthetics) {
-        val fill = p.fill()
-        val fillAlpha = AestheticsUtil.alpha(fill!!, p)
-        path.fill().set(withOpacity(fill, fillAlpha))
+        val resolvedFill = AestheticsUtil.resolveColor(p.fill()!!, p, applyAlpha = true)
+        path.fill().set(AestheticsUtil.composeColor(resolvedFill))
     }
 
     companion object {

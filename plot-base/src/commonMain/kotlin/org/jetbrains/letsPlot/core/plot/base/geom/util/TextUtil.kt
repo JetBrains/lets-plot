@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
@@ -151,16 +150,9 @@ object TextUtil {
     fun lineheight(p: DataPointAesthetics, scale: Double) = p.lineheight()!! * fontSize(p, scale)
 
     fun decorate(label: Label, p: DataPointAesthetics, scale: Double = 1.0, applyAlpha: Boolean = true) {
-        val color = p.color()!!
-        label.textColor().set(color)
-        val alpha = if (applyAlpha) {
-            // apply alpha aes
-            AestheticsUtil.alpha(color, p)
-        } else {
-            // keep color's alpha
-            SvgUtils.alpha2opacity(color.alpha)
-        }
-        label.setTextOpacity(alpha)
+        val resolvedColor = AestheticsUtil.resolveColor(p.color()!!, p, applyAlpha)
+        label.textColor().set(resolvedColor.color)
+        label.setTextOpacity(resolvedColor.opacity)
 
         label.setFontSize(fontSize(p, scale))
         label.setLineHeight(lineheight(p, scale))
@@ -222,7 +214,7 @@ object TextUtil {
                 val value: Any? = when (aes) {
                     Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
                     Aes.SIZE -> super.get(Aes.SEGMENT_SIZE)
-                    Aes.ALPHA -> if (super.get(Aes.SEGMENT_ALPHA) == DEFAULT_ALPHA) super.get(Aes.ALPHA) else super.get(Aes.SEGMENT_ALPHA)
+                    Aes.ALPHA -> if (AestheticsUtil.hasExplicitSegmentAlpha(this)) super.get(Aes.SEGMENT_ALPHA) else super.get(Aes.ALPHA)
                     else -> super.get(aes)
                 }
                 @Suppress("UNCHECKED_CAST")

@@ -53,7 +53,7 @@ private inline fun <reified TValue> standardise(v: TValue?): Any? {
         is Long -> v
         is Double -> v
         is Boolean -> v
-        is Color -> v.toHexColor()
+        is Color -> v.toHexColorNoAlpha()
         is GeomKind -> Option.GeomName.fromGeomKind(v)
         is Aes<*> -> toOption(v)
         is Pair<*, *> -> listOf(v.first, v.second)

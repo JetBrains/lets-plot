@@ -42,14 +42,14 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
     }
 
     override fun setFill(c: Color, alpha: Double) {
-        setAttribute(fill, c.toHexColor())
+        setAttribute(fill, c.toHexColorNoAlpha())
         if (alpha < 1.0) {
             setAttribute(fillOpacity, alpha.toString())
         }
     }
 
     override fun setStroke(c: Color, alpha: Double) {
-        setAttribute(stroke, c.toHexColor())
+        setAttribute(stroke, c.toHexColorNoAlpha())
         if (alpha < 1.0) {
             setAttribute(strokeOpacity, alpha.toString())
         }

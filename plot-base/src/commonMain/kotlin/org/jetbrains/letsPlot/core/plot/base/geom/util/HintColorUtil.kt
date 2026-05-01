@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.GeomMeta
-import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.plot.base.render.point.TinyPointShape
@@ -33,7 +32,7 @@ object HintColorUtil {
 
     fun applyAlpha(color: Color, alpha: Double): Color {
         val intAlpha = (255 * alpha).toInt()
-        return if (alpha != AesInitValue.DEFAULT_ALPHA) {
+        return if (AestheticsUtil.isExplicitAlphaValue(alpha)) {
             color.changeAlpha(intAlpha)
         } else {
             color

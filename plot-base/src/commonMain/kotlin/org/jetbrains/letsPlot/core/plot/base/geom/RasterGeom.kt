@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
@@ -91,8 +92,8 @@ class RasterGeom : GeomBase() {
         for (p in dataPoints) {
             val x = p.x()
             val y = p.y()
-            val alpha = p.alpha()
-            val color = p.fill()
+            val color = p.fill()!!
+            val alpha = AestheticsUtil.alpha(color, p)
 
             var col = round((x!! - x0) / stepX).toInt()
             var row = round((y!! - y0) / stepY).toInt()
@@ -105,7 +106,7 @@ class RasterGeom : GeomBase() {
                 row = rows - (row + 1)
             }
 
-            argbValues[row * cols + col] = SvgUtils.toARGB(color!!, alpha!!)
+            argbValues[row * cols + col] = SvgUtils.toARGB(color, alpha)
         }
 
         val bitmap = Bitmap(cols, rows, argbValues)
