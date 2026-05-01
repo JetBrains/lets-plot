@@ -38,6 +38,11 @@ class ColorsTest {
     }
 
     @Test
+    fun parseHexWithAlpha() {
+        assertEquals(Color(0, 255, 0, 128), Colors.parseColor("#00ff0080"))
+    }
+
+    @Test
     fun parseRGB() {
         assertEquals(Color.RED, Colors.parseColor("rgb(255,0,0)"))
     }

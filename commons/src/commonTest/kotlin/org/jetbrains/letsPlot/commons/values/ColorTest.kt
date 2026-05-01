@@ -37,6 +37,16 @@ class ColorTest {
     }
 
     @Test
+    fun toHexColorNoAlpha() {
+        assertEquals("#112233", Color(0x11, 0x22, 0x33, 0x44).toHexColorNoAlpha())
+    }
+
+    @Test
+    fun toSvgOpacityString() {
+        assertEquals("0.26666666666666666", Color(0x11, 0x22, 0x33, 0x44).toSvgOpacityString())
+    }
+
+    @Test
     fun parseRGB() {
         assertEquals(Color.RED, Color.parseRGB("rgb(255,0,0)"))
     }

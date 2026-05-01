@@ -180,7 +180,9 @@ object Colors {
      *     - rgba(r, g, b, a)
      *     - color(r, g, b, a)
      *     - #rrggbb
+     *     - #rrggbbaa
      *     - #rgb
+     *     - #rgba
      *     - white, green, etc.
      */
     fun parseColor(c: String): Color {

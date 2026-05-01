@@ -57,13 +57,19 @@ class Color @JvmOverloads constructor(
     }
 
     fun toHexColor(): String {
-        val rgb = "#" + toColorPart(red) + toColorPart(green) + toColorPart(blue)
-        if (alpha == 255) {
-            return rgb
+        val rgb = toHexColorNoAlpha()
+        return if (alpha == 255) {
+            rgb
         } else {
-            return rgb + toColorPart(alpha)
+            rgb + toColorPart(alpha)
         }
     }
+
+    fun toHexColorNoAlpha(): String {
+        return "#" + toColorPart(red) + toColorPart(green) + toColorPart(blue)
+    }
+
+    fun toSvgOpacityString(): String = (alpha / 255.0).toString()
 
     override fun hashCode(): Int {
         var result = 0

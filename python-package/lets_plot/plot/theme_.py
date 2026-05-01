@@ -527,9 +527,11 @@ def element_rect(
     Parameters
     ----------
     fill : str
-        Fill color.
+        Fill color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
     color : str
-        Border color.
+        Border color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
     size : int
         Border size.
     linetype : int or str or list
@@ -579,7 +581,8 @@ def element_line(
     Parameters
     ----------
     color : str
-        Line color.
+        Line color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
     size : int
         Line size.
     linetype : int or str or list
@@ -634,7 +637,8 @@ def element_text(
     Parameters
     ----------
     color : str
-        Text color.
+        Text color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
     family : str
         Font family.
     face : str
@@ -716,7 +720,8 @@ def element_markdown(
     Parameters
     ----------
     color : str
-        Text color.
+        Text color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
     family : str
         Font family.
     face : {'plain', 'italic', 'bold', 'bold_italic'}, default='plain'
