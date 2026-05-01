@@ -63,7 +63,10 @@ object Text {
     ): String {
         val sb = StringBuilder()
         if (textColor != null) {
-            sb.append("fill:").append(textColor.toHexColor()).append(';')
+            sb.append("fill:").append(textColor.toHexColorNoAlpha()).append(';')
+            if (textColor.alpha < 255) {
+                sb.append("fill-opacity:").append(textColor.toSvgOpacityString()).append(';')
+            }
         }
 
         // set each property separately

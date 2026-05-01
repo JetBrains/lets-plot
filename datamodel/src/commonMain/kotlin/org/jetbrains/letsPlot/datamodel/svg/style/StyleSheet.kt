@@ -51,7 +51,10 @@ class StyleSheet constructor(
 
         private fun TextStyle.toCSS(): String {
             val css = StringBuilder()
-            css.appendLine("fill: ${color.toHexColor()};")
+            css.appendLine("fill: ${color.toHexColorNoAlpha()};")
+            if (color.alpha < 255) {
+                css.appendLine("fill-opacity: ${color.toSvgOpacityString()};")
+            }
             css.appendLine("font-weight: ${face.weight};")
             css.appendLine("font-style: ${face.style};")
             if (!isNoneFamily) css.appendLine("font-family: $family;")
@@ -85,12 +88,14 @@ class StyleSheet constructor(
                         ?: defaultSize
 
                     val color = parseProperty(styleProperties, "fill")
+                    val fillOpacity = parseProperty(styleProperties, "fill-opacity")?.toDoubleOrNull()
+                    val parsedColor = color?.let(Color::parseHex) ?: Color.BLACK
 
                     classes[className] = TextStyle(
                         family = fontFamily,
                         face = FontFace(bold = fontWeight == "bold", italic = fontStyle == "italic"),
                         size = fontSize,
-                        color = color?.let(Color::parseHex) ?: Color.BLACK
+                        color = fillOpacity?.let(parsedColor::multiplyAlpha) ?: parsedColor
                     )
                 }
 

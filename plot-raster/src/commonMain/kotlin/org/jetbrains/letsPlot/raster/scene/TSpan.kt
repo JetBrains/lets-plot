@@ -46,8 +46,8 @@ internal class TSpan : Figure() {
 
     private val styleData: StyleData by derivedAttr {
         StyleData(
-            fillPaint = fillPaint(fill),
-            strokePaint = strokePaint(stroke = stroke, strokeWidth = strokeWidth)
+            fillPaint = fillPaint(fill, fillOpacity),
+            strokePaint = strokePaint(stroke = stroke, strokeWidth = strokeWidth, strokeOpacity = strokeOpacity)
         )
     }
 
@@ -137,6 +137,9 @@ internal class TSpan : Figure() {
         )
         val LineHeightAttrSpec = CLASS.registerDerivedAttr(TSpan::lineHeight, dependencies = setOf(FontAttrSpec))
         val BaselineAttrSpec = CLASS.registerDerivedAttr(TSpan::baseline, dependencies = setOf(BaselineShiftAttrSpec, DyAttrSpec, LineHeightAttrSpec))
-        val StyleDataAttrSpec = CLASS.registerDerivedAttr(TSpan::styleData, dependencies = setOf(FillAttrSpec, StrokeAttrSpec, StrokeWidthAttrSpec))
+        val StyleDataAttrSpec = CLASS.registerDerivedAttr(
+            TSpan::styleData,
+            dependencies = setOf(FillAttrSpec, FillOpacityAttrSpec, StrokeAttrSpec, StrokeWidthAttrSpec, StrokeOpacityAttrSpec)
+        )
     }
 }
