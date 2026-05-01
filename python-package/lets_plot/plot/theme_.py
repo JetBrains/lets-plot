@@ -125,8 +125,6 @@ def theme(*,
         to the upper_exp_bound (6 by default, but can be affected by ``precision`` in format specifier).
 
         See `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
-
-        Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
         Style settings for all line elements.
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.

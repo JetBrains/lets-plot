@@ -39,7 +39,7 @@ def ggdeck(plots: list, *,
     --------
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10-11
+        :emphasize-lines: 10
 
         import numpy as np
         from lets_plot import *
