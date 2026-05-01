@@ -118,6 +118,13 @@ class ColorsTest {
     }
 
     @Test
+    fun `color space conversions apply alpha`() {
+        assertEquals(128, rgbFromHsl(HSL(0.0, 1.0, 0.5), alpha = 0.5).alpha)
+        assertEquals(128, rgbFromHcl(HCL(15.0, 100.0, 65.0), alpha = 0.5).alpha)
+        assertEquals(128, rgbFromLab(LAB(l = 43.579, a = 45.164, b = 36.823), alpha = 0.5).alpha)
+    }
+
+    @Test
     fun hcl() {
         fun assertHclToRgb(hcl: HCL, hexRgb: String) {
             assertEquals(Color.parseHex(hexRgb), rgbFromHcl(hcl))

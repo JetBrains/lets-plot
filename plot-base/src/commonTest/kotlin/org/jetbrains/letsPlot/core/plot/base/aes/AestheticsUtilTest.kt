@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.aes
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -51,23 +50,21 @@ class AestheticsUtilTest {
         assertTrue(AestheticsUtil.isExplicitAlphaValue(0.0))
     }
 
-    // --- alpha() ---
+    // --- applyAlpha() / resolveColor() / resolveFill() ---
 
     @Test
-    fun `no aesthetic alpha falls back to the color's own alpha`() {
+    fun `applyAlpha no explicit alpha leaves color unchanged`() {
         val color = Color(255, 0, 0, 128)
-        val p = point(color = color)   // no explicit alpha set
-        assertEquals(SvgUtils.alpha2opacity(128), AestheticsUtil.alpha(color, p))
+        val resolved = AestheticsUtil.applyAlpha(color, point(color = color))
+        assertEquals(color, resolved)
     }
 
     @Test
-    fun `explicit aesthetic alpha overrides the color's alpha`() {
-        val color = Color(255, 0, 0, 128)   // color has its own alpha
-        val p = point(color = color, alpha = 0.25)
-        assertEquals(0.25, AestheticsUtil.alpha(color, p))
+    fun `applyAlpha explicit alpha replaces color alpha`() {
+        val color = Color(255, 0, 0, 128)
+        val resolved = AestheticsUtil.applyAlpha(color, point(color = color, alpha = 0.25))
+        assertEquals(64, resolved.alpha)
     }
-
-    // --- resolveColor() ---
 
     @Test
     fun `resolveColor applyAlpha=true no explicit alpha - alpha comes from color`() {
@@ -88,5 +85,15 @@ class AestheticsUtilTest {
         val color = Color(255, 0, 0, 128)
         val resolved = AestheticsUtil.resolveColor(point(color = color, alpha = 0.25), applyAlpha = false)
         assertEquals(128, resolved.alpha)
+    }
+
+    @Test
+    fun `resolveFill applies explicit alpha to fill color`() {
+        val fill = Color(0, 0, 255, 128)
+        val resolved = AestheticsUtil.resolveFill(point(fill = fill, alpha = 0.25))
+        assertEquals(64, resolved.alpha)
+        assertEquals(fill.red, resolved.red)
+        assertEquals(fill.green, resolved.green)
+        assertEquals(fill.blue, resolved.blue)
     }
 }

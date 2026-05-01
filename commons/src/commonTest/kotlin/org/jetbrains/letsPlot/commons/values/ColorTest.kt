@@ -47,6 +47,11 @@ class ColorTest {
     }
 
     @Test
+    fun changeAlphaDoubleRoundsToNearestByte() {
+        assertEquals(128, Color.RED.changeAlpha(0.5).alpha)
+    }
+
+    @Test
     fun parseRGB() {
         assertEquals(Color.RED, Color.parseRGB("rgb(255,0,0)"))
     }

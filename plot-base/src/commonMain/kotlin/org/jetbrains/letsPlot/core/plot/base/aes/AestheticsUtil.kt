@@ -10,7 +10,6 @@ import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.render.point.UpdatableShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 object AestheticsUtil {
     //affects bar, smooth, area and ribbon
@@ -60,10 +59,6 @@ object AestheticsUtil {
         }
 
         shape.update(resolvedFill, resolvedStroke, strokeWidth, transform)
-    }
-
-    fun alpha(color: Color, p: DataPointAesthetics): Double {
-        return explicitAlpha(p) ?: SvgUtils.alpha2opacity(color.alpha)
     }
 
     fun applyAlpha(color: Color, p: DataPointAesthetics): Color {
