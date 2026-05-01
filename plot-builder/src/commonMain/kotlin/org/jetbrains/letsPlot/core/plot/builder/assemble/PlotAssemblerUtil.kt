@@ -173,7 +173,6 @@ internal object PlotAssemblerUtil {
 
     fun createPlotLayout(
         layoutProviderByTile: List<TileLayoutProvider>,
-        insideOut: Boolean,
         facets: PlotFacets,
         facetsTheme: FacetsTheme,
         hAxisTheme: AxisTheme,
@@ -192,7 +191,6 @@ internal object PlotAssemblerUtil {
         } else {
             val tileLayout = layoutProviderByTile[0].createTileLayout()
             SingleTilePlotLayout(
-                insideOut,
                 tileLayout,
                 plotTheme
             )

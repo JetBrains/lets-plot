@@ -56,7 +56,7 @@ internal class PlotFigureLayouter(
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
 
-        val plotPreferredSize = PlotLayoutUtil.subtractTitlesLegendsTagsAndMargins(
+        val innerSize = PlotLayoutUtil.subtractTitlesLegendsTagsAndMargins(
             baseSize = outerSize,
             title,
             subtitle,
@@ -73,8 +73,8 @@ internal class PlotFigureLayouter(
         // -------------
 
         // Layout plot inners
-        val plotLayout = createPlotLayout(insideOut = false)
-        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider)
+        val plotLayout = createPlotLayout()
+        val layoutInfo = plotLayout.layoutByPlotSize(innerSize, coordProvider)
 
         return createFigureLayoutInfo(
             figurePreferredSize = outerSize,
@@ -88,8 +88,8 @@ internal class PlotFigureLayouter(
         axisSpacer: Thickness,
         figureSvgPadding: Thickness = Thickness.ZERO
     ): PlotFigureLayoutInfo {
-        val plotLayout = createPlotLayout(insideOut = true)
-        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider, axisSpacer)
+        val plotLayout = createPlotLayout()
+        val layoutInfo = plotLayout.layoutByGeomSize(geomSize, coordProvider, axisSpacer)
         return createFigureLayoutInfo(
             figurePreferredSize = null,
             layoutInfo,
@@ -98,7 +98,7 @@ internal class PlotFigureLayouter(
     }
 
 
-    private fun createPlotLayout(insideOut: Boolean): PlotLayout {
+    private fun createPlotLayout(): PlotLayout {
         return if (containsLiveMap) {
             createLiveMapPlotLayout()
         } else {
@@ -107,7 +107,6 @@ internal class PlotFigureLayouter(
             }
             PlotAssemblerUtil.createPlotLayout(
                 layoutProviderByTile,
-                insideOut,
                 facets,
                 theme.facets(),
                 hAxisTheme = theme.horizontalAxis(flipAxis),
@@ -127,7 +126,6 @@ internal class PlotFigureLayouter(
         }
         return PlotAssemblerUtil.createPlotLayout(
             layoutProviderByTile,
-            insideOut = false,
             facets,
             theme.facets(),
             hAxisTheme = LiveMapAxisTheme(),

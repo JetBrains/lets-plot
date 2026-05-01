@@ -13,23 +13,14 @@ import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
 
 internal class SingleTilePlotLayout constructor(
-    private val insideOut: Boolean,
     private val tileLayout: TileLayout,
     private val plotTheme: PlotTheme
 ) : PlotLayout {
 
     private val insets: DoubleInsets = plotInsets(plotTheme.plotInset())
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, axisSpacer: Thickness): PlotLayoutInfo {
-        return if (insideOut) {
-            layoutByGeomSize(preferredSize, coordProvider, axisSpacer)
-        } else {
-            layoutOuterSize(preferredSize, coordProvider)
-        }
-    }
-
-    private fun layoutOuterSize(outerSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-        val geomWithAxisSize = outerSize
+    override fun layoutByPlotSize(plotInnerSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
+        val geomWithAxisSize = plotInnerSize
             .subtract(insets.leftTop)
             .subtract(insets.rightBottom)
 
@@ -40,7 +31,11 @@ internal class SingleTilePlotLayout constructor(
         return tileInfoToPlotInfo(tileInfo)
     }
 
-    private fun layoutByGeomSize(geomContentSize: DoubleVector, coordProvider: CoordProvider, axisSpacer: Thickness): PlotLayoutInfo {
+    override fun layoutByGeomSize(
+        geomContentSize: DoubleVector,
+        coordProvider: CoordProvider,
+        axisSpacer: Thickness
+    ): PlotLayoutInfo {
         val tileInfo = tileLayout
             .doInsideOutLayout(geomContentSize, coordProvider, axisSpacer)
             .withOffset(insets.leftTop)

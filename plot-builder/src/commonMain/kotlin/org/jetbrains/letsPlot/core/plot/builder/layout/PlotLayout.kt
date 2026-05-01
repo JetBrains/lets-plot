@@ -10,5 +10,17 @@ import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.coord.CoordProvider
 
 interface PlotLayout {
-    fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider, axisSpacer: Thickness = Thickness.ZERO): PlotLayoutInfo
+    /**
+     * 'plot inner size' is the size of the plot without titles, axis titles, legends, tags, and plot margins.
+     */
+    fun layoutByPlotSize(
+        plotInnerSize: DoubleVector,
+        coordProvider: CoordProvider
+    ): PlotLayoutInfo
+
+    fun layoutByGeomSize(
+        geomContentSize: DoubleVector,
+        coordProvider: CoordProvider,
+        axisSpacer: Thickness = Thickness.ZERO
+    ): PlotLayoutInfo
 }
