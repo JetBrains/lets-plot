@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.builder.defaultTheme
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
@@ -140,7 +139,7 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.RECT,
                 GeomKind.RIBBON,
                 GeomKind.BAND,
-                GeomKind.MAP -> Colors.withOpacity(color, 0.1)
+                GeomKind.MAP -> color.changeAlpha(0.1)
 
                 GeomKind.BAR,
                 GeomKind.PIE,

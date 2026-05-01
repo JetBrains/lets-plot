@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMAX
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil.TO_LOCATION_X_YMAX_WITH_FINITE_YMIN
@@ -64,7 +65,7 @@ class RibbonGeom : GeomBase() {
             val ymax = p.finiteOrNull(Aes.YMAX) ?: continue
 
             hint.defaultCoord(p[Aes.X]!!)
-                .defaultColor(p.fill()!!, alpha = null)
+                .defaultColor(AestheticsUtil.resolveFill(p))
 
             val hintsCollection = HintsCollection(p, helper)
                 .addHint(hint.create(Aes.YMAX))

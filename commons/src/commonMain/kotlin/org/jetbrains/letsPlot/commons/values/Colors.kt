@@ -315,10 +315,6 @@ object Colors {
         return Color(red, green, blue)
     }
 
-    fun withOpacity(c: Color, opacity: Double): Color {
-        return c.changeAlpha(max(0, min(255, round(255 * opacity).toInt())))
-    }
-
     fun contrast(color: Color, other: Color): Double {
         return (luminance(color) + .05) / (luminance(other) + .05)
     }
