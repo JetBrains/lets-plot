@@ -69,8 +69,6 @@ class Color @JvmOverloads constructor(
         return "#" + toColorPart(red) + toColorPart(green) + toColorPart(blue)
     }
 
-    fun toSvgOpacityString(): String = (alpha / 255.0).toString()
-
     override fun hashCode(): Int {
         var result = 0
         result = 31 * result + red

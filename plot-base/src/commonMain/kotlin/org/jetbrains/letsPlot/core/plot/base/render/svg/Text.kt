@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 object Text {
 
@@ -65,7 +66,7 @@ object Text {
         if (textColor != null) {
             sb.append("fill:").append(textColor.toHexColorNoAlpha()).append(';')
             if (textColor.alpha < 255) {
-                sb.append("fill-opacity:").append(textColor.toSvgOpacityString()).append(';')
+                sb.append("fill-opacity:").append(SvgUtils.opacityString(textColor)).append(';')
             }
         }
 

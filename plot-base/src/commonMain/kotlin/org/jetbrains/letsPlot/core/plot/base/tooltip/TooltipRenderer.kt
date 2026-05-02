@@ -36,6 +36,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 
@@ -358,7 +359,7 @@ class TooltipRenderer(
         val fillColor = when {
             spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipFill()
             spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipFill()
-            spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
+            spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, SvgUtils.opacity(it), WHITE) }
             else -> tooltipsTheme.tooltipFill()
         }
 

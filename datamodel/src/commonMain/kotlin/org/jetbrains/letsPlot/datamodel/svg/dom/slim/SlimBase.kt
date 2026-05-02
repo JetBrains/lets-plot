@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.datamodel.svg.dom.slim
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 
 internal abstract class SlimBase protected constructor(val elementName: String) :
@@ -44,14 +45,14 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
     override fun setFill(c: Color) {
         setAttribute(fill, c.toHexColorNoAlpha())
         if (c.alpha < 255 || hasAttribute(fillOpacity)) {
-            setAttribute(fillOpacity, c.toSvgOpacityString())
+            setAttribute(fillOpacity, SvgUtils.opacityString(c))
         }
     }
 
     override fun setStroke(c: Color) {
         setAttribute(stroke, c.toHexColorNoAlpha())
         if (c.alpha < 255 || hasAttribute(strokeOpacity)) {
-            setAttribute(strokeOpacity, c.toSvgOpacityString())
+            setAttribute(strokeOpacity, SvgUtils.opacityString(c))
         }
     }
 

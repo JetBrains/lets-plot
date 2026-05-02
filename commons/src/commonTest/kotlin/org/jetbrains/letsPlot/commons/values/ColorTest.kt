@@ -42,11 +42,6 @@ class ColorTest {
     }
 
     @Test
-    fun toSvgOpacityString() {
-        assertEquals("0.26666666666666666", Color(0x11, 0x22, 0x33, 0x44).toSvgOpacityString())
-    }
-
-    @Test
     fun changeAlphaDoubleRoundsToNearestByte() {
         assertEquals(128, Color.RED.changeAlpha(0.5).alpha)
     }

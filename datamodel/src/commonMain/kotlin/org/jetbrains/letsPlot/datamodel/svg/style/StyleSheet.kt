@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.datamodel.svg.style
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle.Companion.NONE_COLOR
 
 
@@ -53,7 +54,7 @@ class StyleSheet constructor(
             val css = StringBuilder()
             css.appendLine("fill: ${color.toHexColorNoAlpha()};")
             if (color.alpha < 255) {
-                css.appendLine("fill-opacity: ${color.toSvgOpacityString()};")
+                css.appendLine("fill-opacity: ${SvgUtils.opacityString(color)};")
             }
             css.appendLine("font-weight: ${face.weight};")
             css.appendLine("font-style: ${face.style};")
