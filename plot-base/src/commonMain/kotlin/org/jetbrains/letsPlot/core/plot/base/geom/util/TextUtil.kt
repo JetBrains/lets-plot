@@ -213,7 +213,7 @@ object TextUtil {
                 val value: Any? = when (aes) {
                     Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
                     Aes.SIZE -> super.get(Aes.SEGMENT_SIZE)
-                    Aes.ALPHA -> if (AestheticsUtil.hasExplicitSegmentAlpha(this)) super.get(Aes.SEGMENT_ALPHA) else super.get(Aes.ALPHA)
+                    Aes.ALPHA -> AestheticsUtil.effectiveSegmentAlpha(p)
                     else -> super.get(aes)
                 }
                 @Suppress("UNCHECKED_CAST")

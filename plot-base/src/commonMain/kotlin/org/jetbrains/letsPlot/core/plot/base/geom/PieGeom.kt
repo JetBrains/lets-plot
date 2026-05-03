@@ -331,7 +331,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                         size.y / 2,
                         shapeSize(p) / 2
                     ).apply {
-                        fillColor().set(p.fill())
+                        fillColor().set(AestheticsUtil.resolveFill(p))
                         strokeColor().set(p.color())
                         strokeWidth().set(p.stroke())
                     }

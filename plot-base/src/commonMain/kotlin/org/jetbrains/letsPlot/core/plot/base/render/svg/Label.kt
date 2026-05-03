@@ -114,10 +114,6 @@ class Label(
         horizontalRepositionLines()
     }
 
-    fun setTextOpacity(value: Double?) {
-        myLines.forEach { it.fillOpacity().set(value) }
-    }
-
     private fun updateStyleAttribute() {
         val styleAttr = Text.buildStyle(
             myTextColor,

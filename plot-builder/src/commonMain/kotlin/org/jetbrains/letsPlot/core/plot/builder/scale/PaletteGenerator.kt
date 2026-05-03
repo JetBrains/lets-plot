@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.scale
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 interface PaletteGenerator {
     fun createPaletteGeneratorScaleMapper(colorCount: Int): ScaleMapper<Color>
@@ -18,7 +19,7 @@ interface PaletteGenerator {
 
         val scaleMapper = createPaletteGeneratorScaleMapper(colorCount)
         return (0 until colorCount).map { i ->
-            scaleMapper(i.toDouble())?.toHexColorNoAlpha()
+            scaleMapper(i.toDouble())?.let { SvgUtils.splitColorAndOpacity(it).first }
                 ?: throw IllegalStateException("Can't generate a palette color for index: $i")
         }
     }

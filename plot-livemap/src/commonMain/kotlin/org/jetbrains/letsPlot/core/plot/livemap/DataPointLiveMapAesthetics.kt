@@ -200,7 +200,7 @@ internal class DataPointLiveMapAesthetics {
         }
 
     val fillArray: List<Color>
-        get() = myFillArray.map { AestheticsUtil.applyAlpha(it, myP) }
+        get() = myFillArray.map { AestheticsUtil.resolveFill(myP, it) }
 
     val sizeStart
         get() = pointRadius(AestheticsUtil.circleDiameter(myP,  DataPointAesthetics::sizeStart)).px * 2.0

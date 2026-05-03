@@ -9,15 +9,14 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class AestheticsUtilTest {
 
     private fun point(
         color: Color = Color.RED,
         fill: Color = Color.BLUE,
-        alpha: Double? = null
+        alpha: Double? = null,
+        segmentAlpha: Double? = null
     ): DataPointAesthetics {
         val builder = AestheticsBuilder(1)
             .color(AestheticsBuilder.constant(color))
@@ -25,45 +24,40 @@ class AestheticsUtilTest {
         if (alpha != null) {
             builder.alpha(AestheticsBuilder.constant(alpha))
         }
+        if (segmentAlpha != null) {
+            builder.segmentAlpha(AestheticsBuilder.constant(segmentAlpha))
+        }
         return builder.build().dataPoints().first()
     }
 
-    // --- isExplicitAlphaValue ---
+    // --- resolveColor() / resolveFill() ---
 
     @Test
-    fun `null is not an explicit alpha`() {
-        assertFalse(AestheticsUtil.isExplicitAlphaValue(null))
-    }
-
-    @Test
-    fun `DEFAULT_ALPHA sentinel is not an explicit alpha`() {
-        assertFalse(AestheticsUtil.isExplicitAlphaValue(AesInitValue.DEFAULT_ALPHA))
-    }
-
-    @Test
-    fun `0_5 is an explicit alpha`() {
-        assertTrue(AestheticsUtil.isExplicitAlphaValue(0.5))
-    }
-
-    @Test
-    fun `0_0 is an explicit alpha`() {
-        assertTrue(AestheticsUtil.isExplicitAlphaValue(0.0))
-    }
-
-    // --- applyAlpha() / resolveColor() / resolveFill() ---
-
-    @Test
-    fun `applyAlpha no explicit alpha leaves color unchanged`() {
+    fun `resolveFill with explicit fill no explicit alpha leaves color unchanged`() {
         val color = Color(255, 0, 0, 128)
-        val resolved = AestheticsUtil.applyAlpha(color, point(color = color))
+        val resolved = AestheticsUtil.resolveFill(point(fill = color), color)
         assertEquals(color, resolved)
     }
 
     @Test
-    fun `applyAlpha explicit alpha replaces color alpha`() {
+    fun `resolveFill with default alpha sentinel leaves color alpha unchanged`() {
         val color = Color(255, 0, 0, 128)
-        val resolved = AestheticsUtil.applyAlpha(color, point(color = color, alpha = 0.25))
+        val resolved = AestheticsUtil.resolveFill(point(fill = color, alpha = AesInitValue.DEFAULT_ALPHA), color)
+        assertEquals(128, resolved.alpha)
+    }
+
+    @Test
+    fun `resolveFill with explicit fill explicit alpha replaces color alpha`() {
+        val color = Color(255, 0, 0, 128)
+        val resolved = AestheticsUtil.resolveFill(point(fill = color, alpha = 0.25), color)
         assertEquals(64, resolved.alpha)
+    }
+
+    @Test
+    fun `resolveFill with explicit zero alpha makes color transparent`() {
+        val color = Color(255, 0, 0, 128)
+        val resolved = AestheticsUtil.resolveFill(point(fill = color, alpha = 0.0), color)
+        assertEquals(0, resolved.alpha)
     }
 
     @Test
@@ -95,5 +89,15 @@ class AestheticsUtilTest {
         assertEquals(fill.red, resolved.red)
         assertEquals(fill.green, resolved.green)
         assertEquals(fill.blue, resolved.blue)
+    }
+
+    @Test
+    fun `effectiveSegmentAlpha uses alpha when segment alpha is default`() {
+        assertEquals(0.25, AestheticsUtil.effectiveSegmentAlpha(point(alpha = 0.25)))
+    }
+
+    @Test
+    fun `effectiveSegmentAlpha uses explicit segment alpha`() {
+        assertEquals(0.5, AestheticsUtil.effectiveSegmentAlpha(point(alpha = 0.25, segmentAlpha = 0.5)))
     }
 }

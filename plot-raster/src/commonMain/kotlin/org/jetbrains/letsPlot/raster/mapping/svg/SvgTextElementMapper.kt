@@ -68,9 +68,10 @@ internal class SvgTextElementMapper(
             target.fontWeight = toFontWeight(style.face)
 
             val styleAttr = buildString {
-                append("fill:${style.color.toHexColorNoAlpha()};")
-                if (style.color.alpha < 255) {
-                    append("fill-opacity:${SvgDomUtils.opacityString(style.color)};")
+                val (fill, fillOpacity) = SvgDomUtils.splitColorAndOpacity(style.color)
+                append("fill:$fill;")
+                if (fillOpacity != null) {
+                    append("fill-opacity:$fillOpacity;")
                 }
             }
             myTextAttrSupport.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)

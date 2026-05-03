@@ -9,8 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.observable.property.Property
 import org.jetbrains.letsPlot.commons.intern.observable.property.WritableProperty
 import org.jetbrains.letsPlot.commons.values.Color
-import kotlin.math.max
-import kotlin.math.min
 
 object SvgUtils {
     private val OPACITY_TABLE: DoubleArray = DoubleArray(256) { alpha -> alpha / 255.0 }
@@ -20,28 +18,19 @@ object SvgUtils {
         return OPACITY_TABLE[c.alpha]
     }
 
-    fun opacityString(c: Color): String {
+    private fun opacityString(c: Color): String {
         return OPACITY_STRING_TABLE[c.alpha]
     }
 
-    fun alpha2opacity(colorAlpha: Int): Double {
-        return OPACITY_TABLE[colorAlpha]
+    fun splitColorAndOpacity(color: Color): Pair<String, String?> {
+        return color.toHexColorNoAlpha() to if (color.alpha < 255) opacityString(color) else null
     }
 
     fun toARGB(c: Color): Int {
         return toARGB(c.red, c.green, c.blue, c.alpha)
     }
 
-    fun toARGB(c: Color, alpha: Double): Int {
-        return toARGB(
-            c.red,
-            c.green,
-            c.blue,
-            max(0.0, min(255.0, alpha * 255)).toInt()
-        )
-    }
-
-    fun toARGB(r: Int, g: Int, b: Int, alpha: Int): Int {
+    private fun toARGB(r: Int, g: Int, b: Int, alpha: Int): Int {
         val rgb = (r shl 16) + (g shl 8) + b
         return (alpha shl 24) + rgb
     }

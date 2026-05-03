@@ -56,17 +56,13 @@ class Color @JvmOverloads constructor(
         }
     }
 
-    fun toHexColor(): String {
-        val rgb = toHexColorNoAlpha()
-        return if (alpha == 255) {
-            rgb
-        } else {
-            rgb + toColorPart(alpha)
-        }
-    }
-
     fun toHexColorNoAlpha(): String {
         return "#" + toColorPart(red) + toColorPart(green) + toColorPart(blue)
+    }
+
+    fun toHexColor(): String {
+        val rgb = toHexColorNoAlpha()
+        return if (alpha == 255) rgb else rgb + toColorPart(alpha)
     }
 
     override fun hashCode(): Int {

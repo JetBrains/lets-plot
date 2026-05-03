@@ -24,14 +24,6 @@ object HintColorUtil {
         return AestheticsUtil.resolveFill(p)
     }
 
-    fun applyAlpha(color: Color, alpha: Double): Color {
-        return if (AestheticsUtil.isExplicitAlphaValue(alpha)) {
-            color.changeAlpha(alpha)
-        } else {
-            color
-        }
-    }
-
     fun createColorMarkerMapper(
         ctx: GeomContext,
     ): (DataPointAesthetics) -> List<Color> {

@@ -65,7 +65,7 @@ object DataUtil {
                     is String -> it
                     is Number -> toDouble(it)
                     is Char -> it.toString()
-                    is Color -> it.toHexColorNoAlpha()
+                    is Color -> it.toHexColor()
                     else -> throw IllegalArgumentException("Can't standardize the value \"$it\" of type ${it::class.simpleName} as a string, number or date-time.")
                 }
             }

@@ -52,9 +52,10 @@ class StyleSheet constructor(
 
         private fun TextStyle.toCSS(): String {
             val css = StringBuilder()
-            css.appendLine("fill: ${color.toHexColorNoAlpha()};")
-            if (color.alpha < 255) {
-                css.appendLine("fill-opacity: ${SvgUtils.opacityString(color)};")
+            val (fill, fillOpacity) = SvgUtils.splitColorAndOpacity(color)
+            css.appendLine("fill: $fill;")
+            if (fillOpacity != null) {
+                css.appendLine("fill-opacity: $fillOpacity;")
             }
             css.appendLine("font-weight: ${face.weight};")
             css.appendLine("font-style: ${face.style};")

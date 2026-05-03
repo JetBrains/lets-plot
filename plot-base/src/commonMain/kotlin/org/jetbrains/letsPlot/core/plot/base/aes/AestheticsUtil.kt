@@ -15,11 +15,11 @@ object AestheticsUtil {
     //affects bar, smooth, area and ribbon
     internal const val ALPHA_CONTROLS_BOTH = false
 
-    fun isExplicitAlphaValue(alpha: Double?): Boolean {
+    private fun isExplicitAlphaValue(alpha: Double?): Boolean {
         return alpha != null && alpha != AesInitValue.DEFAULT_ALPHA
     }
 
-    fun hasExplicitSegmentAlpha(p: DataPointAesthetics): Boolean {
+    private fun hasExplicitSegmentAlpha(p: DataPointAesthetics): Boolean {
         return isExplicitAlphaValue(p.segmentAlpha())
     }
 
@@ -61,8 +61,12 @@ object AestheticsUtil {
         shape.update(resolvedFill, resolvedStroke, strokeWidth, transform)
     }
 
-    fun applyAlpha(color: Color, p: DataPointAesthetics): Color {
+    private fun applyAlpha(color: Color, p: DataPointAesthetics): Color {
         return explicitAlpha(p)?.let(color::changeAlpha) ?: color
+    }
+
+    fun effectiveSegmentAlpha(p: DataPointAesthetics): Double? {
+        return if (hasExplicitSegmentAlpha(p)) p.segmentAlpha() else p.alpha()
     }
 
     fun resolveColor(p: DataPointAesthetics, applyAlpha: Boolean): Color {
@@ -70,8 +74,8 @@ object AestheticsUtil {
         return if (applyAlpha) applyAlpha(color, p) else color
     }
 
-    fun resolveFill(p: DataPointAesthetics): Color {
-        return applyAlpha(p.fill()!!, p)
+    fun resolveFill(p: DataPointAesthetics, fill: Color = p.fill()!!): Color {
+        return applyAlpha(fill, p)
     }
 
     fun strokeWidth(p: DataPointAesthetics) = AesScaling.strokeWidth(p)

@@ -64,9 +64,10 @@ object Text {
     ): String {
         val sb = StringBuilder()
         if (textColor != null) {
-            sb.append("fill:").append(textColor.toHexColorNoAlpha()).append(';')
-            if (textColor.alpha < 255) {
-                sb.append("fill-opacity:").append(SvgUtils.opacityString(textColor)).append(';')
+            val (fill, fillOpacity) = SvgUtils.splitColorAndOpacity(textColor)
+            sb.append("fill:").append(fill).append(';')
+            if (fillOpacity != null) {
+                sb.append("fill-opacity:").append(fillOpacity).append(';')
             }
         }
 
