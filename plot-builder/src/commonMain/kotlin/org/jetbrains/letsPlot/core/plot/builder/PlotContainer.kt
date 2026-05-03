@@ -42,7 +42,7 @@ class PlotContainer(
             val plotInteractor = PlotInteractor(
                 decorationLayer = svgRoot.decorationLayer,
                 mouseEventPeer = mouseEventPeer,
-                plotSize = plot.figureSize,    // ToDo: svgRoot.bounds.dimension
+                plotSize = plot.figureSvgSize,
                 flippedAxis = plot.flippedAxis,
                 theme = plot.theme,
                 styleSheet = plot.styleSheet,

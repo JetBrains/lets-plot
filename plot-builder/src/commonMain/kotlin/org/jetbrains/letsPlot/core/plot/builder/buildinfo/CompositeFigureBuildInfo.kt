@@ -128,7 +128,7 @@ class CompositeFigureBuildInfo constructor(
             legendBlocks
         ).apply {
             this._layoutInfo = CompositeFigureLayoutInfo(
-                figureSize = outerBounds.dimension,
+                figureSvgSize = outerBounds.dimension,
                 contentAreaBounds = contentAreaBounds,
                 elementsAreaBounds = layoutedElementsAreaBounds,
                 legendsBlockInfos = legendBlocks
@@ -136,19 +136,11 @@ class CompositeFigureBuildInfo constructor(
         }
     }
 
-    override fun layoutedByGeomBounds(geomBounds: DoubleRectangle, axisSpacer: Thickness, figureSvgPadding: Thickness): CompositeFigureBuildInfo {
+    override fun layoutedByGeomBounds(
+        geomBounds: DoubleRectangle,
+        axisSpacer: Thickness,
+        figureSvgPadding: Thickness
+    ): CompositeFigureBuildInfo {
         UNSUPPORTED("Composite figure does not support layouting by \"geometry bounds\".")
     }
-
-//    override fun withPreferredSize(size: DoubleVector): FigureBuildInfo {
-//        return CompositeFigureBuildInfo(
-//            elements,
-//            layout,
-//            DoubleRectangle(DoubleVector.Companion.ZERO, size),
-//            title, subtitle, caption, tag,
-//            theme,
-//            computationMessages,
-//            legendBlocks
-//        )
-//    }
 }

@@ -86,7 +86,7 @@ class PlotFigureBuildInfo constructor(
         )
         val newSvgBounds = DoubleRectangle(
             origin = this.svgBounds.origin.subtract(delta),
-            dimension = layoutInfo.figureSvgBounds.dimension
+            dimension = layoutInfo.figureSvgSize
         )
 
         return makeCopy(newBounds, newSvgBounds).apply {
@@ -114,13 +114,4 @@ class PlotFigureBuildInfo constructor(
 
         return newBuildInfo
     }
-
-//    override fun withPreferredSize(size: DoubleVector): FigureBuildInfo {
-//        return PlotFigureBuildInfo(
-//            plotAssembler,
-//            processedPlotSpec,
-//            DoubleRectangle(DoubleVector.Companion.ZERO, size),
-//            computationMessages
-//        )
-//    }
 }
