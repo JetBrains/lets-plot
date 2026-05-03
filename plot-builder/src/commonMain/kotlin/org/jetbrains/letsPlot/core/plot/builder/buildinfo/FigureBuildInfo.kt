@@ -13,10 +13,12 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 
 interface FigureBuildInfo {
     val isComposite: Boolean
+
     /**
      * Logical figure bounds: the space allocated in the parent by layout.
      */
     val bounds: DoubleRectangle
+
     /**
      * Physical SVG viewport bounds.
      * Equals [bounds] normally; may differ for ggdeck subplots
@@ -40,6 +42,4 @@ interface FigureBuildInfo {
         axisSpacer: Thickness = Thickness.ZERO,
         figureSvgPadding: Thickness = Thickness.ZERO
     ): FigureBuildInfo
-
-//    fun withPreferredSize(size: DoubleVector): FigureBuildInfo
 }

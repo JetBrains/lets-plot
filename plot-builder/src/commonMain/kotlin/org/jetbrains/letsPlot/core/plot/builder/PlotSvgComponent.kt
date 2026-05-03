@@ -60,7 +60,7 @@ class PlotSvgComponent constructor(
     val plotContext: PlotContext
 ) : SvgComponent() {
 
-    val figureSize: DoubleVector = figureLayoutInfo.figureSize
+    val figureSvgSize: DoubleVector = figureLayoutInfo.figureSvgSize
     val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
@@ -102,7 +102,7 @@ class PlotSvgComponent constructor(
                 "<no message>"
             val message = "Error building plot: ${rootCause::class.simpleName}\n$causeMessage"
 
-            val y = figureSize.y / 2
+            val errorCenter = figureLayoutInfo.figureLayoutedBounds.center
             val errorLabel = Label(message)
             val textColor = when {
                 theme.plot().showBackground() -> theme.plot().textColor()
@@ -115,7 +115,7 @@ class PlotSvgComponent constructor(
             errorLabel.setFontStyle("normal")
             errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
             errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-            errorLabel.moveTo(figureSize.x / 2, y)
+            errorLabel.moveTo(errorCenter.x, errorCenter.y)
             rootGroup.children().add(errorLabel.rootGroup)
         }
     }

@@ -39,14 +39,25 @@ internal class FacetedPlotLayout(
         require(facets.isDefined) { "Undefined facets." }
     }
 
-    override fun doLayout(
-        preferredSize: DoubleVector,
+    override fun layoutByGeomSize(
+        geomContentSize: DoubleVector,
         coordProvider: CoordProvider,
         axisSpacer: Thickness
     ): PlotLayoutInfo {
+        // In the context of faceted plot, geom content space equal to the plot inner space.
+        return layoutByPlotSize(
+            plotInnerSize = geomContentSize,
+            coordProvider = coordProvider
+        )
+    }
+
+    override fun layoutByPlotSize(
+        plotInnerSize: DoubleVector,
+        coordProvider: CoordProvider,
+    ): PlotLayoutInfo {
         var tilesAreaSize = DoubleVector(
-            preferredSize.x - (insets.left + insets.right),
-            preferredSize.y - (insets.top + insets.bottom)
+            plotInnerSize.x - (insets.left + insets.right),
+            plotInnerSize.y - (insets.top + insets.bottom)
         )
 
         val facetTiles = facets.tileInfos()
@@ -129,7 +140,6 @@ internal class FacetedPlotLayout(
         }
 
         // Create final plot tiles layout infos.
-
 
         // Align geom areas of tiles.
 
