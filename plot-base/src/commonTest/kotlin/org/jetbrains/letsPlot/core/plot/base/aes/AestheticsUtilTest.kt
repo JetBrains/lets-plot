@@ -92,7 +92,7 @@ class AestheticsUtilTest {
     }
 
     @Test
-    fun `effectiveSegmentAlpha uses alpha when segment alpha is default`() {
+    fun `effectiveSegmentAlpha uses alpha when segment alpha is not explicitly set`() {
         assertEquals(0.25, AestheticsUtil.effectiveSegmentAlpha(point(alpha = 0.25)))
     }
 

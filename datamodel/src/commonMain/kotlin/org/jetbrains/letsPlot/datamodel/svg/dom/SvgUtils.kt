@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 object SvgUtils {
     private val OPACITY_TABLE: DoubleArray = DoubleArray(256) { alpha -> alpha / 255.0 }
     private val OPACITY_STRING_TABLE: Array<String> = Array(256) { alpha -> OPACITY_TABLE[alpha].toString() }
+    internal val OPAQUE_OPACITY_STRING: String = OPACITY_STRING_TABLE[255]
 
     fun opacity(c: Color): Double {
         return OPACITY_TABLE[c.alpha]

@@ -46,7 +46,7 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
         val (color, opacity) = SvgUtils.splitColorAndOpacity(c)
         setAttribute(fill, color)
         if (opacity != null || hasAttribute(fillOpacity)) {
-            setAttribute(fillOpacity, opacity ?: "1.0")
+            setAttribute(fillOpacity, opacity ?: SvgUtils.OPAQUE_OPACITY_STRING)
         }
     }
 
@@ -54,7 +54,7 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
         val (color, opacity) = SvgUtils.splitColorAndOpacity(c)
         setAttribute(stroke, color)
         if (opacity != null || hasAttribute(strokeOpacity)) {
-            setAttribute(strokeOpacity, opacity ?: "1.0")
+            setAttribute(strokeOpacity, opacity ?: SvgUtils.OPAQUE_OPACITY_STRING)
         }
     }
 

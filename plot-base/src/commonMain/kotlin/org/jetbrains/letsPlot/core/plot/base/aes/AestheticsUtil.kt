@@ -55,7 +55,7 @@ object AestheticsUtil {
         val resolvedStroke = if (strokeWidth > 0) {
             applyAlpha(stroke, p)
         } else {
-            stroke.changeAlpha(0)
+            Color.TRANSPARENT
         }
 
         shape.update(resolvedFill, resolvedStroke, strokeWidth, transform)
@@ -74,8 +74,8 @@ object AestheticsUtil {
         return if (applyAlpha) applyAlpha(color, p) else color
     }
 
-    fun resolveFill(p: DataPointAesthetics, fill: Color = p.fill()!!): Color {
-        return applyAlpha(fill, p)
+    fun resolveFill(p: DataPointAesthetics, color: Color = p.fill()!!): Color {
+        return applyAlpha(color, p)
     }
 
     fun strokeWidth(p: DataPointAesthetics) = AesScaling.strokeWidth(p)
