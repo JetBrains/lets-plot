@@ -45,17 +45,13 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
     override fun setFill(c: Color) {
         val (color, opacity) = SvgUtils.splitColorAndOpacity(c)
         setAttribute(fill, color)
-        if (opacity != null || hasAttribute(fillOpacity)) {
-            setAttribute(fillOpacity, opacity ?: SvgUtils.OPAQUE_OPACITY_STRING)
-        }
+        opacity?.let { setAttribute(fillOpacity, it) }
     }
 
     override fun setStroke(c: Color) {
         val (color, opacity) = SvgUtils.splitColorAndOpacity(c)
         setAttribute(stroke, color)
-        if (opacity != null || hasAttribute(strokeOpacity)) {
-            setAttribute(strokeOpacity, opacity ?: SvgUtils.OPAQUE_OPACITY_STRING)
-        }
+        opacity?.let { setAttribute(strokeOpacity, it) }
     }
 
     override fun setStrokeWidth(v: Double) {
