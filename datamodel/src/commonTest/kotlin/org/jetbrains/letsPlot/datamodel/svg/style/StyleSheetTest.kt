@@ -26,21 +26,21 @@ class StyleSheetTest {
     @Test
     fun `opaque color does not emit fill-opacity`() {
         val css = sheetWith(Color.RED).toCSS()
-        assertTrue(css.contains("fill: #ff0000"))
+        assertTrue(css.contains("fill:#ff0000"))
         assertFalse(css.contains("fill-opacity"))
     }
 
     @Test
     fun `semi-transparent color emits fill and fill-opacity separately`() {
         val css = sheetWith(Color(255, 0, 0, 128)).toCSS()
-        assertTrue(css.contains("fill: #ff0000"))
+        assertTrue(css.contains("fill:#ff0000"))
         assertTrue(css.contains("fill-opacity:"))
     }
 
     @Test
     fun `fully transparent color emits fill-opacity of 0`() {
         val css = sheetWith(Color(0, 255, 0, 0)).toCSS()
-        assertTrue(css.contains("fill-opacity: 0"))
+        assertTrue(css.contains("fill-opacity:0"))
     }
 
     // --- fromCSS roundtrip ---

@@ -52,11 +52,7 @@ class StyleSheet constructor(
 
         private fun TextStyle.toCSS(): String {
             val css = StringBuilder()
-            val (fill, fillOpacity) = SvgUtils.splitColorAndOpacity(color)
-            css.appendLine("fill: $fill;")
-            if (fillOpacity != null) {
-                css.appendLine("fill-opacity: $fillOpacity;")
-            }
+            css.append(SvgUtils.fillAndOpacityStyle(color, separator = "\n"))
             css.appendLine("font-weight: ${face.weight};")
             css.appendLine("font-style: ${face.style};")
             if (!isNoneFamily) css.appendLine("font-family: $family;")
@@ -73,7 +69,7 @@ class StyleSheet constructor(
 
         fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleSheet {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
-                val regex = Regex("$propertyName:(.+);")
+                val regex = Regex("$propertyName:\\s*([^;]+);")
                 return regex.find(styleProperties)?.groupValues?.get(1)?.trim()
             }
 

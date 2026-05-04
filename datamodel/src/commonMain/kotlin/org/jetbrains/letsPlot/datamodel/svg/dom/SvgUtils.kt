@@ -27,6 +27,16 @@ object SvgUtils {
         return color.toHexColorNoAlpha() to if (color.alpha < 255) opacityString(color) else null
     }
 
+    fun fillAndOpacityStyle(color: Color, separator: String = ""): String {
+        val (fill, fillOpacity) = splitColorAndOpacity(color)
+        return buildString {
+            append("fill:$fill;$separator")
+            if (fillOpacity != null) {
+                append("fill-opacity:$fillOpacity;$separator")
+            }
+        }
+    }
+
     fun toARGB(c: Color): Int {
         return toARGB(c.red, c.green, c.blue, c.alpha)
     }

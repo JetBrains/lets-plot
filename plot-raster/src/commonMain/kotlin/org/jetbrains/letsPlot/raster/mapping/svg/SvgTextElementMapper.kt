@@ -67,13 +67,7 @@ internal class SvgTextElementMapper(
             target.fontStyle = toFontStyle(style.face)
             target.fontWeight = toFontWeight(style.face)
 
-            val styleAttr = buildString {
-                val (fill, fillOpacity) = SvgUtils.splitColorAndOpacity(style.color)
-                append("fill:$fill;")
-                if (fillOpacity != null) {
-                    append("fill-opacity:$fillOpacity;")
-                }
-            }
+            val styleAttr = SvgUtils.fillAndOpacityStyle(style.color)
             myTextAttrSupport.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
         }
     }
