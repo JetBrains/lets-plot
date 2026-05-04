@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -28,9 +28,6 @@ kotlin {
                 api(project(":plot-builder"))
                 api(project(":plot-stem"))
                 api(project(":plot-raster"))
-
-                api("org.jetbrains.kotlinx:kotlinx-datetime:${project.extra["kotlinx.datetime.version"]}")
-                api("io.github.oshai:kotlin-logging:${project.extra["kotlinLogging.version"]}")
             }
         }
     }
