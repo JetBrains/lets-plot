@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.aes
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.render.point.UpdatableShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
@@ -67,6 +68,12 @@ object AestheticsUtil {
 
     fun effectiveSegmentAlpha(p: DataPointAesthetics): Double? {
         return if (hasExplicitSegmentAlpha(p)) p.segmentAlpha() else p.alpha()
+    }
+
+    fun effectiveSegmentColor(p: DataPointAesthetics): Color? {
+        return p.segmentColor()
+            ?.takeIf { it != DEFAULT_SEGMENT_COLOR }
+            ?: p.color()
     }
 
     fun resolveColor(p: DataPointAesthetics, applyAlpha: Boolean): Color {

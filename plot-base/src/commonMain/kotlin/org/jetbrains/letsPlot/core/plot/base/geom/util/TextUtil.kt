@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
-import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
@@ -211,7 +210,7 @@ object TextUtil {
 
             override operator fun <T> get(aes: Aes<T>): T? {
                 val value: Any? = when (aes) {
-                    Aes.COLOR -> if (super.get(Aes.SEGMENT_COLOR) == DEFAULT_SEGMENT_COLOR) super.get(Aes.COLOR) else super.get(Aes.SEGMENT_COLOR)
+                    Aes.COLOR -> AestheticsUtil.effectiveSegmentColor(p)
                     Aes.SIZE -> super.get(Aes.SEGMENT_SIZE)
                     Aes.ALPHA -> AestheticsUtil.effectiveSegmentAlpha(p)
                     else -> super.get(aes)
