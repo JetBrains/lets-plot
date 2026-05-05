@@ -31,6 +31,16 @@ class PlotTooltipsTest : PlotVisualTestBase() {
     override fun currentTestName(): String? = currentTest.methodName
 
     @Test
+    fun plot_tooltips_anchorWithoutAxisTooltip() {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.ANCHOR_WITHOUT_AXIS_TOOLTIP))
+
+        val cursorPos = Vector(390, 340)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        assertBitmap(plotCanvasDrawable, cursorPos)
+    }
+
+    @Test
     fun plot_tooltips_pointAndLine_lineTooltip() {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.POINT_AND_LINE))
 
