@@ -15,17 +15,22 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 import org.jetbrains.letsPlot.visualtesting.plot.PlotTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
 class PlotTooltipsTest : PlotTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
     override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
     override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "tooltips"), silent = true)
 
     init {
-        registerTest(::plot_tooltips_pointAndLine_lineTooltip)
         registerTest(::plot_tooltips_pointAndLine_pointTooltip)
         registerTest(::plot_tooltips_pointAndPoint_pointTooltip)
         registerTest(::plot_tooltips_pointAndPolygon_polygonTooltip)
@@ -89,13 +94,14 @@ class PlotTooltipsTest : PlotTestBase() {
         testSuit.assertTest(testSuit::plot_tooltips_pointRangeNearest)
     }
 
-    fun plot_tooltips_pointAndLine_lineTooltip(): Bitmap {
+    @Test
+    fun plot_tooltips_pointAndLine_lineTooltip() {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.POINT_AND_LINE))
 
         val cursorPos = Vector(465, 80)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
-        return paint(plotCanvasDrawable, cursorPos)
+        return assertPlotImage(plotCanvasDrawable, cursorPos)
     }
 
     fun plot_tooltips_pointAndLine_pointTooltip(): Bitmap {
@@ -519,5 +525,9 @@ class PlotTooltipsTest : PlotTestBase() {
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    private fun assertPlotImage(plotCanvasDrawable: PlotCanvasDrawable, cursorPos: Vector? = null) {
+        assertPlotImage(plotCanvasDrawable, cursorPos, currentTest.methodName)
     }
 }

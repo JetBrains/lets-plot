@@ -66,6 +66,14 @@ abstract class PlotTestBase : TestSuit() {
         return plotCanvasDrawable
     }
 
+    // For regular @Test-annotated tests
+    protected fun currentTestName(): String? = null
+
+    protected fun assertPlotImage(plotCanvasDrawable: PlotCanvasDrawable, cursorPos: Vector? = null) {
+        val bitmap = paint(plotCanvasDrawable, cursorPos)
+        assertImage(bitmap, testMethodName)
+    }
+
     fun paint(plotCanvasDrawable: PlotCanvasDrawable, cursorPos: Vector? = null): Bitmap {
         val canvas = canvasPeer.createCanvas(plotCanvasDrawable.size)
         plotCanvasDrawable.paint(canvas.context2d)

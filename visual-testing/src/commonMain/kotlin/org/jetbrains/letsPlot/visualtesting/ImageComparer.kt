@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import kotlin.math.ceil
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 
 class ImageComparer(
     private val canvasPeer: CanvasPeer,
@@ -61,7 +60,6 @@ class ImageComparer(
 
     data class ComparisonContext(
         val testSuite: KClass<out TestSuit>?,
-        val test: KFunction<*>?,
         val profile: ComparisonProfile
     )
 
@@ -79,8 +77,7 @@ class ImageComparer(
         fileName: String,
         actualBitmap: Bitmap,
         profile: ComparisonProfile? = null,
-        testSuite: KClass<out TestSuit>? = null,
-        test: KFunction<*>? = null
+        testSuite: KClass<out TestSuit>? = null
     ) {
         val testName = fileName.removeSuffix(".png") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
         val expectedFileName = "$testName.png"
@@ -101,7 +98,6 @@ class ImageComparer(
         val profile = profileAdjuster(
             ComparisonContext(
                 testSuite = testSuite,
-                test = test,
                 profile = profile ?: defaultProfile
             )
         )

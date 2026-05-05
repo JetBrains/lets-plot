@@ -40,9 +40,13 @@ abstract class TestSuit {
     }
 
     fun assertTest(test: KFunction0<Bitmap>, profile: ComparisonProfile? = null) {
-        val expectedFileName = test.name.replace(" ", "_").replace(".", "_")
         val actual = test.invoke()
-        imageComparer.assertBitmapEquals(expectedFileName, actual, profile, testSuiteClass, test)
+        assertImage(actual, test.name, profile)
+    }
+
+    protected fun assertImage(actual: Bitmap, testMethodName: String, profile: ComparisonProfile? = null) {
+        val expectedFileName = testMethodName.replace(" ", "_").replace(".", "_")
+        imageComparer.assertBitmapEquals(expectedFileName, actual, profile, testSuiteClass)
     }
 
     private fun runTest(test: KFunction0<Bitmap>, profile: ComparisonProfile?): Int {
