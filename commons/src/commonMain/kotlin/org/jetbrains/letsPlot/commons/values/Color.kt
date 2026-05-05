@@ -243,8 +243,6 @@ class Color @JvmOverloads constructor(
         }
 
         fun parseRGB(text: String): Color {
-            fun IntRange.toMessage() = if (first == last) "$first" else "$first or $last"
-
             val firstParen = text.indexOf("(")
             val lastParen = text.lastIndexOf(")")
             if (firstParen == -1 || lastParen == -1 || lastParen < firstParen) {
@@ -254,28 +252,19 @@ class Color @JvmOverloads constructor(
             val prefix = text.substring(0, firstParen)
             val components = text.substring(firstParen + 1, lastParen).split(",").map(String::trim)
 
-            val expectedComponentCount = when (prefix) {
-                RGB -> 3..3
-                RGBA -> 4..4
-                COLOR -> 3..4
+            when (prefix) {
+                RGB -> require(components.size == 3) { "RGB color format requires exactly 3 components: $text" }
+                RGBA -> require(components.size == 4) { "RGBA color format requires exactly 4 components: $text" }
+                COLOR -> require(components.size in 3..4) { "'color()' format requires 3 or 4 components: $text" }
                 else -> throw IllegalArgumentException("Unsupported RGB color format: $text")
-            }
-
-            if (components.size !in expectedComponentCount) {
-                throw IllegalArgumentException(
-                    "Invalid color value: $text. Expected ${expectedComponentCount.toMessage()} components."
-                )
             }
 
             return try {
                 val red = components[0].toInt()
                 val green = components[1].toInt()
                 val blue = components[2].toInt()
-                val alpha = if (components.size == 4) {
-                    (components[3].toFloat() * 255).roundToInt()
-                } else {
-                    255
-                }
+                val opacity = components.getOrNull(3)?.toFloat() ?: 1f
+                val alpha = (opacity * 255).roundToInt()
 
                 Color(red, green, blue, alpha)
             } catch (e: NumberFormatException) {

@@ -62,7 +62,7 @@ class ColorTest {
             Color.parseRGB("rgba(220, 240, 255)")
         }
 
-        assertEquals("Invalid color value: rgba(220, 240, 255). Expected 4 components.", e.message)
+        assertEquals("RGBA color format requires exactly 4 components: rgba(220, 240, 255)", e.message)
     }
 
     @Test
@@ -71,7 +71,7 @@ class ColorTest {
             Color.parseRGB("rgb(220, 240, 255, 0.5)")
         }
 
-        assertEquals("Invalid color value: rgb(220, 240, 255, 0.5). Expected 3 components.", e.message)
+        assertEquals("RGB color format requires exactly 3 components: rgb(220, 240, 255, 0.5)", e.message)
     }
 
     @Test
@@ -90,7 +90,7 @@ class ColorTest {
             Color.parseRGB("color(0,0)")
         }
 
-        assertEquals("Invalid color value: color(0,0). Expected 3 or 4 components.", e.message)
+        assertEquals("'color()' format requires 3 or 4 components: color(0,0)", e.message)
     }
 
     @Test
