@@ -1,15 +1,10 @@
-/*
- * Copyright (c) 2026. JetBrains s.r.o.
- * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
- */
-
 package org.jetbrains.letsPlot.visualtesting.plot
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.interact.InteractionSpec
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.DefaultFigureToolsController
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelBase
@@ -18,13 +13,12 @@ import org.jetbrains.letsPlot.core.plot.builder.interact.tools.FigureModelOption
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.SpecOverrideState
 import org.jetbrains.letsPlot.core.spec.front.SpecOverrideUtil.applySpecOverride
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
-import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
-import org.jetbrains.letsPlot.raster.export.PlotRasterExport
 import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
-import org.jetbrains.letsPlot.visualtesting.TestSuit
 
-abstract class PlotTestBase : TestSuit() {
+class PlotHelper(
+    private val canvasPeer: CanvasPeer
+) {
     fun createPlot(
         plotSpec: MutableMap<String, Any?>,
         width: Number? = null,
@@ -66,13 +60,6 @@ abstract class PlotTestBase : TestSuit() {
         return plotCanvasDrawable
     }
 
-    // For regular @Test-annotated tests
-    protected fun currentTestName(): String? = null
-
-    protected fun assertPlotImage(plotCanvasDrawable: PlotCanvasDrawable, cursorPos: Vector? = null) {
-        val bitmap = paint(plotCanvasDrawable, cursorPos)
-        assertImage(bitmap, testMethodName)
-    }
 
     fun paint(plotCanvasDrawable: PlotCanvasDrawable, cursorPos: Vector? = null): Bitmap {
         val canvas = canvasPeer.createCanvas(plotCanvasDrawable.size)
@@ -108,22 +95,6 @@ abstract class PlotTestBase : TestSuit() {
         return bitmap
     }
 
-    fun paint(
-        plotSpec: MutableMap<String, Any?>,
-        width: Number? = null,
-        height: Number? = null,
-        unit: SizeUnit? = null,
-        dpi: Number? = null,
-        scale: Number? = 1.0
-    ): Bitmap {
-        @Suppress("UNCHECKED_CAST")
-        val plotSpec = plotSpec as MutableMap<String, Any>
-        val plotSize = if (width != null && height != null) DoubleVector(width, height) else null
-
-        val (bitmap, _) = PlotRasterExport.exportBitmap(plotSpec, plotSize, unit, dpi, scale, canvasPeer)
-        return bitmap
-    }
-
     class TestingFigureModel(
         private val processedPlotSpec: Map<String, Any>,
         private val plotCanvasDrawable: PlotCanvasDrawable,
@@ -146,4 +117,5 @@ abstract class PlotTestBase : TestSuit() {
                 computationMessagesHandler = { })
         }
     }
+
 }

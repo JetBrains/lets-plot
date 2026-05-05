@@ -59,7 +59,6 @@ class ImageComparer(
     }
 
     data class ComparisonContext(
-        val testSuite: KClass<out TestSuit>?,
         val profile: ComparisonProfile
     )
 
@@ -77,7 +76,7 @@ class ImageComparer(
         fileName: String,
         actualBitmap: Bitmap,
         profile: ComparisonProfile? = null,
-        testSuite: KClass<out TestSuit>? = null
+        testSuite: KClass<out TestSuitBase>? = null
     ) {
         val testName = fileName.removeSuffix(".png") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
         val expectedFileName = "$testName.png"
@@ -95,12 +94,7 @@ class ImageComparer(
             error("Failed to read expected image.\n${it.message}\nActual image saved to ${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}")
         }
 
-        val profile = profileAdjuster(
-            ComparisonContext(
-                testSuite = testSuite,
-                profile = profile ?: defaultProfile
-            )
-        )
+        val profile = profileAdjuster(ComparisonContext(profile = profile ?: defaultProfile))
         val diffBitmap = createDiffImage(expectedBitmap, actualBitmap, profile)
         if (diffBitmap != null) {
             val diffFilePath = "${testName}_diff.png"

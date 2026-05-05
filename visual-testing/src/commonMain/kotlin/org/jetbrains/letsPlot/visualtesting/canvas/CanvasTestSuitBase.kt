@@ -11,10 +11,10 @@ import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
-import org.jetbrains.letsPlot.visualtesting.TestSuit
+import org.jetbrains.letsPlot.visualtesting.TestSuitBase
 
 
-abstract class CanvasTestBase : TestSuit() {
+abstract class CanvasTestSuitBase : TestSuitBase() {
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
 
     fun createCanvas(width: Int = 100, height: Int = 100): Pair<Canvas, Context2d> {
