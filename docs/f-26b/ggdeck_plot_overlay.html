@@ -7475,7 +7475,18 @@ a.anchor-link {
 </style>
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=336d88ab-d865-4247-90b4-f1cfa7cd11be">
+<main>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=0dcc833b-8ff3-42f4-9138-8bd6a8c7820d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Plot-Overlay-with-ggdeck()">Plot Overlay with <code>ggdeck()</code><a class="anchor-link" href="#Plot-Overlay-with-ggdeck()">¶</a></h1><p>The <code>ggdeck()</code> function enables <strong>multivariate comparison</strong> by synchronized <strong>overlaying of independent plots</strong>. This allows you to combine separate plot objects—each with its own coordinate system and geometries—into a unified view.</p>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=336d88ab-d865-4247-90b4-f1cfa7cd11be">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -7520,6 +7531,17 @@ a.anchor-link {
 //# sourceMappingURL=lets-plot.js.map
         </script>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=6d72a431-2063-4d82-a63a-e3174fdbb3a3">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="1.-Delhi-Mean-Temperature-Chart">1. Delhi Mean Temperature Chart<a class="anchor-link" href="#1.-Delhi-Mean-Temperature-Chart">¶</a></h4>
 </div>
 </div>
 </div>
@@ -7616,6 +7638,7 @@ a.anchor-link {
         <span class="o">+</span> <span class="n">geom_line</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'meantemp'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'meantemp'</span><span class="p">))</span> 
         <span class="o">+</span> <span class="n">scale_color_gradient2</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="s1">'#0571b0'</span><span class="p">,</span> <span class="n">mid</span><span class="o">=</span><span class="s1">'#f7f7f7'</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="s1">'#ca0020'</span><span class="p">,</span> <span class="n">midpoint</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
         <span class="o">+</span> <span class="n">labs</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s1">'Mean Temperature [°C]'</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">theme</span><span class="p">(</span><span class="n">axis_text_y</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#0571b0'</span><span class="p">),</span> <span class="n">axis_title_y</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#0571b0'</span><span class="p">))</span>
 <span class="p">)</span>
 <span class="n">temperature_plot</span>
 </pre></div>
@@ -7630,7 +7653,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="mtFrIl"></div>
+<div id="QsUNYr"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -7655,7 +7678,7 @@ a.anchor-link {
        };
    }
    
-   const containerDiv = document.getElementById("mtFrIl");
+   const containerDiv = document.getElementById("QsUNYr");
    let fig = null;
    
    function renderPlot() {
@@ -7688,6 +7711,16 @@ a.anchor-link {
 "guides":{
 "y":{
 "title":"Mean Temperature [°C]"
+}
+},
+"theme":{
+"axis_title_y":{
+"color":"#0571b0",
+"blank":false
+},
+"axis_text_y":{
+"color":"#0571b0",
+"blank":false
 }
 },
 "kind":"plot",
@@ -7759,6 +7792,17 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=d27208ff-ad88-44e2-b440-3b5224f95396">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="2.-Fictional-'Daily-Ice-Cream-Cost'-Data">2. Fictional 'Daily Ice Cream Cost' Data<a class="anchor-link" href="#2.-Fictional-'Daily-Ice-Cream-Cost'-Data">¶</a></h4>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=1a399843-8f3a-4614-ab77-4841d8ce527b">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -7767,8 +7811,7 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [5]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Synthetic: Daily cost with a temperature-based surge</span>
-<span class="k">def</span> <span class="nf">calculate_daily_cost</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">calculate_daily_cost</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
     <span class="n">base_cost</span> <span class="o">=</span> <span class="mf">1.5</span>
     <span class="n">surge</span> <span class="o">=</span> <span class="mi">0</span>
     
@@ -7790,7 +7833,7 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [6]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Monthly cost data (synthetic)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Synthesize daily cost data and aggregate by month</span>
 <span class="n">cost_data</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">climate_data</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">daily_cost</span><span class="o">=</span><span class="n">climate_data</span><span class="p">[</span><span class="s1">'meantemp'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">calculate_daily_cost</span><span class="p">))</span>
     <span class="o">.</span><span class="n">resample</span><span class="p">(</span><span class="s1">'MS'</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'date'</span><span class="p">)</span>
@@ -7798,7 +7841,6 @@ a.anchor-link {
         <span class="n">avg_daily_cost</span><span class="o">=</span><span class="p">(</span><span class="s1">'daily_cost'</span><span class="p">,</span> <span class="s1">'mean'</span><span class="p">),</span>
         <span class="n">min_daily_cost</span><span class="o">=</span><span class="p">(</span><span class="s1">'daily_cost'</span><span class="p">,</span> <span class="s1">'min'</span><span class="p">),</span>
         <span class="n">max_daily_cost</span><span class="o">=</span><span class="p">(</span><span class="s1">'daily_cost'</span><span class="p">,</span> <span class="s1">'max'</span><span class="p">),</span>
-        <span class="n">total_monthly_bill</span><span class="o">=</span><span class="p">(</span><span class="s1">'daily_cost'</span><span class="p">,</span> <span class="s1">'sum'</span><span class="p">)</span> <span class="c1"># Useful for a different plot</span>
     <span class="p">)</span>
     <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 <span class="p">)</span>
@@ -7838,7 +7880,6 @@ a.anchor-link {
 <th>avg_daily_cost</th>
 <th>min_daily_cost</th>
 <th>max_daily_cost</th>
-<th>total_monthly_bill</th>
 </tr>
 </thead>
 <tbody>
@@ -7848,7 +7889,6 @@ a.anchor-link {
 <td>1.5</td>
 <td>1.5</td>
 <td>1.5</td>
-<td>46.5</td>
 </tr>
 <tr>
 <th>1</th>
@@ -7856,7 +7896,6 @@ a.anchor-link {
 <td>1.5</td>
 <td>1.5</td>
 <td>1.5</td>
-<td>42.0</td>
 </tr>
 <tr>
 <th>2</th>
@@ -7864,12 +7903,22 @@ a.anchor-link {
 <td>1.5</td>
 <td>1.5</td>
 <td>1.5</td>
-<td>46.5</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=758c3249-8184-47bd-9ccb-33714fb19ff1">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="3.-'Daily-Cost'-Plot-with-Y-Axis-on-the-Right">3. 'Daily Cost' Plot with Y-Axis on the Right<a class="anchor-link" href="#3.-'Daily-Cost'-Plot-with-Y-Axis-on-the-Right">¶</a></h4>
 </div>
 </div>
 </div>
@@ -7888,6 +7937,7 @@ a.anchor-link {
         <span class="o">+</span> <span class="n">geom_pointrange</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'avg_daily_cost'</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="s1">'min_daily_cost'</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="s1">'max_daily_cost'</span><span class="p">),</span>
                 <span class="n">color</span><span class="o">=</span><span class="s1">'#A04000'</span><span class="p">,</span> <span class="n">fatten</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
         <span class="o">+</span> <span class="n">labs</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s1">'Daily Ice Cream Cost per Kid [$]'</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">theme</span><span class="p">(</span><span class="n">axis_text_y</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#A04000'</span><span class="p">),</span> <span class="n">axis_title_y</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#A04000'</span><span class="p">))</span>
         <span class="o">+</span> <span class="n">scale_y_continuous</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="s1">'right'</span><span class="p">)</span>
 <span class="p">)</span>             
 
@@ -7904,7 +7954,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[7]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="9SCMlS"></div>
+<div id="o1ska0"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -7929,7 +7979,7 @@ a.anchor-link {
        };
    }
    
-   const containerDiv = document.getElementById("9SCMlS");
+   const containerDiv = document.getElementById("o1ska0");
    let fig = null;
    
    function renderPlot() {
@@ -7956,14 +8006,21 @@ a.anchor-link {
 },{
 "type":"float",
 "column":"max_daily_cost"
-},{
-"type":"float",
-"column":"total_monthly_bill"
 }]
 },
 "guides":{
 "y":{
 "title":"Daily Ice Cream Cost per Kid [$]"
+}
+},
+"theme":{
+"axis_title_y":{
+"color":"#A04000",
+"blank":false
+},
+"axis_text_y":{
+"color":"#A04000",
+"blank":false
 }
 },
 "kind":"plot",
@@ -8048,6 +8105,17 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=7b50e4b5-87ce-4ba9-ad4e-29c4f6854ea2">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="4.-Composing-the-'Temperature'-and-'Daily-Cost'-Plots-into-a-Deck">4. Composing the 'Temperature' and 'Daily Cost' Plots into a Deck<a class="anchor-link" href="#4.-Composing-the-'Temperature'-and-'Daily-Cost'-Plots-into-a-Deck">¶</a></h4>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=07916f0d-e76b-4869-b81c-375fcac09272">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8062,9 +8130,8 @@ a.anchor-link {
 <span class="p">])</span> <span class="o">+</span> \
 <span class="n">theme</span><span class="p">(</span>
     <span class="n">plot_title</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">hjust</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">21</span><span class="p">),</span>
-    <span class="n">panel_grid</span><span class="o">=</span><span class="n">element_line</span><span class="p">(),</span>
 <span class="p">)</span> <span class="o">+</span> \
-<span class="n">ggtitle</span><span class="p">(</span><span class="s1">'Delhi Mean Temperature &amp; Ice Cream Costs'</span><span class="p">)</span> <span class="o">+</span>\
+<span class="n">ggtitle</span><span class="p">(</span><span class="s1">'Delhi Mean Temperature &amp; Ice Cream Cost'</span><span class="p">)</span> <span class="o">+</span>\
 <span class="n">ggsize</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8078,7 +8145,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[8]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="AcuUql"></div>
+<div id="LCuURY"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -8103,16 +8170,13 @@ a.anchor-link {
        };
    }
    
-   const containerDiv = document.getElementById("AcuUql");
+   const containerDiv = document.getElementById("LCuURY");
    let fig = null;
    
    function renderPlot() {
        if (fig === null) {
            const plotSpec = {
 "theme":{
-"panel_grid":{
-"blank":false
-},
 "plot_title":{
 "size":21.0,
 "hjust":0.5,
@@ -8120,7 +8184,7 @@ a.anchor-link {
 }
 },
 "ggtitle":{
-"text":"Delhi Mean Temperature & Ice Cream Costs"
+"text":"Delhi Mean Temperature & Ice Cream Cost"
 },
 "ggsize":{
 "width":800.0,
@@ -8161,6 +8225,14 @@ a.anchor-link {
 }
 },
 "theme":{
+"axis_title_y":{
+"color":"#0571b0",
+"blank":false
+},
+"axis_text_y":{
+"color":"#0571b0",
+"blank":false
+},
 "legend_position":"none"
 },
 "kind":"plot",
@@ -8208,14 +8280,21 @@ a.anchor-link {
 },{
 "type":"float",
 "column":"max_daily_cost"
-},{
-"type":"float",
-"column":"total_monthly_bill"
 }]
 },
 "guides":{
 "y":{
 "title":"Daily Ice Cream Cost per Kid [$]"
+}
+},
+"theme":{
+"axis_title_y":{
+"color":"#A04000",
+"blank":false
+},
+"axis_text_y":{
+"color":"#A04000",
+"blank":false
 }
 },
 "kind":"plot",
@@ -8301,6 +8380,23 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=1b8e8f3c-daf4-4403-b07f-5f6212b98b1b">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="5.-Managing-Tooltips-in-Composites">5. Managing Tooltips in Composites<a class="anchor-link" href="#5.-Managing-Tooltips-in-Composites">¶</a></h4><p>Since <code>ggdeck()</code> overlays independent plots, multiple tooltips may trigger simultaneously. This can lead to visual clutter and overlapping labels, especially on the axes.</p>
+<p>To maintain clarity:</p>
+<ul>
+<li><strong>Silence background layers:</strong> Disable tooltips on secondary geometries to reduce hover noise.</li>
+<li><strong>Remove redundant axis labels:</strong> Suppress axis tooltips on overlaid plots to avoid duplication.</li>
+<li><strong>Use anchored tooltips:</strong> Consolidate information into a fixed position.</li>
+</ul>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=08ad9184-107b-4a33-92ae-5922819c4220">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8309,27 +8405,28 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In [9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
-<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Tooltips</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Configure tooltips on the 'Daily Cost' plot</span>
 
 <span class="n">cost_plot2</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">ggplot</span><span class="p">(</span><span class="n">cost_data</span><span class="p">)</span>
         <span class="o">+</span> <span class="n">geom_bar</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'avg_daily_cost'</span><span class="p">),</span> <span class="n">stat</span><span class="o">=</span><span class="s1">'identity'</span><span class="p">,</span> 
                 <span class="n">fill</span><span class="o">=</span><span class="s1">'#F39C12'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
-                <span class="n">tooltips</span><span class="o">=</span><span class="s1">'none'</span><span class="p">)</span>           <span class="c1"># &lt;-- Remove all tooltips from bars</span>
+                <span class="n">tooltips</span><span class="o">=</span><span class="s1">'none'</span><span class="p">)</span>           <span class="c1"># &lt;-- Disable all tooltips on bars</span>
 
         <span class="o">+</span> <span class="n">geom_pointrange</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="s1">'date'</span><span class="p">,</span> <span class="s1">'avg_daily_cost'</span><span class="p">,</span> <span class="n">ymin</span><span class="o">=</span><span class="s1">'min_daily_cost'</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="s1">'max_daily_cost'</span><span class="p">),</span>
                 <span class="n">color</span><span class="o">=</span><span class="s1">'#A04000'</span><span class="p">,</span> <span class="n">fatten</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
-                <span class="n">tooltips</span><span class="o">=</span><span class="n">layer_tooltips</span><span class="p">()</span>  <span class="c1"># &lt;-- Configure tooltip anchored to the top-right corner </span>
+                <span class="n">tooltips</span><span class="o">=</span><span class="n">layer_tooltips</span><span class="p">()</span>  <span class="c1"># &lt;-- Consolidate 'sideways' tooltips in a single panel </span>
                     <span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'@date'</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="s1">'Avg | ^y'</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="s1">'Min | ^ymin'</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="s1">'Max | ^ymax'</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">'^Y'</span><span class="p">,</span> <span class="s1">'${.2f}'</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">'@date'</span><span class="p">,</span> <span class="s1">'%b'</span><span class="p">)</span>
-                    <span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">'top_right'</span><span class="p">)</span>   
+                    <span class="o">.</span><span class="n">anchor</span><span class="p">(</span><span class="s1">'top_right'</span><span class="p">)</span>   <span class="c1"># &lt;-- Anchor to the top-right corner </span>
                 <span class="p">)</span>
-        <span class="o">+</span> <span class="n">theme</span><span class="p">(</span><span class="n">axis_tooltip_x</span><span class="o">=</span><span class="s1">'blank'</span><span class="p">)</span>    <span class="c1"># &lt;-- Remove tooltip from the x-axis</span>
+        <span class="o">+</span> <span class="n">theme</span><span class="p">(</span><span class="n">axis_tooltip_x</span><span class="o">=</span><span class="s1">'blank'</span><span class="p">)</span>    <span class="c1"># &lt;-- Suppress redundant X-axis tooltips</span>
         <span class="o">+</span> <span class="n">labs</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="s1">'Daily Ice Cream Cost per Kid [$]'</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">theme</span><span class="p">(</span><span class="n">axis_text_y</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#A04000'</span><span class="p">),</span> <span class="n">axis_title_y</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s1">'#A04000'</span><span class="p">))</span>
         <span class="o">+</span> <span class="n">scale_y_continuous</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="s1">'right'</span><span class="p">)</span>
 <span class="p">)</span>
 
@@ -8346,7 +8443,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="t2HHSy"></div>
+<div id="62R8PM"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -8371,7 +8468,7 @@ a.anchor-link {
        };
    }
    
-   const containerDiv = document.getElementById("t2HHSy");
+   const containerDiv = document.getElementById("62R8PM");
    let fig = null;
    
    function renderPlot() {
@@ -8398,13 +8495,18 @@ a.anchor-link {
 },{
 "type":"float",
 "column":"max_daily_cost"
-},{
-"type":"float",
-"column":"total_monthly_bill"
 }]
 },
 "theme":{
-"axis_tooltip_x":"blank"
+"axis_tooltip_x":"blank",
+"axis_title_y":{
+"color":"#A04000",
+"blank":false
+},
+"axis_text_y":{
+"color":"#A04000",
+"blank":false
+}
 },
 "guides":{
 "y":{
@@ -8510,6 +8612,17 @@ a.anchor-link {
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=792039a1-7aac-415a-86d1-95a675d8d96d">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h4 id="6.-Assembling-the-Updated-'Daily-Cost'-Plot-into-a-Final-Deck">6. Assembling the Updated 'Daily Cost' Plot into a Final Deck<a class="anchor-link" href="#6.-Assembling-the-Updated-'Daily-Cost'-Plot-into-a-Final-Deck">¶</a></h4>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=e665681d-cd68-4b53-8483-ecb1ba8e710e">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -8524,9 +8637,8 @@ a.anchor-link {
 <span class="p">])</span> <span class="o">+</span> \
 <span class="n">theme</span><span class="p">(</span>
     <span class="n">plot_title</span><span class="o">=</span><span class="n">element_text</span><span class="p">(</span><span class="n">hjust</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">21</span><span class="p">),</span>
-    <span class="n">panel_grid</span><span class="o">=</span><span class="n">element_line</span><span class="p">(),</span>
 <span class="p">)</span> <span class="o">+</span> \
-<span class="n">ggtitle</span><span class="p">(</span><span class="s1">'Delhi Mean Temperature &amp; Ice Cream Costs'</span><span class="p">)</span> <span class="o">+</span>\
+<span class="n">ggtitle</span><span class="p">(</span><span class="s1">'Delhi Mean Temperature &amp; Ice Cream Cost'</span><span class="p">)</span> <span class="o">+</span>\
 <span class="n">ggsize</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -8540,7 +8652,7 @@ a.anchor-link {
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[10]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="frw3eQ"></div>
+<div id="tmaOYO"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -8565,16 +8677,13 @@ a.anchor-link {
        };
    }
    
-   const containerDiv = document.getElementById("frw3eQ");
+   const containerDiv = document.getElementById("tmaOYO");
    let fig = null;
    
    function renderPlot() {
        if (fig === null) {
            const plotSpec = {
 "theme":{
-"panel_grid":{
-"blank":false
-},
 "plot_title":{
 "size":21.0,
 "hjust":0.5,
@@ -8582,7 +8691,7 @@ a.anchor-link {
 }
 },
 "ggtitle":{
-"text":"Delhi Mean Temperature & Ice Cream Costs"
+"text":"Delhi Mean Temperature & Ice Cream Cost"
 },
 "ggsize":{
 "width":800.0,
@@ -8623,6 +8732,14 @@ a.anchor-link {
 }
 },
 "theme":{
+"axis_title_y":{
+"color":"#0571b0",
+"blank":false
+},
+"axis_text_y":{
+"color":"#0571b0",
+"blank":false
+},
 "legend_position":"none"
 },
 "kind":"plot",
@@ -8670,13 +8787,18 @@ a.anchor-link {
 },{
 "type":"float",
 "column":"max_daily_cost"
-},{
-"type":"float",
-"column":"total_monthly_bill"
 }]
 },
 "theme":{
-"axis_tooltip_x":"blank"
+"axis_tooltip_x":"blank",
+"axis_title_y":{
+"color":"#A04000",
+"blank":false
+},
+"axis_text_y":{
+"color":"#A04000",
+"blank":false
+}
 },
 "guides":{
 "y":{
