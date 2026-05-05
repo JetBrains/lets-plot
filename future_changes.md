@@ -18,7 +18,9 @@
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/removed_points_messages.html).
 
-- Alpha channel support in color values. [[#1462](https://github.com/JetBrains/lets-plot/issues/1462)].
+- Alpha (transparency) component support in color values:
+  - Hex colors accept `#RRGGBBAA` or `#RGBA` notation.
+  - Theme element colors support alpha [[#1462](https://github.com/JetBrains/lets-plot/issues/1462)].
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/color_alpha.html).
 
