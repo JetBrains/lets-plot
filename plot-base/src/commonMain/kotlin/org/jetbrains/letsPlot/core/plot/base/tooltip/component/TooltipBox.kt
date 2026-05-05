@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.*
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
@@ -471,16 +471,16 @@ class TooltipBox(
             val titleComponent = Label(titleLine)
             titleComponent.addClassName(TooltipStyle.TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            val defaultLineMetrics = LineMetrics.ascentOnly(fontSize)
-            val metricsByLine = estimateLineMetrics(titleLine, TooltipStyle.TOOLTIP_TITLE).map { it ?: defaultLineMetrics }
-            titleComponent.setLineMetrics(metricsByLine)
+            val defaultMetrics = LineLayoutMetrics.ascentOnly(fontSize)
+            val metricsByLine = estimateLineLayoutMetrics(titleLine, TooltipStyle.TOOLTIP_TITLE).map { it ?: defaultMetrics }
+            titleComponent.setLineLayoutMetrics(metricsByLine)
             titleComponent.setFontSize(fontSize)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
         }
 
-        private fun estimateLineMetrics(line: String, className: String): List<LineMetrics?> {
+        private fun estimateLineLayoutMetrics(line: String, className: String): List<LineLayoutMetrics?> {
             val style = styleSheet.getTextStyle(className)
             return line
                 .split("\n")
@@ -503,43 +503,43 @@ class TooltipBox(
 
         // For line-height estimation, we currently treat the SVG bounding box as the single source of truth.
         // But we need a baseline-aware height, so we also have to get the baseline,
-        // and that information is only available from RichText.estimateLineMetrics().
+        // and that information is only available from RichText line layout estimates.
         // This makes the algorithm more complex.
-        // In practice, though, RichText.estimateLineMetrics() may already be accurate enough,
+        // In practice, though, RichText line layout estimates may already be accurate enough,
         // so we should consider relying on it alone and dropping the merge with getBBox().
         private fun estimateBaseline(
             line: String,
             style: TextStyle,
             estimatedHeights: List<Double?>
-        ): List<LineMetrics?> {
+        ): List<LineLayoutMetrics?> {
             val font = Font(
                 family = DefaultFontFamilyRegistry().get(style.family),
                 size = style.size.roundToInt(),
                 isBold = style.face.bold,
                 isItalic = style.face.italic
             )
-            val estimatedLineMetrics = RichText.estimateLineDimensions(line, font).map(LineDimensions::metrics)
-            if (estimatedLineMetrics.size == estimatedHeights.size) {
+            val estimatedMetrics = RichText.estimateLineDimensions(line, font).map(LineDimensions::layoutMetrics)
+            if (estimatedMetrics.size == estimatedHeights.size) {
                 // One scale for the whole block, not per line: keeps (ascent - descent) equal
                 // across lines so Label's baseline stacking stays consistent between plain and fraction lines.
-                val scale = estimatedLineMetrics.sumOf(LineMetrics::height).let { totalMetricsHeight ->
+                val scale = estimatedMetrics.sumOf(LineLayoutMetrics::height).let { totalMetricsHeight ->
                     if (totalMetricsHeight > 0) {
                         estimatedHeights.filterNotNull().sum() / totalMetricsHeight
                     } else 1.0
                 }
-                return (estimatedLineMetrics zip estimatedHeights).map { (lineMetrics, height) ->
+                return (estimatedMetrics zip estimatedHeights).map { (metrics, height) ->
                     if (height == null) {
                         null
                     } else {
-                        LineMetrics(
-                            lineMetrics.ascent * scale + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS,
-                            lineMetrics.descent * scale
+                        LineLayoutMetrics(
+                            metrics.ascent * scale + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS,
+                            metrics.descent * scale
                         )
                     }
                 }
             }
             // Fallback
-            return estimatedLineMetrics
+            return estimatedMetrics
         }
 
         private fun layoutTitle(
@@ -589,24 +589,24 @@ class TooltipBox(
                 myLinesContainer.children().add(valueComponent.rootGroup)
             }
 
-            // calculate LineMetrics of original label/value lines
-            val defaultLabelMetrics = LineMetrics.ascentOnly(labelFontSize)
-            val defaultValueMetrics = LineMetrics.ascentOnly(valueFontSize)
-            val metricsByLine: List<Pair<List<LineMetrics>?, List<LineMetrics>>> = lines.map { line ->
+            // calculate LineLayoutMetrics of original label/value lines
+            val defaultLabelMetrics = LineLayoutMetrics.ascentOnly(labelFontSize)
+            val defaultValueMetrics = LineLayoutMetrics.ascentOnly(valueFontSize)
+            val metricsByLine: List<Pair<List<LineLayoutMetrics>?, List<LineLayoutMetrics>>> = lines.map { line ->
                 Pair(
                     line.label?.let {
-                        estimateLineMetrics(it, TooltipStyle.TOOLTIP_LABEL).map { labelMetrics -> labelMetrics ?: defaultLabelMetrics }
+                        estimateLineLayoutMetrics(it, TooltipStyle.TOOLTIP_LABEL).map { labelMetrics -> labelMetrics ?: defaultLabelMetrics }
                     },
-                    estimateLineMetrics(line.value, textClassName).map { valueMetrics -> valueMetrics ?: defaultValueMetrics }
+                    estimateLineLayoutMetrics(line.value, textClassName).map { valueMetrics -> valueMetrics ?: defaultValueMetrics }
                 )
             }
 
             // set vertical shifts for tspan elements
             metricsByLine.zip(components).onEach { (metrics, component) ->
-                val (labelLineMetrics, valueLineMetrics) = metrics
+                val (labelMetrics, valueMetrics) = metrics
                 val (labelComponent, valueComponent) = component
-                labelLineMetrics?.let { labelComponent?.setLineMetrics(it) }
-                valueComponent.setLineMetrics(valueLineMetrics)
+                labelMetrics?.let { labelComponent?.setLineLayoutMetrics(it) }
+                valueComponent.setLineLayoutMetrics(valueMetrics)
             }
 
             val rawBBoxes = components.map { (label, value) -> getBBox(label) to getBBox(value) }
@@ -616,10 +616,10 @@ class TooltipBox(
 
             // max line height - will be used as default height for empty string
             val defaultLineHeight = metricsByLine
-                .flatMap { (labelLineMetrics, valueLineMetrics) ->
+                .flatMap { (labelMetrics, valueMetrics) ->
                     listOfNotNull(
-                        labelLineMetrics?.maxOfOrNull(LineMetrics::height),
-                        valueLineMetrics.maxOfOrNull(LineMetrics::height)
+                        labelMetrics?.maxOfOrNull(LineLayoutMetrics::height),
+                        valueMetrics.maxOfOrNull(LineLayoutMetrics::height)
                     )
                 }
                 .maxOrNull()

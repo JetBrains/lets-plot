@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
@@ -52,16 +53,11 @@ abstract class ColorBarComponentLayout(
 
     internal abstract fun createBreakInfo(tickLocation: Double): BreakInfo
 
-    internal enum class LabelVerticalPlacement {
-        TOP,
-        CENTER,
-    }
-
     internal class BreakInfo(
         val tickLocation: Double,
         val labelLocation: DoubleVector,
         val labelHorizontalAnchor: Text.HorizontalAnchor,
-        val labelVerticalPlacement: LabelVerticalPlacement
+        val labelVerticalAnchor: VerticalAnchor
     )
 
     private class HorizontalLayout(
@@ -98,7 +94,7 @@ abstract class ColorBarComponentLayout(
                 tickLocation,
                 labelLocation,
                 Text.HorizontalAnchor.MIDDLE,
-                LabelVerticalPlacement.TOP
+                VerticalAnchor.TOP
             )
         }
     }
@@ -137,7 +133,7 @@ abstract class ColorBarComponentLayout(
                 tickLocation,
                 labelLocation,
                 Text.HorizontalAnchor.LEFT,
-                LabelVerticalPlacement.CENTER
+                VerticalAnchor.CENTER
             )
         }
     }

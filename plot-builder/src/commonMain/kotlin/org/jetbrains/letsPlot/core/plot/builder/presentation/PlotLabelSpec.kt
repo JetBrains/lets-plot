@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 
 class PlotLabelSpec(
@@ -21,7 +21,7 @@ class PlotLabelSpec(
     }
 
     override fun defaultLine(): LineDimensions {
-        return LineDimensions(0.0, LineMetrics.plainText(font))
+        return LineDimensions(0.0, LineLayoutMetrics.plainText(font))
     }
 
     companion object {

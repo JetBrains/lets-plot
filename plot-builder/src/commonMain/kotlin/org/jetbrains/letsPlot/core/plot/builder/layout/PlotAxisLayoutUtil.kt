@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.builder.presentation.width
 
 internal object PlotAxisLayoutUtil {
@@ -32,7 +32,7 @@ internal object PlotAxisLayoutUtil {
 
     private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: LabelSpec): Double {
         return if (orientation.isHorizontal)
-            tickLabelSpec.lineMetrics(INITIAL_TICK_LABEL_IN_CHARS).single().height
+            tickLabelSpec.lineLayoutMetrics(INITIAL_TICK_LABEL_IN_CHARS).single().height
         else
             tickLabelSpec.width(INITIAL_TICK_LABEL_IN_CHARS)
     }

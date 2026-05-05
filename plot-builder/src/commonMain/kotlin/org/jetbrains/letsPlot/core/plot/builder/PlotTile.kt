@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -36,7 +36,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Compani
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
@@ -230,7 +230,7 @@ internal class PlotTile constructor(
 
         val textSize = FacetedPlotLayout.titleSize(label, theme)
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val metricsByLine = labelSpec.lineMetrics(label)
+        val metricsByLine = labelSpec.lineLayoutMetrics(label)
         val className = if (isColumnLabel) "x" else "y"
         val themeAngle = theme.stripTextAngle()
         val defaultRotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
@@ -251,13 +251,13 @@ internal class PlotTile constructor(
             textBounds,
             fontSize,
             textSize,
-            metricsByLine.firstOrNull() ?: LineMetrics.ascentOnly(fontSize),
+            metricsByLine.firstOrNull() ?: LineLayoutMetrics.ascentOnly(fontSize),
             theme.stripTextJustification(),
             rotation
         )
         lab.setHorizontalAnchor(hAnchor)
         lab.setFontSize(labelSpec.font.size.toDouble())
-        lab.setLineMetrics(metricsByLine)
+        lab.setLineLayoutMetrics(metricsByLine)
         lab.moveTo(pos)
         if (!themeAngle.isNaN() && themeAngle != 0.0) {
             lab.rotate(themeAngle)

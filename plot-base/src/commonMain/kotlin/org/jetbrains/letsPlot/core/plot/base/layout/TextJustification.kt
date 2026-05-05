@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 
 class TextJustification(val x: Double, val y: Double) {
 
@@ -22,7 +22,7 @@ class TextJustification(val x: Double, val y: Double) {
             boundRect: DoubleRectangle,
             fontSize: Double,
             textSize: DoubleVector,
-            firstLineMetrics: LineMetrics,
+            firstLineMetrics: LineLayoutMetrics,
             justification: TextJustification,
             rotation: TextRotation? = null
         ): Pair<DoubleVector, Text.HorizontalAnchor> {
@@ -37,14 +37,6 @@ class TextJustification(val x: Double, val y: Double) {
                 TextRotation.ANTICLOCKWISE -> DoubleVector(y, rect.left + rect.right - x)
             }
             return position to hAnchor
-        }
-
-        fun verticalCorrectionFactor(firstLineMetrics: LineMetrics, fontSize: Double): (Double) -> Double {
-            return { vjust ->
-                // It's selected by eye to look good with both normal height lines and double height lines (fractions).
-                // It centers text at vjust = 0.5, though callers usually nudge it slightly upward for better visuals.
-                firstLineMetrics.ascent - vjust * fontSize / 4
-            }
         }
 
         private fun xPosition(
@@ -68,13 +60,11 @@ class TextJustification(val x: Double, val y: Double) {
             boundRect: DoubleRectangle,
             fontSize: Double,
             textSize: DoubleVector,
-            firstLineMetrics: LineMetrics,
+            firstLineMetrics: LineLayoutMetrics,
             vjust: Double,
         ): Double {
             val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
-            // use 0.8 for better alignment: like vertical_anchor = 'top' (dy="0.8em")
-            val correction = verticalCorrectionFactor(firstLineMetrics, fontSize)
-            return y - textSize.y + correction(0.8)
+            return y - textSize.y + BaselinePolicy.offsetEmBox(Text.VerticalAnchor.TOP, listOf(firstLineMetrics), fontSize)
         }
     }
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator
 import org.jetbrains.letsPlot.commons.values.Colors.parseColor
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
@@ -54,7 +54,7 @@ object TestUtil {
             val levelFontSize = max(1, (baseFont.size * levelSizeScale).roundToInt())
             Font(baseFont.family, levelFontSize, baseFont.isBold, baseFont.isItalic)
         } ?: baseFont
-        return TextWidthEstimator.widthCalculator(text, font)
+        return TextMetricsEstimator.widthCalculator(text, font)
     }
 
     internal fun toTestWidth(texts: Iterable<String>, baseFont: Font = DEF_FONT, level: FormulaLevel = FormulaLevel()): Double {

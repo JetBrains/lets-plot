@@ -16,7 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.width
@@ -114,11 +114,11 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 boundRect,
                 lineFont.size.toDouble(),
                 textSize,
-                LineMetrics.ascentOnly(lineHeight),
+                LineLayoutMetrics.ascentOnly(lineHeight),
                 justification,
                 rotation
             )
-            label.setLineMetrics(List(label.linesCount()) { LineMetrics.ascentOnly(lineHeight) })
+            label.setLineLayoutMetrics(List(label.linesCount()) { LineLayoutMetrics.ascentOnly(lineHeight) })
             label.setHorizontalAnchor(hAnchor)
             rotation?.angle?.let(label::rotate)
             label.moveTo(position)

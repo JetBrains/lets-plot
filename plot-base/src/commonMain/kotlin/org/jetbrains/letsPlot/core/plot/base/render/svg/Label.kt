@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
@@ -34,7 +34,7 @@ class Label(
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
-    private val myLineMetrics = mutableListOf<LineMetrics>()
+    private val myMetrics = mutableListOf<LineLayoutMetrics>()
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
@@ -139,25 +139,25 @@ class Label(
         verticalRepositionLines()
     }
 
-    fun setConstantLineMetrics(v: LineMetrics) {
-        setLineMetrics(List(linesCount()) { v })
+    fun setConstantLineLayoutMetrics(v: LineLayoutMetrics) {
+        setLineLayoutMetrics(List(linesCount()) { v })
     }
 
-    fun setLineMetrics(values: List<LineMetrics>) {
-        myLineMetrics.clear()
+    fun setLineLayoutMetrics(values: List<LineLayoutMetrics>) {
+        myMetrics.clear()
         if (myLines.isEmpty()) return
-        require(values.size == linesCount()) { "Line metrics count must match line count." }
-        myLineMetrics.addAll(values)
+        require(values.size == linesCount()) { "Line layout metrics count must match line count." }
+        myMetrics.addAll(values)
         verticalRepositionLines()
     }
 
     private fun verticalRepositionLines() {
-        if (myLineMetrics.isEmpty()) {
+        if (myMetrics.isEmpty()) {
             myLines.forEach { it.y().set(yStart) }
             return
         }
 
-        val baselineOffsets = myLineMetrics
+        val baselineOffsets = myMetrics
             .zipWithNext { prev, next -> prev.descent + next.ascent }
             .runningFold(0.0, Double::plus)
         val totalBaselineShift = baselineOffsets.last()

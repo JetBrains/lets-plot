@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
@@ -37,8 +37,8 @@ object RichText {
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
     ): List<LineDimensions> {
-        val defaultLineMetrics = LineMetrics.plainText(font)
-        val defaultDimensions = LineDimensions(0.0, defaultLineMetrics)
+        val defaultMetrics = LineLayoutMetrics.plainText(font)
+        val defaultDimensions = LineDimensions(0.0, defaultMetrics)
 
         val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
         if (lines.isEmpty()) {
@@ -50,9 +50,9 @@ object RichText {
                 val terms = line.mapNotNull { term -> term as? RichTextNode.RichSpan }
                 LineDimensions(
                     width = terms.sumOf { term -> term.estimateWidth(font) },
-                    metrics = LineMetrics.mergeOnBaseline(
-                        metrics = terms.map { term -> term.estimateLineMetrics(font) },
-                        defaultIfEmpty = defaultLineMetrics
+                    layoutMetrics = LineLayoutMetrics.mergeOnBaseline(
+                        metrics = terms.map { term -> term.estimateLineLayoutMetrics(font) },
+                        defaultIfEmpty = defaultMetrics
                     )
                 )
             }
@@ -272,7 +272,7 @@ object RichText {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font): Double
-            abstract fun estimateLineMetrics(font: Font): LineMetrics
+            abstract fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics
             abstract fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>>
 
             // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
@@ -319,8 +319,8 @@ object RichText {
                 return widthCalculator(text, font)
             }
 
-            override fun estimateLineMetrics(font: Font): LineMetrics {
-                return LineMetrics.plainText(font)
+            override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+                return LineLayoutMetrics.plainText(font)
             }
 
             override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {

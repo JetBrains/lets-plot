@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan

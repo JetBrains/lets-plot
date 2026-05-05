@@ -13,12 +13,12 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
@@ -131,7 +131,7 @@ abstract class LegendBox : SvgComponent() {
         justification: TextJustification
     ): Label {
         val labelSpec = PlotLabelSpecFactory.legendTitle(theme)
-        val metricsByLine = labelSpec.lineMetrics(title)
+        val metricsByLine = labelSpec.lineLayoutMetrics(title)
         val fontSize = labelSpec.font.size.toDouble()
 
         val label = Label(title)
@@ -139,13 +139,13 @@ abstract class LegendBox : SvgComponent() {
             boundRect,
             fontSize = fontSize,
             textSize = titleSize,
-            firstLineMetrics = metricsByLine.firstOrNull() ?: LineMetrics.ascentOnly(fontSize),
+            firstLineMetrics = metricsByLine.firstOrNull() ?: LineLayoutMetrics.ascentOnly(fontSize),
             justification
         )
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
         label.setFontSize(fontSize)
-        label.setLineMetrics(metricsByLine)
+        label.setLineLayoutMetrics(metricsByLine)
         label.moveTo(pos)
         return label
     }

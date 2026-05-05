@@ -10,14 +10,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.verticalCorrectionFactor
+import org.jetbrains.letsPlot.core.plot.base.layout.BaselinePolicy
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -84,17 +83,17 @@ class ColorBarComponent(
             // Label
             val labelSpec = PlotLabelSpecFactory.legendItem(theme)
             val fontSize = theme.textStyle().size
-            val metricsByLine = labelSpec.lineMetrics(brLabel)
+            val metricsByLine = labelSpec.lineLayoutMetrics(brLabel)
             val label = Label(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setFontSize(fontSize)
-            label.setLineMetrics(metricsByLine)
-            fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, labelSpec)
-            val correction = verticalCorrectionFactor(metricsByLine.firstOrNull() ?: LineMetrics.ascentOnly(fontSize), fontSize)
-            val yOffset = when (brInfo.labelVerticalPlacement) {
-                ColorBarComponentLayout.LabelVerticalPlacement.TOP -> correction(1.2)
-                ColorBarComponentLayout.LabelVerticalPlacement.CENTER -> -labelSize().y / 2 + correction(0.6)
+            label.setLineLayoutMetrics(metricsByLine)
+            // TOP labels use em-box alignment; CENTER labels use visible-text centering — matches the legacy placement.
+            val anchor = brInfo.labelVerticalAnchor
+            val yOffset = when (anchor) {
+                VerticalAnchor.CENTER -> BaselinePolicy.offsetCapCenter(metricsByLine, fontSize)
+                else -> BaselinePolicy.offsetEmBox(anchor, metricsByLine, fontSize)
             }
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)

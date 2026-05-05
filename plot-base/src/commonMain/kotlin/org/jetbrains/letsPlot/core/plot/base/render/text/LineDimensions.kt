@@ -9,8 +9,8 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 data class LineDimensions(
     val width: Double,
-    val metrics: LineMetrics
+    val layoutMetrics: LineLayoutMetrics
 ) {
-    val height: Double get() = metrics.height
+    val height: Double get() = layoutMetrics.height
     val extent: DoubleVector get() = DoubleVector(width, height)
 }

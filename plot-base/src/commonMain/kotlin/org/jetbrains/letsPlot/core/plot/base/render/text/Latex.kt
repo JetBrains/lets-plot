@@ -5,7 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedSvgElement
@@ -279,8 +280,8 @@ internal class Latex(
         override fun estimateWidth(font: Font): Double =
             node.estimateWidth(font)
 
-        override fun estimateLineMetrics(font: Font): LineMetrics =
-            node.estimateLineMetrics(font)
+        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics =
+            node.estimateLineLayoutMetrics(font)
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return node.render(context, prefixWidth)
@@ -293,8 +294,8 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun estimateLineMetrics(font: Font): LineMetrics {
-            return LineMetrics.plainText(font)
+        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+            return LineLayoutMetrics.plainText(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -308,10 +309,10 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font) }
         }
 
-        override fun estimateLineMetrics(font: Font): LineMetrics {
-            return LineMetrics.mergeOnBaseline(
-                metrics = children.map { it.estimateLineMetrics(font) },
-                defaultIfEmpty = LineMetrics.plainText(font)
+        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+            return LineLayoutMetrics.mergeOnBaseline(
+                metrics = children.map { it.estimateLineLayoutMetrics(font) },
+                defaultIfEmpty = LineLayoutMetrics.plainText(font)
             )
         }
 
@@ -332,8 +333,8 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun estimateLineMetrics(font: Font): LineMetrics {
-            return content.estimateLineMetrics(font)
+        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+            return content.estimateLineLayoutMetrics(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -347,8 +348,8 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun estimateLineMetrics(font: Font): LineMetrics {
-            return content.estimateLineMetrics(font)
+        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+            return content.estimateLineLayoutMetrics(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -365,11 +366,9 @@ internal class Latex(
         private val barGlyphOffset = 0.25
         // Clearance between the bar and the nearest edge of numerator/denominator (when barBaselineShift == 0).
         private val fractionGap = 0.01
-        // Workaround: numerator descent is approximated by this constant because LineMetrics.plainText
-        // currently reports (font.size, 0) — i.e. zero descent — for plain text. Once LineMetrics
-        // returns a real descent, replace usages with numerator.estimateLineMetrics(font).descent and
-        // drop this constant.
-        private val empiricalNumeratorDescent = 0.2
+        // Extra allowance below the numerator, in em, equal to the nominal
+        // plain-text space below the baseline in the current layout model.
+        private val numeratorBottomAllowance = 1.0 - TextMetricsEstimator.baselineRatio()
         // Shift the bar baseline below the original line baseline by this amount (em). Redistributes
         // gap from the numerator side to the denominator side without changing total fraction height.
         private val barBaselineShift = 0.1
@@ -379,12 +378,12 @@ internal class Latex(
             return max(numerator.estimateWidth(font), denominator.estimateWidth(font))
         }
 
-        override fun estimateLineMetrics(font: Font): LineMetrics {
-            val numeratorMetrics = numerator.estimateLineMetrics(font)
-            val denominatorMetrics = denominator.estimateLineMetrics(font)
-            val numeratorBaselineShift = (barGlyphOffset + fractionGap + empiricalNumeratorDescent) * font.size
+        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+            val numeratorMetrics = numerator.estimateLineLayoutMetrics(font)
+            val denominatorMetrics = denominator.estimateLineLayoutMetrics(font)
+            val numeratorBaselineShift = (barGlyphOffset + fractionGap + numeratorBottomAllowance) * font.size
             val denominatorBaselineShift = denominatorMetrics.ascent + (fractionGap - barGlyphOffset) * font.size
-            return LineMetrics(
+            return LineLayoutMetrics(
                 ascent = numeratorMetrics.ascent + numeratorBaselineShift,
                 descent = denominatorMetrics.descent + denominatorBaselineShift
             )
@@ -397,8 +396,8 @@ internal class Latex(
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
 
             // Baseline positions relative to the original line baseline.
-            val numeratorBaselineEm = -(barGlyphOffset + fractionGap + empiricalNumeratorDescent)
-            val denominatorAscentEm = denominator.estimateLineMetrics(font).ascent / max(1, font.size)
+            val numeratorBaselineEm = -(barGlyphOffset + fractionGap + numeratorBottomAllowance)
+            val denominatorAscentEm = denominator.estimateLineLayoutMetrics(font).ascent / max(1, font.size)
             val denominatorBaselineEm = denominatorAscentEm + fractionGap - barGlyphOffset
             val numeratorDy = formatEm(numeratorBaselineEm)
             val denominatorDy = formatEm(denominatorBaselineEm - numeratorBaselineEm)

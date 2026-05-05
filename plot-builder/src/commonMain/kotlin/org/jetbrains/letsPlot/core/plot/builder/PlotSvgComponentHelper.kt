@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TagLocation
 import org.jetbrains.letsPlot.core.plot.base.theme.TitlePosition
@@ -22,7 +22,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 
 internal object PlotSvgComponentHelper {
     private fun textRectangle(elementRect: DoubleRectangle, margins: Thickness) = createTextRectangle(
@@ -219,7 +219,7 @@ internal object PlotSvgComponentHelper {
     ) {
         if (text == null) return
 
-        val metricsByLine = labelSpec.lineMetrics(text)
+        val metricsByLine = labelSpec.lineLayoutMetrics(text)
         val textLabel = Label(text, markdown = labelSpec.markdown)
         textLabel.addClassName(className)
         val fontSize = labelSpec.font.size.toDouble()
@@ -227,12 +227,12 @@ internal object PlotSvgComponentHelper {
             boundRect,
             fontSize = fontSize,
             textSize = PlotLayoutUtil.textDimensions(text, labelSpec),
-            firstLineMetrics = metricsByLine.firstOrNull() ?: LineMetrics.ascentOnly(fontSize),
+            firstLineMetrics = metricsByLine.firstOrNull() ?: LineLayoutMetrics.ascentOnly(fontSize),
             justification,
             rotation
         )
         textLabel.setFontSize(fontSize)
-        textLabel.setLineMetrics(metricsByLine)
+        textLabel.setLineLayoutMetrics(metricsByLine)
         textLabel.setHorizontalAnchor(hAnchor)
         textLabel.moveTo(position)
         rotation?.angle?.let(textLabel::rotate)

@@ -16,11 +16,11 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
-import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.verticalCorrectionFactor
+import org.jetbrains.letsPlot.core.plot.base.layout.BaselinePolicy
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
@@ -155,10 +155,10 @@ object TextUtil {
 
     fun decorate(label: Label, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0, applyAlpha: Boolean = true) {
         decorateLabelStyle(label, p, scale, applyAlpha)
-        val lineInterval = (p.lineheight()!! - 1) * fontSize(p, scale)
-        label.setLineMetrics(
-            estimatedLineMetrics(label.text, p, ctx, scale).map {
-                LineMetrics(it.ascent + lineInterval, it.descent)
+        val lineInterval = BaselinePolicy.lineSpacing(p.lineheight()!!, fontSize(p, scale))
+        label.setLineLayoutMetrics(
+            estimatedLineLayoutMetrics(label.text, p, ctx, scale).map {
+                LineLayoutMetrics(it.ascent + lineInterval, it.descent)
             }
         )
     }
@@ -205,12 +205,12 @@ object TextUtil {
                 y = acc.y + sz.height
             )
         }
-        val lineInterval = (p.lineheight()!! - 1) * fontSize
+        val lineInterval = BaselinePolicy.lineSpacing(p.lineheight()!!, fontSize)
         val textHeight = estimated.y + lineInterval * (Label.splitLines(text).size - 1)
         return DoubleVector(estimated.x, textHeight)
     }
 
-    fun estimatedLineMetrics(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<LineMetrics> {
+    fun estimatedLineLayoutMetrics(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<LineLayoutMetrics> {
         val fontSize = fontSize(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
@@ -221,7 +221,7 @@ object TextUtil {
             fontSize,
             fontFace.bold,
             fontFace.italic
-        ).map(LineDimensions::metrics)
+        ).map(LineDimensions::layoutMetrics)
     }
 
     fun rectangleForText(
@@ -276,14 +276,9 @@ object TextUtil {
 
         val fontSize = fontSize(p, sizeUnitRatio)
         val textSize = measure(text, p, ctx, sizeUnitRatio)
-        val firstLineMetrics = estimatedLineMetrics(text, p, ctx, sizeUnitRatio)
-            .firstOrNull()
-            ?: LineMetrics.ascentOnly(fontSize)
-
-        val correction = verticalCorrectionFactor(firstLineMetrics, fontSize)
+        val metrics = estimatedLineLayoutMetrics(text, p, ctx, sizeUnitRatio)
         val yPosition = vAnchor(p, location, boundsCenter).let { vjust ->
-            // 1.2 is a visual tweak: a slightly stronger vjust shift usually places text better.
-            location.y + (vjust - 1) * textSize.y + correction(1.2 * vjust)
+            location.y + (vjust - 1) * textSize.y + BaselinePolicy.offsetForVjust(vjust, metrics, fontSize)
         }
 
         val textLocation = DoubleVector(location.x, yPosition)
@@ -333,13 +328,10 @@ object TextUtil {
             Text.HorizontalAnchor.RIGHT -> location.x - padding
             Text.HorizontalAnchor.MIDDLE -> location.x
         }
-        val firstLineMetrics = estimatedLineMetrics(text, p, ctx, sizeUnitRatio)
-            .firstOrNull()
-            ?: LineMetrics.ascentOnly(fontSize)
-        val correction = verticalCorrectionFactor(firstLineMetrics, fontSize)
+        val metrics = estimatedLineLayoutMetrics(text, p, ctx, sizeUnitRatio)
         val textPosition = DoubleVector(
             xPosition,
-            rectangle.origin.y + padding + correction(0.8)
+            rectangle.origin.y + padding + BaselinePolicy.offsetEmBox(Text.VerticalAnchor.TOP, metrics, fontSize)
         )
         label.setHorizontalAnchor(hAnchor)
         label.moveTo(labelNudge(textPosition, textSize))

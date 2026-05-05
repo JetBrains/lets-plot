@@ -9,13 +9,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.BOTTOM
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.TOP
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineMetrics
+import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import kotlin.math.abs
 
 internal class HorizontalVerticalLabelsLayout(
@@ -43,7 +43,7 @@ internal class HorizontalVerticalLabelsLayout(
     ): AxisLabelsLayoutInfo {
 
         val maxHeight = breaks.labels.maxOf {
-            labelSpec.lineMetrics(it).maxOfOrNull(LineMetrics::height) ?:
+            labelSpec.lineLayoutMetrics(it).maxOfOrNull(LineLayoutMetrics::height) ?:
             labelSpec.defaultLine().height
         }
         val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = true)
