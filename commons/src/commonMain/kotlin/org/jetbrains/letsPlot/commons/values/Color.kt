@@ -243,43 +243,44 @@ class Color @JvmOverloads constructor(
         }
 
         fun parseRGB(text: String): Color {
-            val firstParen = findNext(text, "(", 0)
+            fun IntRange.toMessage() = if (first == last) "$first" else "$first or $last"
+
+            val firstParen = text.indexOf("(")
+            val lastParen = text.lastIndexOf(")")
+            if (firstParen == -1 || lastParen == -1 || lastParen < firstParen) {
+                throw IllegalArgumentException("Invalid color value: $text")
+            }
+
             val prefix = text.substring(0, firstParen)
+            val components = text.substring(firstParen + 1, lastParen).split(",").map(String::trim)
 
-            val firstComma = findNext(text, ",", firstParen + 1)
-            val secondComma = findNext(text, ",", firstComma + 1)
-
-            var thirdComma = -1
-
-            when {
-                prefix == RGBA -> thirdComma = findNext(text, ",", secondComma + 1)
-                prefix == COLOR -> thirdComma = text.indexOf(",", secondComma + 1)
-                prefix != RGB -> throw IllegalArgumentException(text)
+            val expectedComponentCount = when (prefix) {
+                RGB -> 3..3
+                RGBA -> 4..4
+                COLOR -> 3..4
+                else -> throw IllegalArgumentException("Unsupported RGB color format: $text")
             }
 
-            val lastParen = findNext(text, ")", thirdComma + 1)
-            val red = text.substring(firstParen + 1, firstComma).trim { it <= ' ' }.toInt()
-            val green = text.substring(firstComma + 1, secondComma).trim { it <= ' ' }.toInt()
-
-            val blue: Int
-            val alpha: Int
-            if (thirdComma == -1) {
-                blue = text.substring(secondComma + 1, lastParen).trim { it <= ' ' }.toInt()
-                alpha = 255
-            } else {
-                blue = text.substring(secondComma + 1, thirdComma).trim { it <= ' ' }.toInt()
-                alpha = (text.substring(thirdComma + 1, lastParen).trim { it <= ' ' }.toFloat() * 255).roundToInt()
+            if (components.size !in expectedComponentCount) {
+                throw IllegalArgumentException(
+                    "Invalid color value: $text. Expected ${expectedComponentCount.toMessage()} components."
+                )
             }
 
-            return Color(red, green, blue, alpha)
-        }
+            return try {
+                val red = components[0].toInt()
+                val green = components[1].toInt()
+                val blue = components[2].toInt()
+                val alpha = if (components.size == 4) {
+                    (components[3].toFloat() * 255).roundToInt()
+                } else {
+                    255
+                }
 
-        private fun findNext(s: String, what: String, from: Int): Int {
-            val result = s.indexOf(what, from)
-            if (result == -1) {
-                throw IllegalArgumentException("text=$s what=$what from=$from")
+                Color(red, green, blue, alpha)
+            } catch (e: NumberFormatException) {
+                throw IllegalArgumentException("Invalid color value: $text", e)
             }
-            return result
         }
 
         fun parseHex(hexColor: String): Color {

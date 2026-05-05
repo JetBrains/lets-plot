@@ -57,6 +57,24 @@ class ColorTest {
     }
 
     @Test
+    fun rgbaRequiresAlpha() {
+        val e = assertFailsWith<IllegalArgumentException> {
+            Color.parseRGB("rgba(220, 240, 255)")
+        }
+
+        assertEquals("Invalid color value: rgba(220, 240, 255). Expected 4 components.", e.message)
+    }
+
+    @Test
+    fun rgbRejectsExtraAlpha() {
+        val e = assertFailsWith<IllegalArgumentException> {
+            Color.parseRGB("rgb(220, 240, 255, 0.5)")
+        }
+
+        assertEquals("Invalid color value: rgb(220, 240, 255, 0.5). Expected 3 components.", e.message)
+    }
+
+    @Test
     fun parseColRGB() {
         assertEquals(Color.BLUE, Color.parseRGB("color(0,0,255)"))
     }
@@ -64,6 +82,15 @@ class ColorTest {
     @Test
     fun parseColRGBA() {
         assertEquals(Color.BLUE, Color.parseRGB("color(0,0,255,1.0)"))
+    }
+
+    @Test
+    fun colorRejectsWrongComponentCount() {
+        val e = assertFailsWith<IllegalArgumentException> {
+            Color.parseRGB("color(0,0)")
+        }
+
+        assertEquals("Invalid color value: color(0,0). Expected 3 or 4 components.", e.message)
     }
 
     @Test
