@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
 import org.jetbrains.letsPlot.core.plot.base.layout.BaselinePolicy
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
@@ -89,12 +88,7 @@ class ColorBarComponent(
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setFontSize(fontSize)
             label.setLineLayoutMetrics(metricsByLine)
-            // TOP labels use em-box alignment; CENTER labels use visible-text centering — matches the legacy placement.
-            val anchor = brInfo.labelVerticalAnchor
-            val yOffset = when (anchor) {
-                VerticalAnchor.CENTER -> BaselinePolicy.offsetCapCenter(metricsByLine, fontSize)
-                else -> BaselinePolicy.offsetEmBox(anchor, metricsByLine, fontSize)
-            }
+            val yOffset = BaselinePolicy.offsetCap(brInfo.labelVerticalAnchor, metricsByLine, fontSize)
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
         }

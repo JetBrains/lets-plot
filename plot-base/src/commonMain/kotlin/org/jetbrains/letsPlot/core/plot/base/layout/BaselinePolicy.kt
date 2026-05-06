@@ -10,32 +10,26 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 
 // Text is positioned by two visual conventions:
-// - `offsetEmBox()`: anchor against the text block.
-// - `offsetForVjust()` / `offsetCapCenter()`: anchor against visible text.
-//
-// If the two conventions ever collapse into one, `offsetEmBox()` likely becomes a special case of `offsetForVjust()`.
+// - offsetEmBoxTop(): anchor against the em-box top.
+// - offsetCap() and offsetCapForVjust(): anchor against visible text.
 object BaselinePolicy {
-    fun offsetEmBox(anchor: VerticalAnchor, metrics: List<LineLayoutMetrics>, fontSize: Double): Double {
+    fun offsetEmBoxTop(metrics: List<LineLayoutMetrics>, fontSize: Double): Double {
         val first = metrics.firstOrNull() ?: LineLayoutMetrics.ascentOnly(fontSize)
-        return when (anchor) {
-            VerticalAnchor.TOP -> first.ascent - EM_BOX_TOP_NUDGE * fontSize
-            VerticalAnchor.CENTER -> {
-                val textHeight = if (metrics.isEmpty()) fontSize else metrics.sumOf { it.height }
-                first.ascent - EM_BOX_TOP_NUDGE * fontSize - textHeight / 2
-            }
-            VerticalAnchor.BOTTOM -> 0.0 // no callers
-        }
+        return first.ascent - EM_BOX_TOP_NUDGE * fontSize
     }
 
-    fun offsetForVjust(vjust: Double, metrics: List<LineLayoutMetrics>, fontSize: Double): Double {
+    fun offsetCapForVjust(vjust: Double, metrics: List<LineLayoutMetrics>, fontSize: Double): Double {
         val first = metrics.firstOrNull() ?: LineLayoutMetrics.ascentOnly(fontSize)
         return first.ascent - CAP_VJUST_NUDGE * vjust * fontSize
     }
 
-    fun offsetCapCenter(metrics: List<LineLayoutMetrics>, fontSize: Double): Double {
-        val first = metrics.firstOrNull() ?: LineLayoutMetrics.ascentOnly(fontSize)
+    fun offsetCap(anchor: VerticalAnchor, metrics: List<LineLayoutMetrics>, fontSize: Double): Double {
         val textHeight = if (metrics.isEmpty()) fontSize else metrics.sumOf { it.height }
-        return first.ascent - CAP_CENTER_NUDGE * fontSize - textHeight / 2
+        return when (anchor) {
+            VerticalAnchor.TOP -> offsetCapForVjust(1.0, metrics, fontSize)
+            VerticalAnchor.CENTER -> offsetCapForVjust(0.5, metrics, fontSize) - textHeight / 2
+            VerticalAnchor.BOTTOM -> offsetCapForVjust(0.0, metrics, fontSize) - textHeight // not currently in use
+        }
     }
 
     fun firstLineTopExcess(metrics: List<LineLayoutMetrics>, fontSize: Double): Double {
@@ -48,9 +42,7 @@ object BaselinePolicy {
     // those share the same formula by coincidence, not by concept.
     fun lineSpacing(lineHeight: Double, fontSize: Double): Double = (lineHeight - 1) * fontSize
 
-    // Visual nudges in font-size units, derived from the font height ratios
-    // provided by TextMetricsEstimator.
+    // Visual nudges in font-size units, derived from the font height ratios provided by TextMetricsEstimator.
     private val EM_BOX_TOP_NUDGE = 1.0 - TextMetricsEstimator.baselineRatio()
     private val CAP_VJUST_NUDGE = 1.0 - TextMetricsEstimator.capHeightRatio()
-    private val CAP_CENTER_NUDGE = CAP_VJUST_NUDGE / 2
 }

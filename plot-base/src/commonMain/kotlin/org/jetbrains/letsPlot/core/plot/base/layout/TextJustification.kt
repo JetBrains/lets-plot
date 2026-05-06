@@ -64,7 +64,7 @@ class TextJustification(val x: Double, val y: Double) {
             vjust: Double,
         ): Double {
             val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
-            return y - textSize.y + BaselinePolicy.offsetEmBox(Text.VerticalAnchor.TOP, listOf(firstLineMetrics), fontSize)
+            return y - textSize.y + BaselinePolicy.offsetEmBoxTop(listOf(firstLineMetrics), fontSize)
         }
     }
 }

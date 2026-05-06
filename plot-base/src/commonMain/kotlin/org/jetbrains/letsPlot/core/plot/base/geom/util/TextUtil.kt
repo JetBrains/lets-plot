@@ -278,7 +278,7 @@ object TextUtil {
         val textSize = measure(text, p, ctx, sizeUnitRatio)
         val metrics = estimatedLineLayoutMetrics(text, p, ctx, sizeUnitRatio)
         val yPosition = vAnchor(p, location, boundsCenter).let { vjust ->
-            location.y + (vjust - 1) * textSize.y + BaselinePolicy.offsetForVjust(vjust, metrics, fontSize)
+            location.y + (vjust - 1) * textSize.y + BaselinePolicy.offsetCapForVjust(vjust, metrics, fontSize)
         }
 
         val textLocation = DoubleVector(location.x, yPosition)
@@ -331,7 +331,7 @@ object TextUtil {
         val metrics = estimatedLineLayoutMetrics(text, p, ctx, sizeUnitRatio)
         val textPosition = DoubleVector(
             xPosition,
-            rectangle.origin.y + padding + BaselinePolicy.offsetEmBox(Text.VerticalAnchor.TOP, metrics, fontSize)
+            rectangle.origin.y + padding + BaselinePolicy.offsetEmBoxTop(metrics, fontSize)
         )
         label.setHorizontalAnchor(hAnchor)
         label.moveTo(labelNudge(textPosition, textSize))
