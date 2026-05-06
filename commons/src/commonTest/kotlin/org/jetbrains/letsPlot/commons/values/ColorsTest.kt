@@ -68,6 +68,30 @@ class ColorsTest {
     }
 
     @Test
+    fun parseColorNameWithAlpha() {
+        assertEquals(Color.STEEL_BLUE.withOpacity(0.35), Colors.parseColor("steelblue / 0.35"))
+    }
+
+    @Test
+    fun parseColorNameWithAlphaNoSpaces() {
+        assertEquals(Color.STEEL_BLUE.withOpacity(0.35), Colors.parseColor("steelblue/0.35"))
+    }
+
+    @Test
+    fun percentAlphaSuffixIsNotSupported() {
+        assertFailsWith<IllegalArgumentException> {
+            Colors.parseColor("steelblue / 35%")
+        }
+    }
+
+    @Test
+    fun alphaSuffixRequiresSingleSlash() {
+        assertFailsWith<IllegalArgumentException> {
+            Colors.parseColor("steelblue / 0.35 / 0.5")
+        }
+    }
+
+    @Test
     fun rgbFromHsv() {
         assertEquals(Color.BLACK, Colors.rgbFromHsv(0.0, 0.0, 0.0))
         assertEquals(Color.BLACK, Colors.rgbFromHsv(360.0, 0.0, 0.0))

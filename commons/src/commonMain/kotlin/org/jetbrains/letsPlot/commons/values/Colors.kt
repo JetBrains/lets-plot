@@ -184,14 +184,29 @@ object Colors {
      *     - #rgb
      *     - #rgba
      *     - white, green, etc.
+     *     - steelblue / 0.35 with opacity in [0, 1]
      */
     fun parseColor(c: String): Color {
         return when {
             c.indexOf('(') > 0 -> Color.parseRGB(c)
             c.startsWith("#") -> Color.parseHex(c)
             isColorName(c) -> forName(c)
+            c.contains("/") -> parseColorWithAlpha(c)
             else -> throw IllegalArgumentException("Error parsing color value: $c")
         }
+    }
+
+    private fun parseColorWithAlpha(c: String): Color {
+        val components = c.split("/")
+        if (components.size != 2) {
+            throw IllegalArgumentException("Error parsing color value: $c")
+        }
+
+        val color = parseColor(components[0].trim())
+        val opacity = components[1].trim().toDoubleOrNull()
+            ?: throw IllegalArgumentException("Error parsing color value: $c")
+
+        return color.withOpacity(opacity)
     }
 
     private fun normalizeColorName(name: String): String =

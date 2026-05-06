@@ -526,10 +526,12 @@ def element_rect(
     ----------
     fill : str
         Fill color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
-        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     color : str
         Border color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
-        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     size : int
         Border size.
     linetype : int or str or list
@@ -580,7 +582,8 @@ def element_line(
     ----------
     color : str
         Line color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
-        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     size : int
         Line size.
     linetype : int or str or list
@@ -636,7 +639,8 @@ def element_text(
     ----------
     color : str
         Text color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
-        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     family : str
         Font family.
     face : str
@@ -719,7 +723,8 @@ def element_markdown(
     ----------
     color : str
         Text color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
-        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, and ``#RGBA``.
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     family : str
         Font family.
     face : {'plain', 'italic', 'bold', 'bold_italic'}, default='plain'
