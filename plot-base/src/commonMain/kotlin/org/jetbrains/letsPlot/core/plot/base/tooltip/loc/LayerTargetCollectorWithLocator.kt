@@ -113,12 +113,7 @@ class LayerTargetCollectorWithLocator(
 
     override fun search(coord: DoubleVector): LookupResult? {
         if (myLocator == null) {
-            myLocator = LayerTargetLocator(
-                geomKind,
-                lookupSpec,
-                contextualMapping,
-                myTargets
-            )
+            myLocator = LayerTargetLocator(geomKind, contextualMapping, myTargets)
         }
         return myLocator!!.search(coord)
     }

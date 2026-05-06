@@ -385,6 +385,7 @@ class LocatedTargetsPickerTest {
 
                 val contextualMapping = ContextualMapping(
                     tooltipBehavior = TooltipBehavior(
+                        lookupSpec = myLookupSpec,
                         tooltipGroup = myTooltipGroup ?: defaultTooltipGroup(requireNotNull(myGeomKind)),
                         anchor = if (myIsCrosshairEnabled) TooltipAnchor(TOP, RIGHT) else null,
                         minWidth = null,
@@ -401,7 +402,6 @@ class LocatedTargetsPickerTest {
                     targets = emptyList(),
                     lookupDistance = myDistance,
                     ownerDistance = myOwnerDistance ?: myDistance,
-                    lookupSpec = myLookupSpec,
                     geomKind = requireNotNull(myGeomKind),
                     contextualMapping = contextualMapping,
                     hitShapeKind = myHitShapeKind

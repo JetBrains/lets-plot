@@ -17,8 +17,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider.LiveMapData
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
@@ -272,7 +270,6 @@ object LiveMapProviderUtil {
                         ownerDistance = geomTargets.minOf { target ->
                             target.tooltipHint.coord.subtract(coord).length()
                         },
-                        lookupSpec = GeomTargetLocator.LookupSpec(LookupSpace.XY, LookupStrategy.HOVER),
                         geomKind = layer.geomKind,
                         contextualMapping = contextualMapping!!,
                         hitShapeKind = when (hoverObjects.first().kind) {

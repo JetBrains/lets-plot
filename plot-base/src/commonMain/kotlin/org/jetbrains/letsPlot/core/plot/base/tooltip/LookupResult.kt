@@ -22,11 +22,11 @@ data class LookupResult(
     // PATH + HOVER + X -> abs(dx) to nearest tooltip owner.
     // RECT + HOVER + X -> abs(dx) to the rect tooltip anchor.
     val ownerDistance: Double,
-    val lookupSpec: GeomTargetLocator.LookupSpec,
     val geomKind: GeomKind,
     val contextualMapping: ContextualMapping,
     val hitShapeKind: HitShape.Kind
 ) {
+    val lookupSpec = contextualMapping.tooltipBehavior.lookupSpec
     val hasGeneralTooltip: Boolean = contextualMapping.hasGeneralTooltip
     val hasAxisTooltip: Boolean = contextualMapping.hasAxisTooltip
     val isCrosshairEnabled: Boolean = contextualMapping.tooltipBehavior.isCrosshairEnabled
