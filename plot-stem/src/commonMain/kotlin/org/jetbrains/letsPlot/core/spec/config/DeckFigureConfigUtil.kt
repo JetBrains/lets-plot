@@ -75,7 +75,7 @@ internal object DeckFigureConfigUtil {
     }
 
     internal fun applyDeckOverlayTheme(
-        spec: Map<String, Any>,
+        elementSpec: Map<String, Any>,
         deckTheme: DefaultTheme,
         shareX: Boolean,
         shareY: Boolean,
@@ -122,8 +122,14 @@ internal object DeckFigureConfigUtil {
         }
 
         @Suppress("UNCHECKED_CAST")
-        val existingTheme = (spec[THEME] as? Map<String, Any>) ?: emptyMap()
-        return spec + (THEME to overlayTheme + existingTheme)
+        val existingTheme = ((elementSpec[THEME] as? Map<String, Any>) ?: emptyMap()).toMutableMap()
+
+        // Remove the element's 'margins' if not speified explicitiy in its theme (the deck composite has its own margins).
+        if (!existingTheme.containsKey(ThemeOption.PLOT_MARGIN)) {
+            existingTheme[ThemeOption.PLOT_MARGIN] = 0
+        }
+
+        return elementSpec + (THEME to overlayTheme + existingTheme)
     }
 }
 

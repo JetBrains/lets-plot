@@ -13,19 +13,21 @@ import kotlin.time.Instant as KotlinInstant
  */
 class Instant : Comparable<Instant> {
     constructor(epochMillis: Long) {
-        this.kotlinxInstant = KotlinInstant.fromEpochMilliseconds(epochMillis)
+        this.kotlinInstant = KotlinInstant.fromEpochMilliseconds(epochMillis)
     }
 
-    internal constructor(kotlinxInstant: KotlinInstant) {
-        this.kotlinxInstant = kotlinxInstant
+    internal constructor(kotlinInstant: KotlinInstant) {
+        this.kotlinInstant = kotlinInstant
     }
 
-    internal val kotlinxInstant: KotlinInstant
+    internal constructor(kotlinxInstant: kotlinx.datetime.Instant) : this(kotlinxInstant.toEpochMilliseconds())
 
-    fun toEpochMilliseconds(): Long = kotlinxInstant.toEpochMilliseconds()
+    internal val kotlinInstant: KotlinInstant
+
+    fun toEpochMilliseconds(): Long = kotlinInstant.toEpochMilliseconds()
 
     fun toDateTime(tz: TimeZone): DateTime {
-        val kotlinxLocalDateTime = kotlinxInstant.toLocalDateTime(tz.kotlinxTz)
+        val kotlinxLocalDateTime = kotlinInstant.toLocalDateTime(tz.kotlinxTz)
         return DateTime(kotlinxLocalDateTime)
     }
 
@@ -34,20 +36,20 @@ class Instant : Comparable<Instant> {
 //    }
 
     fun add(millis: Long): Instant {
-        return Instant(kotlinxInstant.toEpochMilliseconds() + millis)
+        return Instant(kotlinInstant.toEpochMilliseconds() + millis)
     }
 
     fun add(duration: Duration): Instant {
-        return Instant(kotlinxInstant.toEpochMilliseconds() + duration.totalMillis)
+        return Instant(kotlinInstant.toEpochMilliseconds() + duration.totalMillis)
     }
 
-    override fun compareTo(other: Instant) = kotlinxInstant.compareTo(other.kotlinxInstant)
-    override fun hashCode() = kotlinxInstant.hashCode()
+    override fun compareTo(other: Instant) = kotlinInstant.compareTo(other.kotlinInstant)
+    override fun hashCode() = kotlinInstant.hashCode()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Instant) return false
-        return kotlinxInstant == other.kotlinxInstant
+        return kotlinInstant == other.kotlinInstant
     }
 
-    override fun toString() = kotlinxInstant.toString()
+    override fun toString() = kotlinInstant.toString()
 }
