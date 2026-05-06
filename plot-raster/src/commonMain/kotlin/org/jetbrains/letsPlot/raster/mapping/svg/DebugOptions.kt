@@ -29,8 +29,8 @@ internal object DebugOptions {
                 else -> Color.LIGHT_GRAY
             }
 
-            val fillColor = color.changeAlpha(0.02)
-            val strokeColor = color.changeAlpha(0.7)
+            val fillColor = color.changeOpacity(0.02)
+            val strokeColor = color.changeOpacity(0.7)
             ctx.setFillStyle(fillColor)
             ctx.setStrokeStyle(strokeColor)
 

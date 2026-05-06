@@ -63,7 +63,7 @@ object AestheticsUtil {
     }
 
     private fun applyAlpha(color: Color, p: DataPointAesthetics): Color {
-        return explicitAlpha(p)?.let(color::changeAlpha) ?: color
+        return explicitAlpha(p)?.let(color::changeOpacity) ?: color
     }
 
     fun effectiveSegmentAlpha(p: DataPointAesthetics): Double? {

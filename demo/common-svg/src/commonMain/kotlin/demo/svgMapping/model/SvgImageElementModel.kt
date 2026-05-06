@@ -78,9 +78,9 @@ object SvgImageElementModel {
             // .5  |  1  |  .5   <-- gray, alpha
 
             return intArrayOf(
-                SvgUtils.toARGB(Color.RED.changeAlpha(0.5)), SvgUtils.toARGB(Color.GREEN.changeAlpha(0.5)), SvgUtils.toARGB(Color.BLUE.changeAlpha(0.5)),
+                SvgUtils.toARGB(Color.RED.changeOpacity(0.5)), SvgUtils.toARGB(Color.GREEN.changeOpacity(0.5)), SvgUtils.toARGB(Color.BLUE.changeOpacity(0.5)),
                 SvgUtils.toARGB(Color.RED), SvgUtils.toARGB(Color.GREEN), SvgUtils.toARGB(Color.BLUE),
-                SvgUtils.toARGB(Color.BLACK.changeAlpha(0.5)), SvgUtils.toARGB(Color.BLACK), SvgUtils.toARGB(Color.BLACK.changeAlpha(0.5))
+                SvgUtils.toARGB(Color.BLACK.changeOpacity(0.5)), SvgUtils.toARGB(Color.BLACK), SvgUtils.toARGB(Color.BLACK.changeOpacity(0.5))
             )
         }
     }

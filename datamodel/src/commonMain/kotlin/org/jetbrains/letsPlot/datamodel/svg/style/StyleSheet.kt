@@ -93,7 +93,7 @@ class StyleSheet constructor(
                         family = fontFamily,
                         face = FontFace(bold = fontWeight == "bold", italic = fontStyle == "italic"),
                         size = fontSize,
-                        color = fillOpacity?.let(parsedColor::multiplyAlpha) ?: parsedColor
+                        color = fillOpacity?.let(parsedColor::multiplyOpacity) ?: parsedColor
                     )
                 }
 

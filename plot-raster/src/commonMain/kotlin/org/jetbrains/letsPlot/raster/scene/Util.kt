@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.raster.scene
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.values.Color
 import kotlin.math.max
 import kotlin.math.min
 
@@ -76,4 +75,3 @@ internal fun reversedDepthFirstTraversal(node: Node): Sequence<Node> {
     return enumerate(node)
 }
 
-fun Color.changeAlpha(a: Float) = changeAlpha(a.toDouble())

@@ -99,17 +99,17 @@ class CanvasDrawImageTest(
 
     fun canvas_drawImage_snapshotSeries(): Bitmap {
         val (tempCanvas, tempCtx) = createCanvas()
-        tempCtx.fillStyle = Color.BLACK.changeAlpha(0.5)
+        tempCtx.fillStyle = Color.BLACK.changeOpacity(0.5)
         tempCtx.fillRect(0, 0, 50, 50)
 
         tempCanvas.takeSnapshot()
 
-        tempCtx.fillStyle = Color.RED.changeAlpha(0.5)
+        tempCtx.fillStyle = Color.RED.changeOpacity(0.5)
         tempCtx.fillRect(25, 25, 50, 50)
 
         tempCanvas.takeSnapshot()
 
-        tempCtx.fillStyle = Color.BLUE.changeAlpha(0.5)
+        tempCtx.fillStyle = Color.BLUE.changeOpacity(0.5)
         tempCtx.fillRect(50, 50, 50, 50)
         val snapshot = tempCanvas.takeSnapshot()
 

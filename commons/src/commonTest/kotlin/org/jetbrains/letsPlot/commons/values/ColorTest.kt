@@ -42,8 +42,8 @@ class ColorTest {
     }
 
     @Test
-    fun changeAlphaDoubleRoundsToNearestByte() {
-        assertEquals(128, Color.RED.changeAlpha(0.5).alpha)
+    fun changeOpacityRoundsToNearestByte() {
+        assertEquals(128, Color.RED.changeOpacity(0.5).alpha)
     }
 
     @Test

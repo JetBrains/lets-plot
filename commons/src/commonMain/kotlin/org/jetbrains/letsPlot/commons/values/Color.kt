@@ -28,14 +28,22 @@ class Color @JvmOverloads constructor(
         return Color(red, green, blue, newAlpha)
     }
 
-    fun changeAlpha(newAlpha: Double): Color {
-        val alphaInt = (newAlpha * 255).roundToInt()
-        return changeAlpha(alphaInt)
+    fun changeOpacity(opacity: Double): Color {
+        val alpha = (opacity * 255).roundToInt()
+        return changeAlpha(alpha)
     }
 
-    fun multiplyAlpha(mulAlpha: Double): Color {
-        val newAlpha = alpha / 255.0 * mulAlpha
-        return changeAlpha(newAlpha)
+    @Deprecated(
+        "Use changeOpacity() for fractional opacity or changeAlpha(Int) for a byte alpha channel.",
+        ReplaceWith("changeOpacity(newAlpha)")
+    )
+    fun changeAlpha(newAlpha: Double): Color {
+        return changeOpacity(newAlpha)
+    }
+
+    fun multiplyOpacity(opacity: Double): Color {
+        val newOpacity = alpha / 255.0 * opacity
+        return changeOpacity(newOpacity)
     }
 
     override fun equals(other: Any?): Boolean {

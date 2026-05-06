@@ -85,7 +85,7 @@ internal abstract class Figure : Node() {
 
             val paint = Paint()
             paint.isStroke = true
-            paint.color = stroke.multiplyAlpha(strokeOpacity.toDouble())
+            paint.color = stroke.multiplyOpacity(strokeOpacity.toDouble())
             paint.strokeWidth = strokeWidth
             strokeMiter?.let { paint.strokeMiter = it }
             strokeDashArray.let { paint.strokeDashList = it.toDoubleArray() }
@@ -97,8 +97,8 @@ internal abstract class Figure : Node() {
             if (fill == null) return null
 
             return Paint().also { paint ->
-                // opacity and alpha should be multiplied
-                paint.color = fill.multiplyAlpha(fillOpacity.toDouble())
+                // SVG opacity and color alpha channel should be multiplied.
+                paint.color = fill.multiplyOpacity(fillOpacity.toDouble())
             }
         }
 
