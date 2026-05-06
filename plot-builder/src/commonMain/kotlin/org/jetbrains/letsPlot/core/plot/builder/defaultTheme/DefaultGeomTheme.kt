@@ -139,7 +139,7 @@ internal class DefaultGeomTheme private constructor(
                 GeomKind.RECT,
                 GeomKind.RIBBON,
                 GeomKind.BAND,
-                GeomKind.MAP -> color.changeOpacity(0.1)
+                GeomKind.MAP -> color.withOpacity(0.1)
 
                 GeomKind.BAR,
                 GeomKind.PIE,

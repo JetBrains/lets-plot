@@ -77,5 +77,5 @@ fun rgbFromHsl(hsl: HSL, opacity: Double = 1.0): Color {
         ((g1 + m) * 255).roundToInt(),
         ((b1 + m) * 255).roundToInt(),
         (255 * 1.0).roundToInt()
-    ).changeOpacity(opacity)
+    ).withOpacity(opacity)
 }

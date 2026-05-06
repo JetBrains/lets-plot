@@ -59,7 +59,7 @@ class RasterGeom : GeomBase() {
             val center = boundsXY.center
             val text = "Raster image size\n[$width X $height]\nexceeds capability\nof\nyour imaging device"
             val label = Label(text)
-            label.textColor().set(Color.DARK_MAGENTA.changeOpacity(0.5))
+            label.textColor().set(Color.DARK_MAGENTA.withOpacity(0.5))
             label.setFontSize(12.0)
             label.setLineHeight(16.0)
             label.setFontWeight("bold")

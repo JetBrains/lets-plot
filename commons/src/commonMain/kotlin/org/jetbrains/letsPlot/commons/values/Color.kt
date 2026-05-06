@@ -24,18 +24,18 @@ class Color @JvmOverloads constructor(
         ) { "Color components out of range: $this" }
     }
 
-    fun changeAlpha(newAlpha: Int): Color {
+    fun withAlpha(newAlpha: Int): Color {
         return Color(red, green, blue, newAlpha)
     }
 
-    fun changeOpacity(opacity: Double): Color {
+    fun withOpacity(opacity: Double): Color {
         val alpha = (opacity * 255).roundToInt()
-        return changeAlpha(alpha)
+        return withAlpha(alpha)
     }
 
     fun multiplyOpacity(opacity: Double): Color {
         val newOpacity = alpha / 255.0 * opacity
-        return changeOpacity(newOpacity)
+        return withOpacity(newOpacity)
     }
 
     override fun equals(other: Any?): Boolean {
