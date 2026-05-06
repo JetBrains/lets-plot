@@ -120,8 +120,8 @@ class PlotInteractivityTest(
             |      "\\( \\frac{A}{B} \\)\nX",
             |      "X\n\\( A \\cdot \\frac{B}{C} \\)",
             |      "X\n\\( A \\cdot \\frac{B}{C} \\)",
-            |      "A + \\( B_1 + \\frac{C + D}{E} + F^2 \\) + G\nT + \\( U_1 + \\frac{V + W}{X} + Y^2 \\) + Z",
-            |      "A + \\( B_1 + \\frac{C + D}{E} + F^2 \\) + G\nT + \\( U_1 + \\frac{V + W}{X} + Y^2 \\) + Z"
+            |      "A + \\( B + \\frac{C + D}{E} \\)\n\\( \\frac{V + W}{X} + Y \\) + Z",
+            |      "A + \\( B + \\frac{C + D}{E} \\)\n\\( \\frac{V + W}{X} + Y \\) + Z"
             |    ]
             |  },
             |  "mapping": {
@@ -150,6 +150,9 @@ class PlotInteractivityTest(
             |  },
             |  "kind": "plot",
             |  "scales": [],
+            |  "theme": {
+            |    "axis": "blank"
+            |  },
             |  "layers": [
             |    {
             |      "geom": "line",
