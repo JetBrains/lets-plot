@@ -33,14 +33,6 @@ class Color @JvmOverloads constructor(
         return changeAlpha(alpha)
     }
 
-    @Deprecated(
-        "Use changeOpacity() for fractional opacity or changeAlpha(Int) for a byte alpha channel.",
-        ReplaceWith("changeOpacity(newAlpha)")
-    )
-    fun changeAlpha(newAlpha: Double): Color {
-        return changeOpacity(newAlpha)
-    }
-
     fun multiplyOpacity(opacity: Double): Color {
         val newOpacity = alpha / 255.0 * opacity
         return changeOpacity(newOpacity)

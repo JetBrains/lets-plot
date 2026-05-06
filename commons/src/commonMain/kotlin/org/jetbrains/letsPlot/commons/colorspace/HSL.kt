@@ -58,7 +58,7 @@ fun hslFromRgb(rgb: Color): HSL {
 }
 
 
-fun rgbFromHsl(hsl: HSL, alpha: Double = 1.0): Color {
+fun rgbFromHsl(hsl: HSL, opacity: Double = 1.0): Color {
     val c = (1.0 - abs(2 * hsl.l - 1.0)) * hsl.s
     val h2 = hsl.h / 60
     val x = c * (1 - abs(h2 % 2 - 1))
@@ -77,5 +77,5 @@ fun rgbFromHsl(hsl: HSL, alpha: Double = 1.0): Color {
         ((g1 + m) * 255).roundToInt(),
         ((b1 + m) * 255).roundToInt(),
         (255 * 1.0).roundToInt()
-    ).changeOpacity(alpha)
+    ).changeOpacity(opacity)
 }
