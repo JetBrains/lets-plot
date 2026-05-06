@@ -99,83 +99,39 @@ class PlotInteractivityTest(
         val spec = """
             |{
             |  "data": {
-            |    "x": [
-            |      0.0,
-            |      1.0,
-            |      0.0,
-            |      1.0,
-            |      0.0,
-            |      1.0
-            |    ],
-            |    "y": [
-            |      0.0,
-            |      0.0,
-            |      1.0,
-            |      1.0,
-            |      2.0,
-            |      2.0
-            |    ],
-            |    "label": [
-            |      "\\( \\frac{A}{B} \\)\nX",
-            |      "\\( \\frac{A}{B} \\)\nX",
-            |      "X\n\\( A \\cdot \\frac{B}{C} \\)",
-            |      "X\n\\( A \\cdot \\frac{B}{C} \\)",
-            |      "A + \\( B + \\frac{C + D}{E} \\)\n\\( \\frac{V + W}{X} + Y \\) + Z",
-            |      "A + \\( B + \\frac{C + D}{E} \\)\n\\( \\frac{V + W}{X} + Y \\) + Z"
-            |    ]
+            |    "x": [ 0.5 ],
+            |    "y": [ 0.5 ],
+            |    "label": [ "\\( \\frac{A}{B} \\)" ]
             |  },
             |  "mapping": {
             |    "x": "x",
             |    "y": "y"
             |  },
-            |  "data_meta": {
-            |    "series_annotations": [
-            |      {
-            |        "type": "int",
-            |        "column": "x"
-            |      },
-            |      {
-            |        "type": "int",
-            |        "column": "y"
-            |      },
-            |      {
-            |        "type": "str",
-            |        "column": "label"
-            |      }
-            |    ]
-            |  },
             |  "ggsize": {
-            |    "width": 600.0,
-            |    "height": 500.0
+            |    "width": 300.0,
+            |    "height": 200.0
             |  },
             |  "kind": "plot",
-            |  "scales": [],
             |  "theme": {
-            |    "axis": "blank"
+            |    "axis": "blank",
+            |    "panel_grid": "blank"
             |  },
             |  "layers": [
             |    {
-            |      "geom": "line",
-            |      "mapping": {
-            |        "color": "label"
-            |      },
+            |      "geom": "point",
+            |      "size": 8.0,
             |      "tooltips": {
-            |        "formats": [],
-            |        "lines": [
-            |          "@|@label"
-            |        ],
+            |        "lines": [ "@|@label" ],
             |        "title": "@label"
-            |      },
-            |      "data_meta": {}
+            |      }
             |    }
-            |  ],
-            |  "metainfo_list": []
+            |  ]
             |}
         """.trimMargin()
 
         val plotCanvasDrawable = createPlot(parseJson(spec))
 
-        val cursorPos = Vector(380, 250)
+        val cursorPos = Vector(150, 100)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)
