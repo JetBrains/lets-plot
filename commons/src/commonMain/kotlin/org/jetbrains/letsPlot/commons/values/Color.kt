@@ -57,12 +57,12 @@ class Color @JvmOverloads constructor(
     }
 
     fun toHexColorNoAlpha(): String {
-        return "#" + toColorPart(red) + toColorPart(green) + toColorPart(blue)
+        return "#" + toHexColorPart(red) + toHexColorPart(green) + toHexColorPart(blue)
     }
 
     fun toHexColor(): String {
         val rgb = toHexColorNoAlpha()
-        return if (alpha == 255) rgb else rgb + toColorPart(alpha)
+        return if (alpha == 255) rgb else rgb + toHexColorPart(alpha)
     }
 
     override fun hashCode(): Int {
@@ -305,7 +305,7 @@ class Color @JvmOverloads constructor(
             return Color(r, g, b, a)
         }
 
-        private fun toColorPart(value: Int): String {
+        private fun toHexColorPart(value: Int): String {
             if (value < 0 || value > 255) {
                 throw IllegalArgumentException("RGB color part must be in range [0..255] but was $value")
             }
