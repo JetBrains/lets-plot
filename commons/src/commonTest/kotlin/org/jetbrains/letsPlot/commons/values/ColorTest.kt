@@ -47,6 +47,16 @@ class ColorTest {
     }
 
     @Test
+    fun withOpacityClampsBelowZero() {
+        assertEquals(0, Color.RED.withOpacity(-0.1).alpha)
+    }
+
+    @Test
+    fun withOpacityClampsAboveOne() {
+        assertEquals(255, Color.RED.withOpacity(1.5).alpha)
+    }
+
+    @Test
     fun parseRGB() {
         assertEquals(Color.RED, Color.parseRGB("rgb(255,0,0)"))
     }

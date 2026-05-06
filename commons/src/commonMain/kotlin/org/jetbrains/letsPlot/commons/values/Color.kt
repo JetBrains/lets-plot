@@ -29,7 +29,7 @@ class Color @JvmOverloads constructor(
     }
 
     fun withOpacity(opacity: Double): Color {
-        val alpha = (opacity * 255).roundToInt()
+        val alpha = (opacity.coerceIn(0.0, 1.0) * 255).roundToInt()
         return withAlpha(alpha)
     }
 
