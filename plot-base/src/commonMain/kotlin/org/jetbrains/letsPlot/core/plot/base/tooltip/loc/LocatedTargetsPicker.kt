@@ -249,10 +249,10 @@ internal class LocatedTargetsPicker(
                     fill = null,
                     markerColors = geomTarget.tooltipHint.markerColors,
                     isSide = false,
-                    anchor = contextualMapping.tooltipAnchor,
-                    minWidth = contextualMapping.tooltipMinWidth,
-                    isCrosshairEnabled = contextualMapping.isCrosshairEnabled,
-                    crosshairMode = if (!contextualMapping.hasAxisTooltip) null else when (lookupSpec.lookupSpace) {
+                    anchor = contextualMapping.tooltipBehavior.anchor,
+                    minWidth = contextualMapping.tooltipBehavior.minWidth,
+                    isCrosshairEnabled = contextualMapping.tooltipBehavior.isCrosshairEnabled,
+                    crosshairMode = if (!contextualMapping.tooltipBehavior.axisTooltipEnabled) null else when (lookupSpec.lookupSpace) {
                         LookupSpace.XY -> CrosshairMode.XY
                         LookupSpace.X -> CrosshairMode.X
                         LookupSpace.Y -> CrosshairMode.Y

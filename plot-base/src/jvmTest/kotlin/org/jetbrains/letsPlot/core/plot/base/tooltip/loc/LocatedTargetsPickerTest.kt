@@ -11,6 +11,9 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor.HorizontalAnchor.RIGHT
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor.VerticalAnchor.TOP
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
@@ -381,12 +384,17 @@ class LocatedTargetsPickerTest {
                 }
 
                 val contextualMapping = ContextualMapping(
+                    tooltipBehavior = TooltipBehavior(
+                        tooltipGroup = myTooltipGroup ?: defaultTooltipGroup(requireNotNull(myGeomKind)),
+                        anchor = if (myIsCrosshairEnabled) TooltipAnchor(TOP, RIGHT) else null,
+                        minWidth = null,
+                        ignoreInvisibleTargets = false,
+                        disableSplitting = false,
+                        valueSources = emptyList(),
+                        tooltipLinePatterns = null,
+                        tooltipTitle = null,
+                    ),
                     tooltipLines = listOf(LinePattern(null, "", fields)),
-                    tooltipAnchor = null,
-                    tooltipMinWidth = null,
-                    ignoreInvisibleTargets = false,
-                    isCrosshairEnabled = myIsCrosshairEnabled,
-                    tooltipGroup = myTooltipGroup ?: defaultTooltipGroup(requireNotNull(myGeomKind)),
                     tooltipTitle = null
                 )
                 myResult = LookupResult(

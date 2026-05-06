@@ -26,7 +26,7 @@ class LayerTargetCollectorWithLocator(
         tooltipParams: GeomTargetCollector.TooltipParams,
         tooltipPlacement: TooltipHint.Placement
     ) {
-        if (contextualMapping.ignoreInvisibleTargets) {
+        if (contextualMapping.tooltipBehavior.ignoreInvisibleTargets) {
             if (radius == 0.0 || tooltipParams.markerColorsFactory(index).all { it.alpha == 0 }) {
                 return
             }
@@ -48,7 +48,7 @@ class LayerTargetCollectorWithLocator(
         tooltipPlacement: TooltipHint.Placement,
         tooltipAnchor: DoubleVector?
     ) {
-        if (contextualMapping.ignoreInvisibleTargets) {
+        if (contextualMapping.tooltipBehavior.ignoreInvisibleTargets) {
             if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerColorsFactory(index)
                     .all { it.alpha == 0 }
             ) {

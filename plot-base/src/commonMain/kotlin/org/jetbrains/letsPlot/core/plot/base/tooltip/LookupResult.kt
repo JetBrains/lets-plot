@@ -29,6 +29,6 @@ data class LookupResult(
 ) {
     val hasGeneralTooltip: Boolean = contextualMapping.hasGeneralTooltip
     val hasAxisTooltip: Boolean = contextualMapping.hasAxisTooltip
-    val isCrosshairEnabled: Boolean = contextualMapping.isCrosshairEnabled
-    val tooltipGroup: String? = contextualMapping.tooltipGroup
+    val isCrosshairEnabled: Boolean = contextualMapping.tooltipBehavior.isCrosshairEnabled
+    val tooltipGroup: String? = contextualMapping.tooltipBehavior.tooltipGroup
 }
