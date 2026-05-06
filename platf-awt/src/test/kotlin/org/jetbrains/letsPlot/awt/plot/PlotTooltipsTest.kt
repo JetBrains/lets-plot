@@ -31,10 +31,30 @@ class PlotTooltipsTest : PlotVisualTestBase() {
     override fun currentTestName(): String? = currentTest.methodName
 
     @Test
-    fun plot_tooltips_anchorWithoutAxisTooltip() {
-        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.ANCHOR_WITHOUT_AXIS_TOOLTIP))
+    fun plot_tooltips_anchorBar_axisTooltipHidden_noCrosshair() {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.BAR_ANCHOR_WITH_AXIS_TOOLTIP_HIDDEN))
 
-        val cursorPos = Vector(390, 340)
+        val cursorPos = Vector(235, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        assertBitmap(plotCanvasDrawable, cursorPos)
+    }
+
+    @Test
+    fun plot_tooltips_anchorBar_axisTooltipVisible_showCrosshair() {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.BAR_ANCHOR_WITH_AXIS_TOOLTIP_VISIBLE))
+
+        val cursorPos = Vector(235, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        assertBitmap(plotCanvasDrawable, cursorPos)
+    }
+
+    @Test
+    fun plot_tooltips_anchorRect_withoutAxisTooltip_noCrosshair() {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.RECT_ANCHOR_WITHOUT_AXIS_TOOLTIP))
+
+        val cursorPos = Vector(205, 145)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         assertBitmap(plotCanvasDrawable, cursorPos)
