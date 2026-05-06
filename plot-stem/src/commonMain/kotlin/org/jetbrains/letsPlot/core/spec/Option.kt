@@ -455,6 +455,16 @@ object Option {
             val YMAX = Aes.YMAX.name
         }
 
+        object AnnotationRaster {
+            const val HREF = "href"
+            const val INTERPOLATE = "interpolate"
+
+            const val XMIN = "xmin"
+            const val XMAX = "xmax"
+            const val YMIN = "ymin"
+            const val YMAX = "ymax"
+        }
+
         object Text {
             const val LABEL_FORMAT = "label_format"
             const val NA_TEXT = "na_text"
@@ -1185,6 +1195,7 @@ object Option {
         private const val LABEL_REPEL = "label_repel"
         private const val RASTER = "raster"
         const val IMAGE = "image"
+        private const val ANNOTATION_RASTER = "annotation_raster"
         const val PIE = "pie"
         const val LOLLIPOP = "lollipop"
         const val BRACKET = "bracket"
@@ -1246,6 +1257,7 @@ object Option {
             map[LABEL_REPEL] = GeomKind.LABEL_REPEL
             map[RASTER] = GeomKind.RASTER
             map[IMAGE] = GeomKind.IMAGE
+            map[ANNOTATION_RASTER] = GeomKind.ANNOTATION_RASTER
             map[PIE] = GeomKind.PIE
             map[LOLLIPOP] = GeomKind.LOLLIPOP
             map[BRACKET] = GeomKind.BRACKET

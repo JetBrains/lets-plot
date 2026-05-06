@@ -499,6 +499,8 @@ object GeomMeta {
                 Aes.COLOR  // not rendered but necessary for color legend to appear.
             )
 
+            GeomKind.ANNOTATION_RASTER -> emptyList()
+
             GeomKind.PIE -> listOf(
                 Aes.X,
                 Aes.Y,
