@@ -88,9 +88,9 @@ class TooltipConfigTest {
             tooltips = null
         )
 
-        val lineGroup = lineLayer.createContextualMapping()!!.tooltipGroup
-        val areaGroup = areaLayer.createContextualMapping()!!.tooltipGroup
-        val pointGroup = pointLayer.createContextualMapping()!!.tooltipGroup
+        val lineGroup = lineLayer.createContextualMapping()!!.tooltipBehavior.tooltipGroup
+        val areaGroup = areaLayer.createContextualMapping()!!.tooltipBehavior.tooltipGroup
+        val pointGroup = pointLayer.createContextualMapping()!!.tooltipBehavior.tooltipGroup
 
         assertEquals(lineGroup, areaGroup)
         assertTrue(lineGroup != pointGroup)

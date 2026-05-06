@@ -20,9 +20,9 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TargetPrototype
-import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -73,6 +73,11 @@ object TestUtil {
 
     private const val VARIABLE_NAME = "A"
     private const val VARIABLE_VALUE = "value"
+    private val defaultContextualMapping = ContextualMapping(
+        tooltipBehavior = TooltipBehavior.NONE,
+        tooltipLines = emptyList(),
+        tooltipTitle = null
+    )
     private val defaultTooltipParams = TooltipParams(
         emptyMap(),
         TooltipHint.StemLength.NORMAL,
@@ -137,7 +142,7 @@ object TestUtil {
 
         return createLocator(
             lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
-            contextualMapping = mock(ContextualMapping::class.java),
+            contextualMapping = defaultContextualMapping,
             targets = targetsList,
             geomKind = GeomKind.POINT
         )
@@ -155,7 +160,7 @@ object TestUtil {
 
         return createLocator(
             lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
-            contextualMapping = mock(ContextualMapping::class.java),
+            contextualMapping = defaultContextualMapping,
             targets = targetsList,
             geomKind = geomKind
         )
@@ -163,7 +168,7 @@ object TestUtil {
 
     internal fun createLocator(
         lookupSpec: LookupSpec,
-        contextualMapping: ContextualMapping = mock(ContextualMapping::class.java),
+        contextualMapping: ContextualMapping = defaultContextualMapping,
         targets: List<TargetPrototype>,
         geomKind: GeomKind = GeomKind.POINT
     ): GeomTargetLocator {
