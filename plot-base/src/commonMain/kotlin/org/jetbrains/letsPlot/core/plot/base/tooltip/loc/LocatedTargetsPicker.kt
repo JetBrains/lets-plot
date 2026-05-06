@@ -111,7 +111,10 @@ internal class LocatedTargetsPicker(
                     // and we actually want to see ancestors geom tooltip.
                     candidates.isNotEmpty() && lookupResult.geomKind in listOf(TEXT, LABEL) -> candidates
 
-                    candidates.isNotEmpty() && stackableResults(candidates[0], lookupResult) -> candidates + lookupResult
+                    candidates.isNotEmpty() && stackableResults(
+                        candidates[0],
+                        lookupResult
+                    ) -> candidates + lookupResult
 
                     else -> listOf(lookupResult)
                 }
@@ -143,8 +146,9 @@ internal class LocatedTargetsPicker(
     }
 
     private fun chooseTooltipModels(lookupResult: LookupResult): List<TooltipModel> {
-        val tooltipModels = chooseTooltipModels(lookupResult.targets, lookupResult.lookupSpec, lookupResult.contextualMapping)
-            .filter { it.lines.isNotEmpty() }
+        val tooltipModels =
+            chooseTooltipModels(lookupResult.targets, lookupResult.lookupSpec, lookupResult.contextualMapping)
+                .filter { it.lines.isNotEmpty() }
 
         return tooltipModels
             .removeDuplicates { it.tooltipHint.placement == X_AXIS }
@@ -185,7 +189,7 @@ internal class LocatedTargetsPicker(
                         title = null,
                         lines = linesForAes,
                         fill = hint.fillColor ?: geomTarget.tooltipHint.fillColor
-                            ?: geomTarget.tooltipHint.markerColors.firstOrNull() ?: WHITE,
+                        ?: geomTarget.tooltipHint.markerColors.firstOrNull() ?: WHITE,
                         markerColors = emptyList(),
                         isSide = true
                     )
@@ -248,7 +252,7 @@ internal class LocatedTargetsPicker(
                     anchor = contextualMapping.tooltipAnchor,
                     minWidth = contextualMapping.tooltipMinWidth,
                     isCrosshairEnabled = contextualMapping.isCrosshairEnabled,
-                    crosshairMode = when (lookupSpec.lookupSpace) {
+                    crosshairMode = if (!contextualMapping.hasAxisTooltip) null else when (lookupSpec.lookupSpace) {
                         LookupSpace.XY -> CrosshairMode.XY
                         LookupSpace.X -> CrosshairMode.X
                         LookupSpace.Y -> CrosshairMode.Y
@@ -327,13 +331,15 @@ internal class LocatedTargetsPicker(
             return when {
                 // HOVER over polygon/boxplot/histogram - give chance for points or lines to show tooltips
                 (lookupResult.hitShapeKind == HitShape.Kind.POLYGON ||
-                lookupResult.hitShapeKind == HitShape.Kind.RECT) &&
+                        lookupResult.hitShapeKind == HitShape.Kind.RECT) &&
                         lookupResult.lookupDistance == 0.0 -> FAKE_DISTANCE
+
                 lookupResult.isCrosshairEnabled -> {
                     lookupResult.targets
                         .minOfOrNull { target -> cursor.distanceTo(target.tooltipHint.coord) }
                         ?: FAKE_DISTANCE
                 }
+
                 else -> lookupResult.lookupDistance // fake distance to give a chance for tooltips from other layers
             }
         }

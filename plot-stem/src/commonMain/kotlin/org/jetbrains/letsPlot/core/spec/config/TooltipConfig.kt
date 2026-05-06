@@ -26,7 +26,6 @@ class TooltipConfig(
 ) : LineSpecConfig(opts, constantsMap, groupingVarNames, varBindings) {
 
     val anchor: TooltipAnchor? = readAnchor()
-    val isCrosshairEnabled = isCrosshairEnabled(geomKind, anchor)
     val minWidth = getDouble(Tooltips.TOOLTIP_MIN_WIDTH)
     val disableSplitting = getBoolean(Tooltips.DISABLE_SPLITTING, def = false)
     val tooltipGroup: String? = getString(Tooltips.TOOLTIP_GROUP) ?: "__auto_line_group__".takeIf { geomKind in LINE_LIKE_GEOMS }
@@ -58,11 +57,10 @@ class TooltipConfig(
             anchor = anchor,
             minWidth = minWidth,
             disableSplitting = disableSplitting,
-            tooltipGroup = tooltipGroup,
-            isCrosshairEnabled = isCrosshairEnabled,
+            tooltipGroup = tooltipGroup
         )
 
-        return createTooltipBehavior(geomKind, statKind, isCrosshairEnabled, tooltipBehavior)
+        return createTooltipBehavior(geomKind, statKind, tooltipBehavior)
     }
 
     private fun readAnchor(): TooltipAnchor? {
@@ -91,17 +89,9 @@ class TooltipConfig(
     }
 
     companion object {
-        fun defaultTooltip(
-            geomKind: GeomKind,
-            statKind: StatKind,
-        ): TooltipBehavior {
-            return createTooltipBehavior(geomKind, statKind, false, TooltipBehavior.defaultTooltip())
-        }
-
         private fun createTooltipBehavior(
             geomKind: GeomKind,
             statKind: StatKind,
-            isCrosshairEnabled: Boolean,
             tooltipBehavior: TooltipBehavior,
         ): TooltipBehavior {
             val defaultTooltipBehavior = when {
@@ -210,7 +200,7 @@ class TooltipConfig(
                 else -> noneTooltipBehavior(tooltipBehavior)
             }
 
-            if (isCrosshairEnabled) {
+            if (tooltipBehavior.isCrosshairEnabled) {
                 return defaultTooltipBehavior.copy(lookupSpec = defaultTooltipBehavior.lookupSpec.copy(lookupStrategy = LookupStrategy.NEAREST))
             } else {
                 return defaultTooltipBehavior
@@ -254,41 +244,6 @@ class TooltipConfig(
                 axisAesFromFunctionKind = emptyList(),
                 axisTooltipEnabled = true,
                 ignoreInvisibleTargets = false,
-            )
-        }
-
-        private fun isCrosshairEnabled(geomKind: GeomKind, anchor: TooltipAnchor?): Boolean {
-            if (anchor == null) {
-                return false
-            }
-
-            return true
-
-            return geomKind in setOf(
-                GeomKind.POINT,
-                GeomKind.JITTER,
-                GeomKind.SINA,
-                GeomKind.Q_Q,
-                GeomKind.Q_Q_2,
-                GeomKind.LINE,
-                GeomKind.AREA,
-                GeomKind.TILE,
-                GeomKind.CONTOUR,
-                GeomKind.CONTOURF,
-                GeomKind.BIN_2D,
-                GeomKind.HEX,
-                GeomKind.DENSITY,
-                GeomKind.DENSITY2D,
-                GeomKind.DENSITY2DF,
-                GeomKind.POINT_DENSITY,
-                GeomKind.FREQPOLY,
-                GeomKind.PATH,
-                GeomKind.SEGMENT,
-                GeomKind.CURVE,
-                GeomKind.SPOKE,
-                GeomKind.RIBBON,
-                GeomKind.SMOOTH,
-                GeomKind.STEP
             )
         }
 

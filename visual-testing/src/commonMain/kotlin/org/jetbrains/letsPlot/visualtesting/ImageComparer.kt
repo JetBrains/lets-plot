@@ -110,7 +110,7 @@ class ImageComparer(
                 |    Expected: ${reportLocation(bitmapIO.getExpectedFileReportPath(expectedFileName))}""".trimMargin() + "\n"
             )
         } else {
-            log("Image comparison passed: $expectedFileName")
+            log("Image comparison passed: ${reportLocation(bitmapIO.getExpectedFileReportPath(expectedFileName))}")
         }
     }
 

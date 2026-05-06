@@ -6,6 +6,10 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilderUtil.createTooltipLines
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 
@@ -55,13 +59,12 @@ class GeomInteractionBuilder constructor(
         fun xUnivariateFunction(lookupStrategy: org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy): GeomInteractionBuilder {
             return createBuilder(
                 TooltipBehavior(
-                    lookupSpec = org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec(
+                    lookupSpec = LookupSpec(
                         org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.X,
                         lookupStrategy
                     ),
                     axisAesFromFunctionKind = listOf(Aes.X),
                     axisTooltipEnabled = true,
-                    isCrosshairEnabled = false,
                     ignoreInvisibleTargets = false,
                     valueSources = emptyList(),
                     tooltipLinePatterns = null,
@@ -75,20 +78,12 @@ class GeomInteractionBuilder constructor(
         }
 
         fun bivariateFunction(area: Boolean): GeomInteractionBuilder {
-            val lookupStrategy = if (area) {
-                org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
-            } else {
-                org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
-            }
+            val lookupStrategy = if (area) HOVER else NEAREST
             return createBuilder(
                 TooltipBehavior(
-                    lookupSpec = org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec(
-                        org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY,
-                        lookupStrategy
-                    ),
+                    lookupSpec = LookupSpec(XY, lookupStrategy),
                     axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
                     axisTooltipEnabled = !area,
-                    isCrosshairEnabled = false,
                     ignoreInvisibleTargets = false,
                     valueSources = emptyList(),
                     tooltipLinePatterns = null,

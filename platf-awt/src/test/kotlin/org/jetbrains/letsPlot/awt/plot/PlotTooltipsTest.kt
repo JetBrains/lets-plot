@@ -26,7 +26,7 @@ class PlotTooltipsTest : PlotVisualTestBase() {
     var currentTest = TestName()
 
     override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
-    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "tooltips"), silent = true)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "tooltips"))
 
     override fun currentTestName(): String? = currentTest.methodName
 

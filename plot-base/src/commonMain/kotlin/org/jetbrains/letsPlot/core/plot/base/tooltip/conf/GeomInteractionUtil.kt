@@ -10,7 +10,9 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.Scale
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 
 
@@ -100,46 +102,17 @@ object GeomInteractionUtil {
         tooltipBehavior: TooltipBehavior,
         isPolarCoordSystem: Boolean
     ): TooltipBehavior {
-        val resolvedTooltipBehavior = if (isPolarCoordSystem) {
-            // Always show axis tooltips for polar coordinate system as all geoms are area-like.
-            bivariateFunction(
-                area = true,
-                isCrosshairEnabled = tooltipBehavior.isCrosshairEnabled,
-                axisTooltipVisibilityFromConfig = true,
-                tooltipBehavior = tooltipBehavior
-            )
-        } else {
-            tooltipBehavior
+        if (!isPolarCoordSystem) {
+            return tooltipBehavior
         }
 
-        return resolvedTooltipBehavior
-    }
-
-    private fun bivariateFunction(
-        area: Boolean,
-        isCrosshairEnabled: Boolean,
-        tooltipBehavior: TooltipBehavior,
-        axisTooltipVisibilityFromConfig: Boolean? = null,
-    ): TooltipBehavior {
-        val axisTooltipVisibilityFromFunctionKind = !area
-        val lookupStrategy = if (area) LookupStrategy.HOVER else LookupStrategy.NEAREST
+        // Always show axis tooltips for polar coordinate system as all geoms are area-like.
         return tooltipBehavior.copy(
-            lookupSpec = LookupSpec(LookupSpace.XY, lookupStrategy),
+            lookupSpec = LookupSpec(XY, HOVER),
             axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
-            axisTooltipEnabled = isAxisTooltipEnabled(
-                axisTooltipVisibilityFromConfig,
-                axisTooltipVisibilityFromFunctionKind
-            ),
-            isCrosshairEnabled = isCrosshairEnabled,
+            axisTooltipEnabled = true,
             ignoreInvisibleTargets = false,
         )
-    }
-
-    private fun isAxisTooltipEnabled(
-        axisTooltipVisibilityFromConfig: Boolean?,
-        axisTooltipVisibilityFromFunctionKind: Boolean
-    ): Boolean {
-        return axisTooltipVisibilityFromConfig ?: axisTooltipVisibilityFromFunctionKind
     }
 
     private fun createHiddenAesList(

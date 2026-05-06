@@ -149,8 +149,8 @@ class TooltipRenderer(
     }
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
-        val showVertical = tooltips.any { it.tooltipModel.crosshairMode == CrosshairMode.X || it.tooltipModel.crosshairMode == CrosshairMode.XY }
-        val showHorizontal = tooltips.any { it.tooltipModel.crosshairMode == CrosshairMode.Y || it.tooltipModel.crosshairMode == CrosshairMode.XY }
+        val showVertical = tooltips.any { it.tooltipModel.crosshairMode in listOf(CrosshairMode.X, CrosshairMode.XY) }
+        val showHorizontal = tooltips.any { it.tooltipModel.crosshairMode in listOf(CrosshairMode.Y, CrosshairMode.XY) }
         if (!showVertical && !showHorizontal) {
             crosshairStorage.provide(0)
             return
