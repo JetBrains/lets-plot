@@ -1,4 +1,4 @@
-## [4.9.1] - 2026-mm-dd
+## [4.10.0] - 2026-05-dd
 
 ### Added
 
@@ -11,7 +11,7 @@
   - [multivariate comparison](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/ggdeck_plot_overlay.html)
 
 
-- Datetime formatting: `%f` support in `DateTimeFormat` (milliseconds, zero-padded to 3 digits) [[#1482](https://github.com/JetBrains/lets-plot/issues/1482)].
+- Datetime: `%f` formatting pattern - support for milliseconds when formatting datetime values (zero-padded to 3 digits) [[#1482](https://github.com/JetBrains/lets-plot/issues/1482)].
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/milliseconds_format.html).
 
@@ -22,7 +22,7 @@
 
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/legend_key_size.html).
 
-- `na_rm` parameter for geoms and statistical functions. When `na_rm=false` (default), corresponding computation messages are shown; when `na_rm=true`, non-finite / dropped rows are removed silently [[LPK-81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)].
+- `na_rm` parameter for geoms and statistical functions. When `na_rm=false` (default), corresponding computation messages are shown; when `na_rm=true`, non-finite / dropped rows are removed silently [[LPK-81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)],[[#686](https://github.com/JetBrains/lets-plot/issues/686)].
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/removed_points_messages.html).
                 
@@ -32,5 +32,6 @@
 ### Changed
 
 ### Fixed
+
 - Add 'synchronized tooltips' feature [[#1415](https://github.com/JetBrains/lets-plot/issues/1415)].
 - Alpha is not supported in element_text() [[#1462](https://github.com/JetBrains/lets-plot/issues/1462)].
