@@ -16,7 +16,8 @@ class TooltipModel(
     val isSide: Boolean,
     val anchor: TooltipAnchor? = null,
     val minWidth: Double? = null,
-    val isCrosshairEnabled: Boolean = false
+    val isCrosshairEnabled: Boolean = false,
+    val crosshairMode: CrosshairMode? = null,
 ) {
     override fun toString(): String {
         return "TooltipModel($tooltipHint, lines=${lines.map(Line::toString)})"

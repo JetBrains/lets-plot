@@ -31,7 +31,7 @@ class PlotTooltipsTest : PlotVisualTestBase() {
     override fun currentTestName(): String? = currentTest.methodName
 
     @Test
-    fun plot_tooltips_anchorBar_axisTooltipHidden_noCrosshair() {
+    fun plot_tooltips_anchorBar_axisTooltipHidden_showCrosshair() {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.BAR_ANCHOR_WITH_AXIS_TOOLTIP_HIDDEN))
 
         val cursorPos = Vector(235, 120)

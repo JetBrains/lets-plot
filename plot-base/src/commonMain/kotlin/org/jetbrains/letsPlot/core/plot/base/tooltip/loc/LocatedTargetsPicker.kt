@@ -14,6 +14,10 @@ import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.X_AXIS
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.Y_AXIS
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
@@ -139,7 +143,7 @@ internal class LocatedTargetsPicker(
     }
 
     private fun chooseTooltipModels(lookupResult: LookupResult): List<TooltipModel> {
-        val tooltipModels = chooseTooltipModels(lookupResult.targets, lookupResult.contextualMapping)
+        val tooltipModels = chooseTooltipModels(lookupResult.targets, lookupResult.lookupSpec, lookupResult.contextualMapping)
             .filter { it.lines.isNotEmpty() }
 
         return tooltipModels
@@ -149,6 +153,7 @@ internal class LocatedTargetsPicker(
 
     internal fun chooseTooltipModels(
         geomTargets: List<GeomTarget>,
+        lookupSpec: LookupSpec,
         contextualMapping: ContextualMapping
     ): List<TooltipModel> {
         val tooltipModels = ArrayList<TooltipModel>()
@@ -156,7 +161,7 @@ internal class LocatedTargetsPicker(
             val dataPoints = contextualMapping.getDataPoints(geomTarget.hitIndex, ctx)
             tooltipModels += axisTooltipModels(geomTarget, dataPoints)
             tooltipModels += sideTooltipModels(geomTarget, dataPoints)
-            tooltipModels += generalTooltipModels(geomTarget, contextualMapping, dataPoints)
+            tooltipModels += generalTooltipModels(geomTarget, lookupSpec, contextualMapping, dataPoints)
         }
         return tooltipModels
     }
@@ -191,10 +196,7 @@ internal class LocatedTargetsPicker(
         return tooltipModels
     }
 
-    private fun axisTooltipModels(
-        geomTarget: GeomTarget,
-        dataPoints: List<DataPoint>
-    ): List<TooltipModel> {
+    private fun axisTooltipModels(geomTarget: GeomTarget, dataPoints: List<DataPoint>): List<TooltipModel> {
         val tooltipModels = ArrayList<TooltipModel>()
         val axis = mapOf(
             Aes.X to axisDataPoints(dataPoints).filter { Aes.X == it.aes }
@@ -226,6 +228,7 @@ internal class LocatedTargetsPicker(
 
     private fun generalTooltipModels(
         geomTarget: GeomTarget,
+        lookupSpec: LookupSpec,
         contextualMapping: ContextualMapping,
         dataPoints: List<DataPoint>
     ): List<TooltipModel> {
@@ -244,7 +247,13 @@ internal class LocatedTargetsPicker(
                     isSide = false,
                     anchor = contextualMapping.tooltipAnchor,
                     minWidth = contextualMapping.tooltipMinWidth,
-                    isCrosshairEnabled = contextualMapping.isCrosshairEnabled
+                    isCrosshairEnabled = contextualMapping.isCrosshairEnabled,
+                    crosshairMode = when (lookupSpec.lookupSpace) {
+                        LookupSpace.XY -> CrosshairMode.XY
+                        LookupSpace.X -> CrosshairMode.X
+                        LookupSpace.Y -> CrosshairMode.Y
+                        LookupSpace.NONE -> null
+                    }
                 )
             )
         } else {
@@ -363,5 +372,5 @@ fun createTooltipModels(
         yAxisTheme = yAxisTheme,
         ctx = ctx
     )
-        .chooseTooltipModels(listOf(geomTarget), contextualMapping)
+        .chooseTooltipModels(listOf(geomTarget), LookupSpec(XY, HOVER), contextualMapping)
 }
