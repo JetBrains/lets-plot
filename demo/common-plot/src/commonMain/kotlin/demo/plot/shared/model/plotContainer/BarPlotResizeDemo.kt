@@ -1,20 +1,18 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package demo.plot.shared.model.plotContainer
 
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DiscreteTransform
-import org.jetbrains.letsPlot.core.plot.base.Scale
-import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.Scales
 import org.jetbrains.letsPlot.core.plot.base.stat.Stats
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.DefaultTooltipBehaviorFactory
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionUtil
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.builder.VarBinding
 import org.jetbrains.letsPlot.core.plot.builder.assemble.GeomLayerBuilder
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssembler
@@ -52,29 +50,43 @@ class BarPlotResizeDemo private constructor(
         val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>> = mapOf(
             Aes.FILL to fillMapper
         )
+        val barWidth = 0.9
+        val constantsMap = mapOf<Aes<*>, Any>(Aes.WIDTH to barWidth)
+        val xBinding = VarBinding(varX, Aes.X)
+        val yBinding = VarBinding(varY, Aes.Y)
+        val fillBinding = VarBinding(varCat, Aes.FILL)
+        val varBindings = listOf(
+            xBinding,
+            yBinding,
+            fillBinding
+        )
 
         val layerBuilder = GeomLayerBuilder.demoAndTest(GeomProvider.bar(), Stats.IDENTITY, PosProvider.dodge())
             .groupingVarNames(listOf(varCat.name))
-            .addBinding(VarBinding(varX, Aes.X))
-            .addBinding(
-                VarBinding(
-                    varY,
-                    Aes.Y
-                )
-            )
-            .addBinding(VarBinding(varCat, Aes.FILL))
-            .addConstantAes(Aes.WIDTH, 0.9)
+            .addBinding(xBinding)
+            .addBinding(yBinding)
+            .addBinding(fillBinding)
+            .addConstantAes(Aes.WIDTH, barWidth)
 
         // Add bar plot interactions
-        val geomInteraction = GeomInteractionBuilder.DemoAndTest(
-            listOf(
-                Aes.X,
-                Aes.Y,
-                Aes.FILL
-            )
+        val tooltipBehavior = DefaultTooltipBehaviorFactory.create(
+            geomKind = GeomKind.BAR,
+            statKind = StatKind.IDENTITY,
+            tooltipBehavior = TooltipBehavior.DEFAULT
         )
-            .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-            .build()
+        val geomInteraction = GeomInteractionUtil.createGeomInteractionBuilder(
+            bindings = varBindings.associate { it.aes to it.variable },
+            scaleMap = scaleByAes,
+            isLiveMap = false,
+            isPolarCoordSystem = false,
+            theme = DefaultTheme.minimal2(),
+            geomKind = GeomKind.BAR,
+            tooltipBehavior1 = tooltipBehavior,
+            isYOrientation = false,
+            constantsMap = constantsMap,
+            renderedAes = varBindings.map(VarBinding::aes) + Aes.WIDTH,
+            getOriginalVariableName = { aes -> varBindings.find { it.aes == aes }?.variable?.name }
+        ).build()
 
         val layer = layerBuilder
             .locatorLookupSpec(geomInteraction.createLookupSpec())

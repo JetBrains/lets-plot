@@ -56,15 +56,7 @@ class GeomInteraction(builder: GeomInteractionBuilder) :
                 userDefinedValueSources
             )
             return createContextualMapping(
-                TooltipBehavior(
-                    valueSources = emptyList(),
-                    tooltipLinePatterns = null,
-                    anchor = null,
-                    minWidth = null,
-                    tooltipTitle = null,
-                    disableSplitting = false,
-                    tooltipGroup = null,
-                ),
+                TooltipBehavior.DEFAULT,
                 tooltipTitle = null,
                 defaultTooltipLines,
                 dataAccess,

@@ -7,13 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -325,15 +321,22 @@ class LocatorByGeneralTooltipTest {
         lookupSpec: LookupSpec = nearestXY,
         axisTooltips: Boolean = false
     ): ContextualMapping {
-        val builder = GeomInteractionBuilder.DemoAndTest(
-            supportedAes = Aes.values(),
-            axisAes = if (axisTooltips) listOf(Aes.X) else emptyList()
-        )
-        val contextualMappingProvider = when (lookupSpec.lookupSpace) {
-            LookupSpace.XY -> builder.bivariateFunction(area = lookupSpec.lookupStrategy == LookupStrategy.HOVER)
-            LookupSpace.X -> builder.xUnivariateFunction(lookupSpec.lookupStrategy)
-            else -> error("Unsupported lookupSpec for test: $lookupSpec")
-        }.build()
+        val contextualMappingProvider = GeomInteractionTestingFactory.createBuilder(
+            geomKind = when (lookupSpec.lookupSpace) {
+                LookupSpace.XY -> if (lookupSpec.lookupStrategy == LookupStrategy.HOVER) GeomKind.RECT else GeomKind.POINT
+                LookupSpace.X -> GeomKind.BAR
+                else -> error("Unsupported lookupSpec for test: $lookupSpec")
+            },
+            statKind = StatKind.IDENTITY,
+            renderedAes = Aes.values().toList(),
+            mappings = mappedDataAccessMock.getMappings(),
+            tooltipBehaviorTransform = { tooltipBehavior ->
+                when (lookupSpec.lookupSpace) {
+                    LookupSpace.XY -> tooltipBehavior.copy(axisTooltipEnabled = axisTooltips && lookupSpec.lookupStrategy != LookupStrategy.HOVER)
+                    LookupSpace.X -> tooltipBehavior.copy(axisTooltipEnabled = axisTooltips)
+                }
+            }
+        ).build()
         return contextualMappingProvider.createContextualMapping(
             mappedDataAccessMock.mappedDataAccess,
             DataFrame.Builder().build()

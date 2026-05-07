@@ -6,10 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.conf
 
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilderUtil.createTooltipLines
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 
@@ -49,62 +45,5 @@ class GeomInteractionBuilder constructor(
 
     fun build(): GeomInteraction {
         return GeomInteraction(this)
-    }
-
-
-    class DemoAndTest(
-        private val supportedAes: List<Aes<*>>,
-        private val axisAes: List<Aes<*>>? = null,
-    ) {
-        fun xUnivariateFunction(lookupStrategy: org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy): GeomInteractionBuilder {
-            return createBuilder(
-                TooltipBehavior(
-                    lookupSpec = LookupSpec(
-                        org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.X,
-                        lookupStrategy
-                    ),
-                    axisAesFromFunctionKind = listOf(Aes.X),
-                    axisTooltipEnabled = true,
-                    ignoreInvisibleTargets = false,
-                    valueSources = emptyList(),
-                    tooltipLinePatterns = null,
-                    anchor = null,
-                    minWidth = null,
-                    tooltipTitle = null,
-                    disableSplitting = false,
-                    tooltipGroup = null,
-                )
-            )
-        }
-
-        fun bivariateFunction(area: Boolean): GeomInteractionBuilder {
-            val lookupStrategy = if (area) HOVER else NEAREST
-            return createBuilder(
-                TooltipBehavior(
-                    lookupSpec = LookupSpec(XY, lookupStrategy),
-                    axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
-                    axisTooltipEnabled = !area,
-                    ignoreInvisibleTargets = false,
-                    valueSources = emptyList(),
-                    tooltipLinePatterns = null,
-                    anchor = null,
-                    minWidth = null,
-                    tooltipTitle = null,
-                    disableSplitting = false,
-                    tooltipGroup = null,
-                )
-            )
-        }
-
-        private fun createBuilder(tooltipBehavior: TooltipBehavior): GeomInteractionBuilder {
-            return GeomInteractionBuilder(
-                tooltipBehavior = tooltipBehavior,
-                tooltipAes = supportedAes - tooltipBehavior.axisAesFromFunctionKind,
-                tooltipAxisAes = axisAes
-                    ?: if (!tooltipBehavior.axisTooltipEnabled) emptyList()
-                    else tooltipBehavior.axisAesFromFunctionKind,
-                sideTooltipAes = emptyList()
-            )
-        }
     }
 }

@@ -8,18 +8,11 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccessMock
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -222,8 +215,12 @@ class LocatedTargetsPickerFilterTargetsTest {
     }
 
     private fun createLocator(geomKind: GeomKind, targetPrototypes: List<TargetPrototype>): GeomTargetLocator {
-        val contextualMapping = GeomInteractionBuilder.DemoAndTest(supportedAes = Aes.values())
-            .xUnivariateFunction(HOVER)
+        val contextualMapping = GeomInteractionTestingFactory.createBuilder(
+            geomKind = GeomKind.BAR,
+            statKind = StatKind.IDENTITY,
+            renderedAes = Aes.values().toList(),
+            mappings = emptyList()
+        )
             .build()
             .createContextualMapping(
                 MappedDataAccessMock().mappedDataAccess,

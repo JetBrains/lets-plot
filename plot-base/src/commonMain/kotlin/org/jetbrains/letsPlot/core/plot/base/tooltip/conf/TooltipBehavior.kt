@@ -31,17 +31,7 @@ data class TooltipBehavior(
     val isCrosshairEnabled: Boolean = anchor != null
 
     companion object {
-        val NONE = TooltipBehavior(
-            valueSources = emptyList(),
-            tooltipLinePatterns = emptyList(),
-            anchor = null,
-            minWidth = null,
-            tooltipTitle = null,
-            disableSplitting = false,
-            tooltipGroup = null,
-        )
-
-        fun defaultTooltip() = TooltipBehavior(
+        val DEFAULT = TooltipBehavior(
             valueSources = emptyList(),
             tooltipLinePatterns = null,
             anchor = null,
@@ -49,6 +39,10 @@ data class TooltipBehavior(
             tooltipTitle = null,
             disableSplitting = false,
             tooltipGroup = null,
+        )
+
+        val NONE = DEFAULT.copy(
+            tooltipLinePatterns = emptyList(),
         )
     }
 }
