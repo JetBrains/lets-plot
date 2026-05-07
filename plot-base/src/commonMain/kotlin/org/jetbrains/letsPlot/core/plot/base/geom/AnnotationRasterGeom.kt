@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.PositionAdjustment
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgImageElement
 import kotlin.math.max
 import kotlin.math.min
@@ -41,8 +42,8 @@ class AnnotationRasterGeom(
         )
         svgImageElement.href().set(imageUrl)
         svgImageElement.setAttribute(
-            SvgImageElement.IMAGE_RENDERING,
-            if (interpolate) "optimizeQuality" else "optimizeSpeed"
+            SvgConstants.SVG_STYLE_ATTRIBUTE,
+            if (interpolate) "image-rendering: auto" else "image-rendering: pixelated;image-rendering: crisp-edges;"
         )
         root.add(svgImageElement)
     }

@@ -2,6 +2,7 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 import base64
+from io import BytesIO
 from typing import List
 
 from lets_plot.plot.core import FeatureSpec, _filter_none
@@ -33,10 +34,9 @@ def annotation_raster(raster, xmin=None, xmax=None, ymin=None, ymax=None, interp
     """
     from .geom import _geom
 
-    image_bytes = _as_image_bytes(raster)
-    mime_type = _detect_image_mime_type(image_bytes)
+    image_bytes = _to_supported_png_bytes(_as_image_bytes(raster))
     href = 'data:{};base64,{}'.format(
-        mime_type,
+        'image/png',
         str(base64.standard_b64encode(image_bytes), 'utf-8')
     )
 
@@ -80,6 +80,34 @@ def _detect_image_mime_type(image_bytes):
         return 'image/webp'
 
     raise ValueError("Unsupported raster image format: expected PNG, JPEG, GIF or WebP")
+
+
+def _to_supported_png_bytes(image_bytes):
+    _detect_image_mime_type(image_bytes)
+
+    try:
+        import png
+        from PIL import Image
+
+        image = Image.open(BytesIO(image_bytes)).convert('RGBA')
+        width, height = image.size
+        row_stride = width * 4
+        rgba_bytes = image.tobytes()
+        rows = [
+            rgba_bytes[y * row_stride:(y + 1) * row_stride]
+            for y in range(height)
+        ]
+        out = BytesIO()
+        png.Writer(
+            width=width,
+            height=height,
+            greyscale=False,
+            alpha=True,
+            bitdepth=8,
+        ).write(out, rows)
+        return out.getvalue()
+    except Exception as e:
+        raise ValueError("Unsupported raster image format: expected PNG, JPEG, GIF or WebP") from e
 
 class layer_labels(FeatureSpec):
     """

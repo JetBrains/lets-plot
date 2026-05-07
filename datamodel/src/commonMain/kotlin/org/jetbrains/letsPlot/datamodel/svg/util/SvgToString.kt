@@ -77,7 +77,7 @@ object SvgToString {
                         }
 
                         if (childNode is SvgImageElement) {
-                            childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, "image-rendering: optimizeSpeed; image-rendering: pixelated")
+                            ensureDefaultImageRendering(childNode)
                         }
 
                         @Suppress("USELESS_CAST") // Kotlin 1.9 fails to infer correctly here
@@ -90,6 +90,19 @@ object SvgToString {
         }
         crlf(buffer, level)
         buffer.append("</").append(svgElement.elementName).append('>')
+    }
+
+    private fun ensureDefaultImageRendering(imageElement: SvgImageElement) {
+        if (imageElement.getAttribute(SvgImageElement.IMAGE_RENDERING).get() != null) {
+            return
+        }
+        if (imageElement.getAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE).get() != null) {
+            return
+        }
+        imageElement.setAttribute(
+            SvgConstants.SVG_STYLE_ATTRIBUTE,
+            "image-rendering: optimizeSpeed; image-rendering: pixelated"
+        )
     }
 
     private fun renderTextNode(node: SvgTextNode, buffer: StringBuilder) {
