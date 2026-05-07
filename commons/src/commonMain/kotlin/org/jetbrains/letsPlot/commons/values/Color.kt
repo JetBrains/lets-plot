@@ -24,6 +24,14 @@ class Color @JvmOverloads constructor(
         ) { "Color components out of range: $this" }
     }
 
+    private val hexColorNoAlpha: String by lazy(LazyThreadSafetyMode.NONE) {
+        "#" + toHexColorPart(red) + toHexColorPart(green) + toHexColorPart(blue)
+    }
+
+    private val hexColor: String by lazy(LazyThreadSafetyMode.NONE) {
+        if (alpha == 255) hexColorNoAlpha else hexColorNoAlpha + toHexColorPart(alpha)
+    }
+
     fun withAlpha(newAlpha: Int): Color {
         return Color(red, green, blue, newAlpha)
     }
@@ -57,12 +65,11 @@ class Color @JvmOverloads constructor(
     }
 
     fun toHexColorNoAlpha(): String {
-        return "#" + toHexColorPart(red) + toHexColorPart(green) + toHexColorPart(blue)
+        return hexColorNoAlpha
     }
 
     fun toHexColor(): String {
-        val rgb = toHexColorNoAlpha()
-        return if (alpha == 255) rgb else rgb + toHexColorPart(alpha)
+        return hexColor
     }
 
     override fun hashCode(): Int {
@@ -305,17 +312,6 @@ class Color @JvmOverloads constructor(
             return Color(r, g, b, a)
         }
 
-        private fun toHexColorPart(value: Int): String {
-            if (value < 0 || value > 255) {
-                throw IllegalArgumentException("RGB color part must be in range [0..255] but was $value")
-            }
-
-            val result = value.toString(16)
-            return if (result.length == 1) {
-                "0$result"
-            } else {
-                result
-            }
-        }
+        private fun toHexColorPart(value: Int): String = value.toString(16).padStart(2, '0')
     }
 }
