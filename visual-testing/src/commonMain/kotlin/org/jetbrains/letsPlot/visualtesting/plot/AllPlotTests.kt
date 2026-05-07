@@ -13,6 +13,7 @@ object AllPlotTests {
         var failedTestsCount = 0
 
         failedTestsCount += PlotCompositeTest(canvasPeer, imageComparer).runTests()
+        failedTestsCount += PlotGenericTest(canvasPeer, imageComparer).runTests()
         failedTestsCount += PlotInteractivityTest(canvasPeer, imageComparer).runTests()
         failedTestsCount += PlotThemeTest(canvasPeer, imageComparer).runTests()
         //failedTestsCount += PlotAxisTest().runTests()
