@@ -54,11 +54,11 @@ internal class RectTargetProjection(
         range: DoubleSpan,
         byX: Boolean
     ): Boolean {
-        val p = if (byX) cursor.x else cursor.y
 
         return when (lookupStrategy) {
             LookupStrategy.NONE -> false
             LookupStrategy.HOVER -> {
+                val p = if (byX) cursor.x else cursor.y
                 if (p in range) {
                     updatePointChecker(closestPointChecker)
                     true
@@ -68,16 +68,8 @@ internal class RectTargetProjection(
             }
 
             LookupStrategy.NEAREST -> {
-                val pp = if (byX) {
-                    DoubleVector(range.lowerEnd, cursor.y)
-                } else {
-                    DoubleVector(cursor.x, range.lowerEnd)
-                }
-                //if (range.contains(p - RECT_X_NEAREST_EPSILON) || range.contains(p + RECT_X_NEAREST_EPSILON)) {
-                    closestPointChecker.check(pp)
-                //} else {
-                //    false
-                //}
+                val center = DoubleVector(range.length / 2 + range.lowerEnd, cursor.y).flipIf(!byX)
+                closestPointChecker.check(center)
             }
         }
     }
