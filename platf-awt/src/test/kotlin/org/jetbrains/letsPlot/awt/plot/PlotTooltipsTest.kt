@@ -61,6 +61,16 @@ class PlotTooltipsTest : PlotVisualTestBase() {
     }
 
     @Test
+    fun plot_tooltips_anchorBarCoordFlipped_axisTooltipVisible_showCrosshair() {
+        val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.BAR_ANCHOR_COORD_FLIPPED_WITH_AXIS_TOOLTIP_VISIBLE))
+
+        val cursorPos = Vector(235, 235)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        assertBitmap(plotCanvasDrawable, cursorPos)
+    }
+
+    @Test
     fun plot_tooltips_anchorRect_withoutAxisTooltip_noCrosshair() {
         val plotCanvasDrawable = createPlot(parseJson(PlotTooltipsSpecs.RECT_ANCHOR_WITHOUT_AXIS_TOOLTIP))
 

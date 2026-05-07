@@ -68,6 +68,26 @@ object PlotTooltipsSpecs {
         |}
     """.trimMargin()
 
+    val BAR_ANCHOR_COORD_FLIPPED_WITH_AXIS_TOOLTIP_VISIBLE = """
+        |{
+        |  "kind": "plot",
+        |  "coord": { "name": "flip", "flip": true },
+        |  "data": {
+        |    "x": [ "a", "b", "c" ],
+        |    "y": [ 3.0, 7.0, 5.0 ],
+        |    "id": [ "A", "B", "C" ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "tooltip_anchor": "top_right" }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
     val RECT_ANCHOR_WITHOUT_AXIS_TOOLTIP = """
         |{
         |  "kind": "plot",
