@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
-import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertGeneralTooltip
+import org.jetbrains.letsPlot.core.spec.config.TooltipAssertions.assertGeneralTooltip
 import kotlin.test.Test
 
 class TooltipWithConstantTest {

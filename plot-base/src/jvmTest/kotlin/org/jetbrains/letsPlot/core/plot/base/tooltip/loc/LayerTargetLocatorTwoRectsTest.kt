@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -51,7 +51,7 @@ class LayerTargetLocatorTwoRectsTest {
         TestUtil.assertObjects(locator, TestUtil.outsideY(SECOND_RECT), SECOND_RECT_KEY)
         TestUtil.assertObjects(locator, TestUtil.inside(SECOND_RECT), SECOND_RECT_KEY)
         TestUtil.assertObjects(locator, TestUtil.outsideX(FIRST_RECT), FIRST_RECT_KEY)
-        TestUtil.assertObjects(locator, TestUtil.outsideXY(FIRST_RECT), SECOND_RECT_KEY)
+        TestUtil.assertObjects(locator, TestUtil.outsideXY(FIRST_RECT), FIRST_RECT_KEY)
         TestUtil.assertObjects(locator, TestUtil.outsideX(SECOND_RECT), SECOND_RECT_KEY)
         TestUtil.assertObjects(locator, TestUtil.outsideXY(SECOND_RECT), SECOND_RECT_KEY)
     }

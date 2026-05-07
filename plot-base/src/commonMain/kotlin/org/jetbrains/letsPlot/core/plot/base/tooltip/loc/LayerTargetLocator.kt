@@ -21,10 +21,10 @@ import kotlin.math.max
 
 internal class LayerTargetLocator(
     private val geomKind: GeomKind,
-    private val lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping,
     targetPrototypes: List<TargetPrototype>
 ) : GeomTargetLocator {
+    private val lookupSpec = contextualMapping.tooltipBehavior.lookupSpec
 
     private val myTargets = ArrayList<Target>()
 
@@ -90,7 +90,6 @@ internal class LayerTargetLocator(
                 // In this case use 0.0 as a distance - we have a direct hit.
                 max(0.0, collector.closestPointChecker.distance),
                 ownerDistance(collector.cursor, collector.collection(), lookupSpec.lookupSpace),
-                lookupSpec,
                 geomKind,
                 contextualMapping,
                 hitShapeKind

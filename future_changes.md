@@ -24,7 +24,7 @@
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/legend_key_size.html).
 
 
-- Indication of removed records [[LPK-81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)][[#686](https://github.com/JetBrains/lets-plot/issues/686)].
+- Indication of removed records [[LPK-81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)], [[#686](https://github.com/JetBrains/lets-plot/issues/686)].
 
   When records in data are dropped by active sampling or because they contain missing or out-of-bounds values, the user is now informed of the number of dropped records and the reason they were dropped.
 
@@ -32,7 +32,7 @@
   - `na_rm=false` (default) — records are removed and messages are shown;
   - `na_rm=true` — records are removed silently.
 
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/removed_points_messages.html).
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/removed_records_indication.html).
 
 - Alpha (transparency) component:
   - Hex colors accept `#RRGGBBAA` or `#RGBA` notation.
@@ -50,3 +50,5 @@
 ### Fixed
 
 - Add 'synchronized tooltips' feature [[#1415](https://github.com/JetBrains/lets-plot/issues/1415)].
+- Alpha is not supported in element_text() [[#1462](https://github.com/JetBrains/lets-plot/issues/1462)].
+- geom_imshow(): should render transparency for NaNs when all other pixel values are identical. [[#1485](https://github.com/JetBrains/lets-plot/issues/1485)].

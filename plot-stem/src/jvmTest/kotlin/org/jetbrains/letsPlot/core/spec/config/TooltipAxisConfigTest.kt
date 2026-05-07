@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -348,7 +348,7 @@ class TooltipAxisConfigTest {
             val ctx = TestingPlotContext.create(geomLayer)
             val dataPoints = geomLayer.createContextualMapping()!!.getDataPoints(index = 0, ctx)
             val generalTooltip = dataPoints
-                .filterNot(LineSpec.DataPoint::isSide)
+                .filter { !it.isSide && !it.isAxis }
                 .map(LineSpec.DataPoint::value)
                 .firstOrNull()
             areEqual(expected, generalTooltip, "general tooltip", method)

@@ -17,7 +17,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 class CanvasDrawImageTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase() {
+): CanvasTestSuitBase() {
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
 
     init {

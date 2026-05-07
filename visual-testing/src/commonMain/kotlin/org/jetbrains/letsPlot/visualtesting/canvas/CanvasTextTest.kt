@@ -19,7 +19,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 class CanvasTextTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase() {
+): CanvasTestSuitBase() {
 
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Text
 
