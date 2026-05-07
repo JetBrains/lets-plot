@@ -9,7 +9,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
-import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.createTooltipModels
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.mockito.ReturnsNotNullValuesAnswer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.mockito.Mockito.*
@@ -40,15 +40,14 @@ internal class TestingTooltipModelsBuilder private constructor(
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tooltipHint).thenReturn(tooltipHint)
 
-        return createTooltipModels(
-            geomTarget = geomTarget,
-            contextualMapping = contextualMapping,
-            axisOrigin = DoubleVector.ZERO,
+        return LocatedTargetsPicker(
             flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
             ctx = plotContext
-        )
+        ).chooseTooltipModels(listOf(geomTarget), contextualMapping)
     }
 
     private fun buildMappedDataAccess(): MappedDataAccess {

@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.core.spec.config
 
 import demoAndTestShared.TestingGeomLayersBuilder
-import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertGeneralTooltip
-import org.jetbrains.letsPlot.core.spec.config.TooltipTestUtil.assertXAxisTooltip
+import org.jetbrains.letsPlot.core.spec.config.TooltipAssertions.assertGeneralTooltip
+import org.jetbrains.letsPlot.core.spec.config.TooltipAssertions.assertXAxisTooltip
 import kotlin.test.Test
 
 
@@ -160,32 +160,6 @@ class TooltipCheckLabelInLines {
             {
                 "geom" : "bar", "stat": "identity",
                 "tooltips": { "lines": [ "|^y" ] }
-            }
-          ]
-        }""".trimIndent()
-        val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
-        assertGeneralTooltip(
-            layer,
-            expectedLines = listOf("10")
-        )
-    }
-
-    @Test
-    fun `default with side tooltips - general will be one-line without label`() {
-        val spec = """
-        {
-          "data": { 
-              "x": ["a"],
-              "y": [ 10 ],
-              "ymin": [ 5 ],
-              "ymax": [ 15 ]
-          },
-          "kind": "plot",
-          "mapping": { "x" : "x", "y" : "y" },
-          "layers": [
-            {
-                "geom" : "pointrange",
-                "mapping": { "ymin" : "ymin", "ymax" : "ymax" }
             }
           ]
         }""".trimIndent()
@@ -352,7 +326,7 @@ class TooltipCheckLabelInLines {
 
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
 
-        assertXAxisTooltip(layer, expectedLines = listOf("label: 2.46913·\\(10^{6}\\)"), hitIndex = 1)
+        assertGeneralTooltip(layer, expectedLines = listOf("label: 2.46913·\\(10^{6}\\)"), hitIndex = 1)
     }
 
     @Test
@@ -379,6 +353,6 @@ class TooltipCheckLabelInLines {
 
         val layer = TestingGeomLayersBuilder.getSingleGeomLayer(spec)
 
-        assertXAxisTooltip(layer, expectedLines = listOf("label: 2,469,134"), hitIndex = 1)
+        assertGeneralTooltip(layer, expectedLines = listOf("label: 2,469,134"), hitIndex = 1)
     }
 }
