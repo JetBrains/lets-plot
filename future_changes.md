@@ -24,7 +24,7 @@
     See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/legend_key_size.html).
 
 
-- Indication of removed records [[LPK-81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)][[#686](https://github.com/JetBrains/lets-plot/issues/686)].
+- Indication of removed records [[LPK-81](https://github.com/JetBrains/lets-plot-kotlin/issues/81)], [[#686](https://github.com/JetBrains/lets-plot/issues/686)].
 
   When records in data are dropped by active sampling or because they contain missing or out-of-bounds values, the user is now informed of the number of dropped records and the reason they were dropped.
 
