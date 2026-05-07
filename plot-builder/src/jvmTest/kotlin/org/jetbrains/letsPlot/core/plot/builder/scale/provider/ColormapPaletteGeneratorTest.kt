@@ -15,7 +15,7 @@ class ColormapPaletteGeneratorTest {
     fun `respects direction parameter`() {
         val provider = ColormapMapperProvider(
             cmapName = "viridis",
-            alpha = 1.0,
+            opacity = 1.0,
             begin = 0.0,
             end = 1.0,
             direction = 1.0,
@@ -24,7 +24,7 @@ class ColormapPaletteGeneratorTest {
 
         val providerReversed = ColormapMapperProvider(
             cmapName = "viridis",
-            alpha = 1.0,
+            opacity = 1.0,
             begin = 0.0,
             end = 1.0,
             direction = -1.0,

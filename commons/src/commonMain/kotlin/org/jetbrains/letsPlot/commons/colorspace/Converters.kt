@@ -11,18 +11,18 @@ import org.jetbrains.letsPlot.commons.values.Color
 import kotlin.math.*
 
 
-fun rgbFromHcl(hcl: HCL, alpha: Double = 1.0): Color {
+fun rgbFromHcl(hcl: HCL, opacity: Double = 1.0): Color {
     val luv = luvFromHcl(hcl)
     val xyz = xyzFromLuv(luv)
     val rgb = rgbFromXyz(xyz)
-    return rgb.withOpacity(alpha)
+    return rgb.withOpacity(opacity)
 }
 
 
-fun rgbFromLab(lab: LAB, alpha: Double = 1.0): Color {
+fun rgbFromLab(lab: LAB, opacity: Double = 1.0): Color {
     val xyz = xyzFromLab(lab)
     val rgb = rgbFromXyz(xyz)
-    return rgb.withOpacity(alpha)
+    return rgb.withOpacity(opacity)
 }
 
 

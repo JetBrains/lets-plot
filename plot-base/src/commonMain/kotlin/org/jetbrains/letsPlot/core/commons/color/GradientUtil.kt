@@ -40,7 +40,7 @@ object GradientUtil {
         domain: DoubleSpan,
         colors: List<Color>,
         naColor: Color,
-        alpha: Double = 1.0
+        opacity: Double = 1.0
     ): (Double?) -> Color {
         val subdomainsCount = colors.size - 1
         val subdomainLength = domain.length / subdomainsCount
@@ -54,7 +54,7 @@ object GradientUtil {
                 val (lowValue, lowColor) = low
                 val (highValue, highColor) = high
                 val subdomain = DoubleSpan(lowValue, highValue)
-                gradient(subdomain, lowColor, highColor, naColor, alpha)
+                gradient(subdomain, lowColor, highColor, naColor, opacity)
             }
 
         return { value ->
@@ -74,21 +74,21 @@ object GradientUtil {
     }
 
     /**
-     * Alpha channel [0..1] (0 - transparent and 1 - opaque).
+     * Opacity [0..1] (0 - transparent and 1 - opaque).
      */
     fun gradient(
         domain: DoubleSpan,
         low: Color,
         high: Color,
         naColor: Color,
-        alpha: Double = 1.0
+        opacity: Double = 1.0
     ): (Double?) -> Color {
         return gradientLAB(
             domain,
             labFromRgb(low),
             labFromRgb(high),
             naColor,
-            alpha
+            opacity
         )
     }
 
@@ -97,7 +97,7 @@ object GradientUtil {
         low: LAB,
         high: LAB,
         naColor: Color,
-        alpha: Double = 1.0
+        opacity: Double = 1.0
     ): (Double?) -> Color {
 
         val mapperA = Mappers.linear(domain, low.a, high.a, null)
@@ -111,7 +111,7 @@ object GradientUtil {
                 val a = mapperA(input)!!
                 val b = mapperB(input)!!
                 val l = mapperL(input)!!
-                rgbFromLab(LAB(l, a, b), alpha = alpha)
+                rgbFromLab(LAB(l, a, b), opacity = opacity)
             }
         }
     }
@@ -121,7 +121,7 @@ object GradientUtil {
         low: HCL,
         high: HCL,
         naColor: Color,
-        alpha: Double = 1.0,
+        opacity: Double = 1.0,
         autoHueDirection: Boolean = false
     ): (Double?) -> Color {
         var lowH = low.h
@@ -161,7 +161,7 @@ object GradientUtil {
                 val h = if (hue >= 0) hue else 360 + hue
                 val c = mapperC(input)!!
                 val l = mapperL(input)!!
-                rgbFromHcl(HCL(h, c, l), alpha = alpha)
+                rgbFromHcl(HCL(h, c, l), opacity = opacity)
             }
         }
     }

@@ -68,24 +68,24 @@ class ColorsTest {
     }
 
     @Test
-    fun parseColorNameWithAlpha() {
+    fun parseColorNameWithOpacity() {
         assertEquals(Color.STEEL_BLUE.withOpacity(0.35), Colors.parseColor("steelblue / 0.35"))
     }
 
     @Test
-    fun parseColorNameWithAlphaNoSpaces() {
+    fun parseColorNameWithOpacityNoSpaces() {
         assertEquals(Color.STEEL_BLUE.withOpacity(0.35), Colors.parseColor("steelblue/0.35"))
     }
 
     @Test
-    fun percentAlphaSuffixIsNotSupported() {
+    fun percentOpacitySuffixIsNotSupported() {
         assertFailsWith<IllegalArgumentException> {
             Colors.parseColor("steelblue / 35%")
         }
     }
 
     @Test
-    fun alphaSuffixRequiresSingleSlash() {
+    fun opacitySuffixRequiresSingleSlash() {
         assertFailsWith<IllegalArgumentException> {
             Colors.parseColor("steelblue / 0.35 / 0.5")
         }
@@ -142,10 +142,10 @@ class ColorsTest {
     }
 
     @Test
-    fun `color space conversions apply alpha`() {
+    fun `color space conversions apply opacity`() {
         assertEquals(128, rgbFromHsl(HSL(0.0, 1.0, 0.5), opacity = 0.5).alpha)
-        assertEquals(128, rgbFromHcl(HCL(15.0, 100.0, 65.0), alpha = 0.5).alpha)
-        assertEquals(128, rgbFromLab(LAB(l = 43.579, a = 45.164, b = 36.823), alpha = 0.5).alpha)
+        assertEquals(128, rgbFromHcl(HCL(15.0, 100.0, 65.0), opacity = 0.5).alpha)
+        assertEquals(128, rgbFromLab(LAB(l = 43.579, a = 45.164, b = 36.823), opacity = 0.5).alpha)
     }
 
     @Test
