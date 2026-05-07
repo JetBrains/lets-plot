@@ -3,7 +3,7 @@
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>removed_points_messages</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>removed_records_indication</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7570,7 +7570,7 @@ ensure that the final visualization is interpreted correctly.</p>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[2]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="KJXc5G"></div>
+<div id="ujteZh"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -7595,7 +7595,7 @@ ensure that the final visualization is interpreted correctly.</p>
        };
    }
    
-   const containerDiv = document.getElementById("KJXc5G");
+   const containerDiv = document.getElementById("ujteZh");
    let fig = null;
    
    function renderPlot() {
@@ -7729,7 +7729,7 @@ ensure that the final visualization is interpreted correctly.</p>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[3]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="5hGVEA"></div>
+<div id="IihsaH"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -7754,7 +7754,7 @@ ensure that the final visualization is interpreted correctly.</p>
        };
    }
    
-   const containerDiv = document.getElementById("5hGVEA");
+   const containerDiv = document.getElementById("IihsaH");
    let fig = null;
    
    function renderPlot() {
@@ -7877,7 +7877,7 @@ ensure that the final visualization is interpreted correctly.</p>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[4]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="tXCPan"></div>
+<div id="ND8Dy3"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -7902,7 +7902,7 @@ ensure that the final visualization is interpreted correctly.</p>
        };
    }
    
-   const containerDiv = document.getElementById("tXCPan");
+   const containerDiv = document.getElementById("ND8Dy3");
    let fig = null;
    
    function renderPlot() {
@@ -7997,7 +7997,8 @@ ensure that the final visualization is interpreted correctly.</p>
 <li><code>na_rm=false</code> (default) — records are removed and messages are shown;</li>
 <li><code>na_rm=true</code> — records are removed silently.</li>
 </ul>
-<p><strong>Per Plot or even Globally:</strong> Use <code>theme(plot_message=element_blank())</code> to silence all notifications.</p>
+<p><strong>Per Plot or Globally:</strong> Use <code>theme(plot_message='blank')</code> to silence all notifications.</p>
+<p>Note: you can suppress messages globally using <code>LetsPlot.set_theme(theme(plot_message='blank'))</code>.</p>
 </div>
 </div>
 </div>
@@ -8023,7 +8024,7 @@ ensure that the final visualization is interpreted correctly.</p>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[5]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="liiBCu"></div>
+<div id="2ZmH9v"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -8048,7 +8049,7 @@ ensure that the final visualization is interpreted correctly.</p>
        };
    }
    
-   const containerDiv = document.getElementById("liiBCu");
+   const containerDiv = document.getElementById("2ZmH9v");
    let fig = null;
    
    function renderPlot() {
@@ -8140,8 +8141,7 @@ ensure that the final visualization is interpreted correctly.</p>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
 <div class="cm-editor cm-s-jupyter">
 <div class="highlight hl-ipython3"><pre><span></span><span class="c1"># Suppress messages from all layers</span>
-<span class="n">ggplot</span><span class="p">(</span><span class="n">df_ridges</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">))</span> <span class="o">+</span> <span class="n">geom_area_ridges</span><span class="p">()</span> <span class="o">+</span> \
-    <span class="n">theme</span><span class="p">(</span><span class="n">plot_message</span><span class="o">=</span><span class="n">element_blank</span><span class="p">())</span>
+<span class="n">ggplot</span><span class="p">(</span><span class="n">df_ridges</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">))</span> <span class="o">+</span> <span class="n">geom_area_ridges</span><span class="p">()</span> <span class="o">+</span> <span class="n">theme</span><span class="p">(</span><span class="n">plot_message</span><span class="o">=</span><span class="s1">'blank'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -8154,7 +8154,7 @@ ensure that the final visualization is interpreted correctly.</p>
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[6]:</div>
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
-<div id="P0Cnpu"></div>
+<div id="glWUty"></div>
 <script data-lets-plot-script="plot" type="text/javascript">
    
    (function() {
@@ -8179,7 +8179,7 @@ ensure that the final visualization is interpreted correctly.</p>
        };
    }
    
-   const containerDiv = document.getElementById("P0Cnpu");
+   const containerDiv = document.getElementById("glWUty");
    let fig = null;
    
    function renderPlot() {
@@ -8201,9 +8201,7 @@ ensure that the final visualization is interpreted correctly.</p>
 }]
 },
 "theme":{
-"plot_message":{
-"blank":true
-}
+"plot_message":"blank"
 },
 "kind":"plot",
 "scales":[],
