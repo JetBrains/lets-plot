@@ -3,6 +3,7 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .annotation import *
+from .annotation_raster_ import *
 from .coord import *
 from .core import *
 from .expand_limits_ import *
@@ -56,6 +57,7 @@ __all__ = (coord.__all__ +
            theme_set.__all__ +
            tooltip.__all__ +
            annotation.__all__ +
+           annotation_raster_.__all__ +
            marginal_layer.__all__ +
            font_features.__all__ +
            ggbunch_.__all__ +

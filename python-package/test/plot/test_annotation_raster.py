@@ -10,7 +10,7 @@ from io import BytesIO
 import pytest
 from PIL import Image
 
-from lets_plot.plot.annotation import annotation_raster
+from lets_plot.plot.annotation_raster_ import annotation_raster
 
 PNG_1X1_BASE64 = 'iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAYAAAD0In+KAAAADklEQVR4nGNgYGD4DwIADvoE/EWwHYsAAAAASUVORK5CYII='
 PNG_1X1_BYTES = base64.b64decode(PNG_1X1_BASE64)
