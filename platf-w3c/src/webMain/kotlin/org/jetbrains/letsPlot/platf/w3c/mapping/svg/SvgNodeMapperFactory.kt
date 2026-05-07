@@ -24,7 +24,10 @@ class SvgNodeMapperFactory(private val myPeer: SvgDomPeer): MapperFactory<SvgNod
 
                     val pixelated = SvgImageElement()
                     SvgUtils.copyAttributes(s as SvgElement, pixelated)
-                    ensureDefaultImageRendering(pixelated)
+                    SvgUtils.ensureDefaultImageRendering(
+                        pixelated,
+                        "image-rendering: pixelated;image-rendering: crisp-edges;"
+                    )
                     s = pixelated
 
                     SvgElementMapper(
@@ -51,16 +54,4 @@ class SvgNodeMapperFactory(private val myPeer: SvgDomPeer): MapperFactory<SvgNod
                 else -> throw IllegalStateException("Unsupported SvgNode ${source::class}")
             }
 
-    private fun ensureDefaultImageRendering(imageElement: SvgImageElement) {
-        if (imageElement.getAttribute(SvgImageElement.IMAGE_RENDERING).get() != null) {
-            return
-        }
-        if (imageElement.getAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE).get() != null) {
-            return
-        }
-        imageElement.setAttribute(
-            SvgConstants.SVG_STYLE_ATTRIBUTE,
-            "image-rendering: pixelated;image-rendering: crisp-edges;"
-        )
-    }
 }
