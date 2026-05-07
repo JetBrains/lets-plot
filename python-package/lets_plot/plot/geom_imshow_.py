@@ -118,7 +118,8 @@ def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     if normalize:
         if vmin == vmax:
             image_data = numpy.copy(image_data)
-            image_data[True] = 127
+            # Preserve NaNs so they can be rendered as transparent downstream.
+            image_data[numpy.isfinite(image_data)] = 127
         else:
             # float array for scaling
             if image_data.dtype.kind == 'f':
