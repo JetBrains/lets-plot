@@ -32,7 +32,7 @@
   - `na_rm=false` (default) — records are removed and messages are shown;
   - `na_rm=true` — records are removed silently.
 
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/removed_points_messages.html).
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/removed_records_indication.html).
 
 
 - Memo for Kotlin API users:
