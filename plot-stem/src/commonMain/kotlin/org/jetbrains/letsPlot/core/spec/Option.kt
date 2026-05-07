@@ -456,13 +456,7 @@ object Option {
         }
 
         object AnnotationRaster {
-            const val HREF = "href"
             const val INTERPOLATE = "interpolate"
-
-            const val XMIN = "xmin"
-            const val XMAX = "xmax"
-            const val YMIN = "ymin"
-            const val YMAX = "ymax"
         }
 
         object Text {

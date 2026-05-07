@@ -53,5 +53,4 @@ class SvgNodeMapperFactory(private val myPeer: SvgDomPeer): MapperFactory<SvgNod
                 )
                 else -> throw IllegalStateException("Unsupported SvgNode ${source::class}")
             }
-
 }

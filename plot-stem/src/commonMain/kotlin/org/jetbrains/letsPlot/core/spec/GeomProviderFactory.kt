@@ -383,15 +383,15 @@ internal object GeomProviderFactory {
             }
 
             GeomKind.ANNOTATION_RASTER -> GeomProvider.annotationRaster {
-                require(layerConfig.hasOwn(Option.Geom.AnnotationRaster.HREF)) {
+                require(layerConfig.hasOwn(Option.Geom.Image.HREF)) {
                     "Raster image reference URL (href) is not specified."
                 }
                 AnnotationRasterGeom(
-                    imageUrl = layerConfig.getString(Option.Geom.AnnotationRaster.HREF)!!,
-                    xMin = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.XMIN),
-                    xMax = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.XMAX),
-                    yMin = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.YMIN),
-                    yMax = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.YMAX),
+                    imageUrl = layerConfig.getString(Option.Geom.Image.HREF)!!,
+                    xMin = annotationRasterBound(layerConfig, Option.Geom.Image.XMIN),
+                    xMax = annotationRasterBound(layerConfig, Option.Geom.Image.XMAX),
+                    yMin = annotationRasterBound(layerConfig, Option.Geom.Image.YMIN),
+                    yMax = annotationRasterBound(layerConfig, Option.Geom.Image.YMAX),
                     interpolate = layerConfig.getBoolean(Option.Geom.AnnotationRaster.INTERPOLATE),
                 )
             }
