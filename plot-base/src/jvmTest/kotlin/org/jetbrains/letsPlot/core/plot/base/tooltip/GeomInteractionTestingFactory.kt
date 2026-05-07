@@ -43,17 +43,17 @@ internal object GeomInteractionTestingFactory {
         )
 
         return GeomInteractionUtil.createGeomInteractionBuilder(
+            geomKind = geomKind,
+            renderedAes = renderedAes,
             bindings = bindings,
             scaleMap = scaleMap,
+            constantsMap = constantsMap,
+            getOriginalVariableName = { aes -> bindings[aes]?.name },
+            tooltipBehavior = tooltipBehavior,
             isLiveMap = false,
             isPolarCoordSystem = false,
-            theme = theme(),
-            geomKind = geomKind,
-            tooltipBehavior1 = tooltipBehavior,
             isYOrientation = false,
-            constantsMap = constantsMap,
-            renderedAes = renderedAes,
-            getOriginalVariableName = { aes -> bindings[aes]?.name }
+            theme = theme()
         )
     }
 

@@ -75,17 +75,17 @@ class BarPlotResizeDemo private constructor(
             tooltipBehavior = TooltipBehavior.DEFAULT
         )
         val geomInteraction = GeomInteractionUtil.createGeomInteractionBuilder(
+            geomKind = GeomKind.BAR,
+            renderedAes = varBindings.map(VarBinding::aes) + Aes.WIDTH,
             bindings = varBindings.associate { it.aes to it.variable },
             scaleMap = scaleByAes,
+            constantsMap = constantsMap,
+            getOriginalVariableName = { aes -> varBindings.find { it.aes == aes }?.variable?.name },
+            tooltipBehavior = tooltipBehavior,
             isLiveMap = false,
             isPolarCoordSystem = false,
-            theme = DefaultTheme.minimal2(),
-            geomKind = GeomKind.BAR,
-            tooltipBehavior1 = tooltipBehavior,
             isYOrientation = false,
-            constantsMap = constantsMap,
-            renderedAes = varBindings.map(VarBinding::aes) + Aes.WIDTH,
-            getOriginalVariableName = { aes -> varBindings.find { it.aes == aes }?.variable?.name }
+            theme = DefaultTheme.minimal2()
         ).build()
 
         val layer = layerBuilder

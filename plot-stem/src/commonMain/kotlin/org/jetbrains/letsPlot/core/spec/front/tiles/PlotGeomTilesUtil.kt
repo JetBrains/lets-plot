@@ -96,17 +96,17 @@ internal object PlotGeomTilesUtil {
                     null
                 } else {
                     GeomInteractionUtil.createGeomInteractionBuilder(
-                        layerConfig.varBindings.associate { it.aes to it.variable },
-                        scaleMapByLayer[layerIndex],
-                        isLiveMap,
-                        coordProvider.isPolar,
-                        theme,
-                        layerConfig.geomProto.geomKind,
-                        layerConfig.tooltips,
-                        layerConfig.isYOrientation,
-                        layerConfig.constantsMap,
-                        layerConfig.renderedAes,
-                        layerConfig::getOriginalVariableName
+                        geomKind = layerConfig.geomProto.geomKind,
+                        renderedAes = layerConfig.renderedAes,
+                        bindings = layerConfig.varBindings.associate { it.aes to it.variable },
+                        scaleMap = scaleMapByLayer[layerIndex],
+                        constantsMap = layerConfig.constantsMap,
+                        getOriginalVariableName = layerConfig::getOriginalVariableName,
+                        tooltipBehavior = layerConfig.tooltips,
+                        isLiveMap = isLiveMap,
+                        isPolarCoordSystem = coordProvider.isPolar,
+                        isYOrientation = layerConfig.isYOrientation,
+                        theme = theme
                     ).build()
                 }
             }

@@ -18,22 +18,28 @@ import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
 
 object GeomInteractionUtil {
     fun createGeomInteractionBuilder(
+        geomKind: GeomKind,
+        renderedAes: List<Aes<*>>,
         bindings: Map<Aes<*>, DataFrame.Variable>,
         scaleMap: Map<Aes<*>, Scale>,
+        constantsMap: Map<Aes<*>, Any>,
+        getOriginalVariableName: (Aes<*>) -> String?,
+        tooltipBehavior: TooltipBehavior,
         isLiveMap: Boolean,
         isPolarCoordSystem: Boolean,
-        theme: Theme,
-        geomKind: GeomKind,
-        tooltipBehavior1: TooltipBehavior,
         isYOrientation: Boolean,
-        constantsMap: Map<Aes<*>, Any>,
-        renderedAes: List<Aes<*>>,
-        getOriginalVariableName: (Aes<*>) -> String?,
+        theme: Theme,
     ): GeomInteractionBuilder {
-        val tooltipBehavior = createTooltipBehavior(
-            tooltipBehavior = tooltipBehavior1,
-            isPolarCoordSystem = isPolarCoordSystem
-        )
+        val tooltipBehavior = if (!isPolarCoordSystem) {
+            tooltipBehavior
+        } else {
+            // Always show axis tooltips for polar coordinate system as all geoms are area-like.
+            tooltipBehavior.copy(
+                lookupSpec = LookupSpec(XY, HOVER),
+                axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
+                axisTooltipEnabled = true
+            )
+        }
 
         val axisWithoutTooltip = HashSet<Aes<*>>()
         if (isLiveMap || !theme.horizontalAxis(flipAxis = false).showTooltip()) axisWithoutTooltip.add(Aes.X)
@@ -75,7 +81,7 @@ object GeomInteractionUtil {
             sideTooltipAes = emptyList()
         }
 
-        val tooltipBehaviorWithVisibleLines = if (theme.tooltips().show()) {
+        val resolvedTooltipBehavior = if (theme.tooltips().show()) {
             tooltipBehavior
         } else {
             // Need to keep specified formats to use for non-hidden tooltips:
@@ -90,29 +96,12 @@ object GeomInteractionUtil {
         }
 
         val builder = GeomInteractionBuilder(
-            tooltipBehavior = tooltipBehaviorWithVisibleLines,
+            tooltipBehavior = resolvedTooltipBehavior,
             tooltipAes = tooltipAes,
             tooltipAxisAes = axisAes,
             sideTooltipAes = sideTooltipAes
         )
         return builder.tooltipConstants(createConstantAesList(geomKind, constantsMap))
-    }
-
-    private fun createTooltipBehavior(
-        tooltipBehavior: TooltipBehavior,
-        isPolarCoordSystem: Boolean
-    ): TooltipBehavior {
-        if (!isPolarCoordSystem) {
-            return tooltipBehavior
-        }
-
-        // Always show axis tooltips for polar coordinate system as all geoms are area-like.
-        return tooltipBehavior.copy(
-            lookupSpec = LookupSpec(XY, HOVER),
-            axisAesFromFunctionKind = listOf(Aes.X, Aes.Y),
-            axisTooltipEnabled = true,
-            ignoreInvisibleTargets = false,
-        )
     }
 
     private fun createHiddenAesList(
