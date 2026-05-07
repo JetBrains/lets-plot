@@ -388,10 +388,10 @@ internal object GeomProviderFactory {
                 }
                 AnnotationRasterGeom(
                     imageUrl = layerConfig.getString(Option.Geom.AnnotationRaster.HREF)!!,
-                    xmin = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.XMIN),
-                    xmax = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.XMAX),
-                    ymin = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.YMIN),
-                    ymax = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.YMAX),
+                    xMin = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.XMIN),
+                    xMax = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.XMAX),
+                    yMin = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.YMIN),
+                    yMax = annotationRasterBound(layerConfig, Option.Geom.AnnotationRaster.YMAX),
                     interpolate = layerConfig.getBoolean(Option.Geom.AnnotationRaster.INTERPOLATE),
                 )
             }

@@ -19,10 +19,10 @@ import kotlin.math.min
 
 class AnnotationRasterGeom(
     private val imageUrl: String,
-    private val xmin: Double?,
-    private val xmax: Double?,
-    private val ymin: Double?,
-    private val ymax: Double?,
+    private val xMin: Double?,
+    private val xMax: Double?,
+    private val yMin: Double?,
+    private val yMax: Double?,
     private val interpolate: Boolean,
 ) : GeomBase() {
 
@@ -54,39 +54,23 @@ class AnnotationRasterGeom(
         val dataOrigin = coord.fromClient(contentOrigin)
         val dataCorner = coord.fromClient(contentCorner)
 
-        val x0 = when {
-            xmin == null -> minNotNull(dataOrigin?.x, dataCorner?.x) ?: return null
-            xmin.isFinite() -> xmin
-            else -> return null
-        }
-        val x1 = when {
-            xmax == null -> maxNotNull(dataOrigin?.x, dataCorner?.x) ?: return null
-            xmax.isFinite() -> xmax
-            else -> return null
-        }
-        val y0 = when {
-            ymin == null -> minNotNull(dataOrigin?.y, dataCorner?.y) ?: return null
-            ymin.isFinite() -> ymin
-            else -> return null
-        }
-        val y1 = when {
-            ymax == null -> maxNotNull(dataOrigin?.y, dataCorner?.y) ?: return null
-            ymax.isFinite() -> ymax
-            else -> return null
-        }
+        val left = resolveBound(xMin, dataOrigin?.x, dataCorner?.x, ::min) ?: return null
+        val right = resolveBound(xMax, dataOrigin?.x, dataCorner?.x, ::max) ?: return null
+        val top = resolveBound(yMin, dataOrigin?.y, dataCorner?.y, ::min) ?: return null
+        val bottom = resolveBound(yMax, dataOrigin?.y, dataCorner?.y, ::max) ?: return null
 
-        return DoubleRectangle.span(DoubleVector(x0, y0), DoubleVector(x1, y1))
+        return DoubleRectangle.LTRB(left, top, right, bottom)
     }
 
     companion object {
         const val HANDLES_GROUPS = false
 
-        private fun minNotNull(a: Double?, b: Double?): Double? {
-            return if (a == null || b == null) null else min(a, b)
-        }
-
-        private fun maxNotNull(a: Double?, b: Double?): Double? {
-            return if (a == null || b == null) null else max(a, b)
+        private fun resolveBound(bound: Double?, panelStart: Double?, panelEnd: Double?, edge: (Double, Double) -> Double): Double? {
+            return when {
+                bound == null && panelStart != null && panelEnd != null -> edge(panelStart, panelEnd)
+                bound != null && bound.isFinite() -> bound
+                else -> null
+            }
         }
     }
 }
