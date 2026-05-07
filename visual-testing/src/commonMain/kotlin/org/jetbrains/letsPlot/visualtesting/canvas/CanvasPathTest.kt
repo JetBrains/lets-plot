@@ -17,7 +17,7 @@ import kotlin.math.PI
 class CanvasPathTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase() {
+): CanvasTestSuitBase() {
 
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
 

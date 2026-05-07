@@ -15,7 +15,6 @@ data class TooltipBehavior(
     val lookupSpec: LookupSpec = LookupSpec.NONE,
     val axisAesFromFunctionKind: List<Aes<*>> = emptyList(),
     val axisTooltipEnabled: Boolean = true,
-    val isCrosshairEnabled: Boolean = false,
     val ignoreInvisibleTargets: Boolean = false,
     val valueSources: List<ValueSource>,
     val tooltipLinePatterns: List<LinePattern>?,
@@ -29,18 +28,10 @@ data class TooltipBehavior(
 
     fun hideTooltips() = tooltipLinePatterns?.isEmpty() ?: false
 
-    companion object {
-        val NONE = TooltipBehavior(
-            valueSources = emptyList(),
-            tooltipLinePatterns = emptyList(),
-            anchor = null,
-            minWidth = null,
-            tooltipTitle = null,
-            disableSplitting = false,
-            tooltipGroup = null,
-        )
+    val isCrosshairEnabled: Boolean = anchor != null
 
-        fun defaultTooltip() = TooltipBehavior(
+    companion object {
+        val DEFAULT = TooltipBehavior(
             valueSources = emptyList(),
             tooltipLinePatterns = null,
             anchor = null,
@@ -48,6 +39,10 @@ data class TooltipBehavior(
             tooltipTitle = null,
             disableSplitting = false,
             tooltipGroup = null,
+        )
+
+        val NONE = DEFAULT.copy(
+            tooltipLinePatterns = emptyList(),
         )
     }
 }

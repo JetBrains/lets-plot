@@ -10,7 +10,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer
 class PlotCompositeTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-) : PlotTestBase() {
+) : PlotTestSuitBase() {
 
     init {
         registerTest(::plot_composite_nested)

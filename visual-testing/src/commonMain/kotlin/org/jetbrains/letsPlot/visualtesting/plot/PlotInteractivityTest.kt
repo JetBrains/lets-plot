@@ -20,7 +20,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer
 class PlotInteractivityTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-) : PlotTestBase() {
+) : PlotTestSuitBase() {
     init {
         registerTest(::plot_interactivity_facetGrid_tooltip)
         registerTest(::plot_interactivity_panInProgress_withIncompleteBuffer)

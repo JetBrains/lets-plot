@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.canvas.Canvas
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import kotlin.math.ceil
 import kotlin.reflect.KClass
-import kotlin.reflect.KFunction
 
 class ImageComparer(
     private val canvasPeer: CanvasPeer,
@@ -60,8 +59,6 @@ class ImageComparer(
     }
 
     data class ComparisonContext(
-        val testSuite: KClass<out TestSuit>?,
-        val test: KFunction<*>?,
         val profile: ComparisonProfile
     )
 
@@ -79,8 +76,7 @@ class ImageComparer(
         fileName: String,
         actualBitmap: Bitmap,
         profile: ComparisonProfile? = null,
-        testSuite: KClass<out TestSuit>? = null,
-        test: KFunction<*>? = null
+        testSuite: KClass<out TestSuitBase>? = null
     ) {
         val testName = fileName.removeSuffix(".png") + if (suffix.isNotEmpty()) "_${suffix.lowercase()}" else ""
         val expectedFileName = "$testName.png"
@@ -98,13 +94,7 @@ class ImageComparer(
             error("Failed to read expected image.\n${it.message}\nActual image saved to ${reportLocation(bitmapIO.getActualFileReportPath(actualFileName))}")
         }
 
-        val profile = profileAdjuster(
-            ComparisonContext(
-                testSuite = testSuite,
-                test = test,
-                profile = profile ?: defaultProfile
-            )
-        )
+        val profile = profileAdjuster(ComparisonContext(profile = profile ?: defaultProfile))
         val diffBitmap = createDiffImage(expectedBitmap, actualBitmap, profile)
         if (diffBitmap != null) {
             val diffFilePath = "${testName}_diff.png"
@@ -120,7 +110,7 @@ class ImageComparer(
                 |    Expected: ${reportLocation(bitmapIO.getExpectedFileReportPath(expectedFileName))}""".trimMargin() + "\n"
             )
         } else {
-            log("Image comparison passed: $expectedFileName")
+            log("Image comparison passed: ${reportLocation(bitmapIO.getExpectedFileReportPath(expectedFileName))}")
         }
     }
 

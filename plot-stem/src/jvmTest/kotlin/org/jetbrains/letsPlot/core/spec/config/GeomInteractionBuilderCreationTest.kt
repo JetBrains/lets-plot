@@ -196,17 +196,17 @@ class GeomInteractionBuilderCreationTest {
         val scaleMap = plotConfig.createScales()
         plotConfig.layerConfigs.forEach { layerConfig ->
             val builder = GeomInteractionUtil.createGeomInteractionBuilder(
+                geomKind = layerConfig.geomProto.geomKind,
+                renderedAes = layerConfig.renderedAes,
                 bindings = layerConfig.varBindings.associate { it.aes to it.variable },
                 scaleMap = scaleMap,
+                constantsMap = layerConfig.constantsMap,
+                getOriginalVariableName = layerConfig::getOriginalVariableName,
+                tooltipBehavior = layerConfig.tooltips,
                 isLiveMap = false,
                 isPolarCoordSystem = false,
-                theme = DefaultTheme.minimal2(),
-                geomKind = layerConfig.geomProto.geomKind,
-                tooltipBehavior1 = layerConfig.tooltips,
                 isYOrientation = layerConfig.isYOrientation,
-                constantsMap = layerConfig.constantsMap,
-                renderedAes = layerConfig.renderedAes,
-                getOriginalVariableName = layerConfig::getOriginalVariableName
+                theme = DefaultTheme.minimal2()
             )
             val tooltipLines = builder.tooltipLines
             val aesListForTooltip = getAesListInTooltip(tooltipLines)
@@ -434,17 +434,17 @@ class GeomInteractionBuilderCreationTest {
 
         val layerConfig = plotConfig.layerConfigs.first()
         return GeomInteractionUtil.createGeomInteractionBuilder(
+            layerConfig.geomProto.geomKind,
+            layerConfig.renderedAes,
             bindings = layerConfig.varBindings.associate { it.aes to it.variable },
             scaleMap = scaleMap,
+            layerConfig.constantsMap,
+            layerConfig::getOriginalVariableName,
+            layerConfig.tooltips,
             isLiveMap = false,
             isPolarCoordSystem = false,
-            theme,
-            layerConfig.geomProto.geomKind,
-            layerConfig.tooltips,
             layerConfig.isYOrientation,
-            layerConfig.constantsMap,
-            layerConfig.renderedAes,
-            layerConfig::getOriginalVariableName
+            theme
         )
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -11,10 +11,11 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
+import org.jetbrains.letsPlot.core.plot.base.StatKind
+import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomInteractionTestingFactory
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.mockito.Mockito
 import kotlin.test.Test
@@ -109,8 +110,12 @@ class LayerTargetCollectorWithLocatorTest {
         }
 
         private fun createGeomInteractionBuilder(area: Boolean): GeomInteraction {
-            return GeomInteractionBuilder.DemoAndTest(Aes.values())
-                .bivariateFunction(area)
+            return GeomInteractionTestingFactory.createBuilder(
+                geomKind = if (area) GeomKind.RECT else GeomKind.POINT,
+                statKind = StatKind.IDENTITY,
+                renderedAes = Aes.values().toList(),
+                mappings = emptyList()
+            )
                 .ignoreInvisibleTargets(true)
                 .build()
         }

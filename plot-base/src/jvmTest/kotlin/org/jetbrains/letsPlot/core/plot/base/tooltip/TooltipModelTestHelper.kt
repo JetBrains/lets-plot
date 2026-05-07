@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.DataFrame
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
-import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.createTooltipModels
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
 import kotlin.test.assertEquals
 
@@ -94,20 +94,22 @@ open class TooltipModelTestHelper {
             tipAes.add(aes)
         }
 
-        myTooltipModels = createTooltipModels(
-            geomTarget = geomTarget,
-            contextualMapping = GeomInteraction.createTestContextualMapping(
+        myTooltipModels = LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = plotContext
+        ).chooseTooltipModels(
+            listOf(geomTarget),
+            GeomInteraction.createTestContextualMapping(
                 tipAes,
                 if (axisTooltipEnabled) axisAes else emptyList(),
                 sideTooltipAes = geomTarget.aesTooltipHint.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build()
-            ),
-            axisOrigin = DoubleVector.ZERO,
-            flippedAxis = false,
-            xAxisTheme = TestUtil.axisTheme,
-            yAxisTheme = TestUtil.axisTheme,
-            ctx = plotContext
+            )
         )
     }
 
@@ -115,21 +117,23 @@ open class TooltipModelTestHelper {
         geomTarget: GeomTarget,
         valueSources: List<ValueSource>
     ) {
-        myTooltipModels = createTooltipModels(
-            geomTarget = geomTarget,
-            contextualMapping = GeomInteraction.createTestContextualMapping(
+        myTooltipModels = LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = plotContext
+        ).chooseTooltipModels(
+            listOf(geomTarget),
+            GeomInteraction.createTestContextualMapping(
                 emptyList(),
                 if (axisTooltipEnabled) axisAes else emptyList(),
                 geomTarget.aesTooltipHint.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build(),
                 valueSources
-            ),
-            axisOrigin = DoubleVector.ZERO,
-            flippedAxis = false,
-            xAxisTheme = TestUtil.axisTheme,
-            yAxisTheme = TestUtil.axisTheme,
-            ctx = plotContext
+            )
         )
     }
 

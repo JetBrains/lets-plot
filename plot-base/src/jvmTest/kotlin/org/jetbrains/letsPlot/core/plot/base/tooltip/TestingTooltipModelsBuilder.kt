@@ -7,19 +7,16 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
+import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
-import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.createTooltipModels
+import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.mockito.ReturnsNotNullValuesAnswer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.mockito.Mockito.*
 
 
 internal class TestingTooltipModelsBuilder private constructor(
-    private val contextualMappingProvider: ContextualMappingProvider
+    private val contextualMappingProviderFactory: (Collection<MappedDataAccessMock.Mapping<*>>) -> ContextualMappingProvider
 ) {
 
     private val mappedDataAccessMock = MappedDataAccessMock()
@@ -31,7 +28,7 @@ internal class TestingTooltipModelsBuilder private constructor(
     fun build(): List<TooltipModel> {
         val mappedDataAccess = buildMappedDataAccess()
 
-        val contextualMapping = contextualMappingProvider.createContextualMapping(
+        val contextualMapping = contextualMappingProviderFactory(mappedDataAccessMock.getMappings()).createContextualMapping(
             mappedDataAccess,
             DataFrame.Builder().build()
         )
@@ -43,15 +40,14 @@ internal class TestingTooltipModelsBuilder private constructor(
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tooltipHint).thenReturn(tooltipHint)
 
-        return createTooltipModels(
-            geomTarget = geomTarget,
-            contextualMapping = contextualMapping,
-            axisOrigin = DoubleVector.ZERO,
+        return LocatedTargetsPicker(
             flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
             ctx = plotContext
-        )
+        ).chooseTooltipModels(listOf(geomTarget), contextualMapping)
     }
 
     private fun buildMappedDataAccess(): MappedDataAccess {
@@ -68,27 +64,36 @@ internal class TestingTooltipModelsBuilder private constructor(
             toList(Aes.values())
 
         fun univariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
-            return TestingTooltipModelsBuilder(
-                GeomInteractionBuilder.DemoAndTest(displayableAesList)
-                    .xUnivariateFunction(GeomTargetLocator.LookupStrategy.NEAREST)
-                    .build()
-            )
+            return TestingTooltipModelsBuilder { mappings ->
+                GeomInteractionTestingFactory.createBuilder(
+                    geomKind = GeomKind.RIBBON,
+                    statKind = StatKind.IDENTITY,
+                    renderedAes = displayableAesList,
+                    mappings = mappings
+                ).build()
+            }
         }
 
         fun bivariateFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
-            return TestingTooltipModelsBuilder(
-                GeomInteractionBuilder.DemoAndTest(displayableAesList)
-                    .bivariateFunction(false)
-                    .build()
-            )
+            return TestingTooltipModelsBuilder { mappings ->
+                GeomInteractionTestingFactory.createBuilder(
+                    geomKind = GeomKind.POINT,
+                    statKind = StatKind.IDENTITY,
+                    renderedAes = displayableAesList,
+                    mappings = mappings
+                ).build()
+            }
         }
 
         fun areaFunctionBuilder(displayableAesList: List<Aes<*>> = DISPLAYABLE_AES_LIST): TestingTooltipModelsBuilder {
-            return TestingTooltipModelsBuilder(
-                GeomInteractionBuilder.DemoAndTest(displayableAesList)
-                    .bivariateFunction(true)
-                    .build()
-            )
+            return TestingTooltipModelsBuilder { mappings ->
+                GeomInteractionTestingFactory.createBuilder(
+                    geomKind = GeomKind.RECT,
+                    statKind = StatKind.IDENTITY,
+                    renderedAes = displayableAesList,
+                    mappings = mappings
+                ).build()
+            }
         }
 
         private fun toList(aes: Iterable<Aes<*>>): List<Aes<*>> {

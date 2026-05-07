@@ -7,6 +7,73 @@ package org.jetbrains.letsPlot.awt.plot
 
 object PlotTooltipsSpecs {
 
+    val BAR_ANCHOR_WITH_AXIS_TOOLTIP_VISIBLE = """
+        |{
+        |  "kind": "plot",
+        |  "data": {
+        |    "x": [ "a", "b" ],
+        |    "y": [ 3.0, 7.0 ],
+        |    "id": [ "A", "B" ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "tooltip_anchor": "top_right" }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val BAR_ANCHOR_WITH_AXIS_TOOLTIP_HIDDEN = """
+        |{
+        |  "kind": "plot",
+        |  "data": {
+        |    "x": [ "a", "b" ],
+        |    "y": [ 3.0, 7.0 ],
+        |    "id": [ "A", "B" ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "bar",
+        |      "stat": "identity",
+        |      "mapping": { "x": "x", "y": "y" },
+        |      "tooltips": { "tooltip_anchor": "top_right" }
+        |    }
+        |  ],
+        |  "theme": {
+        |    "axis_tooltip_x": { "name": "blank" }
+        |  }
+        |}
+    """.trimMargin()
+
+    val RECT_ANCHOR_WITHOUT_AXIS_TOOLTIP = """
+        |{
+        |  "kind": "plot",
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ 0.0, 4.0 ],
+        |    "ylim": [ 0.0, 4.0 ]
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "rect",
+        |      "alpha": 0.5,
+        |      "data": {
+        |        "xmin": [ 1.0 ],
+        |        "xmax": [ 3.0 ],
+        |        "ymin": [ 1.0 ],
+        |        "ymax": [ 3.0 ],
+        |        "id": [ "rect A" ]
+        |      },
+        |      "mapping": { "xmin": "xmin", "xmax": "xmax", "ymin": "ymin", "ymax": "ymax", "fill": "id" },
+        |      "tooltips": { "lines": [ "@id" ], "tooltip_anchor": "top_right" }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
     val ANCHOR_FOR_RECT_LIKE_GEOM = """
         |{
         |  "kind": "plot",

@@ -6,18 +6,12 @@
 package org.jetbrains.letsPlot.visualtesting
 
 import org.jetbrains.letsPlot.commons.values.Bitmap
-import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
-import kotlin.reflect.KClass
 import kotlin.reflect.KFunction0
 
-abstract class TestSuit {
-    abstract val imageComparer: ImageComparer
-    abstract val canvasPeer: CanvasPeer
-    open val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Strict
-
+abstract class TestSuitBase : VisualTestBase() {
     val name: String = this::class.simpleName ?: "TestSuit"
-    private val testSuiteClass: KClass<out TestSuit> = this::class
+
     private data class RegisteredTest(
         val test: KFunction0<Bitmap>,
         val profile: ComparisonProfile
@@ -40,9 +34,8 @@ abstract class TestSuit {
     }
 
     fun assertTest(test: KFunction0<Bitmap>, profile: ComparisonProfile? = null) {
-        val expectedFileName = test.name.replace(" ", "_").replace(".", "_")
         val actual = test.invoke()
-        imageComparer.assertBitmapEquals(expectedFileName, actual, profile, testSuiteClass, test)
+        assertImage(actual, test.name, profile)
     }
 
     private fun runTest(test: KFunction0<Bitmap>, profile: ComparisonProfile?): Int {
