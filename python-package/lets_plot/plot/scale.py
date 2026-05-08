@@ -2437,14 +2437,14 @@ def scale_fill_grey(start=None, end=None, name=None, breaks=None, labels=None, l
 def scale_color_grey(start=None, end=None, name=None, breaks=None, labels=None, lablim=None, limits=None,
                      na_value=None, guide=None, trans=None, format=None):
     """
-    Sequential grey color scale for ``color``  aesthetic.
+    Sequential grey color scale for ``color`` aesthetic.
 
     Parameters
     ----------
     start : float
-        Gray value at low end of palette in range [0, 1].
+        Gray value at the low end of the palette in range [0, 1].
     end : float
-        Gray value at high end of palette in range [0, 1].
+        Gray value at the high end of the palette in range [0, 1].
     name : str
         The name of the scale - used as the axis label or the legend title.
         If None, the default, the name of the scale
