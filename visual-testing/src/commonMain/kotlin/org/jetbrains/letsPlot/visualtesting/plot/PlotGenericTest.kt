@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer
 class PlotGenericTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-) : PlotTestBase() {
+) : PlotTestSuitBase() {
 
     init {
         registerTest(::annotation_raster_under_points)
