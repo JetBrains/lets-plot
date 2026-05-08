@@ -1,12 +1,14 @@
 /*
- * Copyright (c) 2026. JetBrains s.r.o.
+ * Copyright (c) 2019. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package demo.plot.shared.model.scale
 
 import demoAndTestShared.parsePlotSpec
-import org.jetbrains.letsPlot.commons.intern.datetime.*
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -21,10 +23,9 @@ class DateTimeScaleX {
     }
 
     companion object {
-        private val startMillis = DateTime(
-            Date(1, Month.FEBRUARY, 2003),
-            Time(0, 0)
-        ).toEpochMilliseconds(TimeZone.UTC)
+        private val startMillis = LocalDateTime(2003, 2, 1, 0, 0)
+            .toInstant(TimeZone.UTC)
+            .toEpochMilliseconds()
 
         fun plot(title: String, period: Duration): MutableMap<String, Any> {
             val n = 30
