@@ -18,7 +18,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 class AnnotationRasterGeom(
-    private val imageUrl: String,
+    private val imageUrl: String?,
     private val xMin: Double?,
     private val xMax: Double?,
     private val yMin: Double?,
@@ -33,6 +33,7 @@ class AnnotationRasterGeom(
         coord: CoordinateSystem,
         ctx: GeomContext
     ) {
+        if (imageUrl.isNullOrEmpty()) return
         val bbox = dataBounds(coord, ctx) ?: return
         val boundsClient = coord.toClient(bbox) ?: return
 
