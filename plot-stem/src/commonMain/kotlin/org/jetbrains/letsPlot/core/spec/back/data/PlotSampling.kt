@@ -45,12 +45,7 @@ internal object PlotSampling {
         }
 
         if (applied.isNotEmpty()) {
-            val expressionText = applied.map { it.expressionText }.let { texts ->
-                when (texts.size) {
-                    1 -> texts[0]
-                    else -> texts.dropLast(1).joinToString(", ") + " and " + texts.last()
-                }
-            }
+            val expressionText = applied.joinToString(", ") { it.expressionText }
             val droppedCount = originalRowCount - data.rowCount()
             val rows = if (droppedCount == 1) "row" else "rows"
             val message = "Removed $droppedCount $rows out of $originalRowCount by $expressionText."
