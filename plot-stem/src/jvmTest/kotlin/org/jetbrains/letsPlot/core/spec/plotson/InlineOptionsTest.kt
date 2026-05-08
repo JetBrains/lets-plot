@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec.plotson
 
 import org.assertj.core.api.Assertions.assertThat
+import org.jetbrains.letsPlot.commons.values.Color
 import java.util.Map.entry
 import kotlin.test.Test
 
@@ -181,5 +182,21 @@ class InlineOptionsTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `color options preserve alpha`() {
+        class ColorOpts : Options() {
+            var color: Color? by map("COLOR")
+        }
+
+        val opts = ColorOpts().apply {
+            color = Color(0x11, 0x22, 0x33, 0x44)
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        val json = toJson(opts) as Map<String, Any?>
+
+        assertThat(json).containsOnly(entry("COLOR", "#11223344"))
     }
 }

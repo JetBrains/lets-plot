@@ -34,6 +34,12 @@
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/removed_records_indication.html).
 
+- Alpha (transparency) component:
+  - Hex colors accept `#RRGGBBAA` or `#RGBA` notation.
+  - Colors accept an opacity suffix in the form `"named color / opacity"`, for example `"steelblue / 0.35"`.
+  - Alpha in color values is supported in geoms and theme elements [[#1462](https://github.com/JetBrains/lets-plot/issues/1462)].
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/color_alpha.html).
 
 - Memo for Kotlin API users:
   - Added WasmJS support [[LPK-296](https://github.com/JetBrains/lets-plot-kotlin/issues/296)], [[LPC-52](https://github.com/JetBrains/lets-plot-compose/issues/52)].

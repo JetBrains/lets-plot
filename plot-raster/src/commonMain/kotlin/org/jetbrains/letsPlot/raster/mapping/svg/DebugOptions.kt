@@ -8,8 +8,6 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.canvas.Context2d
 import org.jetbrains.letsPlot.raster.scene.*
-import kotlin.math.roundToInt
-
 
 internal object DebugOptions {
     const val DEBUG_DRAWING_ENABLED: Boolean = false
@@ -31,8 +29,8 @@ internal object DebugOptions {
                 else -> Color.LIGHT_GRAY
             }
 
-            val fillColor = color.changeAlpha((255*0.02).roundToInt())
-            val strokeColor = color.changeAlpha((255*0.7).roundToInt())
+            val fillColor = color.withOpacity(0.02)
+            val strokeColor = color.withOpacity(0.7)
             ctx.setFillStyle(fillColor)
             ctx.setStrokeStyle(strokeColor)
 

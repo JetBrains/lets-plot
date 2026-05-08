@@ -7,14 +7,26 @@ package org.jetbrains.letsPlot.core.plot.base.aes
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
+import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.render.point.UpdatableShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 object AestheticsUtil {
     //affects bar, smooth, area and ribbon
     internal const val ALPHA_CONTROLS_BOTH = false
+
+    private fun isExplicitAlphaValue(alpha: Double?): Boolean {
+        return alpha != null && alpha != AesInitValue.DEFAULT_ALPHA
+    }
+
+    private fun hasExplicitSegmentAlpha(p: DataPointAesthetics): Boolean {
+        return isExplicitAlphaValue(p.segmentAlpha())
+    }
+
+    private fun explicitAlpha(p: DataPointAesthetics): Double? {
+        return p.alpha()?.takeIf(::isExplicitAlphaValue)
+    }
 
     fun fill(filled: Boolean, solid: Boolean, p: DataPointAesthetics): Color {
         if (filled) {
@@ -33,28 +45,44 @@ object AestheticsUtil {
         strokeWidth: Double,
         transform: SvgTransform?
     ) {
-        val fill = fill(filled, solid, p)
         val stroke = p.color()!!
 
-        var fillAlpha = 0.0
-        if (filled || solid) {
-            fillAlpha = alpha(fill, p)
+        val resolvedFill = if (filled || solid) {
+            applyAlpha(fill(filled, solid, p), p)
+        } else {
+            Color.TRANSPARENT
         }
 
-        var strokeAlpha = 0.0
-        if (strokeWidth > 0) {
-            strokeAlpha = alpha(stroke, p)
+        val resolvedStroke = if (strokeWidth > 0) {
+            applyAlpha(stroke, p)
+        } else {
+            Color.TRANSPARENT
         }
 
-        shape.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
+        shape.update(resolvedFill, resolvedStroke, strokeWidth, transform)
     }
 
-    fun alpha(color: Color, p: DataPointAesthetics): Double {
-        return if (p.alpha() != AesInitValue.DEFAULT_ALPHA) {  //  apply only custom 'aes' alpha
-            p.alpha()!!
-        } else {                                               // else, override with color's alpha
-            SvgUtils.alpha2opacity(color.alpha)
-        }
+    private fun applyAlpha(color: Color, p: DataPointAesthetics): Color {
+        return explicitAlpha(p)?.let(color::withOpacity) ?: color
+    }
+
+    fun effectiveSegmentAlpha(p: DataPointAesthetics): Double? {
+        return if (hasExplicitSegmentAlpha(p)) p.segmentAlpha() else p.alpha()
+    }
+
+    fun effectiveSegmentColor(p: DataPointAesthetics): Color? {
+        return p.segmentColor()
+            ?.takeIf { it != DEFAULT_SEGMENT_COLOR }
+            ?: p.color()
+    }
+
+    fun resolveColor(p: DataPointAesthetics, applyAlpha: Boolean): Color {
+        val color = p.color()!!
+        return if (applyAlpha) applyAlpha(color, p) else color
+    }
+
+    fun resolveFill(p: DataPointAesthetics, color: Color = p.fill()!!): Color {
+        return applyAlpha(color, p)
     }
 
     fun strokeWidth(p: DataPointAesthetics) = AesScaling.strokeWidth(p)
@@ -74,16 +102,12 @@ object AestheticsUtil {
     fun textSize(p: DataPointAesthetics) = AesScaling.textSize(p)
 
     fun updateStroke(shape: SvgShape, p: DataPointAesthetics, applyAlpha: Boolean) {
-        shape.strokeColor().set(p.color())
-        if (p.alpha() != AesInitValue.DEFAULT_ALPHA && applyAlpha) {
-            shape.strokeOpacity().set(p.alpha())
-        }
+        val resolvedStroke = resolveColor(p, applyAlpha)
+        shape.strokeColor().set(resolvedStroke)
     }
 
     fun updateFill(shape: SvgShape, p: DataPointAesthetics) {
-        shape.fillColor().set(p.fill())
-        if (p.alpha() != AesInitValue.DEFAULT_ALPHA) {
-            shape.fillOpacity().set(p.alpha())
-        }
+        val resolvedFill = resolveFill(p)
+        shape.fillColor().set(resolvedFill)
     }
 }

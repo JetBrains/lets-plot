@@ -19,7 +19,7 @@ object ColorMaps {
 
     fun getColors(
         cmName: String,
-        alpha: Double,
+        opacity: Double,
         hueRange: DoubleSpan,
         n: Int? = null
     ): List<Color> {
@@ -30,7 +30,7 @@ object ColorMaps {
                 red = (it.r * 255).roundToInt(),
                 green = (it.g * 255).roundToInt(),
                 blue = (it.b * 255).roundToInt(),
-                alpha = (alpha * 255).roundToInt(),
+                alpha = (opacity * 255).roundToInt()
             )
         }
     }

@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
@@ -58,8 +59,7 @@ class RasterGeom : GeomBase() {
             val center = boundsXY.center
             val text = "Raster image size\n[$width X $height]\nexceeds capability\nof\nyour imaging device"
             val label = Label(text)
-            label.textColor().set(Color.DARK_MAGENTA)
-            label.setTextOpacity(0.5)
+            label.textColor().set(Color.DARK_MAGENTA.withOpacity(0.5))
             label.setFontSize(12.0)
             label.setLineHeight(16.0)
             label.setFontWeight("bold")
@@ -91,8 +91,7 @@ class RasterGeom : GeomBase() {
         for (p in dataPoints) {
             val x = p.x()
             val y = p.y()
-            val alpha = p.alpha()
-            val color = p.fill()
+            val color = AestheticsUtil.resolveFill(p)
 
             var col = round((x!! - x0) / stepX).toInt()
             var row = round((y!! - y0) / stepY).toInt()
@@ -105,7 +104,7 @@ class RasterGeom : GeomBase() {
                 row = rows - (row + 1)
             }
 
-            argbValues[row * cols + col] = SvgUtils.toARGB(color!!, alpha!!)
+            argbValues[row * cols + col] = SvgUtils.toARGB(color)
         }
 
         val bitmap = Bitmap(cols, rows, argbValues)

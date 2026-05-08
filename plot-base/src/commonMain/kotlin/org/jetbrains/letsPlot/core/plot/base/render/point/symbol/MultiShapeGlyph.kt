@@ -13,14 +13,12 @@ internal abstract class MultiShapeGlyph : Glyph {
     protected fun update(
         shape: SvgSlimShape?,
         fill: Color,
-        fillAlpha: Double,
         stroke: Color,
-        strokeAlpha: Double,
         strokeWidth: Double,
         transform: SvgTransform?
     ) {
-        shape?.setFill(fill, fillAlpha)
-        shape?.setStroke(stroke, strokeAlpha)
+        shape?.setFill(fill)
+        shape?.setStroke(stroke)
         shape?.setStrokeWidth(strokeWidth)
         transform?.let { shape?.setTransform(it) }
     }

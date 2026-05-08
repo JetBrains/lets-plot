@@ -12,5 +12,5 @@ fun alphaScaledColor(color: Color, newAlpha: Int?): Color {
     return when {
         newAlpha == null -> color.alpha
         else -> min(newAlpha, color.alpha)
-    }.let(color::changeAlpha)
+    }.let(color::withAlpha)
 }

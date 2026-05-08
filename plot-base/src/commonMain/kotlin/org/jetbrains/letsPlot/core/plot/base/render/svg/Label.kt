@@ -59,7 +59,7 @@ class Label(
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {
                 // set attribute for svg->canvas mapping to work
-                myLines.forEach(SvgTextElement::fillColor)
+                myLines.forEach { it.fillColor().set(value) }
 
                 // duplicate in 'style' to override styles of container
                 myTextColor = value
@@ -112,10 +112,6 @@ class Label(
         myFontFamily = fontFamily
         updateStyleAttribute()
         horizontalRepositionLines()
-    }
-
-    fun setTextOpacity(value: Double?) {
-        myLines.forEach { it.fillOpacity().set(value) }
     }
 
     private fun updateStyleAttribute() {

@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Synchronizers
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.SvgTSpanElementAttrMapping
@@ -66,7 +67,8 @@ internal class SvgTextElementMapper(
             target.fontStyle = toFontStyle(style.face)
             target.fontWeight = toFontWeight(style.face)
 
-            myTextAttrSupport.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, "fill:${style.color.toHexColor()};")
+            val styleAttr = SvgUtils.fillAndOpacityStyle(style.color)
+            myTextAttrSupport.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
         }
     }
 

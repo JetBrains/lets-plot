@@ -18,7 +18,7 @@ interface PaletteGenerator {
 
         val scaleMapper = createPaletteGeneratorScaleMapper(colorCount)
         return (0 until colorCount).map { i ->
-            scaleMapper(i.toDouble())?.toHexColor()
+            scaleMapper(i.toDouble())?.toHexColorNoAlpha()
                 ?: throw IllegalStateException("Can't generate a palette color for index: $i")
         }
     }

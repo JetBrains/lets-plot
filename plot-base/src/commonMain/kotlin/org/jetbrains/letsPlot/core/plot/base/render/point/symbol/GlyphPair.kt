@@ -14,14 +14,12 @@ internal class GlyphPair(private val myG1: Glyph, private val myG2: Glyph) :
 
     override fun update(
         fill: Color,
-        fillAlpha: Double,
         stroke: Color,
-        strokeAlpha: Double,
         strokeWidth: Double,
         transform: SvgTransform?
     ) {
-        myG1.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
-        myG2.update(fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
+        myG1.update(fill, stroke, strokeWidth, transform)
+        myG2.update(fill, stroke, strokeWidth, transform)
     }
 
     override fun appendTo(g: SvgSlimGroup) {

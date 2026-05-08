@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.*
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintsCollection.HintConfigFactory
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
@@ -76,7 +77,7 @@ class SmoothGeom : GeomBase() {
                     .defaultObjectRadius(objectRadius)
                     .defaultCoord(p1.x)
                     .defaultKind(if (ctx.flipped) VERTICAL else HORIZONTAL)
-                    .defaultColor(fill, aes1.alpha())
+                    .defaultColor(AestheticsUtil.resolveFill(aes1))
 
                 val hintsCollection = HintsCollection(aes1, helper)
                     .addHint(hint.create(Aes.YMAX))

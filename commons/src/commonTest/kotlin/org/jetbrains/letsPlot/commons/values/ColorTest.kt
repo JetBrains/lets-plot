@@ -37,6 +37,26 @@ class ColorTest {
     }
 
     @Test
+    fun toHexColorNoAlpha() {
+        assertEquals("#112233", Color(0x11, 0x22, 0x33, 0x44).toHexColorNoAlpha())
+    }
+
+    @Test
+    fun withOpacityRoundsToNearestByte() {
+        assertEquals(128, Color.RED.withOpacity(0.5).alpha)
+    }
+
+    @Test
+    fun withOpacityClampsBelowZero() {
+        assertEquals(0, Color.RED.withOpacity(-0.1).alpha)
+    }
+
+    @Test
+    fun withOpacityClampsAboveOne() {
+        assertEquals(255, Color.RED.withOpacity(1.5).alpha)
+    }
+
+    @Test
     fun parseRGB() {
         assertEquals(Color.RED, Color.parseRGB("rgb(255,0,0)"))
     }
@@ -47,6 +67,24 @@ class ColorTest {
     }
 
     @Test
+    fun rgbaRequiresAlpha() {
+        val e = assertFailsWith<IllegalArgumentException> {
+            Color.parseRGB("rgba(220, 240, 255)")
+        }
+
+        assertEquals("RGBA color format requires exactly 4 components: rgba(220, 240, 255)", e.message)
+    }
+
+    @Test
+    fun rgbRejectsExtraAlpha() {
+        val e = assertFailsWith<IllegalArgumentException> {
+            Color.parseRGB("rgb(220, 240, 255, 0.5)")
+        }
+
+        assertEquals("RGB color format requires exactly 3 components: rgb(220, 240, 255, 0.5)", e.message)
+    }
+
+    @Test
     fun parseColRGB() {
         assertEquals(Color.BLUE, Color.parseRGB("color(0,0,255)"))
     }
@@ -54,6 +92,15 @@ class ColorTest {
     @Test
     fun parseColRGBA() {
         assertEquals(Color.BLUE, Color.parseRGB("color(0,0,255,1.0)"))
+    }
+
+    @Test
+    fun colorRejectsWrongComponentCount() {
+        val e = assertFailsWith<IllegalArgumentException> {
+            Color.parseRGB("color(0,0)")
+        }
+
+        assertEquals("'color()' format requires 3 or 4 components: color(0,0)", e.message)
     }
 
     @Test

@@ -38,6 +38,11 @@ class ColorsTest {
     }
 
     @Test
+    fun parseHexWithAlpha() {
+        assertEquals(Color(0, 255, 0, 128), Colors.parseColor("#00ff0080"))
+    }
+
+    @Test
     fun parseRGB() {
         assertEquals(Color.RED, Colors.parseColor("rgb(255,0,0)"))
     }
@@ -60,6 +65,30 @@ class ColorsTest {
     @Test
     fun parseColName() {
         assertEquals(Color.MAGENTA, Colors.parseColor("magenta"))
+    }
+
+    @Test
+    fun parseColorNameWithOpacity() {
+        assertEquals(Color.STEEL_BLUE.withOpacity(0.35), Colors.parseColor("steelblue / 0.35"))
+    }
+
+    @Test
+    fun parseColorNameWithOpacityNoSpaces() {
+        assertEquals(Color.STEEL_BLUE.withOpacity(0.35), Colors.parseColor("steelblue/0.35"))
+    }
+
+    @Test
+    fun percentOpacitySuffixIsNotSupported() {
+        assertFailsWith<IllegalArgumentException> {
+            Colors.parseColor("steelblue / 35%")
+        }
+    }
+
+    @Test
+    fun opacitySuffixRequiresSingleSlash() {
+        assertFailsWith<IllegalArgumentException> {
+            Colors.parseColor("steelblue / 0.35 / 0.5")
+        }
     }
 
     @Test
@@ -110,6 +139,13 @@ class ColorsTest {
         assertColors(Color(128, 0, 128), HSL(300.0, 1.0, 0.25)) // purple
         assertColors(Color(0, 128, 128), HSL(180.0, 1.0, 0.25)) // teal
         assertColors(Color(0, 0, 128), HSL(240.0, 1.0, 0.25)) // navy
+    }
+
+    @Test
+    fun `color space conversions apply opacity`() {
+        assertEquals(128, rgbFromHsl(HSL(0.0, 1.0, 0.5), opacity = 0.5).alpha)
+        assertEquals(128, rgbFromHcl(HCL(15.0, 100.0, 65.0), opacity = 0.5).alpha)
+        assertEquals(128, rgbFromLab(LAB(l = 43.579, a = 45.164, b = 36.823), opacity = 0.5).alpha)
     }
 
     @Test

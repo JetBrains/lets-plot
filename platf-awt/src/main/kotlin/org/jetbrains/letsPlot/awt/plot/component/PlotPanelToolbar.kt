@@ -253,9 +253,9 @@ internal class PlotPanelToolbar : JPanel() {
         // C_BACKGR with an alpha channel which on a white background looks the same as the solid C_BACKGR
         // and slightly darkens any darker background.
         private val C_BACKGR_TRANSPARENT = Color(
-            ((C_BACKGR.red - 255 * (255 - ALPHA) / 255.0) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
-            ((C_BACKGR.green - 255 * (255 - ALPHA) / 255.0) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
-            ((C_BACKGR.blue - 255 * (255 - ALPHA) / 255.0) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
+            ((C_BACKGR.red - (255 - ALPHA)) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
+            ((C_BACKGR.green - (255 - ALPHA)) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
+            ((C_BACKGR.blue - (255 - ALPHA)) * 255.0 / ALPHA).toInt().coerceIn(0, 255),
             ALPHA
         )
     }

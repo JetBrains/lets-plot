@@ -41,9 +41,7 @@ object PointShapeSvg {
 
     private fun createTinyDotShape(location: DoubleVector, p: DataPointAesthetics): SvgSlimObject {
         val r = SvgSlimElements.rect(location.x - 0.5, location.y - 0.5, 1.0, 1.0)
-        val color = p.color()!!
-        val alpha = AestheticsUtil.alpha(color, p)
-        r.setFill(color, alpha)
+        r.setFill(AestheticsUtil.resolveColor(p, applyAlpha = true))
         r.setStrokeWidth(0.0)
         return r
     }

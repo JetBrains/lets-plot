@@ -14,10 +14,19 @@ import org.jetbrains.letsPlot.commons.event.MouseEvent.Companion.leftButton
 import org.jetbrains.letsPlot.commons.event.MouseEvent.Companion.noButton
 import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.registration.Disposable
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec
 import org.jetbrains.letsPlot.datamodel.svg.event.SvgEventSpec.*
+import org.jetbrains.letsPlot.datamodel.svg.util.SvgToString
+import kotlin.math.abs
+import org.apache.batik.transcoder.TranscoderInput
+import org.apache.batik.transcoder.TranscoderOutput
+import org.apache.batik.transcoder.image.ImageTranscoder
+import java.awt.image.BufferedImage
+import java.io.ByteArrayOutputStream
+import java.io.StringReader
 import javax.swing.JComponent
 import javax.swing.JLabel
 import kotlin.test.Test
@@ -28,6 +37,29 @@ import kotlin.test.assertTrue
 typealias AWTMouseEvent = java.awt.event.MouseEvent
 
 class BatikPlotComponentTest {
+
+    @Test
+    fun svgColorAlphaIsRendered() {
+        val svg = SvgSvgElement(4.0, 4.0).apply {
+            children().add(SvgRectElement(0.0, 0.0, 4.0, 4.0).apply {
+                fillColor().set(Color.WHITE)
+            })
+            children().add(SvgRectElement(0.0, 0.0, 4.0, 4.0).apply {
+                fillColor().set(Color(255, 0, 0, 128))
+            })
+        }
+        val svgText = SvgToString.render(svg)
+
+        assertTrue(svgText.contains("fill=\"rgb(255,0,0)\""))
+        assertTrue(svgText.contains("fill-opacity="))
+
+        val image = renderSvg(svgText)
+
+        val pixel = image.getRGB(2, 2)
+        assertEquals(255, pixel shr 16 and 0xff)
+        assertClose(127, pixel shr 8 and 0xff)
+        assertClose(127, pixel and 0xff)
+    }
 
     @Test
     fun svgEventsTest() {
@@ -175,6 +207,25 @@ class BatikPlotComponentTest {
                 throw RuntimeException("Error while building plot: ${component.text}")
             }
             return component
+        }
+
+        private fun renderSvg(svg: String): BufferedImage {
+            lateinit var image: BufferedImage
+            val transcoder = object : ImageTranscoder() {
+                override fun createImage(width: Int, height: Int): BufferedImage {
+                    return BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
+                }
+
+                override fun writeImage(img: BufferedImage, output: TranscoderOutput) {
+                    image = img
+                }
+            }
+            transcoder.transcode(TranscoderInput(StringReader(svg)), TranscoderOutput(ByteArrayOutputStream()))
+            return image
+        }
+
+        private fun assertClose(expected: Int, actual: Int) {
+            assertTrue(abs(expected - actual) <= 1, "Expected $actual to be within 1 of $expected")
         }
 
     }
