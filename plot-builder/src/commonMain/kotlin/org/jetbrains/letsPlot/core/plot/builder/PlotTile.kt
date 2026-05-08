@@ -21,7 +21,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -31,12 +30,10 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.NullGeomT
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetCollectorWithLocator
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayersByMargin
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadTotalHeight
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
 
@@ -228,9 +225,8 @@ internal class PlotTile constructor(
             add(rect)
         }
 
-        val textSize = FacetedPlotLayout.titleSize(label, theme)
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val metricsByLine = labelSpec.lineLayoutMetrics(label)
+        val textLayout = labelSpec.measureLayout(label)
         val className = if (isColumnLabel) "x" else "y"
         val themeAngle = theme.stripTextAngle()
         val defaultRotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
@@ -250,14 +246,13 @@ internal class PlotTile constructor(
         val (pos, hAnchor) = applyJustification(
             textBounds,
             fontSize,
-            textSize,
-            metricsByLine.firstOrNull() ?: LineLayoutMetrics.ascentOnly(fontSize),
+            textLayout,
             theme.stripTextJustification(),
             rotation
         )
         lab.setHorizontalAnchor(hAnchor)
         lab.setFontSize(labelSpec.font.size.toDouble())
-        lab.setLineLayoutMetrics(metricsByLine)
+        lab.setTextLayout(textLayout)
         lab.moveTo(pos)
         if (!themeAngle.isNaN() && themeAngle != 0.0) {
             lab.rotate(themeAngle)

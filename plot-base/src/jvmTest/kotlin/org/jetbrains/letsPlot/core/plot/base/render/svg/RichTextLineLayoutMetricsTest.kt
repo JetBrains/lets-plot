@@ -8,19 +8,19 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.test.Test
 
 class RichTextLineLayoutMetricsTest {
     @Test
     fun estimateLineLayoutMetricsForTwoPlainTextLines() {
-        val layoutMetrics = RichText.estimateLineDimensions(
+        val layoutMetrics = RichText.measure(
             text = "A\nB",
             font = DEF_FONT
-        ).map(LineDimensions::layoutMetrics)
+        ).layout.lineMetrics
 
         assertThat(layoutMetrics).containsExactly(
             LineLayoutMetrics(16.0, 0.0),
@@ -30,10 +30,10 @@ class RichTextLineLayoutMetricsTest {
 
     @Test
     fun estimateLineLayoutMetricsForPlainTextThenFraction() {
-        val layoutMetrics = RichText.estimateLineDimensions(
+        val layoutMetrics = RichText.measure(
             text = "A\n\\( \\frac{B}{C} \\)",
             font = DEF_FONT
-        ).map(LineDimensions::layoutMetrics)
+        ).layout.lineMetrics
 
         assertThat(layoutMetrics).containsExactly(
             LineLayoutMetrics(16.0, 0.0),
@@ -43,10 +43,10 @@ class RichTextLineLayoutMetricsTest {
 
     @Test
     fun estimateLineLayoutMetricsForFractionThenPlainText() {
-        val layoutMetrics = RichText.estimateLineDimensions(
+        val layoutMetrics = RichText.measure(
             text = "\\( A\\frac{B}{C} \\)\nD",
             font = DEF_FONT
-        ).map(LineDimensions::layoutMetrics)
+        ).layout.lineMetrics
 
         assertThat(layoutMetrics).containsExactly(
             LineLayoutMetrics(23.36, 12.16),
@@ -59,7 +59,7 @@ class RichTextLineLayoutMetricsTest {
         val label = Label("A\n\\( \\frac{B}{C} \\)")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.setLineLayoutMetrics(listOf(LineLayoutMetrics(16.0, 0.0), LineLayoutMetrics(24.0, 8.0)))
+        label.setTextLayout(TextLayout.fromLineMetrics(listOf(LineLayoutMetrics(16.0, 0.0), LineLayoutMetrics(24.0, 8.0))))
 
         assertThat(lineYPositions(label)).containsExactly(88.0, 112.0)
     }
@@ -69,7 +69,7 @@ class RichTextLineLayoutMetricsTest {
         val label = Label("\\( \\frac{A}{B} \\)\nC")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.setLineLayoutMetrics(listOf(LineLayoutMetrics(24.0, 8.0), LineLayoutMetrics(16.0, 0.0)))
+        label.setTextLayout(TextLayout.fromLineMetrics(listOf(LineLayoutMetrics(24.0, 8.0), LineLayoutMetrics(16.0, 0.0))))
 
         assertThat(lineYPositions(label)).containsExactly(88.0, 112.0)
     }
@@ -79,7 +79,7 @@ class RichTextLineLayoutMetricsTest {
         val label = Label("A\n\\( \\frac{B}{C} \\)")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.TOP)
-        label.setLineLayoutMetrics(listOf(LineLayoutMetrics(16.0, 0.0), LineLayoutMetrics(24.0, 8.0)))
+        label.setTextLayout(TextLayout.fromLineMetrics(listOf(LineLayoutMetrics(16.0, 0.0), LineLayoutMetrics(24.0, 8.0))))
 
         assertThat(lineYPositions(label)).containsExactly(100.0, 124.0)
     }

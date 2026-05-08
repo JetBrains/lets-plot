@@ -10,12 +10,11 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
-import org.jetbrains.letsPlot.core.plot.base.layout.BaselinePolicy
+import org.jetbrains.letsPlot.core.plot.base.layout.TextAnchoring
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -82,13 +81,13 @@ class ColorBarComponent(
             // Label
             val labelSpec = PlotLabelSpecFactory.legendItem(theme)
             val fontSize = theme.textStyle().size
-            val metricsByLine = labelSpec.lineLayoutMetrics(brLabel)
+            val textLayout = labelSpec.measureLayout(brLabel)
             val label = Label(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setFontSize(fontSize)
-            label.setLineLayoutMetrics(metricsByLine)
-            val yOffset = BaselinePolicy.offsetCap(brInfo.labelVerticalAnchor, metricsByLine, fontSize)
+            label.setTextLayout(textLayout)
+            val yOffset = TextAnchoring.offsetCap(brInfo.labelVerticalAnchor, textLayout, fontSize)
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
         }

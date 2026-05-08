@@ -7,9 +7,9 @@ package org.jetbrains.letsPlot.core.plot.base
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 
 interface GeomContext {
@@ -29,13 +29,12 @@ interface GeomContext {
 
     fun isMappedAes(aes: Aes<*>): Boolean
 
-    fun estimateLineDimensions(
-        text: String,
+    fun resolveFont(
         family: String,
         size: Double,
         isBold: Boolean,
         isItalic: Boolean
-    ): List<LineDimensions>
+    ): Font
 
     // Simple formatter, based on the bound variable type (e.g. int -> "d", float -> "g", datetime -> "%d.%m.%y %H:%M:%S")
     // If type is not known, returns Any::toString

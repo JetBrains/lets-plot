@@ -11,11 +11,10 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
+import kotlin.math.roundToInt
 
 /**
  * Used in demos only.
@@ -63,22 +62,19 @@ class EmptyGeomContext : GeomContext {
 
     override fun isMappedAes(aes: Aes<*>): Boolean = false
 
-    override fun estimateLineDimensions(
-        text: String,
+    override fun resolveFont(
         family: String,
         size: Double,
         isBold: Boolean,
         isItalic: Boolean
-    ): List<LineDimensions> {
+    ): Font {
         @Suppress("NAME_SHADOWING")
         val family = DefaultFontFamilyRegistry().get(family)
-        return PlotLabelSpec(
-            Font(
-                family = family,
-                size = size.toInt(),
-                isBold = isBold,
-                isItalic = isItalic
-            ),
-        ).lineDimensions(text)
+        return Font(
+            family = family,
+            size = size.roundToInt(),
+            isBold = isBold,
+            isItalic = isItalic
+        )
     }
 }

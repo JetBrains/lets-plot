@@ -16,11 +16,11 @@ import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_ALPHA
 import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue.DEFAULT_SEGMENT_COLOR
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
-import org.jetbrains.letsPlot.core.plot.base.layout.BaselinePolicy
+import org.jetbrains.letsPlot.core.plot.base.layout.TextAnchoring
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.MeasuredText
+import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement
@@ -155,12 +155,7 @@ object TextUtil {
 
     fun decorate(label: Label, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0, applyAlpha: Boolean = true) {
         decorateLabelStyle(label, p, scale, applyAlpha)
-        val lineInterval = BaselinePolicy.lineSpacing(p.lineheight()!!, fontSize(p, scale))
-        label.setLineLayoutMetrics(
-            estimatedLineLayoutMetrics(label.text, p, ctx, scale).map {
-                LineLayoutMetrics(it.ascent + lineInterval, it.descent)
-            }
-        )
+        label.setTextLayout(measure(label.text, p, ctx, scale).layout)
     }
 
     internal fun decorateLabelStyle(label: Label, p: DataPointAesthetics, scale: Double, applyAlpha: Boolean) {
@@ -188,40 +183,18 @@ object TextUtil {
         }
     }
 
-    fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
+    fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): MeasuredText {
         val fontSize = fontSize(p, scale)
         val fontFamily = fontFamily(p)
         val fontFace = FontFace.fromString(p.fontface())
-
-        val estimated = ctx.estimateLineDimensions(
-            text,
-            fontFamily,
-            fontSize,
-            fontFace.bold,
-            fontFace.italic
-        ).fold(DoubleVector.ZERO) { acc, sz ->
-            DoubleVector(
-                x = max(acc.x, sz.width),
-                y = acc.y + sz.height
-            )
-        }
-        val lineInterval = BaselinePolicy.lineSpacing(p.lineheight()!!, fontSize)
-        val textHeight = estimated.y + lineInterval * (Label.splitLines(text).size - 1)
-        return DoubleVector(estimated.x, textHeight)
-    }
-
-    fun estimatedLineLayoutMetrics(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): List<LineLayoutMetrics> {
-        val fontSize = fontSize(p, scale)
-        val fontFamily = fontFamily(p)
-        val fontFace = FontFace.fromString(p.fontface())
-
-        return ctx.estimateLineDimensions(
-            text,
-            fontFamily,
-            fontSize,
-            fontFace.bold,
-            fontFace.italic
-        ).map(LineDimensions::layoutMetrics)
+        val lineInterval = (p.lineheight()!! - 1) * fontSize
+        val font = ctx.resolveFont(
+            family = fontFamily,
+            size = fontSize,
+            isBold = fontFace.bold,
+            isItalic = fontFace.italic
+        )
+        return RichText.measure(text, font, lineInterval = lineInterval)
     }
 
     fun rectangleForText(
@@ -275,14 +248,13 @@ object TextUtil {
         label.setHorizontalAnchor(hAnchor)
 
         val fontSize = fontSize(p, sizeUnitRatio)
-        val textSize = measure(text, p, ctx, sizeUnitRatio)
-        val metrics = estimatedLineLayoutMetrics(text, p, ctx, sizeUnitRatio)
+        val measuredText = measure(text, p, ctx, sizeUnitRatio)
         val yPosition = vAnchor(p, location, boundsCenter).let { vjust ->
-            location.y + (vjust - 1) * textSize.y + BaselinePolicy.offsetCapForVjust(vjust, metrics, fontSize)
+            location.y + TextAnchoring.offsetCap(vjust, measuredText.layout, fontSize)
         }
 
         val textLocation = DoubleVector(location.x, yPosition)
-        label.moveTo(labelNudge(textLocation, textSize))
+        label.moveTo(labelNudge(textLocation, measuredText.totalSize))
 
         val g = SvgGElement()
         g.children().add(label.rootGroup)
@@ -302,14 +274,14 @@ object TextUtil {
         labelNudge: (location: DoubleVector, size: DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE
     ): SvgGElement {
         // text size estimation
-        val textSize = measure(text, p, ctx, sizeUnitRatio)
+        val measuredText = measure(text, p, ctx, sizeUnitRatio)
 
         val hAnchor = hAnchor(p, location, boundsCenter)
         val vAnchor = vAnchor(p, location, boundsCenter)
 
         // Background rectangle
         val fontSize = fontSize(p, sizeUnitRatio)
-        val rectangle = rectangleForText(location, textSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
+        val rectangle = rectangleForText(location, measuredText.totalSize, padding = fontSize * labelOptions.paddingFactor, hAnchor, vAnchor)
         val backgroundRect = SvgPathElement().apply {
             d().set(
                 roundedRectangle(rectangle, labelOptions.radiusFactor * rectangle.height).build()
@@ -328,13 +300,12 @@ object TextUtil {
             Text.HorizontalAnchor.RIGHT -> location.x - padding
             Text.HorizontalAnchor.MIDDLE -> location.x
         }
-        val metrics = estimatedLineLayoutMetrics(text, p, ctx, sizeUnitRatio)
         val textPosition = DoubleVector(
             xPosition,
-            rectangle.origin.y + padding + BaselinePolicy.offsetEmBoxTop(metrics, fontSize)
+            rectangle.origin.y + padding + TextAnchoring.offsetEmBoxTop(measuredText.layout, fontSize)
         )
         label.setHorizontalAnchor(hAnchor)
-        label.moveTo(labelNudge(textPosition, textSize))
+        label.moveTo(labelNudge(textPosition, measuredText.totalSize))
 
         // group elements and apply rotation
         val g = SvgGElement()

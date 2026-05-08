@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.builder.guide
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.core.plot.base.layout.BaselinePolicy
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
@@ -20,7 +19,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.tickLabelBaseOffset
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils.transformTranslate
@@ -177,16 +175,17 @@ class AxisComponent(
         tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
 
         val labelSpec = PlotLabelSpecFactory.axisTick(axisTheme)
-        val metrics = labelSpec.lineLayoutMetrics(label)
+        val textLayout = labelSpec.measureLayout(label)
         tickLabel.setFontSize(labelSpec.font.size.toDouble())
-        tickLabel.setLineLayoutMetrics(metrics)
+        tickLabel.setTextLayout(textLayout)
         tickLabel.rotate(labelAdjustments.rotationDegree)
 
         // On a horizontal axis, push the label down by the first line's extra
         // ascent (e.g. a LaTeX fraction's numerator) so its visible top stays
         // aligned with the top of a plain-text label.
         val firstAscentExcess = if (orientation.isHorizontal) {
-            BaselinePolicy.firstLineTopExcess(metrics, labelSpec.font.size.toDouble())
+            val fontSize = labelSpec.font.size.toDouble()
+            (textLayout.firstLineMetrics.ascent - fontSize).coerceAtLeast(0.0)
         } else {
             0.0
         }

@@ -5,31 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.presentation
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
-import kotlin.math.max
+import org.jetbrains.letsPlot.core.plot.base.render.text.MeasuredText
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
 
 interface LabelSpec {
     val font: Font
     val markdown: Boolean
 
-    fun lineDimensions(labelText: String): List<LineDimensions>
+    val defaultLineHeight: Double
 
-    fun defaultLine(): LineDimensions
+    fun measure(labelText: String, lineInterval: Double = 0.0): MeasuredText
+
+    fun measureLayout(labelText: String, lineInterval: Double = 0.0): TextLayout =
+        measure(labelText, lineInterval).layout
 }
-
-fun LabelSpec.lineLayoutMetrics(labelText: String): List<LineLayoutMetrics> =
-    lineDimensions(labelText).map(LineDimensions::layoutMetrics)
-
-fun LabelSpec.totalDimensions(labelText: String): DoubleVector =
-    lineDimensions(labelText).fold(DoubleVector.ZERO) { acc, dim ->
-        DoubleVector(
-            x = max(acc.x, dim.width),
-            y = acc.y + dim.height
-        )
-    }
-
-fun LabelSpec.width(labelText: String): Double =
-    lineDimensions(labelText).maxOfOrNull(LineDimensions::width) ?: 0.0

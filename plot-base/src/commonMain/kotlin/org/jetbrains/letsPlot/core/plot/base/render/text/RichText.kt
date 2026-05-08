@@ -30,33 +30,46 @@ object RichText {
         return svgLines
     }
 
-    fun estimateLineDimensions(
+    fun measure(
         text: String,
         font: Font,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
-    ): List<LineDimensions> {
+        lineInterval: Double = 0.0,
+    ): MeasuredText {
+        val (lineMetrics, width) = estimateTextLayoutAndWidth(text, font, wrapLength, maxLinesCount, markdown)
+        return MeasuredText(layout = TextLayout(lineMetrics, lineInterval), width = width)
+    }
+
+    private fun estimateTextLayoutAndWidth(
+        text: String,
+        font: Font,
+        wrapLength: Int = -1,
+        maxLinesCount: Int = -1,
+        markdown: Boolean = false,
+    ): Pair<List<LineLayoutMetrics>, Double> {
         val defaultMetrics = LineLayoutMetrics.plainText(font)
-        val defaultDimensions = LineDimensions(0.0, defaultMetrics)
 
         val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
         if (lines.isEmpty()) {
-            return listOf(defaultDimensions)
+            return listOf(defaultMetrics) to 0.0
         }
-        return lines.map { line ->
-            if (line.isEmpty()) defaultDimensions
+        val measuredLines = lines.map { line ->
+            if (line.isEmpty()) {
+                defaultMetrics to 0.0
+            }
             else {
                 val terms = line.mapNotNull { term -> term as? RichTextNode.RichSpan }
-                LineDimensions(
-                    width = terms.sumOf { term -> term.estimateWidth(font) },
-                    layoutMetrics = LineLayoutMetrics.mergeOnBaseline(
-                        metrics = terms.map { term -> term.estimateLineLayoutMetrics(font) },
-                        defaultIfEmpty = defaultMetrics
-                    )
-                )
+                LineLayoutMetrics.mergeOnBaseline(
+                    metrics = terms.map { term -> term.estimateLineLayoutMetrics(font) },
+                    defaultIfEmpty = defaultMetrics
+                ) to terms.sumOf { term -> term.estimateWidth(font) }
             }
         }
+        val lineMetrics = measuredLines.map { it.first }
+        val width = measuredLines.maxOf { it.second }
+        return lineMetrics to width
     }
 
     private fun parse(

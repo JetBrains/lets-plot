@@ -16,7 +16,6 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
-import org.jetbrains.letsPlot.core.plot.builder.presentation.width
 
 abstract class ColorBarComponentLayout(
     title: String,
@@ -74,7 +73,7 @@ abstract class ColorBarComponentLayout(
         theme
     ) {
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).defaultLine().height / 3
+        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).defaultLineHeight / 3
         override val guideBarLength: Double get() = guideBarSize.x
 
         init {
@@ -115,13 +114,13 @@ abstract class ColorBarComponentLayout(
 
         override val graphSize: DoubleVector
         private val labelDistance: Double
-            get() = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
+            get() = PlotLabelSpecFactory.legendItem(theme).measure(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS).width / 2
         override val guideBarLength: Double get() = guideBarSize.y
 
         init {
             check(!breaks.isEmpty) { "Colorbar VerticalLayout received empty breaks list." }
             val maxLabelWidth: Double = breaks.labels
-                .maxOf { PlotLabelSpecFactory.legendItem(theme).width(it) }
+                .maxOf { PlotLabelSpecFactory.legendItem(theme).measure(it).width }
 
             // Bar + labels bounds
             graphSize = DoubleVector(guideBarSize.x + labelDistance + maxLabelWidth, guideBarSize.y)

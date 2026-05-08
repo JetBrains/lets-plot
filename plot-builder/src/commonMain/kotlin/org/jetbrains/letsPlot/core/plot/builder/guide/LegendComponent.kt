@@ -16,7 +16,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.theme.PanelTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.lineLayoutMetrics
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -68,7 +67,7 @@ class LegendComponent(
         val labelSpec = PlotLabelSpecFactory.legendItem(theme)
         label.addClassName(Style.LEGEND_ITEM)
         label.setFontSize(labelSpec.font.size.toDouble())
-        label.setLineLayoutMetrics(labelSpec.lineLayoutMetrics(br.label))
+        label.setTextLayout(labelSpec.measureLayout(br.label))
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(labelBox.origin)

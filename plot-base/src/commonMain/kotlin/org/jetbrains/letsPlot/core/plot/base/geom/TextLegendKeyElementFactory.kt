@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
@@ -28,7 +29,7 @@ internal class TextLegendKeyElementFactory :
 
         val label = Label("a")
         TextUtil.decorateLabelStyle(label, p, 1.0, true)
-        label.setConstantLineLayoutMetrics(LineLayoutMetrics.ascentOnly(fontSize(p, 1.0)))
+        label.setTextLayout(TextLayout.uniform(label.linesCount(), LineLayoutMetrics.ascentOnly(fontSize(p, 1.0))))
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.rotate(angle(p.angle()!!))

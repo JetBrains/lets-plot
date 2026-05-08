@@ -13,7 +13,6 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.layout.GeometryUtil
-import org.jetbrains.letsPlot.core.plot.builder.presentation.totalDimensions
 
 internal abstract class AbstractFixedBreaksLabelsLayout(
     orientation: Orientation,
@@ -25,7 +24,7 @@ internal abstract class AbstractFixedBreaksLabelsLayout(
 ) {
 
     private fun labelBounds(labelLocation: DoubleVector, labelText: String): DoubleRectangle {
-        val dim = labelSpec.totalDimensions(labelText)
+        val dim = labelSpec.measure(labelText).totalSize
         val labelBounds = labelBounds(dim)
         return labelBounds.add(labelLocation)
     }

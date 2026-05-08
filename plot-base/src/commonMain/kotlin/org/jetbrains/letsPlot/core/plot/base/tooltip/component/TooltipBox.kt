@@ -12,9 +12,9 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.*
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
@@ -473,7 +473,7 @@ class TooltipBox(
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             val defaultMetrics = LineLayoutMetrics.ascentOnly(fontSize)
             val metricsByLine = estimateLineLayoutMetrics(titleLine, TooltipStyle.TOOLTIP_TITLE).map { it ?: defaultMetrics }
-            titleComponent.setLineLayoutMetrics(metricsByLine)
+            titleComponent.setTextLayout(TextLayout.fromLineMetrics(metricsByLine))
             titleComponent.setFontSize(fontSize)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
@@ -518,7 +518,7 @@ class TooltipBox(
                 isBold = style.face.bold,
                 isItalic = style.face.italic
             )
-            val estimatedMetrics = RichText.estimateLineDimensions(line, font).map(LineDimensions::layoutMetrics)
+            val estimatedMetrics = RichText.measure(line, font).layout.lineMetrics
             if (estimatedMetrics.size == estimatedHeights.size) {
                 // One scale for the whole block, not per line: keeps (ascent - descent) equal
                 // across lines so Label's baseline stacking stays consistent between plain and fraction lines.
@@ -605,8 +605,8 @@ class TooltipBox(
             metricsByLine.zip(components).onEach { (metrics, component) ->
                 val (labelMetrics, valueMetrics) = metrics
                 val (labelComponent, valueComponent) = component
-                labelMetrics?.let { labelComponent?.setLineLayoutMetrics(it) }
-                valueComponent.setLineLayoutMetrics(valueMetrics)
+                labelMetrics?.let { labelComponent?.setTextLayout(TextLayout.fromLineMetrics(it)) }
+                valueComponent.setTextLayout(TextLayout.fromLineMetrics(valueMetrics))
             }
 
             val rawBBoxes = components.map { (label, value) -> getBBox(label) to getBBox(value) }

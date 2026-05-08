@@ -7,8 +7,8 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Font
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.MeasuredText
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 
 class PlotLabelSpec(
@@ -16,13 +16,10 @@ class PlotLabelSpec(
     override val markdown: Boolean = false
 ) : LabelSpec {
 
-    override fun lineDimensions(labelText: String): List<LineDimensions> {
-        return RichText.estimateLineDimensions(labelText, font, markdown = markdown)
-    }
+    override val defaultLineHeight: Double get() = LineLayoutMetrics.plainText(font).height
 
-    override fun defaultLine(): LineDimensions {
-        return LineDimensions(0.0, LineLayoutMetrics.plainText(font))
-    }
+    override fun measure(labelText: String, lineInterval: Double): MeasuredText =
+        RichText.measure(labelText, font, markdown = markdown, lineInterval = lineInterval)
 
     companion object {
         val DUMMY: LabelSpec = object : LabelSpec {
@@ -32,13 +29,11 @@ class PlotLabelSpec(
             override val markdown: Boolean
                 get() = UNSUPPORTED("Dummy Label Spec")
 
-            override fun lineDimensions(labelText: String): List<LineDimensions> {
-                UNSUPPORTED("Dummy Label Spec")
-            }
+            override val defaultLineHeight: Double
+                get() = UNSUPPORTED("Dummy Label Spec")
 
-            override fun defaultLine(): LineDimensions {
+            override fun measure(labelText: String, lineInterval: Double): MeasuredText =
                 UNSUPPORTED("Dummy Label Spec")
-            }
         }
     }
 }

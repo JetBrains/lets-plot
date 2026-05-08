@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
@@ -35,6 +36,7 @@ class Label(
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
     private val myMetrics = mutableListOf<LineLayoutMetrics>()
+    private var myLineInterval: Double = 0.0
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
@@ -139,15 +141,12 @@ class Label(
         verticalRepositionLines()
     }
 
-    fun setConstantLineLayoutMetrics(v: LineLayoutMetrics) {
-        setLineLayoutMetrics(List(linesCount()) { v })
-    }
-
-    fun setLineLayoutMetrics(values: List<LineLayoutMetrics>) {
+    fun setTextLayout(textLayout: TextLayout) {
         myMetrics.clear()
         if (myLines.isEmpty()) return
-        require(values.size == linesCount()) { "Line layout metrics count must match line count." }
-        myMetrics.addAll(values)
+        require(textLayout.lineMetrics.size == linesCount()) { "Line layout metrics count must match line count." }
+        myMetrics.addAll(textLayout.lineMetrics)
+        myLineInterval = textLayout.lineInterval
         verticalRepositionLines()
     }
 
@@ -158,7 +157,7 @@ class Label(
         }
 
         val baselineOffsets = myMetrics
-            .zipWithNext { prev, next -> prev.descent + next.ascent }
+            .zipWithNext { prev, next -> prev.descent + next.ascent + myLineInterval }
             .runningFold(0.0, Double::plus)
         val totalBaselineShift = baselineOffsets.last()
 

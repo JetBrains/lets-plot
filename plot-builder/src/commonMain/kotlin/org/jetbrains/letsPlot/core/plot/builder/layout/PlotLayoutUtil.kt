@@ -15,14 +15,13 @@ import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.layout.LayoutConstants.GEOM_MIN_SIZE
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLegendsLayoutUtil.legendsSpaceTotalDelta
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
-import org.jetbrains.letsPlot.core.plot.builder.presentation.totalDimensions
 import kotlin.math.max
 
 object PlotLayoutUtil {
     internal fun plotInsets(plotInset: Thickness) = DoubleInsets(plotInset.leftTop, plotInset.rightBottom)
 
     internal fun textDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
-        return labelSpec.totalDimensions(text)
+        return labelSpec.measure(text).totalSize
     }
 
     private fun titleThickness(title: String?, labelSpec: LabelSpec, margin: Double): Double {

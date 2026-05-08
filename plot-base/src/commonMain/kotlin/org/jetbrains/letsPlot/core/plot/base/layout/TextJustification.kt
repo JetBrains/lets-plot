@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
 
 class TextJustification(val x: Double, val y: Double) {
 
@@ -21,15 +21,14 @@ class TextJustification(val x: Double, val y: Double) {
         fun applyJustification(
             boundRect: DoubleRectangle,
             fontSize: Double,
-            textSize: DoubleVector,
-            firstLineMetrics: LineLayoutMetrics,
+            textLayout: TextLayout,
             justification: TextJustification,
             rotation: TextRotation? = null
         ): Pair<DoubleVector, Text.HorizontalAnchor> {
             val rect = if (rotation != null) boundRect.flip() else boundRect
 
             val (x, hAnchor) = xPosition(rect, justification.x)
-            val y = yPosition(rect, fontSize, textSize, firstLineMetrics, justification.y)
+            val y = yPosition(rect, fontSize, textLayout, justification.y)
 
             val position = when (rotation) {
                 null -> DoubleVector(x, y)
@@ -59,12 +58,12 @@ class TextJustification(val x: Double, val y: Double) {
         private fun yPosition(
             boundRect: DoubleRectangle,
             fontSize: Double,
-            textSize: DoubleVector,
-            firstLineMetrics: LineLayoutMetrics,
+            textLayout: TextLayout,
             vjust: Double,
         ): Double {
-            val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
-            return y - textSize.y + BaselinePolicy.offsetEmBoxTop(listOf(firstLineMetrics), fontSize)
+            val textHeight = textLayout.totalHeight
+            val y = boundRect.bottom - (boundRect.height - textHeight) * vjust
+            return y - textHeight + TextAnchoring.offsetEmBoxTop(textLayout, fontSize)
         }
     }
 }

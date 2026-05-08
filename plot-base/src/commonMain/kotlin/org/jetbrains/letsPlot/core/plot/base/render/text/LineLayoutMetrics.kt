@@ -19,13 +19,6 @@ data class LineLayoutMetrics(
 ) {
     val height: Double get() = ascent + descent
 
-    fun mergeOnBaseline(other: LineLayoutMetrics): LineLayoutMetrics {
-        return LineLayoutMetrics(
-            ascent = maxOf(ascent, other.ascent),
-            descent = maxOf(descent, other.descent)
-        )
-    }
-
     companion object {
         // Creates a layout slot whose full height is above the baseline.
         fun ascentOnly(height: Double): LineLayoutMetrics {
@@ -37,12 +30,17 @@ data class LineLayoutMetrics(
             return ascentOnly(font.size.toDouble())
         }
 
-        fun mergeOnBaseline(
+        internal fun mergeOnBaseline(
             metrics: Collection<LineLayoutMetrics>,
             defaultIfEmpty: LineLayoutMetrics
         ): LineLayoutMetrics {
             if (metrics.isEmpty()) return defaultIfEmpty
-            return metrics.reduce(LineLayoutMetrics::mergeOnBaseline)
+            return metrics.reduce { left, right ->
+                LineLayoutMetrics(
+                    ascent = maxOf(left.ascent, right.ascent),
+                    descent = maxOf(left.descent, right.descent)
+                )
+            }
         }
     }
 }

@@ -16,7 +16,6 @@ import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.DefaultTheme
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
-import org.jetbrains.letsPlot.core.plot.builder.presentation.totalDimensions
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
@@ -118,7 +117,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         if (spec.text.isEmpty()) {
             return DoubleVector.ZERO
         }
-        return spec.plotLabelSpec.totalDimensions(spec.text)
+        return spec.plotLabelSpec.measure(spec.text).totalSize
     }
 
     companion object {

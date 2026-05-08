@@ -41,7 +41,7 @@ abstract class LegendBoxLayout(
                 titleSize.y.let { titleHeight ->
                     if (titleHeight > 0) {
                         // make some space between title and the rest of the content
-                        titleHeight + PlotLabelSpecFactory.legendTitle(theme).defaultLine().height / 2
+                        titleHeight + PlotLabelSpecFactory.legendTitle(theme).defaultLineHeight / 2
                     } else {
                         0.0
                     }

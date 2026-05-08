@@ -10,15 +10,13 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
+import org.jetbrains.letsPlot.core.plot.base.render.text.MeasuredText
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.*
 import org.jetbrains.letsPlot.core.plot.builder.layout.axis.AxisBreaksProvider
 import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
-import org.jetbrains.letsPlot.core.plot.builder.presentation.totalDimensions
-import org.jetbrains.letsPlot.core.plot.builder.presentation.width
 import kotlin.math.*
 
 internal object BreakLabelsLayoutUtil {
@@ -208,15 +206,15 @@ internal object BreakLabelsLayoutUtil {
         projectedBreaks: List<Double>,  // coordinates on axis
         tickLabelSpec: LabelSpec
     ): DoubleRectangle {
-        val maxLabelWidth = breaks.labels.maxOfOrNull(tickLabelSpec::width) ?: 0.0
+        val maxLabelWidth = breaks.labels.map(tickLabelSpec::measure).maxOfOrNull(MeasuredText::width) ?: 0.0
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {
 
             y1 = min(projectedBreaks[0], projectedBreaks.last())
             y2 = max(projectedBreaks[0], projectedBreaks.last())
-            y1 -= tickLabelSpec.defaultLine().height / 2
-            y2 += tickLabelSpec.defaultLine().height / 2
+            y1 -= tickLabelSpec.defaultLineHeight / 2
+            y2 += tickLabelSpec.defaultLineHeight / 2
         }
 
         val origin = DoubleVector(0.0, y1)
@@ -230,9 +228,11 @@ internal object BreakLabelsLayoutUtil {
         rotationAngle: Double?,
         side: (DoubleVector) -> Double
     ): Int {
-        val initialDim = tickLabelSpec.lineDimensions(AxisLabelsLayout.INITIAL_TICK_LABEL)
-                                      .map(LineDimensions::extent)
-                                      .single() // Makes sense to use .single() because INITIAL_TICK_LABEL is a single line label with plain text
+        val initialMeasuredText = tickLabelSpec.measure(AxisLabelsLayout.INITIAL_TICK_LABEL)
+        val initialDim = DoubleVector(
+            initialMeasuredText.width,
+            initialMeasuredText.totalHeight  // Makes sense to use the total height because INITIAL_TICK_LABEL is a single-line plain-text label.
+        )
         val dimension = if (rotationAngle != null) {
             rotatedLabelBounds(initialDim, rotationAngle).dimension
         } else {
@@ -250,11 +250,11 @@ internal object BreakLabelsLayoutUtil {
     ): Int {
         val dims = labels.map { label ->
             if (rotationAngle != null) {
-                rotatedLabelBounds(tickLabelSpec.totalDimensions(label), rotationAngle).dimension
+                rotatedLabelBounds(tickLabelSpec.measure(label).totalSize, rotationAngle).dimension
             } else {
-                tickLabelSpec.lineDimensions(label)
-                             .map(LineDimensions::extent)
-                             .maxBy(side)
+                tickLabelSpec.measure(label).let { measuredText ->
+                    DoubleVector(measuredText.width, measuredText.layout.maxLineHeight)
+                }
             }
         }
         val longestSide = dims.maxOfOrNull(side) ?: 0.0

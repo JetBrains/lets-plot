@@ -12,11 +12,9 @@ import org.jetbrains.letsPlot.core.commons.data.SeriesUtil
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.geom.DroppedPointsReporter
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineDimensions
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 import kotlin.math.roundToInt
 
 class GeomContextBuilder : ImmutableGeomContext.Builder {
@@ -153,27 +151,24 @@ class GeomContextBuilder : ImmutableGeomContext.Builder {
             return aestheticMappers?.containsKey(aes) ?: false
         }
 
-        override fun estimateLineDimensions(
-            text: String,
+        override fun resolveFont(
             family: String,
             size: Double,
             isBold: Boolean,
             isItalic: Boolean
-        ): List<LineDimensions> {
+        ): Font {
             val registry = fontFamilyRegistry
             check(registry != null) { "Font-family registry is not specified." }
             @Suppress("NAME_SHADOWING")
             val family = registry.get(family)
-            return PlotLabelSpec(
-                Font(
-                    family = family,
-                    // PlotLabelSpec measures text with integer font sizes, so fractional sizes
-                    // (for example, geom_text with size_unit = "x") may shift multiline text slightly.
-                    size = size.roundToInt(),
-                    isBold = isBold,
-                    isItalic = isItalic
-                ),
-            ).lineDimensions(text)
+            return Font(
+                family = family,
+                // RichText measures text with integer font sizes, so fractional sizes
+                // (for example, geom_text with size_unit = "x") may shift multiline text slightly.
+                size = size.roundToInt(),
+                isBold = isBold,
+                isItalic = isItalic
+            )
         }
 
         override fun getDefaultFormatter(aes: Aes<*>): (Any) -> String {
