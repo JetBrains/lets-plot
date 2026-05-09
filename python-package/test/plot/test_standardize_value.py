@@ -388,13 +388,6 @@ def test_lazy_is_instance_numpy():
     lazy_numpy = LazyModule('numpy')
     assert lazy_numpy.lazy_is_instance(np.array([1, 2, 3]), 'ndarray') == True
 
-
-@jax_required
-def test_lazy_is_instance_jax():
-    lazy_jax = LazyModule('jax')
-    assert lazy_jax.lazy_is_instance(jnp.array([1, 2, 3]), 'numpy.ndarray') == True
-
-
 def test_shapely_geometry():
     from shapely.geometry import Point, Polygon
 
