@@ -26,7 +26,7 @@ def test_standardize_value_types():
 
 
 def test_standardize_temporal_types():
-    assert _standardize_value(datetime(2023, 1, 1, 12, 30, 45)) == 1672572645000.0
+    assert _standardize_value(datetime(2023, 1, 1, 12, 30, 45, tzinfo=timezone.utc)) == 1672576245000.0
     assert _standardize_value(date(2023, 1, 1)) == 1672531200000.0
     assert _standardize_value(time(12, 34, 56, 789)) == 45296000.0
     assert _standardize_value(timedelta(days=1, hours=2, minutes=30)) == 95400000.0
