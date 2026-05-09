@@ -202,6 +202,7 @@ pandas = LazyModule('pandas')
 geopandas = LazyModule('geopandas')
 numpy = LazyModule('numpy')
 jax = LazyModule('jax')
+jaxlib = LazyModule('jaxlib')
 polars = LazyModule('polars')
 shapely = LazyModule('shapely')
 
@@ -219,10 +220,34 @@ def is_ndarray(data) -> bool:
     if numpy.lazy_is_instance(data, 'ndarray'):
         return True
 
-    if jax.lazy_is_instance(data, 'numpy.ndarray'):
+    return _is_jax_array(data)
+
+
+def _is_jax_value(v) -> bool:
+    return jax.likely_defines(v) or jaxlib.likely_defines(v)
+
+
+def _is_jax_array(v) -> bool:
+    if not _is_jax_value(v):
+        return False
+
+    if not jax:
+        return False
+
+    if hasattr(jax, 'Array') and isinstance(v, jax.Array):
         return True
 
-    return False
+    return isinstance(v, jax.numpy.ndarray)
+
+
+def _is_jax_scalar(v) -> bool:
+    if not _is_jax_value(v):
+        return False
+
+    if not jax:
+        return False
+
+    return isinstance(v, (jax.numpy.floating, jax.numpy.integer))
 
 
 def _standardize_value(v):
@@ -310,13 +335,11 @@ def _standardize_value(v):
             if isinstance(v, polars.Series):
                 return _standardize_value(v.to_numpy())
 
-        if jax.likely_defines(v):
-            if isinstance(v, jax.numpy.ndarray):
-                return _standardize_value(numpy.array(v))
-            if isinstance(v, jax.numpy.floating):
-                return float(v) if math.isfinite(v) else None
-            if isinstance(v, jax.numpy.integer):
-                return float(v)
+        if _is_jax_array(v):
+            return _standardize_value(numpy.array(v))
+        if _is_jax_scalar(v):
+            value = float(v)
+            return value if math.isfinite(value) else None
 
         if geopandas.likely_defines(v):
             if isinstance(v, geopandas.GeoDataFrame):
