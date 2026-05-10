@@ -341,12 +341,16 @@ def test_perf_datetime_numpy_array():
     assert result[-1] == 1672576245000.0    # Normal datetime converted to epoch millis
 
 
+def _make_pandas_datetime_array(n):
+    # Build via numpy to avoid per-element Python boxing of pd.Timestamp objects.
+    buf = np.full(n, np.datetime64('2023-01-01T12:30:45', 'ns'))
+    buf[0] = buf[1] = buf[2] = np.datetime64('NaT', 'ns')
+    return buf
+
+
 @pytest.mark.timeout(10)
 def test_perf_datetime_pandas_array():
-    large_array = pd.array([pd.Timestamp('2023-01-01T12:30:45')] * (3_000 * 3_000))
-    large_array[0] = pd.NaT
-    large_array[1] = pd.NaT
-    large_array[2] = pd.NaT
+    large_array = pd.array(_make_pandas_datetime_array(3_000 * 3_000), dtype='datetime64[ns]')
 
     standardized_large_array = _standardize_value(pd.DataFrame({'data': large_array}))['data']
 
@@ -360,10 +364,7 @@ def test_perf_datetime_pandas_array():
 
 @pytest.mark.timeout(10)
 def test_perf_datetime_pandas_series():
-    large_series = pd.Series([pd.Timestamp('2023-01-01T12:30:45')] * (3_000 * 3_000))
-    large_series[0] = pd.NaT
-    large_series[1] = pd.NaT
-    large_series[2] = pd.NaT
+    large_series = pd.Series(_make_pandas_datetime_array(3_000 * 3_000), dtype='datetime64[ns]')
 
     standardized_large_series = _standardize_value(pd.DataFrame({'data': large_series}))['data']
 
