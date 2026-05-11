@@ -5,7 +5,9 @@
 
 package org.jetbrains.letsPlot.awt.canvas
 
+import org.jetbrains.letsPlot.awt.canvas.AwtMouseEventMapper.AwtMouseEventType.*
 import org.jetbrains.letsPlot.awt.util.AwtEventUtil
+import org.jetbrains.letsPlot.commons.event.MouseEvent
 import org.jetbrains.letsPlot.commons.event.MouseEventPeer
 import org.jetbrains.letsPlot.commons.event.MouseEventSource
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
@@ -14,7 +16,6 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import org.jetbrains.letsPlot.commons.registration.Registration
 import java.awt.Component
-import java.awt.event.MouseEvent
 import java.awt.event.MouseListener
 import java.awt.event.MouseMotionListener
 import java.awt.event.MouseEvent as AwtMouseEvent
@@ -35,26 +36,26 @@ class AwtMouseEventMapper(
 
     init {
         eventSource.addMouseListener(object : MouseListener {
-            override fun mouseClicked(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_CLICKED, e)
-            override fun mousePressed(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_PRESSED, e)
-            override fun mouseReleased(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_RELEASED, e)
-            override fun mouseEntered(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_ENTERED, e)
-            override fun mouseExited(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_EXITED, e)
+            override fun mouseClicked(e: AwtMouseEvent) = state.onMouseEvent(MOUSE_CLICKED, e)
+            override fun mousePressed(e: AwtMouseEvent) = state.onMouseEvent(MOUSE_PRESSED, e)
+            override fun mouseReleased(e: AwtMouseEvent) = state.onMouseEvent(MOUSE_RELEASED, e)
+            override fun mouseEntered(e: AwtMouseEvent) = state.onMouseEvent(MOUSE_ENTERED, e)
+            override fun mouseExited(e: AwtMouseEvent) = state.onMouseEvent(MOUSE_EXITED, e)
         })
         eventSource.addMouseMotionListener(object : MouseMotionListener {
-            override fun mouseDragged(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_DRAGGED, e)
-            override fun mouseMoved(e: MouseEvent) = state.onMouseEvent(AwtMouseEventType.MOUSE_MOVED, e)
+            override fun mouseDragged(e: AwtMouseEvent) = state.onMouseEvent(MOUSE_DRAGGED, e)
+            override fun mouseMoved(e: AwtMouseEvent) = state.onMouseEvent(MOUSE_MOVED, e)
         })
         eventSource.addMouseWheelListener { e ->
-            val mouseEvent = AwtEventUtil.translate(e, bounds?.origin ?: Vector.ZERO)
-            mouseEventPeer.dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, mouseEvent)
+            state.onMouseEvent(MOUSE_WHEEL_ROTATED, e)
         }
     }
 
     private abstract inner class MouseState(
-        val name: String,
-        private val canHandleOutsideOfBounds: Boolean = false
+        private val canHandleOutsideOfBounds: Boolean
     ) {
+        val name: String = checkNotNull(this::class.simpleName)
+
         fun onMouseEvent(type: AwtMouseEventType, e: AwtMouseEvent) {
             if (canHandleOutsideOfBounds || isHitWithinBounds(e)) {
                 log(type.name)
@@ -71,68 +72,137 @@ class AwtMouseEventMapper(
         }
     }
 
-    private inner class HoverState : MouseState("HoverState") {
-        override fun handleEvent(type: AwtMouseEventType, e: MouseEvent) {
+    private inner class HoverState : MouseState(canHandleOutsideOfBounds = false) {
+        override fun handleEvent(type: AwtMouseEventType, e: AwtMouseEvent) {
             when (type) {
-                AwtMouseEventType.MOUSE_PRESSED -> {
+                MOUSE_PRESSED -> {
                     dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+                    // A press begins a gesture sequence: the next event may be DRAGGED, RELEASED,
+                    // or even transient ENTERED/EXITED from AWT retargeting before any drag starts.
                     state = ButtonDownState()
                 }
 
-                AwtMouseEventType.MOUSE_MOVED -> dispatch(MouseEventSpec.MOUSE_MOVED, e)
-                AwtMouseEventType.MOUSE_EXITED -> dispatch(MouseEventSpec.MOUSE_LEFT, e)
-                AwtMouseEventType.MOUSE_ENTERED -> dispatch(MouseEventSpec.MOUSE_ENTERED, e)
-                AwtMouseEventType.MOUSE_WHEEL_ROTATED -> dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e)
-                AwtMouseEventType.MOUSE_DRAGGED -> {} // ignore drag events from another facet
-                AwtMouseEventType.MOUSE_RELEASED -> {} // ignore button release (drag end from another facet)
-                AwtMouseEventType.MOUSE_CLICKED -> {} // ignore button  (drag end from another facet)
+                MOUSE_MOVED -> {
+                    dispatch(MouseEventSpec.MOUSE_MOVED, e)
+                }
+
+                MOUSE_EXITED -> {
+                    dispatch(MouseEventSpec.MOUSE_LEFT, e)
+                }
+
+                MOUSE_ENTERED -> {
+                    dispatch(MouseEventSpec.MOUSE_ENTERED, e)
+                }
+
+                MOUSE_WHEEL_ROTATED -> {
+                    dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, e)
+                }
+
+                MOUSE_DRAGGED,
+                MOUSE_RELEASED,
+                MOUSE_CLICKED -> {} // ignore trailing events from another facet
             }
         }
     }
 
-    private inner class ButtonDownState : MouseState("ButtonDownState") {
-        override fun handleEvent(type: AwtMouseEventType, e: MouseEvent) {
+    // Once a press starts inside the target, the rest of the gesture may legally continue
+    // outside component bounds or through ENTERED/EXITED noise caused by retargeting/rebuilds.
+    private inner class ButtonDownState : MouseState(canHandleOutsideOfBounds = true) {
+        override fun handleEvent(type: AwtMouseEventType, e: AwtMouseEvent) {
             when (type) {
-                AwtMouseEventType.MOUSE_RELEASED -> dispatch(MouseEventSpec.MOUSE_RELEASED, e)
-                AwtMouseEventType.MOUSE_CLICKED -> {
-                    when (e.clickCount) {
-                        1 -> dispatch(MouseEventSpec.MOUSE_CLICKED, e)
-                        2 -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e)
-                        else -> {}
-                    }
+                MOUSE_RELEASED -> {
+                    dispatch(MouseEventSpec.MOUSE_RELEASED, e)
+                    // RELEASED does not guarantee the gesture was a click yet: AWT commonly delivers
+                    // CLICKED afterwards as a separate event, so switch into a short-lived post-release state.
+                    state = AwaitingClickState()
+                }
+
+                MOUSE_CLICKED -> {
+                    dispatchClickEvent(e)
                     state = HoverState()
                 }
 
-                AwtMouseEventType.MOUSE_DRAGGED -> {
+                MOUSE_DRAGGED -> {
                     dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
-                    state = Dragging()
+                    // The first DRAGGED confirms that this gesture is no longer a plain click path.
+                    // From here on we only care about continuing drag updates and the final release.
+                    state = DraggingState()
                 }
 
-                else -> {
-                    state = HoverState() // safety net
-                    error("ButtonDownState: unexpected event - $type")
+                MOUSE_ENTERED,
+                MOUSE_EXITED -> {} // ignore retargeting noise while the press gesture is still active
+
+                MOUSE_MOVED,
+                MOUSE_PRESSED,
+                MOUSE_WHEEL_ROTATED -> {
+                    // ignore stale or conflicting press state and reset
+                    state = HoverState()
                 }
             }
         }
     }
 
-    private inner class Dragging : MouseState(
-        name = "Dragging",
-        canHandleOutsideOfBounds = true
-    ) {
-        override fun handleEvent(type: AwtMouseEventType, e: MouseEvent) = when (type) {
-            AwtMouseEventType.MOUSE_DRAGGED -> dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
-            AwtMouseEventType.MOUSE_RELEASED -> {
-                dispatch(MouseEventSpec.MOUSE_RELEASED, e)
-                state = HoverState()
-            }
+    // AWT may emit CLICKED after RELEASED, but other noise may arrive first. We keep this
+    // dedicated post-release state so that a missing or delayed CLICKED does not leave the mapper
+    // pretending the button is still down.
+    private inner class AwaitingClickState : MouseState(canHandleOutsideOfBounds = true) {
+        override fun handleEvent(type: AwtMouseEventType, e: AwtMouseEvent) {
+            when (type) {
+                MOUSE_CLICKED -> {
+                    dispatchClickEvent(e)
+                    // CLICKED completes the simple press-release path we stayed alive for.
+                    state = HoverState()
+                }
 
-            AwtMouseEventType.MOUSE_ENTERED -> {} // ignored just because noone needed it. Can be handled
-            AwtMouseEventType.MOUSE_EXITED -> {} // ignored just because noone needed it. Can be handled
-            else -> {
-                state = HoverState() // safety net
-                error("Dragging: unexpected event - $type")
+                MOUSE_PRESSED -> {
+                    dispatch(MouseEventSpec.MOUSE_PRESSED, e)
+                    // If the next real input is already a new press, the previous CLICKED is either
+                    // absent or no longer useful, and this press must start a fresh gesture.
+                    state = ButtonDownState()
+                }
+
+                MOUSE_RELEASED,
+                MOUSE_ENTERED,
+                MOUSE_EXITED,
+                MOUSE_DRAGGED,
+                MOUSE_MOVED,
+                MOUSE_WHEEL_ROTATED -> {
+                    state = HoverState() // ignore post-release noise once waiting for CLICKED is no longer useful
+                }
             }
+        }
+    }
+
+    private inner class DraggingState : MouseState(canHandleOutsideOfBounds = true) {
+        override fun handleEvent(type: AwtMouseEventType, e: AwtMouseEvent) {
+            when (type) {
+                MOUSE_DRAGGED -> {
+                    dispatch(MouseEventSpec.MOUSE_DRAGGED, e)
+                }
+
+                MOUSE_RELEASED -> {
+                    dispatch(MouseEventSpec.MOUSE_RELEASED, e)
+                    state = HoverState()
+                }
+
+                MOUSE_ENTERED,
+                MOUSE_EXITED -> {} // ignore boundary noise while dragging
+
+                MOUSE_CLICKED,
+                MOUSE_PRESSED,
+                MOUSE_MOVED,
+                MOUSE_WHEEL_ROTATED -> {
+                    // ignore stale or conflicting drag state and reset
+                    state = HoverState()
+                }
+            }
+        }
+    }
+
+    private fun dispatchClickEvent(e: AwtMouseEvent) {
+        when (e.clickCount) {
+            1 -> dispatch(MouseEventSpec.MOUSE_CLICKED, e)
+            2 -> dispatch(MouseEventSpec.MOUSE_DOUBLE_CLICKED, e)
         }
     }
 
@@ -154,13 +224,9 @@ class AwtMouseEventMapper(
         MOUSE_DRAGGED,
         MOUSE_MOVED,
         MOUSE_WHEEL_ROTATED,
-        ;
     }
 
-    override fun addEventHandler(
-        eventSpec: MouseEventSpec,
-        eventHandler: EventHandler<org.jetbrains.letsPlot.commons.event.MouseEvent>
-    ): Registration {
+    override fun addEventHandler(eventSpec: MouseEventSpec, eventHandler: EventHandler<MouseEvent>): Registration {
         return mouseEventPeer.addEventHandler(eventSpec, eventHandler)
     }
 
