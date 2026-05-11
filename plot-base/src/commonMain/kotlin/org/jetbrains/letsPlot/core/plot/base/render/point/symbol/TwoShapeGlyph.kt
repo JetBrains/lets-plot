@@ -21,14 +21,12 @@ internal abstract class TwoShapeGlyph : MultiShapeGlyph() {
 
     override fun update(
         fill: Color,
-        fillAlpha: Double,
         stroke: Color,
-        strokeAlpha: Double,
         strokeWidth: Double,
         transform: SvgTransform?
     ) {
-        update(myS1, fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
-        update(myS2, fill, fillAlpha, stroke, strokeAlpha, strokeWidth, transform)
+        update(myS1, fill, stroke, strokeWidth, transform)
+        update(myS2, fill, stroke, strokeWidth, transform)
     }
 
     override fun appendTo(g: SvgSlimGroup) {

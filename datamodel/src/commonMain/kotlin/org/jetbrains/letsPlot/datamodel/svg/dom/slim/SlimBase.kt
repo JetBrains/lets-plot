@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.datamodel.svg.dom.slim
 
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 
 internal abstract class SlimBase protected constructor(val elementName: String) :
@@ -41,18 +42,16 @@ internal abstract class SlimBase protected constructor(val elementName: String) 
         internal val ATTR_COUNT = ATTR_KEYS.size
     }
 
-    override fun setFill(c: Color, alpha: Double) {
-        setAttribute(fill, c.toHexColor())
-        if (alpha < 1.0) {
-            setAttribute(fillOpacity, alpha.toString())
-        }
+    override fun setFill(c: Color) {
+        val (color, opacity) = SvgUtils.splitColorAndOpacity(c)
+        setAttribute(fill, color)
+        opacity?.let { setAttribute(fillOpacity, it) }
     }
 
-    override fun setStroke(c: Color, alpha: Double) {
-        setAttribute(stroke, c.toHexColor())
-        if (alpha < 1.0) {
-            setAttribute(strokeOpacity, alpha.toString())
-        }
+    override fun setStroke(c: Color) {
+        val (color, opacity) = SvgUtils.splitColorAndOpacity(c)
+        setAttribute(stroke, color)
+        opacity?.let { setAttribute(strokeOpacity, it) }
     }
 
     override fun setStrokeWidth(v: Double) {

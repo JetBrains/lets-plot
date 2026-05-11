@@ -24,9 +24,9 @@ internal object SampleImageData {
         // .5  |  1  |  .5   <-- gray, alpha
 
         return intArrayOf(
-            toARGB(RED, 0.5), toARGB(GREEN, 0.5), toARGB(BLUE, 0.5),
+            toARGB(RED.withOpacity(0.5)), toARGB(GREEN.withOpacity(0.5)), toARGB(BLUE.withOpacity(0.5)),
             toARGB(RED), toARGB(GREEN), toARGB(BLUE),
-            toARGB(BLACK, 0.5), toARGB(BLACK, 1.0), toARGB(BLACK, 0.5)
+            toARGB(BLACK.withOpacity(0.5)), toARGB(BLACK), toARGB(BLACK.withOpacity(0.5))
         )
     }
 }

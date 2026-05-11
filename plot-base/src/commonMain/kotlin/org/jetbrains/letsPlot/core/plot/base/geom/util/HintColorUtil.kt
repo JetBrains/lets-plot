@@ -11,33 +11,17 @@ import org.jetbrains.letsPlot.core.plot.base.GeomContext
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.GeomKind.*
 import org.jetbrains.letsPlot.core.plot.base.GeomMeta
-import org.jetbrains.letsPlot.core.plot.base.aes.AesInitValue
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.plot.base.render.point.TinyPointShape
 
 object HintColorUtil {
     fun colorWithAlpha(p: DataPointAesthetics): Color {
-        return applyAlpha(
-            p.color()!!,
-            p.alpha()!!
-        )
+        return AestheticsUtil.resolveColor(p, applyAlpha = true)
     }
 
     fun fillWithAlpha(p: DataPointAesthetics): Color {
-        return applyAlpha(
-            p.fill()!!,
-            p.alpha()!!
-        )
-    }
-
-    fun applyAlpha(color: Color, alpha: Double): Color {
-        val intAlpha = (255 * alpha).toInt()
-        return if (alpha != AesInitValue.DEFAULT_ALPHA) {
-            color.changeAlpha(intAlpha)
-        } else {
-            color
-        }
+        return AestheticsUtil.resolveFill(p)
     }
 
     fun createColorMarkerMapper(
@@ -50,18 +34,19 @@ object HintColorUtil {
         )
     }
 
-    private fun pointFillMapper(p:DataPointAesthetics): Color =
+    private fun pointFillMapper(p: DataPointAesthetics): Color =
         when (val shape = p.shape()) {
-            is NamedShape -> applyAlpha(
-                AestheticsUtil.fill(shape.isFilled, shape.isSolid, p),
-                p.alpha()!!
-            )
-            TinyPointShape -> p.color()!!
+            is NamedShape -> when {
+                shape.isFilled -> AestheticsUtil.resolveFill(p)
+                shape.isSolid -> AestheticsUtil.resolveColor(p, applyAlpha = true)
+                else -> Color.TRANSPARENT
+            }
+            TinyPointShape -> AestheticsUtil.resolveColor(p, applyAlpha = true)
             else -> Color.TRANSPARENT
         }
 
-    private fun pointStrokeMapper(p:DataPointAesthetics): Color {
-        return when(val shape = p.shape()) {
+    private fun pointStrokeMapper(p: DataPointAesthetics): Color {
+        return when (val shape = p.shape()) {
             is NamedShape -> {
                 when {
                     shape.isSolid -> Color.TRANSPARENT

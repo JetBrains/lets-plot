@@ -11,5 +11,9 @@ import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 
 interface CompositeFigureLayout {
     fun defaultSize(): DoubleVector
-    fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?>
+    fun doLayout(
+        elementsSpace: DoubleRectangle,
+        elements: List<FigureBuildInfo?>,
+        outerBounds: DoubleRectangle = elementsSpace
+    ): List<FigureBuildInfo?>
 }

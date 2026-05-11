@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -17,7 +17,17 @@ internal object SvgImageAttrMapping : SvgAttrMapping<Image>() {
             SvgImageElement.WIDTH.name -> target.width = value?.asFloat ?: 0.0f
             SvgImageElement.HEIGHT.name -> target.height = value?.asFloat ?: 0.0f
             SvgImageElement.PRESERVE_ASPECT_RATIO.name -> target.preserveRatio = asBoolean(value)
+            SvgImageElement.IMAGE_RENDERING.name -> target.imageSmoothingEnabled = imageSmoothingEnabled(value as? String)
             else -> super.setAttribute(target, name, value)
+        }
+    }
+
+    private fun imageSmoothingEnabled(value: String?): Boolean {
+        return when (value?.trim()?.lowercase()) {
+            "optimizespeed", "pixelated", "crisp-edges" -> false
+            "optimizequality", "auto", "smooth", "high-quality" -> true
+            null -> false
+            else -> false
         }
     }
 }

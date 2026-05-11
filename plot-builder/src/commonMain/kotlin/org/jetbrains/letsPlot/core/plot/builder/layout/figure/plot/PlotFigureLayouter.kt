@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.plot
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.builder.FrameOfReferenceProvider
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PlotAssemblerUtil
@@ -55,7 +56,7 @@ internal class PlotFigureLayouter(
 
     fun layoutByOuterSize(outerSize: DoubleVector): PlotFigureLayoutInfo {
 
-        val plotPreferredSize = PlotLayoutUtil.subtractTitlesAndLegends(
+        val innerSize = PlotLayoutUtil.subtractTitlesLegendsTagsAndMargins(
             baseSize = outerSize,
             title,
             subtitle,
@@ -72,27 +73,69 @@ internal class PlotFigureLayouter(
         // -------------
 
         // Layout plot inners
-        val plotLayout = createPlotLayout(insideOut = false)
-        val layoutInfo = plotLayout.doLayout(plotPreferredSize, coordProvider)
+        val plotLayout = createPlotLayout()
+        val layoutInfo = plotLayout.layoutByPlotSize(innerSize, coordProvider)
+        val layoutedOuterSize = toOuterSize(layoutInfo)
+
+        // Position the "entire" plot rect in the center of the "overall" rect.
+        val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, outerSize)
+        val delta = figurePreferredBounds.center.subtract(
+            DoubleRectangle(figurePreferredBounds.origin, layoutedOuterSize).center
+        )
+        val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
+
+        val figureLayoutedBounds = DoubleRectangle(
+            figurePreferredBounds.origin.add(deltaApplied),
+            layoutedOuterSize
+        )
 
         return createFigureLayoutInfo(
-            figurePreferredSize = outerSize,
-            plotLayoutInfo = layoutInfo
+            plotLayoutInfo = layoutInfo,
+            figureLayoutedBounds = figureLayoutedBounds,
+            figureSvgSize = outerSize
         )
     }
 
-    fun layoutByGeomSize(geomSize: DoubleVector): PlotFigureLayoutInfo {
-        val plotLayout = createPlotLayout(insideOut = true)
-        val layoutInfo = plotLayout.doLayout(geomSize, coordProvider)
+    fun layoutByGeomSize(
+        geomSize: DoubleVector,
+        axisSpacer: Thickness,
+        figureSvgPadding: Thickness = Thickness.ZERO
+    ): PlotFigureLayoutInfo {
+        val plotLayout = createPlotLayout()
+        val layoutInfo = plotLayout.layoutByGeomSize(geomSize, coordProvider, axisSpacer)
+        val layoutedOuterSize = toOuterSize(layoutInfo)
+
+        // The 'inside-out' mode. Offset figureLayoutedBounds by 'svg padding'
+        // so the subplot content is positioned within the larger SVG viewport.
+        val figureSvgSize = figureSvgPadding.inflateSize(layoutedOuterSize)
+        val figureLayoutedBounds = DoubleRectangle(figureSvgPadding.leftTop, layoutedOuterSize)
 
         return createFigureLayoutInfo(
-            figurePreferredSize = null,
-            layoutInfo
+            plotLayoutInfo = layoutInfo,
+            figureLayoutedBounds = figureLayoutedBounds,
+            figureSvgSize = figureSvgSize
         )
     }
 
+    private fun toOuterSize(layoutInfo: PlotLayoutInfo): DoubleVector {
+        // PlotLayoutInfo size includes geoms, axis and facet labels (no titles, legends).
+        val plotInnerSize = layoutInfo.size
+        return PlotLayoutUtil.addTitlesLegendsTagsAndMargins(
+            base = plotInnerSize,
+            title,
+            subtitle,
+            caption,
+            tag,
+            hAxisTitle,
+            vAxisTitle,
+            axisEnabled,
+            legendsBlockInfo,
+            theme,
+            flipAxis
+        )
+    }
 
-    private fun createPlotLayout(insideOut: Boolean): PlotLayout {
+    private fun createPlotLayout(): PlotLayout {
         return if (containsLiveMap) {
             createLiveMapPlotLayout()
         } else {
@@ -101,7 +144,6 @@ internal class PlotFigureLayouter(
             }
             PlotAssemblerUtil.createPlotLayout(
                 layoutProviderByTile,
-                insideOut,
                 facets,
                 theme.facets(),
                 hAxisTheme = theme.horizontalAxis(flipAxis),
@@ -121,7 +163,6 @@ internal class PlotFigureLayouter(
         }
         return PlotAssemblerUtil.createPlotLayout(
             layoutProviderByTile,
-            insideOut = false,
             facets,
             theme.facets(),
             hAxisTheme = LiveMapAxisTheme(),
@@ -131,65 +172,24 @@ internal class PlotFigureLayouter(
     }
 
     private fun createFigureLayoutInfo(
-        figurePreferredSize: DoubleVector?,
-        plotLayoutInfo: PlotLayoutInfo
+        plotLayoutInfo: PlotLayoutInfo,
+        figureLayoutedBounds: DoubleRectangle,
+        figureSvgSize: DoubleVector,
     ): PlotFigureLayoutInfo {
-        // Plot size includes geoms, axis and facet labels (no titles, legends).
-        val plotSize = plotLayoutInfo.size
-        val figureLayoutedSize = PlotLayoutUtil.addTitlesAndLegends(
-            base = plotSize,
-            title,
-            subtitle,
-            caption,
-            tag,
-            hAxisTitle,
-            vAxisTitle,
-            axisEnabled,
-            legendsBlockInfo,
-            theme,
-            flipAxis
-        )
 
-        // Position the "entire" plot rect in the center of the "overall" rect.
-        val figureLayoutedBounds = if (figurePreferredSize == null) {
-            DoubleRectangle(DoubleVector.ZERO, figureLayoutedSize)
-        } else {
-            val plotLayoutMargins = theme.plot().layoutMargins()
-
-            val figurePreferredBounds = DoubleRectangle(DoubleVector.ZERO, figurePreferredSize)
-            // center the overall rect (without margins)
-            val figureOverallSize = figureLayoutedSize.add(
-                DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height)
-            )
-            val delta = figurePreferredBounds.center.subtract(
-                DoubleRectangle(figurePreferredBounds.origin, figureOverallSize).center
-            )
-            val deltaApplied = DoubleVector(max(0.0, delta.x), max(0.0, delta.y))
-            val plotOuterOrigin = figurePreferredBounds.origin
-                .add(deltaApplied)
-                .add(
-                    DoubleVector(
-                        plotLayoutMargins.left,
-                        plotLayoutMargins.top
-                    )
-                ) // apply margins inside the overall rect
-
-            DoubleRectangle(
-                plotOuterOrigin,
-                figureLayoutedSize
-            )
-        }
-
-        val figureBoundsWithoutTitleCaptionAndMargin = run {
+        val figureBoundsWithoutTitlesTagsAndMargins = run {
+            val plotMargins = theme.plot().layoutMargins()
             val titleDelta = PlotLayoutUtil.titleSizeDelta(title, subtitle, theme.plot())
             val captionDelta = PlotLayoutUtil.captionSizeDelta(caption, theme.plot())
             val tagThickness = PlotLayoutUtil.tagMarginThickness(tag, theme.plot())
 
             val origin = figureLayoutedBounds.origin
+                .add(plotMargins.leftTop)
                 .add(titleDelta)
                 .add(tagThickness.leftTop)
 
             val dimension = figureLayoutedBounds.dimension
+                .subtract(plotMargins.size)
                 .subtract(titleDelta)
                 .subtract(captionDelta)
                 .subtract(tagThickness.size)
@@ -197,9 +197,9 @@ internal class PlotFigureLayouter(
             DoubleRectangle(origin, dimension)
         }
 
-        // Inner bounds - all without titles and legends.
+        // Inner bounds - all without titles, tags, legends and margins.
         // Plot origin: the origin of the plot area: geoms, axis and facet labels (no titles, legends).
-        val plotOrigin = figureBoundsWithoutTitleCaptionAndMargin.origin
+        val plotOrigin = figureBoundsWithoutTitlesTagsAndMargins.origin
             .add(legendsSpaceLeftTopDelta(listOfNotNull(legendsBlockInfo), theme.legend()))
             .add(
                 axisTitlesOriginOffset(
@@ -222,13 +222,13 @@ internal class PlotFigureLayouter(
 
         return PlotFigureLayoutInfo(
             figureLayoutedBounds = figureLayoutedBounds,
-            figureBoundsWithoutTitleAndCaption = figureBoundsWithoutTitleCaptionAndMargin,
+            figureBoundsWithoutTitlesTagsAndMargins = figureBoundsWithoutTitlesTagsAndMargins,
             plotAreaOrigin = plotOrigin,
             geomOuterBounds = geomOuterBounds,
             geomContentBounds = geomContentBounds,
-            figurePreferredSize = figurePreferredSize ?: figureLayoutedBounds.dimension,
+            figureSvgSize = figureSvgSize,
             plotLayoutInfo = plotLayoutInfo,
-            legendsBlockInfo = legendsBlockInfo
+            legendsBlockInfo = legendsBlockInfo,
         )
     }
 }

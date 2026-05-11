@@ -13,7 +13,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer
 class PlotThemeTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-) : PlotTestBase() {
+) : PlotTestSuitBase() {
     init {
         registerTest(::plot_theme_alphaColorInTitles)
     }

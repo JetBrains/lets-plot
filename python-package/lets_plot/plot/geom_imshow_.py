@@ -118,7 +118,8 @@ def _normalize_2D(image_data, norm, vmin, vmax, min_lum):
     if normalize:
         if vmin == vmax:
             image_data = numpy.copy(image_data)
-            image_data[True] = 127
+            # Preserve NaNs so they can be rendered as transparent downstream.
+            image_data[numpy.isfinite(image_data)] = 127
         else:
             # float array for scaling
             if image_data.dtype.kind == 'f':
@@ -149,10 +150,14 @@ def geom_imshow(image_data, cmap=None, *,
                 compression=None,
                 show_legend=True,
                 color_by="paint_c",
-                cguide=None
+                cguide=None,
+                breaks=None,
+                labels=None,
+                lablim=None,
+                format=None,
                 ):
     """
-    Display an image specified by an ndarray with shape:
+    Display an image specified by a ndarray with shape:
 
     - (M, N) - greyscale image
     - (M, N, 3) - color RGB image
@@ -212,6 +217,25 @@ def geom_imshow(image_data, cmap=None, *,
     cguide : optional
         A result of `guide_colorbar() <https://lets-plot.org/python/pages/api/lets_plot.guide_colorbar.html>`__ call.
         Use to customize the colorbar for greyscale images.
+    breaks : list or dict, optional
+        Greyscale images only.
+        A list of data values specifying the positions of ticks on the colorbar,
+        or a dictionary which maps the tick labels to the breaks values.
+    labels : list of str or dict, optional
+        Greyscale images only.
+        A list of labels on ticks of the colorbar, or a dictionary which maps the breaks values to the tick labels.
+    lablim : int, optional
+        Greyscale images only.
+        The maximum label length (in characters) before trimming is applied.
+    format : str, optional
+        Greyscale images only.
+        Define the format for labels on the colorbar. The syntax resembles Python's:
+
+        - '.2f' -> '12.45'
+        - 'Num {}' -> 'Num 12.456789'
+        - 'TTL: {.2f}$' -> 'TTL: 12.45$'
+
+        For more info, see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
 
     Returns
     -------
@@ -357,7 +381,7 @@ def geom_imshow(image_data, cmap=None, *,
         # Color RGB/RGBA image
         # Make a copy:
         #   - prevent modification of the original image
-        #   - drop read-only flag
+        #   - drop the read-only flag
         image_data = numpy.copy(image_data)
         if image_data.dtype.kind == 'f':
             image_data *= 255
@@ -435,7 +459,8 @@ def geom_imshow(image_data, cmap=None, *,
         color_scale_mapping = aes(**{color_by: [greyscale_data_min, greyscale_data_max]})
         if cmap_palettable and normalize:
             cmap_32 = palettable.matplotlib.get_map(cmap + "_32")
-            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_32.hex_colors, name="", guide=cguide)
+            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_32.hex_colors, name="", guide=cguide,
+                                          breaks=breaks, labels=labels, lablim=lablim, format=format)
         elif cmap_palettable and not normalize:
             cmap_256 = palettable.matplotlib.get_map(cmap + "_256")
             start = max(0, round(greyscale_data_min))
@@ -446,14 +471,17 @@ def geom_imshow(image_data, cmap=None, *,
                 indices = numpy.linspace(0, len(cmap_hex_colors) - 1, 32, dtype=int)
                 cmap_hex_colors = [cmap_hex_colors[i] for i in indices]
 
-            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_hex_colors, name="", guide=cguide)
+            color_scale = scale_gradientn(aesthetic=color_by, colors=cmap_hex_colors, name="", guide=cguide,
+                                          breaks=breaks, labels=labels, lablim=lablim, format=format)
         elif cmap_list:
             # custom color list - a 'binned' colorbar
-            color_scale = scale_manual(aesthetic=color_by, values=cmap, name="", guide=cguide)
+            color_scale = scale_manual(aesthetic=color_by, values=cmap, name="", guide=cguide,
+                                       breaks=breaks, labels=labels, lablim=lablim, format=format)
         else:
             start = 0 if normalize else greyscale_data_min / 255.
             end = 1 if normalize else greyscale_data_max / 255.
-            color_scale = scale_grey(aesthetic=color_by, start=start, end=end, name="", guide=cguide)
+            color_scale = scale_grey(aesthetic=color_by, start=start, end=end, name="", guide=cguide,
+                                     breaks=breaks, labels=labels, lablim=lablim, format=format)
 
     # Image geom layer
     geom_image_layer = _geom(

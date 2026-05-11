@@ -80,12 +80,9 @@ class CompositeFigureConfig constructor(
         val fontFamilyRegistry: FontFamilyRegistry = FontFamilyRegistryConfig(this).createFontFamilyRegistry()
         val compositeThemeOptions = getMap(THEME).toMutableMap()
         if (isDeckLayout) {
-            // Remove insets and margins if not specified explicitly (children have their own insets/margins).
+            // Remove ggdeck insets if not specified explicitly (children have their own insets).
             if (!compositeThemeOptions.containsKey(ThemeOption.PLOT_INSET)) {
                 compositeThemeOptions[ThemeOption.PLOT_INSET] = 0
-            }
-            if (!compositeThemeOptions.containsKey(ThemeOption.PLOT_MARGIN)) {
-                compositeThemeOptions[ThemeOption.PLOT_MARGIN] = 0
             }
         }
 

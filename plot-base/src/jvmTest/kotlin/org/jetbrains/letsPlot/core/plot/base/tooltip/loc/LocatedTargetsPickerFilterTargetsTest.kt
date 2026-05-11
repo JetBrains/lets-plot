@@ -8,20 +8,11 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.DataFrame
-import org.jetbrains.letsPlot.core.plot.base.GeomKind
-import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
+import org.jetbrains.letsPlot.core.plot.base.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace.XY
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.HOVER
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy.NEAREST
-import org.jetbrains.letsPlot.core.plot.base.tooltip.MappedDataAccessMock
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TestUtil
-import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteractionBuilder
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -31,19 +22,17 @@ class LocatedTargetsPickerFilterTargetsTest {
     fun `line geom targets have increased distance to allow a point tooltip to win`() {
         // https://github.com/JetBrains/lets-plot/issues/1060
         val lineTargetLocator = TestUtil.createLocator(
-            geomKind = GeomKind.H_LINE,
-            lookupSpec = LookupSpec(XY, HOVER),
-            targets = listOf(
-                TestUtil.horizontalPathTarget(key = 1, y = 10.0, xList = doubleArrayOf(0.0, 50.0))
-            )
+            HOVER,
+            XY,
+            GeomKind.H_LINE,
+            TestUtil.horizontalPathTarget(key = 1, y = 10.0, xList = doubleArrayOf(0.0, 50.0))
         )
 
         val pointTargetLocator = TestUtil.createLocator(
-            geomKind = GeomKind.POINT,
-            lookupSpec = LookupSpec(XY, NEAREST),
-            targets = listOf(
-                TestUtil.pointTarget(key = 2, DoubleVector(25.0, 10.0), radius = 3.0)
-            )
+            NEAREST,
+            XY,
+            GeomKind.POINT,
+            TestUtil.pointTarget(key = 2, DoubleVector(25.0, 10.0), radius = 3.0)
         )
 
         // Distance to the hline is shorter than the distance to the center of the point target.
@@ -226,15 +215,18 @@ class LocatedTargetsPickerFilterTargetsTest {
     }
 
     private fun createLocator(geomKind: GeomKind, targetPrototypes: List<TargetPrototype>): GeomTargetLocator {
-        val contextualMapping = GeomInteractionBuilder.DemoAndTest(supportedAes = Aes.values())
-            .xUnivariateFunction(HOVER)
+        val contextualMapping = GeomInteractionTestingFactory.createBuilder(
+            geomKind = GeomKind.BAR,
+            statKind = StatKind.IDENTITY,
+            renderedAes = Aes.values().toList(),
+            mappings = emptyList()
+        )
             .build()
             .createContextualMapping(
                 MappedDataAccessMock().mappedDataAccess,
                 DataFrame.Builder().build()
             )
         return TestUtil.createLocator(
-            lookupSpec = LookupSpec(LookupSpace.X, HOVER),
             contextualMapping = contextualMapping,
             targets = targetPrototypes,
             geomKind = geomKind

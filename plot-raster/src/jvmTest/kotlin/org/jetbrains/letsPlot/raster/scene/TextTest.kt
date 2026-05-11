@@ -124,6 +124,50 @@ class TextTest {
     }
 
     @Test
+    fun `text fill opacity should propagate to child tspan`() {
+        val doc = mapSvg {
+            svgDocument(width = 400, height = 300) {
+                text(fill = SvgColors.BLUE, id = "text") {
+                    fillOpacity().set(0.0)
+                    tspan(text = "Hello", id = "tspan")
+                }
+            }
+        }
+
+        doc.findElement<TSpan>("tspan").let {
+            assertThat(it.fill).isEqualTo(Color.BLUE)
+            assertThat(it.fillOpacity).isEqualTo(0f)
+            assertThat(it.fillPaint?.color?.alpha).isEqualTo(0)
+        }
+    }
+
+    @Test
+    fun `text class style color alpha should propagate to child tspan`() {
+        val doc = mapSvg {
+            svgDocument(width = 400, height = 300) {
+                style(
+                    """
+                    .text-style {
+                        fill: #ff0000;
+                        fill-opacity: 0;
+                    }
+                    """.trimIndent()
+                )
+
+                text(id = "text", styleClass = "text-style") {
+                    tspan(text = "Hello", id = "tspan")
+                }
+            }
+        }
+
+        doc.findElement<TSpan>("tspan").let {
+            assertThat(it.fill).isEqualTo(Color.RED)
+            assertThat(it.fillOpacity).isEqualTo(0f)
+            assertThat(it.fillPaint?.color?.alpha).isEqualTo(0)
+        }
+    }
+
+    @Test
     fun `tspan without attr and style in parent`() {
         val doc = mapSvg {
             svgDocument(width = 400, height = 300) {

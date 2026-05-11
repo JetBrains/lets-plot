@@ -135,6 +135,7 @@ internal class Text : Container() {
             // propagate Text attributes to TSpan children using Figure and TSpan attrSpecs
             when (attrSpec) {
                 FillAttrSpec -> tSpan.inheritValue(Figure.FillAttrSpec, fill)
+                FillOpacityAttrSpec -> tSpan.inheritValue(Figure.FillOpacityAttrSpec, fillOpacity)
                 StrokeAttrSpec -> tSpan.inheritValue(Figure.StrokeAttrSpec, stroke)
                 StrokeWidthAttrSpec -> tSpan.inheritValue(Figure.StrokeWidthAttrSpec, strokeWidth)
                 StrokeDashArrayAttrSpec -> tSpan.inheritValue(Figure.StrokeDashArrayAttrSpec, strokeDashArray)
@@ -153,6 +154,7 @@ internal class Text : Container() {
 
         val tSpan = event.newItem as TSpan
         tSpan.inheritValue(Figure.FillAttrSpec, fill)
+        tSpan.inheritValue(Figure.FillOpacityAttrSpec, fillOpacity)
         tSpan.inheritValue(Figure.StrokeAttrSpec, stroke)
         tSpan.inheritValue(Figure.StrokeWidthAttrSpec, strokeWidth)
         tSpan.inheritValue(Figure.StrokeOpacityAttrSpec, strokeOpacity)

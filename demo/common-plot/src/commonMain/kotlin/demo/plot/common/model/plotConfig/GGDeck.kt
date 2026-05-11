@@ -44,6 +44,7 @@ open class GGDeck {
         val data = randomData(50)
 
 //        'theme': {'axis_line_x': {'color': 'transparent'}},
+//        'tooltips': {'tooltip_anchor': 'top_right'},
         val lineSpecRaw = """
             {
                'mapping': {'x': 'x', 'y': 'y1'},
@@ -60,6 +61,12 @@ open class GGDeck {
 
         val linePlotSpec = HashMap(parsePlotSpec(lineSpecRaw))
         linePlotSpec["data"] = data
+
+//        'tooltips': {
+//            'lines': ['Y | ^y', 'X | ^x'],
+//
+//            'tooltip_anchor': 'top_right'
+//        },
 
         val pointsSpecRaw = """
             {   

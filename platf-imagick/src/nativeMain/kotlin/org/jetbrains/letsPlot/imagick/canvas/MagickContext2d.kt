@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -84,7 +84,7 @@ class MagickContext2d(
         if (dw != snapshot.size.x.toDouble() || dh != snapshot.size.y.toDouble()) {
             // Resize the image if the dimensions do not match
             val scaledImage = cloneMagickWand(snapshot.img, "MagickContext2d.drawImage.scaledImage")
-            ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
+            resizeImage(scaledImage, dw, dh)
             ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, x, y, dw, dh, scaledImage)
             destroyMagickWand(scaledImage)
         } else {
@@ -116,7 +116,7 @@ class MagickContext2d(
             if (dw != sw || dh != sh) {
                 // Resize the cropped image if needed
                 val scaledImage = cloneMagickWand(croppedImage, "MagickContext2d.drawImage.scaledImage")
-                ImageMagick.MagickScaleImage(scaledImage, dw.toULong(), dh.toULong())
+                resizeImage(scaledImage, dw, dh)
                 ImageMagick.DrawComposite(wand, ImageMagick.CompositeOperator.OverCompositeOp, dx, dy, dw, dh, scaledImage)
                 destroyMagickWand(scaledImage)
             } else {
@@ -124,6 +124,14 @@ class MagickContext2d(
             }
 
             destroyMagickWand(croppedImage)
+        }
+    }
+
+    private fun resizeImage(image: CPointer<ImageMagick.MagickWand>, dw: Double, dh: Double) {
+        if (stateDelegate.getImageSmoothingEnabled()) {
+            ImageMagick.MagickResizeImage(image, dw.toULong(), dh.toULong(), ImageMagick.FilterType.TriangleFilter)
+        } else {
+            ImageMagick.MagickSampleImage(image, dw.toULong(), dh.toULong())
         }
     }
 

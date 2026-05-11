@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure.composite
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.FigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.buildinfo.PlotFigureBuildInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.CompositeFigureLayout
@@ -35,10 +36,14 @@ class CompositeFigureDeckLayout(
 
     override fun defaultSize(): DoubleVector = DEF_PLOT_SIZE
 
-    override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
+    override fun doLayout(
+        elementsSpace: DoubleRectangle,
+        elements: List<FigureBuildInfo?>,
+        outerBounds: DoubleRectangle
+    ): List<FigureBuildInfo?> {
         // Initial layout: all elements get the same outer bounds.
         val layouted = elements.map { element ->
-            element?.withBounds(bounds)?.layoutedByOuterSize()
+            element?.withBounds(elementsSpace)?.layoutedByOuterSize()
         }
 
         // Compute the common geom content area as the intersection of all plot geom content bounds.
@@ -52,11 +57,88 @@ class CompositeFigureDeckLayout(
                 )
             } ?: return layouted
 
-        // Re-layout each plot element so its content area matches the common rect.
-        return layouted.map { buildInfo ->
+
+        // Collect axis thickness on each side for non-shared axes.
+        val axisMaskByPlot = plotElements.map { plotInfo ->
+            val axisInfos = plotInfo.layoutInfo.plotLayoutInfo.tiles[0].axisInfos
+            Thickness(
+                left = if (shareY || axisInfos.left == null) 0.0 else 1.0,
+                right = if (shareY || axisInfos.right == null) 0.0 else 1.0,
+                top = if (shareX || axisInfos.top == null) 0.0 else 1.0,
+                bottom = if (shareX || axisInfos.bottom == null) 0.0 else 1.0,
+            )
+        }
+
+        val axisThicknessByPlot = plotElements.mapIndexed { index, plotInfo ->
+            val geomContentBounds = plotInfo.layoutInfo.geomContentBounds
+            // inflated geom bounds = geom bounds + panel insets + axis + axis titles
+            val geomContentBoundsInflated = plotInfo.layoutInfo.figureBoundsWithoutTitlesTagsAndMargins
+            val layoutInsets = Thickness.diff(from = geomContentBoundsInflated, to = geomContentBounds)
+            val axisMask = axisMaskByPlot[index]
+            Thickness(
+                left = layoutInsets.left * axisMask.left,
+                right = layoutInsets.right * axisMask.right,
+                top = layoutInsets.top * axisMask.top,
+                bottom = layoutInsets.bottom * axisMask.bottom,
+            )
+        }
+
+        val cumulativeAxisThicknessByPlot = mutableListOf(axisThicknessByPlot[0])
+        for (i in 1 until axisThicknessByPlot.size) {
+            cumulativeAxisThicknessByPlot.add(
+                cumulativeAxisThicknessByPlot[i - 1] + axisThicknessByPlot[i]
+            )
+        }
+
+        val axisSpacerByPlot = List(cumulativeAxisThicknessByPlot.size) { index ->
+            if (index == 0) {
+                Thickness.ZERO
+            } else {
+                val cumulativeAxisThickness = cumulativeAxisThicknessByPlot[index - 1]
+                val axisMask = axisMaskByPlot[index]
+                Thickness(
+                    left = cumulativeAxisThickness.left * axisMask.left,
+                    right = cumulativeAxisThickness.right * axisMask.right,
+                    top = cumulativeAxisThickness.top * axisMask.top,
+                    bottom = cumulativeAxisThickness.bottom * axisMask.bottom,
+                )
+            }
+        }
+
+        // Shrink the common geom bounds by the maximum spacer on each side.
+        val totalSpacer = axisSpacerByPlot.reduce { acc, thickness ->
+            Thickness(
+                left = maxOf(acc.left, thickness.left),
+                right = maxOf(acc.right, thickness.right),
+                top = maxOf(acc.top, thickness.top),
+                bottom = maxOf(acc.bottom, thickness.bottom),
+            )
+        }
+        val adjustedGeomContentBounds = totalSpacer.shrinkRect(commonGeomContentBounds)
+
+        // Re-layout each plot element so its content area matches the adjusted common rect,
+        // and inflate each subplot's SVG to fill the entire deck bounds.
+        var plotIdx = 0
+        val axisSpacerByElement = layouted.map { buildInfo ->
+            if (buildInfo is PlotFigureBuildInfo) axisSpacerByPlot[plotIdx++] else Thickness.ZERO
+        }
+        return layouted.mapIndexed { i, buildInfo ->
             when (buildInfo) {
                 null -> null
-                is PlotFigureBuildInfo -> buildInfo.layoutedByGeomBounds(commonGeomContentBounds)
+                is PlotFigureBuildInfo -> {
+                    val layoutedByGeomBounds = buildInfo.layoutedByGeomBounds(
+                        geomBounds = adjustedGeomContentBounds,
+                        axisSpacer = axisSpacerByElement[i]
+                    )
+                    // Inflate each subplot's SVG
+                    val svgPadding = Thickness.diff(from = outerBounds, to = layoutedByGeomBounds.bounds)
+                    buildInfo.layoutedByGeomBounds(
+                        geomBounds = adjustedGeomContentBounds,
+                        axisSpacer = axisSpacerByElement[i],
+                        figureSvgPadding = svgPadding
+                    )
+                }
+
                 else -> buildInfo
             }
         }

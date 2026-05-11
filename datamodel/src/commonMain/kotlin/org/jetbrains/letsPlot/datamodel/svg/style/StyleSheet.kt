@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.datamodel.svg.style
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle.Companion.NONE_COLOR
 
 
@@ -51,7 +52,7 @@ class StyleSheet constructor(
 
         private fun TextStyle.toCSS(): String {
             val css = StringBuilder()
-            css.appendLine("fill: ${color.toHexColor()};")
+            css.append(SvgUtils.fillAndOpacityStyle(color, separator = "\n"))
             css.appendLine("font-weight: ${face.weight};")
             css.appendLine("font-style: ${face.style};")
             if (!isNoneFamily) css.appendLine("font-family: $family;")
@@ -68,7 +69,7 @@ class StyleSheet constructor(
 
         fun fromCSS(css: String, defaultFamily: String, defaultSize: Double): StyleSheet {
             fun parseProperty(styleProperties: String, propertyName: String): String? {
-                val regex = Regex("$propertyName:(.+);")
+                val regex = Regex("$propertyName:\\s*([^;]+);")
                 return regex.find(styleProperties)?.groupValues?.get(1)?.trim()
             }
 
@@ -85,12 +86,14 @@ class StyleSheet constructor(
                         ?: defaultSize
 
                     val color = parseProperty(styleProperties, "fill")
+                    val fillOpacity = parseProperty(styleProperties, "fill-opacity")?.toDoubleOrNull()
+                    val parsedColor = color?.let(Color::parseHex) ?: Color.BLACK
 
                     classes[className] = TextStyle(
                         family = fontFamily,
                         face = FontFace(bold = fontWeight == "bold", italic = fontStyle == "italic"),
                         size = fontSize,
-                        color = color?.let(Color::parseHex) ?: Color.BLACK
+                        color = fillOpacity?.let(parsedColor::multiplyOpacity) ?: parsedColor
                     )
                 }
 

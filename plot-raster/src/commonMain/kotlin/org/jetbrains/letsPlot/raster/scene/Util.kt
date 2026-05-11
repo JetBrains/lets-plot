@@ -6,10 +6,8 @@
 package org.jetbrains.letsPlot.raster.scene
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.values.Color
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 internal fun union(rects: List<DoubleRectangle>): DoubleRectangle? =
     rects.fold(null) { acc, rect ->
@@ -77,4 +75,3 @@ internal fun reversedDepthFirstTraversal(node: Node): Sequence<Node> {
     return enumerate(node)
 }
 
-fun Color.changeAlpha(a: Float) = changeAlpha((255 * a).roundToInt())

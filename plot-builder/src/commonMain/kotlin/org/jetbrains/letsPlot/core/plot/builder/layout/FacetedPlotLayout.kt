@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.layout
 
+import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
@@ -19,7 +20,6 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil.geo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FixedScalesTilesLayouter
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FreeScalesTilesLayouter
-import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import kotlin.math.max
 
 internal class FacetedPlotLayout(
@@ -39,13 +39,26 @@ internal class FacetedPlotLayout(
         require(facets.isDefined) { "Undefined facets." }
     }
 
-    override fun doLayout(preferredSize: DoubleVector, coordProvider: CoordProvider): PlotLayoutInfo {
-        val plotLayoutMargins = plotTheme.layoutMargins()
-        var tilesAreaSize = DoubleVector(
-            preferredSize.x - (insets.left + insets.right),
-            preferredSize.y - (insets.top + insets.bottom)
+    override fun layoutByGeomSize(
+        geomContentSize: DoubleVector,
+        coordProvider: CoordProvider,
+        axisSpacer: Thickness
+    ): PlotLayoutInfo {
+        // In the context of faceted plot, geom content space equal to the plot inner space.
+        return layoutByPlotSize(
+            plotInnerSize = geomContentSize,
+            coordProvider = coordProvider
         )
-            .subtract(DoubleVector(plotLayoutMargins.width, plotLayoutMargins.height))
+    }
+
+    override fun layoutByPlotSize(
+        plotInnerSize: DoubleVector,
+        coordProvider: CoordProvider,
+    ): PlotLayoutInfo {
+        var tilesAreaSize = DoubleVector(
+            plotInnerSize.x - (insets.left + insets.right),
+            plotInnerSize.y - (insets.top + insets.bottom)
+        )
 
         val facetTiles = facets.tileInfos()
 
@@ -127,7 +140,6 @@ internal class FacetedPlotLayout(
         }
 
         // Create final plot tiles layout infos.
-
 
         // Align geom areas of tiles.
 

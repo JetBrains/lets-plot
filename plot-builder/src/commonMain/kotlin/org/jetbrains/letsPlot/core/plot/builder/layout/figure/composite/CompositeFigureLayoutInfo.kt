@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.LegendsBlockInfo
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 
 class CompositeFigureLayoutInfo constructor(
-    figureSize: DoubleVector,
+    figureSvgSize: DoubleVector,
 
     /**
      * Figure area without border thickness and margins.
@@ -26,4 +26,4 @@ class CompositeFigureLayoutInfo constructor(
     val elementsAreaBounds: DoubleRectangle,
 
     val legendsBlockInfos: List<LegendsBlockInfo>,
-) : FigureLayoutInfo(figureSize)
+) : FigureLayoutInfo(figureSvgSize)

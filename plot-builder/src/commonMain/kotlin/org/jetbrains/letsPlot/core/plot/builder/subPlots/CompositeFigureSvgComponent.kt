@@ -33,7 +33,7 @@ class CompositeFigureSvgComponent constructor(
 
     override fun buildComponent() {
 
-        val outerBounds = DoubleRectangle(DoubleVector.ZERO, layoutInfo.figureSize)
+        val outerBounds = DoubleRectangle(DoubleVector.ZERO, layoutInfo.figureSvgSize)
         val elementsAreaBounds = layoutInfo.elementsAreaBounds
 
         val plotTheme = theme.plot()
@@ -52,7 +52,7 @@ class CompositeFigureSvgComponent constructor(
 
         if (DEBUG_DRAWING) {
             drawDebugRect(outerBounds, Color.BLUE, "BLUE: plotOuterBounds")
-            drawDebugRect(outerBounds, Color.BLUE, "BLUE: contentAreaBounds")
+//            drawDebugRect(outerBounds, Color.BLUE, "BLUE: contentAreaBounds")
             drawDebugRect(elementsAreaBounds, Color.RED, "RED: elementsAreaBounds")
         }
 

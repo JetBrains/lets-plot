@@ -8,10 +8,8 @@ package org.jetbrains.letsPlot.core.spec.config
 import demoAndTestShared.TestingGeomLayersBuilder.buildGeomLayer
 import demoAndTestShared.TestingGeomLayersBuilder.getSingleGeomLayer
 import org.jetbrains.letsPlot.core.plot.base.Aes
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel.Line
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.assemble.TestingPlotContext
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.spec.Option.Layer.GEOM
 import org.jetbrains.letsPlot.core.spec.Option.Layer.TOOLTIPS
@@ -30,6 +28,7 @@ import org.jetbrains.letsPlot.core.spec.Option.PlotBase.DATA
 import org.jetbrains.letsPlot.core.spec.Option.PlotBase.MAPPING
 import org.jetbrains.letsPlot.core.spec.back.BackendTestUtil
 import org.jetbrains.letsPlot.core.spec.config.TestUtil.buildPointLayer
+import org.jetbrains.letsPlot.core.spec.config.TooltipAssertions.TooltipLine
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -88,9 +87,9 @@ class TooltipConfigTest {
             tooltips = null
         )
 
-        val lineGroup = lineLayer.createContextualMapping()!!.tooltipGroup
-        val areaGroup = areaLayer.createContextualMapping()!!.tooltipGroup
-        val pointGroup = pointLayer.createContextualMapping()!!.tooltipGroup
+        val lineGroup = lineLayer.createContextualMapping()!!.tooltipBehavior.tooltipGroup
+        val areaGroup = areaLayer.createContextualMapping()!!.tooltipBehavior.tooltipGroup
+        val pointGroup = pointLayer.createContextualMapping()!!.tooltipBehavior.tooltipGroup
 
         assertEquals(lineGroup, areaGroup)
         assertTrue(lineGroup != pointGroup)
@@ -241,10 +240,10 @@ class TooltipConfigTest {
         val geomLayer = buildPointLayer(data, mapping, tooltips = tooltipConfig)
 
         val expectedLines = listOf(
-            Line.withLabelAndValue(label = null, "dodge"),
-            Line.withLabelAndValue("", "dodge"),
-            Line.withLabelAndValue("model name", "dodge"),
-            Line.withLabelAndValue("the model", "dodge")
+            TooltipLine(label = null, value = "dodge"),
+            TooltipLine(label = "", value = "dodge"),
+            TooltipLine(label = "model name", value = "dodge"),
+            TooltipLine(label = "the model", value = "dodge")
         )
         assertTooltipLines(expectedLines, getGeneralTooltipLines(geomLayer))
     }
@@ -1046,9 +1045,8 @@ class TooltipConfigTest {
             Aes.LOWER to "0.2",
             Aes.YMIN to "0.019",
         )
-        val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping()!!.getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
-            assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
+        TooltipAssertions.getSideTooltips(geomLayer).forEach { (aes, value) ->
+            assertEquals(expected[aes], value, "Wrong tooltip for $aes")
         }
     }
 
@@ -1077,9 +1075,8 @@ class TooltipConfigTest {
             Aes.XLOWER to "0.2",
             Aes.XMIN to "0.019",
         )
-        val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping()!!.getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
-            assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
+        TooltipAssertions.getSideTooltips(geomLayer).forEach { (aes, value) ->
+            assertEquals(expected[aes], value, "Wrong tooltip for $aes")
         }
     }
 
@@ -1107,9 +1104,8 @@ class TooltipConfigTest {
             Aes.XLOWER to "0.34",
             Aes.XMIN to "0.019",
         )
-        val ctx = TestingPlotContext.create(geomLayer)
-        geomLayer.createContextualMapping()!!.getDataPoints(0, ctx).filter { it.isSide && !it.isAxis }.forEach {
-            assertEquals(expected[it.aes], it.value, "Wrong tooltip for ${it.aes}")
+        TooltipAssertions.getSideTooltips(geomLayer).forEach { (aes, value) ->
+            assertEquals(expected[aes], value, "Wrong tooltip for $aes")
         }
     }
 
@@ -1178,30 +1174,24 @@ class TooltipConfigTest {
 
     companion object {
         private fun getTitleString(geomLayer: GeomLayer): String? {
-            val ctx = TestingPlotContext.create(geomLayer)
-            return geomLayer.createContextualMapping()?.getTitle(index = 0, ctx)
+            return TooltipAssertions.getTitleString(geomLayer)
         }
 
         private fun getGeneralTooltipStrings(geomLayer: GeomLayer): List<String> {
-            return getGeneralTooltipLines(geomLayer).map(Line::toString)
+            return getGeneralTooltipLines(geomLayer).map(TooltipLine::toString)
         }
 
-        private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<Line> {
-            val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createContextualMapping()?.getDataPoints(index = 0, ctx) ?: emptyList()
-            return dataPoints.filterNot(DataPoint::isSide).map { Line.withLabelAndValue(it.label, it.value) }
+        private fun getGeneralTooltipLines(geomLayer: GeomLayer): List<TooltipLine> {
+            return TooltipAssertions.getGeneralTooltipLines(geomLayer)
         }
 
         private fun getAxisTooltips(geomLayer: GeomLayer): List<DataPoint> {
-            val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createContextualMapping()?.getDataPoints(index = 0, ctx) ?: emptyList()
-            return dataPoints.filter(DataPoint::isAxis)
+            return TooltipAssertions.getAxisTooltips(geomLayer, Aes.X) +
+                    TooltipAssertions.getAxisTooltips(geomLayer, Aes.Y)
         }
 
         private fun getSideTooltips(geomLayer: GeomLayer): Map<Aes<*>, String> {
-            val ctx = TestingPlotContext.create(geomLayer)
-            val dataPoints = geomLayer.createContextualMapping()?.getDataPoints(index = 0, ctx) ?: emptyList()
-            return dataPoints.filter { it.isSide && !it.isAxis }.associateBy({ it.aes!! }, { it.value })
+            return TooltipAssertions.getSideTooltips(geomLayer)
         }
 
         private fun assertTooltipStrings(expected: List<String>, actual: List<String>) {
@@ -1211,7 +1201,7 @@ class TooltipConfigTest {
             }
         }
 
-        private fun assertTooltipLines(expectedLines: List<Line>, actualLines: List<Line>) {
+        private fun assertTooltipLines(expectedLines: List<TooltipLine>, actualLines: List<TooltipLine>) {
             assertEquals(expectedLines.size, actualLines.size, "Wrong number of lines in the general tooltip")
             for (index in expectedLines.indices) {
                 assertEquals(

@@ -197,10 +197,12 @@ object MonolithicCommon {
             detachedLegendsCollector,
             messageConsumer
         )
+        val bounds = DoubleRectangle(DoubleVector.ZERO, preferredSize)
         return PlotFigureBuildInfo(
             assembler,
             config.toMap(),
-            DoubleRectangle(DoubleVector.ZERO, preferredSize),
+            bounds = bounds,
+            svgBounds = bounds,
             computationMessages,
         )
     }

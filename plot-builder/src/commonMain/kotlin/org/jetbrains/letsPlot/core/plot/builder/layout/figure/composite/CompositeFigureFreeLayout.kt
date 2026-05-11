@@ -39,16 +39,20 @@ class CompositeFigureFreeLayout(
         return DEF_LARGE_PLOT_SIZE
     }
 
-    override fun doLayout(bounds: DoubleRectangle, elements: List<FigureBuildInfo?>): List<FigureBuildInfo?> {
+    override fun doLayout(
+        elementsSpace: DoubleRectangle,
+        elements: List<FigureBuildInfo?>,
+        outerBounds: DoubleRectangle
+    ): List<FigureBuildInfo?> {
         val elementBoundsList = regions.zip(offsets).map { (region, offset) ->
             // scale
             DoubleRectangle.XYWH(
-                region.origin.x * bounds.width,
-                region.origin.y * bounds.height,
-                region.width * bounds.width,
-                region.height * bounds.height,
+                region.origin.x * elementsSpace.width,
+                region.origin.y * elementsSpace.height,
+                region.width * elementsSpace.width,
+                region.height * elementsSpace.height,
             ).add(offset)  // move (optional, px)
-                .add(bounds.origin)
+                .add(elementsSpace.origin)
         }
 
         val elementsWithBounds = elements.mapIndexed { index, buildInfo ->

@@ -62,7 +62,7 @@ class PlotSvgComponent constructor(
     val plotContext: PlotContext
 ) : SvgComponent() {
 
-    val figureSize: DoubleVector = figureLayoutInfo.figureSize
+    val figureSvgSize: DoubleVector = figureLayoutInfo.figureSvgSize
     val flippedAxis = frameProviderByTile[0].flipAxis
     val mouseEventPeer = MouseEventPeer()
 
@@ -104,7 +104,7 @@ class PlotSvgComponent constructor(
                 "<no message>"
             val message = "Error building plot: ${rootCause::class.simpleName}\n$causeMessage"
 
-            val y = figureSize.y / 2
+            val errorCenter = figureLayoutInfo.figureLayoutedBounds.center
             val errorLabel = Label(message)
             val textColor = when {
                 theme.plot().showBackground() -> theme.plot().textColor()
@@ -117,7 +117,7 @@ class PlotSvgComponent constructor(
             errorLabel.setFontStyle("normal")
             errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
             errorLabel.setVerticalAnchor(VerticalAnchor.CENTER)
-            errorLabel.moveTo(figureSize.x / 2, y)
+            errorLabel.moveTo(errorCenter.x, errorCenter.y)
             rootGroup.children().add(errorLabel.rootGroup)
         }
     }
@@ -158,12 +158,12 @@ class PlotSvgComponent constructor(
             drawDebugRect(plotOuterBounds, Color.BLUE, "BLUE: plotOuterBounds")
         }
 
-        val plotOuterBoundsWithoutTitleAndCaption = figureLayoutInfo.figureBoundsWithoutTitleAndCaption
+        val figureBoundsWithoutTitlesTagsAndMargins = figureLayoutInfo.figureBoundsWithoutTitlesTagsAndMargins
         if (DEBUG_DRAWING) {
             drawDebugRect(
-                plotOuterBoundsWithoutTitleAndCaption,
+                figureBoundsWithoutTitlesTagsAndMargins,
                 Color.BLUE,
-                "BLUE: plotOuterBoundsWithoutTitleAndCaption"
+                "BLUE: figureBoundsWithoutTitlesTagsAndMargins"
             )
         }
 
@@ -240,8 +240,8 @@ class PlotSvgComponent constructor(
         }
 
         if (plotTheme.showBackground()) {
-            val plotInset = plotTheme.plotMargins() + Thickness.uniform(plotTheme.backgroundStrokeWidth() / 2)
-            val backgroundRect = plotInset.inflateRect(figureLayoutInfo.figureLayoutedBounds)
+            val strokeInset = Thickness.uniform(plotTheme.backgroundStrokeWidth() / 2)
+            val backgroundRect = strokeInset.shrinkRect(figureLayoutInfo.figureLayoutedBounds)
 
             val backgroundAreaPath = SvgPathDataBuilder().rect(backgroundRect)
             backgroundLiveMapWindows.forEach(backgroundAreaPath::rect)
@@ -260,19 +260,21 @@ class PlotSvgComponent constructor(
                 StrokeDashArraySupport.apply(this, plotTheme.backgroundStrokeWidth(), plotTheme.backgroundLineType())
                 d().set(SvgPathDataBuilder().rect(backgroundRect).build())
 
-                // Even open path still blocks mouse events. Add pointer-events: none to make links clickable.
+                // Even an open path still blocks mouse events. Add pointer-events: none to make links clickable.
                 pointerEvents().set(SvgGraphicsElement.PointerEvents.NONE)
             }
         }
 
         val geomAreaBounds = figureLayoutInfo.geomOuterBounds
 
+        // Lay out text elements (title, subtitle, caption, tag) inside the plot margins.
+        val plotOuterBoundsInsideMargins = theme.plot().layoutMargins().shrinkRect(plotOuterBounds)
         val textLayout = PlotSvgComponentHelper.figureTextLayout(
             title = title,
             subtitle = subtitle,
             caption = caption,
             tag = tag,
-            outerBounds = plotOuterBounds,
+            outerBounds = plotOuterBoundsInsideMargins,
             geomOrElementsAreaBounds = geomAreaBounds,
             plotTheme = plotTheme
         )
@@ -346,7 +348,7 @@ class PlotSvgComponent constructor(
         figureLayoutInfo.legendsBlockInfo?.let { blockInfo ->
             val legendTheme = theme.legend()
             val legendsBlockInfoLayouted = LegendBoxesLayout(
-                outerBounds = plotOuterBoundsWithoutTitleAndCaption,
+                outerBounds = figureBoundsWithoutTitlesTagsAndMargins,
                 innerBounds = geomAreaBounds,
                 legendTheme
             ).doLayout(blockInfo)

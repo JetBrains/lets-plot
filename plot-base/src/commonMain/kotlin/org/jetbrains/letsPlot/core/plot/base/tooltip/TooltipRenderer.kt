@@ -36,6 +36,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 
@@ -83,7 +84,7 @@ class TooltipRenderer(
         fadeEffectRect = SvgRectElement().apply {
             width().set(0.0)
             height().set(0.0)
-            fillColor().set(plotBackground.changeAlpha((255 * 0.7).toInt()))
+            fillColor().set(plotBackground.withOpacity(0.7))
             visibility().set(Visibility.HIDDEN)
             decorationLayer.children().add(0, this)
         }
@@ -149,8 +150,8 @@ class TooltipRenderer(
     }
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
-        val showVertical = tooltips.any { it.hintKind == X_AXIS }
-        val showHorizontal = tooltips.any { it.hintKind == Y_AXIS }
+        val showVertical = tooltips.any { it.tooltipModel.crosshairMode in listOf(CrosshairMode.X, CrosshairMode.XY) }
+        val showHorizontal = tooltips.any { it.tooltipModel.crosshairMode in listOf(CrosshairMode.Y, CrosshairMode.XY) }
         if (!showVertical && !showHorizontal) {
             crosshairStorage.provide(0)
             return
@@ -358,7 +359,7 @@ class TooltipRenderer(
         val fillColor = when {
             spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipFill()
             spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipFill()
-            spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, it.alpha / 255.0, WHITE) }
+            spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, SvgUtils.opacity(it), WHITE) }
             else -> tooltipsTheme.tooltipFill()
         }
 

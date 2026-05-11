@@ -401,20 +401,11 @@ open class GeomHelper(
             p: DataPointAesthetics,
             applyAlphaToAll: Boolean = ALPHA_CONTROLS_BOTH
         ) {
-            val stroke = p.color()!!
-            val strokeAlpha = if (applyAlphaToAll) {
-                // apply alpha aes
-                AestheticsUtil.alpha(stroke, p)
-            } else {
-                // keep color's alpha
-                SvgUtils.alpha2opacity(stroke.alpha)
-            }
+            val resolvedStroke = AestheticsUtil.resolveColor(p, applyAlphaToAll)
+            val resolvedFill = AestheticsUtil.resolveFill(p)
 
-            val fill = p.fill()!!
-            val fillAlpha = AestheticsUtil.alpha(fill, p)
-
-            shape.setFill(fill, fillAlpha)
-            shape.setStroke(stroke, strokeAlpha)
+            shape.setFill(resolvedFill)
+            shape.setStroke(resolvedStroke)
             shape.setStrokeWidth(AesScaling.strokeWidth(p))
             StrokeDashArraySupport.apply(shape, AesScaling.strokeWidth(p), p.lineType())
         }

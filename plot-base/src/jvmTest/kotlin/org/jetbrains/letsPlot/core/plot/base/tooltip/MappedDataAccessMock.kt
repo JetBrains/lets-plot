@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -15,6 +15,7 @@ import org.mockito.Mockito.`when`
 class MappedDataAccessMock {
 
     private val mappedAes = HashSet<Aes<*>>()
+    private val mappings = LinkedHashMap<Aes<*>, Mapping<*>>()
     val mappedDataAccess: MappedDataAccess = mock(MappedDataAccess::class.java)
 
     fun <T> add(mapping: Mapping<T>): MappedDataAccessMock {
@@ -38,6 +39,7 @@ class MappedDataAccessMock {
             .thenReturn(mapping.label)
 
         getMappedAes().add(aes)
+        mappings[aes] = mapping
 
         return this
     }
@@ -46,10 +48,15 @@ class MappedDataAccessMock {
         return mappedAes
     }
 
+    fun getMappings(): Collection<Mapping<*>> {
+        return mappings.values
+    }
+
     class Mapping<T> internal constructor(
         internal val aes: Aes<T>,
         internal val label: String,
-        internal val value: String
+        internal val value: String,
+        internal val isContinuous: Boolean
     ) {
         fun longTooltipText(): String {
             return "$label: $value"
@@ -81,7 +88,7 @@ class MappedDataAccessMock {
         }
 
         fun <T> mapping(aes: Aes<T>): Mapping<T> {
-            return Mapping(aes, name, value)
+            return Mapping(aes, name, value, isContinuous)
         }
 
     }

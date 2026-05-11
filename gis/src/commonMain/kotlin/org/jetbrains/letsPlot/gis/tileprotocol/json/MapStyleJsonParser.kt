@@ -104,7 +104,7 @@ object MapStyleJsonParser {
         val colors = HashMap<String, Color>()
 
         colorsJson.forEntries {
-                colorName, colorString -> colors[colorName] = parseHexWithAlpha(colorString as String)
+                colorName, colorString -> colors[colorName] = Color.parseHex(colorString as String)
         }
 
         return colors
@@ -220,10 +220,5 @@ object MapStyleJsonParser {
 
         return layerConfig
     }
-
-    private fun parseHexWithAlpha(colorString: String) =
-        Color
-            .parseHex(colorString.substring(0, 7))
-            .changeAlpha(colorString.substring(7, 9).toInt(16))
 }
 

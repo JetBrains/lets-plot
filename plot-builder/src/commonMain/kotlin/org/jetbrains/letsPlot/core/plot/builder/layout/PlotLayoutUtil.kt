@@ -73,7 +73,7 @@ object PlotLayoutUtil {
         )
     }
 
-    internal fun subtractTitlesAndLegends(
+    internal fun subtractTitlesLegendsTagsAndMargins(
         baseSize: DoubleVector,
         title: String?,
         subtitle: String?,
@@ -86,7 +86,7 @@ object PlotLayoutUtil {
         theme: Theme,
         flippedAxis: Boolean
     ): DoubleVector {
-        val delta = titlesAndLegendsSizeDelta(
+        val delta = titlesLegendsTagsAndMarginsSizeDelta(
             title,
             subtitle,
             caption,
@@ -105,7 +105,7 @@ object PlotLayoutUtil {
         )
     }
 
-    internal fun addTitlesAndLegends(
+    internal fun addTitlesLegendsTagsAndMargins(
         base: DoubleVector,
         title: String?,
         subtitle: String?,
@@ -118,7 +118,7 @@ object PlotLayoutUtil {
         theme: Theme,
         flippedAxis: Boolean
     ): DoubleVector {
-        val delta = titlesAndLegendsSizeDelta(
+        val delta = titlesLegendsTagsAndMarginsSizeDelta(
             title,
             subtitle,
             caption,
@@ -133,7 +133,7 @@ object PlotLayoutUtil {
         return base.add(delta)
     }
 
-    private fun titlesAndLegendsSizeDelta(
+    private fun titlesLegendsTagsAndMarginsSizeDelta(
         title: String?,
         subtitle: String?,
         caption: String?,
@@ -155,7 +155,9 @@ object PlotLayoutUtil {
         )
         val legendBlockDelta = legendsSpaceTotalDelta(listOfNotNull(legendsBlockInfo), theme.legend())
         val captionDelta = captionSizeDelta(caption, theme.plot())
+        val plotMargins = theme.plot().layoutMargins()
         return titleDelta.add(axisTitlesDelta).add(legendBlockDelta).add(captionDelta).add(tagThickness.size)
+            .add(plotMargins.size)
     }
 
     internal fun titleSizeDelta(title: String?, subtitle: String?, theme: PlotTheme): DoubleVector {

@@ -8,5 +8,5 @@ package org.jetbrains.letsPlot.core.plot.builder.layout.figure
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 
 abstract class FigureLayoutInfo(
-    val figureSize: DoubleVector
+    val figureSvgSize: DoubleVector
 )

@@ -44,7 +44,7 @@ object ColorMapperDefaults {
             Gradient.DEF_LOW,
             Gradient.DEF_HIGH,
             NA_VALUE,
-            alpha = 1.0
+            opacity = 1.0
         )
     }
 }

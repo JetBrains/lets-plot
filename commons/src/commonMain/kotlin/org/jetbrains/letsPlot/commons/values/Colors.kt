@@ -180,16 +180,33 @@ object Colors {
      *     - rgba(r, g, b, a)
      *     - color(r, g, b, a)
      *     - #rrggbb
+     *     - #rrggbbaa
      *     - #rgb
+     *     - #rgba
      *     - white, green, etc.
+     *     - steelblue / 0.35 with opacity in [0, 1]
      */
     fun parseColor(c: String): Color {
         return when {
             c.indexOf('(') > 0 -> Color.parseRGB(c)
             c.startsWith("#") -> Color.parseHex(c)
             isColorName(c) -> forName(c)
+            c.contains("/") -> parseColorWithOpacity(c)
             else -> throw IllegalArgumentException("Error parsing color value: $c")
         }
+    }
+
+    private fun parseColorWithOpacity(c: String): Color {
+        val components = c.split("/")
+        if (components.size != 2) {
+            throw IllegalArgumentException("Error parsing color value: $c")
+        }
+
+        val color = parseColor(components[0].trim())
+        val opacity = components[1].trim().toDoubleOrNull()
+            ?: throw IllegalArgumentException("Error parsing color value: $c")
+
+        return color.withOpacity(opacity)
     }
 
     private fun normalizeColorName(name: String): String =
@@ -218,10 +235,10 @@ object Colors {
      * @param h hue, [0, 360] degree
      * @param s saturation, [0, 1]
      * @param v value, [0, 1]
-     * @param alpha [0, 1], 0 - transparent and 1 - opaque.
+     * @param opacity [0, 1], 0 - transparent and 1 - opaque.
      */
     @JvmOverloads
-    fun rgbFromHsv(h: Double, s: Double, v: Double = 1.0, alpha: Double = 1.0): Color {
+    fun rgbFromHsv(h: Double, s: Double, v: Double = 1.0, opacity: Double = 1.0): Color {
         val hd = h / 60
         val c = v * s
         val x = c * (1 - abs(hd % 2 - 1))
@@ -267,7 +284,7 @@ object Colors {
             (255 * (r + m)).roundToInt(),
             (255 * (g + m)).roundToInt(),
             (255 * (b + m)).roundToInt(),
-            (255 * alpha).roundToInt(),
+            (255 * opacity).roundToInt(),
         )
     }
 
@@ -306,15 +323,11 @@ object Colors {
         )
     }
 
-    fun mimicTransparency(color: Color, alpha: Double, background: Color): Color {
-        val red = (color.red * alpha + background.red * (1 - alpha)).toInt()
-        val green = (color.green * alpha + background.green * (1 - alpha)).toInt()
-        val blue = (color.blue * alpha + background.blue * (1 - alpha)).toInt()
+    fun mimicTransparency(color: Color, opacity: Double, background: Color): Color {
+        val red = (color.red * opacity + background.red * (1 - opacity)).toInt()
+        val green = (color.green * opacity + background.green * (1 - opacity)).toInt()
+        val blue = (color.blue * opacity + background.blue * (1 - opacity)).toInt()
         return Color(red, green, blue)
-    }
-
-    fun withOpacity(c: Color, opacity: Double): Color {
-        return c.changeAlpha(max(0, min(255, round(255 * opacity).toInt())))
     }
 
     fun contrast(color: Color, other: Color): Double {

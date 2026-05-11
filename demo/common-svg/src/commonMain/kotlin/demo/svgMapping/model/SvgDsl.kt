@@ -266,7 +266,7 @@ internal fun SvgSlimGroup.slimLine(
     config: SvgSlimShape.() -> Unit = {},
     ): SvgSlimShape {
     val el = SvgSlimElements.line(x1, y1, x2, y2)
-    stroke?.let { el.setStroke(it, 1.0) }
+    stroke?.let { el.setStroke(it) }
     strokeWidth?.let { el.setStrokeWidth(it.toDouble()) }
     el.apply(config)
     el.appendTo(this)
@@ -284,8 +284,8 @@ internal fun SvgSlimGroup.slimRect(
     config: SvgSlimShape.() -> Unit = {},
     ): SvgSlimShape {
     val el = SvgSlimElements.rect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble())
-    stroke?.let { el.setStroke(it, 1.0) }
-    fill?.let { el.setFill(it, 1.0) }
+    stroke?.let { el.setStroke(it) }
+    fill?.let { el.setFill(it) }
     strokeWidth?.let { el.setStrokeWidth(it.toDouble()) }
 
     el.apply(config)
@@ -303,8 +303,8 @@ internal fun SvgSlimGroup.slimCircle(
     config: SvgSlimShape.() -> Unit = {},
     ): SvgSlimShape {
     val el = SvgSlimElements.circle(cx.toDouble(), cy.toDouble(), r.toDouble())
-    stroke?.let { el.setStroke(it, 1.0) }
-    fill?.let { el.setFill(it, 1.0) }
+    stroke?.let { el.setStroke(it) }
+    fill?.let { el.setFill(it) }
     strokeWidth?.let { el.setStrokeWidth(it.toDouble()) }
 
     el.apply(config)
@@ -320,8 +320,8 @@ internal fun SvgSlimGroup.slimPath(
     config: SvgSlimShape.() -> Unit = {},
     ): SvgSlimShape {
     val el = SvgSlimElements.path(pathData)
-    stroke?.let { el.setStroke(it, 1.0) }
-    fill?.let { el.setFill(it, 1.0) }
+    stroke?.let { el.setStroke(it) }
+    fill?.let { el.setFill(it) }
     strokeWidth?.let { el.setStrokeWidth(it.toDouble()) }
     el.apply(config)
     el.appendTo(this)

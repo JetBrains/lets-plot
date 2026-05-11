@@ -17,8 +17,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider.LiveMapData
 import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.livemap.LivemapConstants.Projection.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupStrategy
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.LayerRendererData
 import org.jetbrains.letsPlot.core.plot.builder.LayerRendererUtil.createLayerRendererData
@@ -93,7 +91,9 @@ object LiveMapProviderUtil {
     ) : LiveMapProvider {
         init {
             require(letsPlotLayers.isNotEmpty())
-            require(letsPlotLayers.first().geomKind == GeomKind.LIVE_MAP) { "geom_livemap have to be the very first geom after ggplot()" }
+            require(letsPlotLayers.first().geomKind == GeomKind.LIVE_MAP) {
+                "geom_livemap must be the first geom after ggplot()."
+            }
         }
 
         override fun createLiveMap(bounds: DoubleRectangle): LiveMapData {
@@ -123,7 +123,7 @@ object LiveMapProviderUtil {
                     ?: Services.bogusGeocodingService()
 
                 tileSystemProvider = createTileSystemProvider(
-                    myLiveMapOptions.getMap(TILES) ?: error("Tiles must be condigured"),
+                    myLiveMapOptions.getMap(TILES) ?: error("Tiles must be configured."),
                     devParams.isSet(DevParams.DEBUG_TILES),
                     devParams.read(DevParams.COMPUTATION_PROJECTION_QUANT)
                 )
@@ -171,11 +171,13 @@ object LiveMapProviderUtil {
                 return listOf(url)
             }
 
-            require(openBracketIndex <= closeBracketIndex) { "Error parsing subdomains: wrong brackets order" }
+            require(openBracketIndex <= closeBracketIndex) { "Error parsing subdomains: wrong bracket order." }
 
             val subdomains = url.substring(openBracketIndex + 1, closeBracketIndex)
-            require(subdomains.isNotEmpty()) { "Empty subdomains list" }
-            require(subdomains.all { it.lowercaseChar() in 'a'..'z' }) { "subdomain list contains non-letter symbols" }
+            require(subdomains.isNotEmpty()) { "Subdomain list must not be empty." }
+            require(subdomains.all { it.lowercaseChar() in 'a'..'z' }) {
+                "Subdomain list contains non-letter characters."
+            }
 
             val urlStart = url.substring(0, openBracketIndex)
             val urlEnd = url.substring(closeBracketIndex + 1, url.length)
@@ -194,7 +196,7 @@ object LiveMapProviderUtil {
                 }
             )
 
-            else -> throw IllegalArgumentException("Tile provider is not set.")
+            else -> throw IllegalArgumentException("Tile kind is missing or unsupported.")
         }
     }
 
@@ -268,7 +270,6 @@ object LiveMapProviderUtil {
                         ownerDistance = geomTargets.minOf { target ->
                             target.tooltipHint.coord.subtract(coord).length()
                         },
-                        lookupSpec = GeomTargetLocator.LookupSpec(LookupSpace.XY, LookupStrategy.HOVER),
                         geomKind = layer.geomKind,
                         contextualMapping = contextualMapping!!,
                         hitShapeKind = when (hoverObjects.first().kind) {

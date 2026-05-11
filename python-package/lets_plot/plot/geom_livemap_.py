@@ -268,15 +268,15 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
                 OPTIONS_MAPTILES_KIND: TILES_CHESSBOARD
             }
         else:
-            raise ValueError("Unsupported 'tiles' kind: " + tiles.get(MAPTILES_KIND))
+            raise ValueError(f"Unsupported 'tiles' kind: {tiles.get(MAPTILES_KIND)!r}.")
 
     if tiles is not None:
-        raise ValueError("Unsupported 'tiles' parameter type: " + type(tiles))
+        raise ValueError(f"Unsupported 'tiles' parameter type: {type(tiles).__name__}.")
 
     # tiles are not set for this livemap - try to get global tiles config
     if has_global_value(MAPTILES_KIND):
         if not has_global_value(MAPTILES_URL):
-            raise ValueError('URL for tiles service is not set')
+            raise ValueError('Tiles must be configured: tile service URL is not set.')
 
         if get_global_val(MAPTILES_KIND) == TILES_RASTER_ZXY:
             _warn_deprecated_tiles(None)
@@ -306,7 +306,7 @@ def _prepare_tiles(tiles: Optional[Union[str, dict]]) -> Optional[dict]:
                 OPTIONS_MAPTILES_FILL_COLOR: get_global_val(MAPTILES_SOLID_FILL_COLOR),
             }
 
-    raise ValueError('Tile provider is not set.')
+    raise ValueError('Tiles must be configured.')
 
 
 def _warn_deprecated_tiles(tiles: Union[dict, None]):
@@ -343,6 +343,6 @@ def _prepare_location(location: Union[str, List[float]]) -> Optional[dict]:
         kind = RegionKind.data_frame
 
     else:
-        raise ValueError('Wrong location type: ' + location.__str__())
+        raise ValueError(f"Unsupported 'location' parameter type: {type(location).__name__}.")
 
     return {'type': kind.value, 'data': value}

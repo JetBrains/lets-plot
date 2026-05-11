@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026. JetBrains s.r.o.
+ * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+ */
+
 @file:Suppress("FunctionName")
 
 package org.jetbrains.letsPlot.visualtesting.canvas
@@ -12,7 +17,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer.ComparisonProfile
 class CanvasDrawImageTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-): CanvasTestBase() {
+): CanvasTestSuitBase() {
     override val defaultComparisonProfile: ComparisonProfile = ComparisonProfile.Geometries
 
     init {
@@ -94,17 +99,17 @@ class CanvasDrawImageTest(
 
     fun canvas_drawImage_snapshotSeries(): Bitmap {
         val (tempCanvas, tempCtx) = createCanvas()
-        tempCtx.fillStyle = Color.BLACK.changeAlpha(0.5)
+        tempCtx.fillStyle = Color.BLACK.withOpacity(0.5)
         tempCtx.fillRect(0, 0, 50, 50)
 
         tempCanvas.takeSnapshot()
 
-        tempCtx.fillStyle = Color.RED.changeAlpha(0.5)
+        tempCtx.fillStyle = Color.RED.withOpacity(0.5)
         tempCtx.fillRect(25, 25, 50, 50)
 
         tempCanvas.takeSnapshot()
 
-        tempCtx.fillStyle = Color.BLUE.changeAlpha(0.5)
+        tempCtx.fillStyle = Color.BLUE.withOpacity(0.5)
         tempCtx.fillRect(50, 50, 50, 50)
         val snapshot = tempCanvas.takeSnapshot()
 
@@ -207,6 +212,7 @@ class CanvasDrawImageTest(
         val snapshot = img.takeSnapshot()
 
         val (canvas, ctx) = createCanvas()
+        ctx.setImageSmoothingEnabled(false)
         ctx.drawImage(snapshot, x = 5.0, y = 20.0, dw = 90.0, dh = 60.0)
 
         return paint(canvas)

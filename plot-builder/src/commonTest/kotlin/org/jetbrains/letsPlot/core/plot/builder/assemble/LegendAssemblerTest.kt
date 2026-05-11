@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.geom.FilledRectLegendKeyElementFactory
+import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.util.BoxHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.builder.guide.LegendBreak
@@ -325,6 +326,18 @@ class LegendAssemblerTest {
         legendBreak.addLayer(
             dataPoint(mapOf(Aes.SIZE to 0.0)),
             BoxHelper.legendFactory(whiskers = true, showMidline = true),
+            keySizeMultiplier = DoubleVector(2.0, 0.5)
+        )
+
+        assertEquals(DoubleVector(20.0, 20.0), legendBreak.preferredKeySize(DoubleVector(20.0, 20.0)))
+    }
+
+    @Test
+    fun livemapLegendKeyFactoryDoesNotDependOnSize() {
+        val legendBreak = LegendBreak("label")
+        legendBreak.addLayer(
+            dataPoint(mapOf(Aes.SIZE to 100.0)),
+            LiveMapGeom().legendKeyElementFactory,
             keySizeMultiplier = DoubleVector(2.0, 0.5)
         )
 

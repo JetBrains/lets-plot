@@ -6,14 +6,25 @@
 package org.jetbrains.letsPlot.core.plot.builder.buildinfo
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.builder.FigureSvgRoot
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
 import org.jetbrains.letsPlot.core.plot.builder.layout.figure.FigureLayoutInfo
 
 interface FigureBuildInfo {
     val isComposite: Boolean
+
+    /**
+     * Logical figure bounds: the space allocated in the parent by layout.
+     */
     val bounds: DoubleRectangle
+
+    /**
+     * Physical SVG viewport bounds.
+     * Equals [bounds] normally; may differ for ggdeck subplots
+     * where the SVG is inflated to cover the entire deck area.
+     */
+    val svgBounds: DoubleRectangle
     val computationMessages: List<String>
     val containsLiveMap: Boolean
     val layoutInfo: FigureLayoutInfo
@@ -26,7 +37,9 @@ interface FigureBuildInfo {
 
     fun layoutedByOuterSize(): FigureBuildInfo
 
-    fun layoutedByGeomBounds(geomBounds: DoubleRectangle): FigureBuildInfo
-
-    fun withPreferredSize(size: DoubleVector): FigureBuildInfo
+    fun layoutedByGeomBounds(
+        geomBounds: DoubleRectangle,
+        axisSpacer: Thickness = Thickness.ZERO,
+        figureSvgPadding: Thickness = Thickness.ZERO
+    ): FigureBuildInfo
 }

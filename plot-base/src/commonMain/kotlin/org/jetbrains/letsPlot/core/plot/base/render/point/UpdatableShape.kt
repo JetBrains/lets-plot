@@ -11,9 +11,7 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 interface UpdatableShape {
     fun update(
         fill: Color,
-        fillAlpha: Double,
         stroke: Color,
-        strokeAlpha: Double,
         strokeWidth: Double,
         transform: SvgTransform?
     )

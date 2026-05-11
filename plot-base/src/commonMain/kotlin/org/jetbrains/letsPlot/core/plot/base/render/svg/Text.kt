@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 
 object Text {
 
@@ -63,21 +64,21 @@ object Text {
     ): String {
         val sb = StringBuilder()
         if (textColor != null) {
-            sb.append("fill:").append(textColor.toHexColor()).append(';')
+            sb.append(SvgUtils.fillAndOpacityStyle(textColor))
         }
 
         // set each property separately
         if (!fontStyle.isNullOrBlank()) {
-            sb.append("font-style:").append(fontStyle).append(';')
+            sb.append("font-style:$fontStyle;")
         }
         if (!fontWeight.isNullOrEmpty()) {
-            sb.append("font-weight:").append(fontWeight).append(';')
+            sb.append("font-weight:$fontWeight;")
         }
         if (fontSize != null && fontSize > 0) {
-            sb.append("font-size:").append(fontSize).append("px;")
+            sb.append("font-size:${fontSize}px;")
         }
         if (!fontFamily.isNullOrEmpty()) {
-            sb.append("font-family:").append(fontFamily).append(';')
+            sb.append("font-family:$fontFamily;")
         }
         return sb.toString()
     }

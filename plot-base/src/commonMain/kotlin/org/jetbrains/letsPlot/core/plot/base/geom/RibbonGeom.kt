@@ -64,7 +64,7 @@ class RibbonGeom : GeomBase() {
             val ymax = p.finiteOrNull(Aes.YMAX) ?: continue
 
             hint.defaultCoord(p[Aes.X]!!)
-                .defaultColor(p.fill()!!, alpha = null)
+                .defaultColor(p.fill()!!)
 
             val hintsCollection = HintsCollection(p, helper)
                 .addHint(hint.create(Aes.YMAX))

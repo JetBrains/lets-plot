@@ -35,7 +35,7 @@ abstract class CompositeFigureGridLayoutBase(
         return DoubleVector(panelWidth * ncols, panelHeight * nrows)
     }
 
-    protected fun toElelemtsWithInitialBounds(
+    protected fun toElementsWithInitialBounds(
         bounds: DoubleRectangle,
         elements: List<FigureBuildInfo?>
     ): List<FigureBuildInfo?> {

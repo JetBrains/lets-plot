@@ -125,8 +125,6 @@ def theme(*,
         to the upper_exp_bound (6 by default, but can be affected by ``precision`` in format specifier).
 
         See `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
-
-        Superscript is not supported when exporting to PNG/PDF.
     line : str or dict
         Style settings for all line elements.
         Set 'blank' or result of `element_blank() <https://lets-plot.org/python/pages/api/lets_plot.element_blank.html>`__ to draw nothing and assign no space.
@@ -527,9 +525,13 @@ def element_rect(
     Parameters
     ----------
     fill : str
-        Fill color.
+        Fill color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     color : str
-        Border color.
+        Border color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     size : int
         Border size.
     linetype : int or str or list
@@ -579,7 +581,9 @@ def element_line(
     Parameters
     ----------
     color : str
-        Line color.
+        Line color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     size : int
         Line size.
     linetype : int or str or list
@@ -634,7 +638,9 @@ def element_text(
     Parameters
     ----------
     color : str
-        Text color.
+        Text color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     family : str
         Font family.
     face : str
@@ -716,7 +722,9 @@ def element_markdown(
     Parameters
     ----------
     color : str
-        Text color.
+        Text color. Supports named colors, ``rgb(...)``, ``rgba(...)``, ``color(...)``,
+        ``#RRGGBB``, ``#RRGGBBAA``, ``#RGB``, ``#RGBA``, and named colors with
+        an opacity suffix, for example ``steelblue / 0.35``.
     family : str
         Font family.
     face : {'plain', 'italic', 'bold', 'bold_italic'}, default='plain'

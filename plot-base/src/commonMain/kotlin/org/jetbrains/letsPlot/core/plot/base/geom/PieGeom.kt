@@ -11,14 +11,12 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveRe
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.annotation.PieAnnotation
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
@@ -126,9 +124,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                 svgInnerArc(sector)
             }
         ).apply {
-            val fill = sector.p.fill()!!
-            val fillAlpha = AestheticsUtil.alpha(fill, sector.p)
-            fill().set(Colors.withOpacity(fill, fillAlpha))
+            fill().set(AestheticsUtil.resolveFill(sector.p))
         }
     }
 
@@ -230,7 +226,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             index = sector.p.index(),
             GeomTargetCollector.TooltipParams(
                 markerColors = listOf(
-                    HintColorUtil.applyAlpha(sector.p.fill()!!, sector.p.alpha()!!)
+                    AestheticsUtil.resolveFill(sector.p)
                 )
             )
         )
@@ -335,7 +331,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
                         size.y / 2,
                         shapeSize(p) / 2
                     ).apply {
-                        fillColor().set(p.fill())
+                        fillColor().set(AestheticsUtil.resolveFill(p))
                         strokeColor().set(p.color())
                         strokeWidth().set(p.stroke())
                     }

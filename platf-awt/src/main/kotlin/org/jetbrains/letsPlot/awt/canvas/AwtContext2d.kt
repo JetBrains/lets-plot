@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -67,14 +67,18 @@ internal class AwtContext2d(
         log { "AwtContext2d.drawImage(snapshot, x=$x, y=$y) size=${snapshot.size}, transform=${graphics.transform}" }
 
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
-        graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), null)
+        withImageGraphics { g ->
+            g.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), null)
+        }
     }
 
     override fun drawImage(snapshot: Canvas.Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
         log { "AwtContext2d.drawImage(snapshot, x=$x, y=$y, dw=$dw, dh=$dh) size=${snapshot.size}, transform=${graphics.transform}" }
 
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
-        graphics.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), dw.toInt(), dh.toInt(), null)
+        withImageGraphics { g ->
+            g.drawImage(awtSnapshot.image, x.toInt(), y.toInt(), dw.toInt(), dh.toInt(), null)
+        }
     }
 
     override fun drawImage(
@@ -94,11 +98,13 @@ internal class AwtContext2d(
         }
 
         val awtSnapshot = snapshot as AwtCanvas.AwtSnapshot
-        graphics.drawImage(
-            awtSnapshot.image,
-            dx.toInt(), dy.toInt(), dw.toInt() + dx.toInt(), dh.toInt() + dy.toInt(),
-            sx.toInt(), sy.toInt(), sw.toInt() + sx.toInt(), sh.toInt() + sy.toInt(), null
-        )
+        withImageGraphics { g ->
+            g.drawImage(
+                awtSnapshot.image,
+                dx.toInt(), dy.toInt(), dw.toInt() + dx.toInt(), dh.toInt() + dy.toInt(),
+                sx.toInt(), sy.toInt(), sw.toInt() + sx.toInt(), sh.toInt() + sy.toInt(), null
+            )
+        }
     }
 
     override fun drawCircle(x: Double, y: Double, radius: Double) {
@@ -350,6 +356,19 @@ internal class AwtContext2d(
     private fun withFillGraphics(block: (Graphics2D) -> Unit) {
         val g = graphics.create() as Graphics2D
         g.color = stateDelegate.getFillColor().toAwtColor()
+        block(g)
+        g.dispose()
+    }
+
+    private inline fun withImageGraphics(block: (Graphics2D) -> Unit) {
+        val hintValue = if (stateDelegate.getImageSmoothingEnabled()) {
+            RenderingHints.VALUE_INTERPOLATION_BILINEAR
+        } else {
+            RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR
+        }
+
+        val g = graphics.create() as Graphics2D
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, hintValue)
         block(g)
         g.dispose()
     }

@@ -87,17 +87,19 @@ internal class DomContext2d(
         drawImage(snapshot, 0.0, 0.0)
     }
 
+    override fun setImageSmoothingEnabled(enabled: Boolean) {
+        ctx.imageSmoothingEnabled = enabled
+    }
+
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double) {
         log { "DomContext2d.drawImage(snapshot) x=$x, y=$y, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
-        ctx.imageSmoothingEnabled = false
         ctx.drawImage(domSnapshot.canvasElement, x, y)
     }
 
     override fun drawImage(snapshot: Snapshot, x: Double, y: Double, dw: Double, dh: Double) {
         log { "DomContext2d.drawImage(snapshot) x=$x, y=$y, dw=$dw, dh=$dh, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
-        ctx.imageSmoothingEnabled = false
         ctx.drawImage(domSnapshot.canvasElement, x, y, dw, dh)
     }
 
@@ -114,7 +116,6 @@ internal class DomContext2d(
     ) {
         log { "DomContext2d.drawImage(snapshot) sx=$sx, sy=$sy, sw=$sw, sh=$sh, dx=$dx, dy=$dy, dw=$dw, dh=$dh, size=${snapshot.size}, transform=${ctx.getTransform()}" }
         val domSnapshot = snapshot as DomSnapshot
-        ctx.imageSmoothingEnabled = false
         ctx.drawImage(domSnapshot.canvasElement, sx, sy, sw, sh, dx, dy, dw, dh)
     }
 

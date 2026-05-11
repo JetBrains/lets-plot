@@ -20,9 +20,9 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetLocator
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TargetPrototype
-import org.mockito.Mockito.mock
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -73,12 +73,30 @@ object TestUtil {
 
     private const val VARIABLE_NAME = "A"
     private const val VARIABLE_VALUE = "value"
+    private val defaultContextualMapping = ContextualMapping(
+        tooltipBehavior = TooltipBehavior.NONE,
+        tooltipLines = emptyList(),
+        tooltipTitle = null
+    )
     private val defaultTooltipParams = TooltipParams(
         emptyMap(),
         TooltipHint.StemLength.NORMAL,
         null,
         emptyList()
     )
+
+    private fun defaultContextualMapping(
+        lookupSpace: LookupSpace,
+        lookupStrategy: LookupStrategy
+    ): ContextualMapping {
+        return ContextualMapping(
+            tooltipBehavior = TooltipBehavior.NONE.copy(
+                lookupSpec = LookupSpec(lookupSpace, lookupStrategy)
+            ),
+            tooltipLines = emptyList(),
+            tooltipTitle = null
+        )
+    }
 
     internal fun <T> continuous(aes: Aes<T>): MappedDataAccessMock.Mapping<T> {
         return mappedData(aes, true)
@@ -136,8 +154,7 @@ object TestUtil {
         targetsList.addAll(list)
 
         return createLocator(
-            lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
-            contextualMapping = mock(ContextualMapping::class.java),
+            contextualMapping = defaultContextualMapping(lookupSpace, lookupStrategy),
             targets = targetsList,
             geomKind = GeomKind.POINT
         )
@@ -154,20 +171,18 @@ object TestUtil {
         targetsList.addAll(list)
 
         return createLocator(
-            lookupSpec = LookupSpec(lookupSpace, lookupStrategy),
-            contextualMapping = mock(ContextualMapping::class.java),
+            contextualMapping = defaultContextualMapping(lookupSpace, lookupStrategy),
             targets = targetsList,
             geomKind = geomKind
         )
     }
 
     internal fun createLocator(
-        lookupSpec: LookupSpec,
-        contextualMapping: ContextualMapping = mock(ContextualMapping::class.java),
+        contextualMapping: ContextualMapping = defaultContextualMapping,
         targets: List<TargetPrototype>,
         geomKind: GeomKind = GeomKind.POINT
     ): GeomTargetLocator {
-        return LayerTargetLocator(geomKind, lookupSpec, contextualMapping, targets)
+        return LayerTargetLocator(geomKind, contextualMapping, targets)
     }
 
     fun coord(x: Number, y: Number): DoubleVector {
