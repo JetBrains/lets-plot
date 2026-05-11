@@ -30,6 +30,12 @@ class ConstantAesWithScaleTransformTest {
         return aes.dataPointAt(0).alpha()
     }
 
+    private fun sizeOfSecondLayer(spec: String): Double? {
+        val layer = buildLayers(spec)[1]
+        val aes = PlotUtil.DemoAndTest.layerAestheticsWithoutLayout(layer)
+        return aes.dataPointAt(0).size()
+    }
+
     private fun twoLayerSpec(constantAlpha: Double?, trans: String): String {
         val constantPart = if (constantAlpha != null) """"alpha": $constantAlpha,""" else ""
         return """
@@ -166,5 +172,31 @@ class ConstantAesWithScaleTransformTest {
         val alpha = alphaOfFirstLayer(spec)
         assertNotNull(alpha)
         assertEquals(0.7, alpha, absoluteTolerance = 1e-6)
+    }
+
+    @Test
+    fun `constant size still uses scale transform when layer has no size mapper`() {
+        val spec = """
+            {
+              "kind": "plot",
+              "data": {"x": [0], "y": [1], "v": [10000000]},
+              "layers": [
+                {
+                  "geom": "point",
+                  "mapping": {"x": "x", "y": "y", "size": "v"}
+                },
+                {
+                  "geom": "text",
+                  "mapping": {"x": "x", "y": "y", "label": "v"},
+                  "size": 10000000
+                }
+              ],
+              "scales": [{"aesthetic": "size", "trans": "symlog"}]
+            }
+        """.trimIndent()
+
+        val size = sizeOfSecondLayer(spec)
+        assertNotNull(size)
+        assertEquals(8.0, size, absoluteTolerance = 1e-6)
     }
 }

@@ -152,20 +152,22 @@ object PlotUtil {
         if (!aes.isNumeric) return v
 
         val numericValue = v as? Double
-
-        // Non-positional constant: already in the aesthetic output space.
-        if (mapperOption == null) return numericValue
-
-        // Positional constant: in data space, must be transformed before mapping.
-        val transformed = if (continuousTransform != null) {
-            when (continuousTransform.isInDomain(numericValue)) {
-                true -> continuousTransform.apply(numericValue)
-                false -> null
-            }
-        } else {
-            numericValue
+        if (mapperOption == null && isAlpha(aes)) {
+            return numericValue
         }
-        return mapperOption(transformed)
+
+        // Constants with a mapper (e.g. positional aes) are transformed before mapping.
+        val transformed = when {
+            continuousTransform == null -> numericValue
+            continuousTransform.isInDomain(numericValue) -> continuousTransform.apply(numericValue)
+            else -> null
+        }
+
+        return mapperOption?.invoke(transformed) ?: transformed
+    }
+
+    private fun isAlpha(aes: Aes<*>): Boolean {
+        return aes == Aes.ALPHA || aes == Aes.SEGMENT_ALPHA
     }
 
     /**
