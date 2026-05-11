@@ -47,8 +47,7 @@ class AwtMouseEventMapper(
             override fun mouseMoved(e: AwtMouseEvent) = state.onMouseEvent(MOUSE_MOVED, e)
         })
         eventSource.addMouseWheelListener { e ->
-            val mouseEvent = AwtEventUtil.translate(e, bounds?.origin ?: Vector.ZERO)
-            mouseEventPeer.dispatch(MouseEventSpec.MOUSE_WHEEL_ROTATED, mouseEvent)
+            state.onMouseEvent(MOUSE_WHEEL_ROTATED, e)
         }
     }
 

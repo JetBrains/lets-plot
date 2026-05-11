@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.Rectangle
 import org.jetbrains.letsPlot.commons.intern.observable.event.EventHandler
 import java.awt.event.InputEvent
 import java.awt.event.MouseEvent
+import java.awt.event.MouseWheelEvent
 import javax.swing.JPanel
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -145,6 +146,20 @@ class AwtMouseEventMapperTest {
         )
     }
 
+    @Test
+    fun `should ignore wheel events outside mapper bounds`() {
+        val component = JPanel().apply { setSize(300, 300) }
+        val events = registerEvents(
+            AwtMouseEventMapper(component, Rectangle(0, 0, 200, 200)),
+            MouseEventSpec.MOUSE_WHEEL_ROTATED
+        )
+
+        component.dispatchEvent(mouseWheelEvent(component, x = 240, y = 70))
+        component.dispatchEvent(mouseWheelEvent(component, x = 50, y = 70))
+
+        assertEquals(listOf(MouseEventSpec.MOUSE_WHEEL_ROTATED), events)
+    }
+
     private fun registerEvents(
         mapper: AwtMouseEventMapper,
         vararg specs: MouseEventSpec
@@ -179,6 +194,26 @@ class AwtMouseEventMapperTest {
             clickCount,
             false,
             button
+        )
+    }
+
+    private fun mouseWheelEvent(
+        source: JPanel,
+        x: Int,
+        y: Int
+    ): MouseWheelEvent {
+        return MouseWheelEvent(
+            source,
+            MouseEvent.MOUSE_WHEEL,
+            System.currentTimeMillis(),
+            0,
+            x,
+            y,
+            0,
+            false,
+            MouseWheelEvent.WHEEL_UNIT_SCROLL,
+            1,
+            1
         )
     }
 }
