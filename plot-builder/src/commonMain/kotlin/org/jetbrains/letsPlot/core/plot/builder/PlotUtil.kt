@@ -40,7 +40,7 @@ object PlotUtil {
             Aes.Y
         )
         for (aes in renderedAes) {
-            var mapper: ScaleMapper<*>? = when {
+            val mapper: ScaleMapper<*>? = when {
                 aes == Aes.SLOPE -> Mappers.mul(yAesMapper(1.0)!! / xAesMapper(1.0)!!)
                 // positional aes share their mappers
                 Aes.isPositionalX(aes) -> xAesMapper
@@ -90,7 +90,8 @@ object PlotUtil {
                 // Constant overrides binding
                 val v = layer.getConstant(aes)
                 val t = transformIfContinuous(scale(aes, layer))
-                aesBuilder.constantAes(aes, constantToAesValue(aes, v, t, mapperOption))
+                val constantMapperOption = if (Aes.isPositional(aes)) mapperOption else null
+                aesBuilder.constantAes(aes, constantToAesValue(aes, v, t, constantMapperOption))
             } else {
                 // No constant - look-up aes mapping
                 if (layer.hasBinding(aes)) {
@@ -148,23 +149,25 @@ object PlotUtil {
         continuousTransform: ContinuousTransform?,
         mapperOption: ScaleMapper<*>?
     ): Any? {
+        if (!aes.isNumeric) return v
 
-        return if (aes.isNumeric) {
-            // Constants for numerin Aes : x, y, size etc.
-            // should be transformed before further mapping is applied.
-            val transformed = if (continuousTransform != null) {
-                when (continuousTransform.isInDomain(v as Double)) {
-                    true -> continuousTransform.apply(v)
-                    false -> null
-                }
-            } else {
-                v as? Double   // Aes like 'width', 'height' not expected to have a transform.
-            }
-
-            mapperOption?.invoke(transformed) ?: transformed
-        } else {
-            v
+        val numericValue = v as? Double
+        if (mapperOption == null && isAlpha(aes)) {
+            return numericValue
         }
+
+        // Constants with a mapper (e.g. positional aes) are transformed before mapping.
+        val transformed = when {
+            continuousTransform == null -> numericValue
+            continuousTransform.isInDomain(numericValue) -> continuousTransform.apply(numericValue)
+            else -> null
+        }
+
+        return mapperOption?.invoke(transformed) ?: transformed
+    }
+
+    private fun isAlpha(aes: Aes<*>): Boolean {
+        return aes == Aes.ALPHA || aes == Aes.SEGMENT_ALPHA
     }
 
     /**
