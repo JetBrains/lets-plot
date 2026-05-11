@@ -15,7 +15,7 @@ import org.jetbrains.letsPlot.visualtesting.ImageComparer
 class LatexTest(
     override val canvasPeer: CanvasPeer,
     override val imageComparer: ImageComparer,
-) : PlotTestBase() {
+) : PlotTestSuitBase() {
     init {
         registerTest(::`latex symbols`)
         registerTest(::`geom_label renders latex formulas for different hjust values`)
