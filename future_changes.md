@@ -58,5 +58,4 @@
 - Add 'synchronized tooltips' feature [[#1415](https://github.com/JetBrains/lets-plot/issues/1415)].
 - Alpha is not supported in element_text() [[#1462](https://github.com/JetBrains/lets-plot/issues/1462)].
 - geom_imshow(): should render transparency for NaNs when all other pixel values are identical [[#1485](https://github.com/JetBrains/lets-plot/issues/1485)].
-- geom_imshow(): add 'breaks', 'labels' and 'format' parameters [[#1486](https://github.com/JetBrains/lets-plot/issues/1486)].
 - scale_alpha: conflict of constant and mapped values of alpha aesthetic [[#706](https://github.com/JetBrains/lets-plot/issues/706)].
