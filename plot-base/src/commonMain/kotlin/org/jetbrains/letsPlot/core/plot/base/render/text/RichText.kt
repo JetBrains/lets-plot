@@ -25,7 +25,7 @@ object RichText {
         anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
         initialX: Double? = null
     ): List<SvgTextElement> {
-        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
+        val lines = parse(text, font, wrapLength, maxLinesCount, markdown, trimLines = false)
         val svgLines = render(lines, font, anchorCoefficients = anchorCoefficients(lines, anchor), initialX = initialX)
         return svgLines
     }
@@ -37,21 +37,23 @@ object RichText {
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
         lineInterval: Double = 0.0,
+        trimLines: Boolean = false,
     ): MeasuredText {
-        val (lineMetrics, width) = estimateTextLayoutAndWidth(text, font, wrapLength, maxLinesCount, markdown)
+        val (lineMetrics, width) = estimateTextLayoutAndWidth(text, font, wrapLength, maxLinesCount, markdown, trimLines)
         return MeasuredText(layout = TextLayout(lineMetrics, lineInterval), width = width)
     }
 
     private fun estimateTextLayoutAndWidth(
         text: String,
         font: Font,
-        wrapLength: Int = -1,
-        maxLinesCount: Int = -1,
-        markdown: Boolean = false,
+        wrapLength: Int,
+        maxLinesCount: Int,
+        markdown: Boolean,
+        trimLines: Boolean,
     ): Pair<List<LineLayoutMetrics>, Double> {
         val defaultMetrics = LineLayoutMetrics.plainText(font)
 
-        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
+        val lines = parse(text, font, wrapLength, maxLinesCount, markdown, trimLines)
         if (lines.isEmpty()) {
             return listOf(defaultMetrics) to 0.0
         }
@@ -75,9 +77,10 @@ object RichText {
     private fun parse(
         text: String,
         font: Font,
-        wrapLength: Int = -1,
-        maxLinesCount: Int = -1,
-        markdown: Boolean = false
+        wrapLength: Int,
+        maxLinesCount: Int,
+        markdown: Boolean,
+        trimLines: Boolean,
     ): List<List<RichTextNode>> {
         fun parse(nodes: List<RichTextNode>, parser: (String) -> List<RichTextNode>): List<RichTextNode> {
             return nodes.flatMap { node ->
@@ -97,7 +100,7 @@ object RichText {
                 }
             }
             .let { parse(it, Latex(font)::parse) }
-            .let { parseBreaks(it) }
+            .let { parseBreaks(it, trimLines) }
 
         val lines = buildLines(terms)
 
@@ -116,15 +119,26 @@ object RichText {
         }
     }
 
-    private fun parseBreaks(terms: List<RichTextNode>): List<RichTextNode> {
+    // When `trimLines` is true, whitespace adjacent to a '\n' is stripped from each line.
+    // TODO: Suspicious - only legend/colorbar layouts pass `trimLines = true`, and only for width
+    //       measurement, never for rendering (e.g. ColorBarComponentLayout measures with trimming
+    //       while ColorBarComponent renders the raw label). The two sides should agree.
+    private fun parseBreaks(terms: List<RichTextNode>, trimLines: Boolean): List<RichTextNode> {
         val result = mutableListOf<RichTextNode>()
         terms.forEach { term ->
             if (term is RichTextNode.Text) {
                 val lines = term.text.split("\n")
 
                 lines.forEachIndexed { i, line ->
-                    if (line.isNotEmpty()) {
-                        result.add(RichTextNode.Text(line))
+                    val content = when {
+                        !trimLines -> line
+                        lines.size == 1 -> line                    // no '\n' in this fragment
+                        i == 0 -> line.trimEnd()                   // only trailing '\n' is adjacent
+                        i == lines.lastIndex -> line.trimStart()   // only leading '\n' is adjacent
+                        else -> line.trim()                        // sandwiched between '\n's
+                    }
+                    if (content.isNotEmpty()) {
+                        result.add(RichTextNode.Text(content))
                     }
 
                     if (i != lines.lastIndex) {

@@ -15,8 +15,8 @@ interface LabelSpec {
 
     val defaultLineHeight: Double
 
-    fun measure(labelText: String, lineInterval: Double = 0.0): MeasuredText
+    fun measure(labelText: String, lineInterval: Double = 0.0, trimLines: Boolean = false): MeasuredText
 
-    fun measureLayout(labelText: String, lineInterval: Double = 0.0): TextLayout =
-        measure(labelText, lineInterval).layout
+    fun measureLayout(labelText: String, lineInterval: Double = 0.0, trimLines: Boolean = false): TextLayout =
+        measure(labelText, lineInterval, trimLines).layout
 }
