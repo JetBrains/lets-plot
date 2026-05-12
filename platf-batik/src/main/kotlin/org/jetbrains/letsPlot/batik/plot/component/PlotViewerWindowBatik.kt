@@ -3,11 +3,13 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.letsPlot.batik.plot.component
 
 import org.jetbrains.letsPlot.awt.plot.component.ApplicationContext
-import org.jetbrains.letsPlot.awt.plot.util.PlotContentPaneBase
 import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
+import org.jetbrains.letsPlot.awt.plot.util.PlotContentPaneBase
 import org.jetbrains.letsPlot.awt.plot.util.PlotViewerWindowBase
 import org.jetbrains.letsPlot.core.util.MonolithicCommon
 import java.awt.Dimension

@@ -8,6 +8,14 @@ package org.jetbrains.letsPlot.batik.plot.component
 import org.jetbrains.letsPlot.awt.plot.component.ApplicationContext
 import javax.swing.SwingUtilities
 
+@Deprecated(
+    message = "Use org.jetbrains.letsPlot.awt.plot.swing.SwingAppContext instead.",
+    replaceWith = ReplaceWith(
+        expression = "SwingAppContext",
+        "org.jetbrains.letsPlot.awt.plot.swing.SwingAppContext"
+    ),
+    level = DeprecationLevel.WARNING
+)
 class DefaultSwingContextBatik : ApplicationContext {
     override fun runWriteAction(action: Runnable) {
         action.run()
@@ -27,6 +35,14 @@ class DefaultSwingContextBatik : ApplicationContext {
     }
 
     companion object {
+        @Deprecated(
+            message = "Use AWT_EDT_EXECUTOR from org.jetbrains.letsPlot.awt.plot.swing.SwingAppContext instead.",
+            replaceWith = ReplaceWith(
+                expression = "SwingAppContext.AWT_EDT_EXECUTOR",
+                "org.jetbrains.letsPlot.awt.plot.swing.SwingAppContext"
+            ),
+            level = DeprecationLevel.WARNING
+        )
         val AWT_EDT_EXECUTOR = { action: () -> Unit ->
             runInEdt(
                 Runnable {

@@ -182,7 +182,7 @@ fun main() {
         val plotSpecDebugger = PlotSpecDebugger()
         try {
             // Attempt to treat initial load as JSON.
-            // If main() was triggered with Python code in environment, this logic handles it gracefully by failing JSON parse
+            // If main() was triggered with Python code in the environment, this logic handles it gracefully by failing JSON parse
             // and letting the UI load the raw string.
             val spec = parsePlotSpec(specString)
             val specToSet = if (spec.containsKey("kind")) {
@@ -195,7 +195,7 @@ fun main() {
             plotSpecDebugger.evaluate()
         } catch (e: Exception) {
             plotSpecDebugger.setSpec(specString)
-            // If it's not JSON, it might be python. Don't print stacktrace on startup, just let UI handle it.
+            // If it's not JSON, it might be Python. Don't print stacktrace on startup, just let UI handle it.
             //e.printStackTrace()
         }
 
@@ -806,6 +806,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 when (frontendComboBox.selectedItem) {
                     "batik" -> {
                         processedSpec = MonolithicCommon.processRawSpecs(specMap as MutableMap<String, Any>)
+                        @Suppress("DEPRECATION")
                         newPlotComponent = DefaultPlotPanelBatik(
                             processedSpec = processedSpec,
                             preferredSizeFromPlot = false,
@@ -841,6 +842,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
                 processedSpecTextArea.text = JsonSupport.formatJson(processedSpec, pretty = true)
                 processedSpecTextArea.caretPosition = 0
 
+                @Suppress("DEPRECATION")
                 if (newPlotComponent is DefaultPlotPanelBatik) sharedToolbar.attach(newPlotComponent.figureModel)
                 else if (newPlotComponent is SwingPlotPanel) sharedToolbar.attach(newPlotComponent.figureModel)
 
@@ -871,7 +873,7 @@ class PlotSpecDebugger : JFrame("PlotSpec Debugger") {
             cursor = Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)
             evaluateButton.isEnabled = false
 
-            // Run in background to avoid freezing UI
+            // Run in the background to avoid freezing UI
             val worker = object : SwingWorker<Pair<String?, String?>, Void>() {
                 override fun doInBackground(): Pair<String?, String?> {
                     return PythonRunner.runPythonScript(rawText, pythonPath)

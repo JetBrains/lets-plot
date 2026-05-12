@@ -9,6 +9,15 @@ import org.jetbrains.letsPlot.awt.plot.component.PlotPanel
 import org.jetbrains.letsPlot.core.spec.Option
 import org.jetbrains.letsPlot.core.util.sizing.SizingPolicy
 
+@Deprecated(
+    message = "Use org.jetbrains.letsPlot.awt.plot.swing.SwingPlotPanel instead.",
+    replaceWith = ReplaceWith(
+        expression = "SwingPlotPanel",
+        "org.jetbrains.letsPlot.awt.plot.swing.SwingPlotPanel"
+    ),
+    level = DeprecationLevel.WARNING
+)
+@Suppress("DEPRECATION")
 open class DefaultPlotPanelBatik(
     processedSpec: MutableMap<String, Any>,
     preserveAspectRatio: Boolean,

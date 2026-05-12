@@ -11,9 +11,16 @@ import org.jetbrains.letsPlot.batik.plot.util.BatikMessageCallback
 import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgSvgElement
 
-/**
- * Inherited by the IdeaPlotComponentProviderBatik class in IDEA plugin.
- */
+
+@Deprecated(
+    message = "Use org.jetbrains.letsPlot.awt.plot.swing.SwingPlotComponentProvider instead.",
+    replaceWith = ReplaceWith(
+        expression = "SwingPlotComponentProvider",
+        "org.jetbrains.letsPlot.awt.plot.swing.SwingPlotComponentProvider"
+    ),
+    level = DeprecationLevel.WARNING
+)
+@Suppress("DEPRECATION")
 open class DefaultPlotComponentProviderBatik(
     processedSpec: MutableMap<String, Any>,
     executor: (() -> Unit) -> Unit,
