@@ -5,7 +5,7 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - python=3.9
+  - python=3.10
   - numpy
   - pandas
   - charset-normalizer>=3.0.1       # required by "requests" package

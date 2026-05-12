@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* `python >= 3.9` (with dev headers)
+* `python >= 3.10` (with dev headers)
 * `setuptools` (`pip install setuptools`)
 * `build` (`pip install build`)
 

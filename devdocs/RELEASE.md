@@ -6,7 +6,7 @@
  - Linux Ubuntu 20.04+
  - macOS 11.6+ (Apple Silicon processor)
  - JDK11
- - Python 3.9-3.14
+ - Python 3.10-3.14
  - `mingw-w64-x86_64-gcc` MSYS2 package (only for Windows)
 
 **Important!** Linux requires more special setup: [README.md](../tools/README.md)   
@@ -43,46 +43,46 @@ For `RC` skip this step.
  - `git add --all && git commit -m "Updated version vX.X.X" && git push` (or `vX.X.XrcN`)
  - `git tag vX.X.X && git push --tags` (or `vX.X.XrcN`)
  
-### 5. Prepare to the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev1"_:
+### 5. Prepare for the next dev cycle: increment versions and add _"-SNAPSHOT"_ and _"dev1"_:
          
  - `version` in `build.gradle` (`X.X.X-SNAPSHOT`)
  - `__version__` in `python-package/lets_plot/_version.py` (`X.X.X.devN`)
 
-### 6. Push new dev version to GitHub
+### 6. Push the new dev version to GitHub
 
 ## Build the project for publishing
 
 **The next steps need to be reproduced on all supported platforms (`Mac`, `Linux` and `Windows`).**
 Put `local.properties` in the project root. See `local.properties.template` for an example.
 
-### 1. Checkout repository in a new directory: 
+### 1. Check out the repository in a new directory: 
 
  `git clone --branch vX.X.X git@github.com:JetBrains/lets-plot lets-plot-release`
 
 ### 2. Prepare a config file with Python paths for the release script
 
 File must be in the YAML format and contain paths to bin and include directories for
-each Python version: from 3.9 to 3.14.
+each Python version: from 3.10 to 3.14.
 
 **Example:**
 
 `release_pythons.yml`
 
 ```yaml
-py39-arm:
-  bin_path: /Users/letsplotter/anaconda-arm/envs/py39-arm/bin
-  include_path: /Users/letsplotter/anaconda-arm/envs/py39-arm/include/python3.9
+py310-arm:
+  bin_path: /Users/letsplotter/anaconda-arm/envs/py310-arm/bin
+  include_path: /Users/letsplotter/anaconda-arm/envs/py310-arm/include/python3.10
 py310-x64:
   bin_path: /Users/letsplotter/anaconda-x64/envs/py310/bin
   include_path: /Users/letsplotter/anaconda-x64/envs/py310/include/python3.10
 ...
 ```
 
-### 3. Run release script
+### 3. Run the release script
 
 For **Linux** check [README.md](../tools/README.md) before build.
 
-From the project root run Python script for release build. Pass a path to the config file
+From the project root run a Python script for release build. Pass a path to the config file
 from step 2 as a script parameter.
 
 ```shell
@@ -98,9 +98,9 @@ python .\build_release.py ..\release_pythons.yml
 ### 4. Check Python artifacts
 
 The directory `python-package/dist` must contain Python release wheels:
- - Windows: `x64` wheels for Python versions 3.9-3.14
- - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.9-3.14
- - Mac: `x64` and `arm64` wheels for 3.9-3.14
+ - Windows: `x64` wheels for Python versions 3.10–3.14
+ - Linux: manylinux `x64` and `aarch64` wheels for Python versions 3.10–3.14
+ - Mac: `x64` and `arm64` wheels for 3.10–3.14
 
 
 ## Publish artifacts
