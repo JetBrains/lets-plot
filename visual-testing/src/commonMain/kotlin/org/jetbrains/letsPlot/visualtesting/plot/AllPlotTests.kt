@@ -18,7 +18,6 @@ object AllPlotTests {
         failedTestsCount += LatexTest(canvasPeer, imageComparer).runTests()
         //failedTestsCount += PlotAxisTest().runTests()
         //failedTestsCount += PlotFacetTest().runTests()
-        //failedTestsCount += PlotThemeTest().runTests()
 
         if (failedTestsCount > 0) {
             error("$failedTestsCount tests failed!")
