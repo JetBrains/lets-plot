@@ -1,22 +1,15 @@
-#  Copyright (c) 2025. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 import decimal
 import math
 from datetime import datetime, date, time, timezone, timedelta
 
+import jax.numpy as jnp
 import numpy as np
 import pandas as pd
 import polars as pl
 import pytest
-
-try:
-    import jax.numpy as jnp
-    jax_available = True
-except ImportError:
-    jax_available = False
-
-jax_required = pytest.mark.skipif(not jax_available, reason="jax not installed")
 
 from lets_plot._type_utils import _standardize_value, is_ndarray, LazyModule
 
@@ -61,9 +54,7 @@ def test_standardize_external_numeric_types():
     assert _standardize_value([np.float32(3.2)]) == [3.200000047683716]
     assert _standardize_value([np.float64(6.4)]) == [6.4]
 
-
-@jax_required
-def test_standardize_jax_numeric_types():
+    # JAX numeric types
     assert _standardize_value([jnp.int8(8)]) == [8.0]
     assert _standardize_value([jnp.int16(16)]) == [16.0]
     assert _standardize_value([jnp.int32(32)]) == [32.0]
@@ -150,9 +141,7 @@ def test_collection_of_integers():
     assert _standardize_value(pd.Series([1, 2, 3], dtype=pd.Int64Dtype())) == [1.0, 2.0, 3.0]
     assert _standardize_value(pd.array([1, 2, 3], dtype=pd.Int64Dtype())) == [1.0, 2.0, 3.0]
 
-
-@jax_required
-def test_collection_of_integers_jax():
+    # JAX array of integers
     assert _standardize_value(jnp.array([1, 2, 3], dtype=jnp.int32)) == [1.0, 2.0, 3.0]
 
 
@@ -167,9 +156,7 @@ def test_collection_of_floats():
     assert _standardize_value(pd.Series([1.5, 2.5, 3.5], dtype=pd.Float64Dtype())) == [1.5, 2.5, 3.5]
     assert _standardize_value(pd.array([1.5, 2.5, 3.5], dtype=pd.Float64Dtype())) == [1.5, 2.5, 3.5]
 
-
-@jax_required
-def test_collection_of_floats_jax():
+    # JAX array of floats
     assert _standardize_value(jnp.array([1.5, 2.5, 3.5])) == [1.5, 2.5, 3.5]
 
 
@@ -187,9 +174,7 @@ def test_collection_of_nans():
     assert _standardize_value(pd.Series(pd.NA)) == [None]
     assert _standardize_value(pd.array([pd.NA])) == [None]
 
-
-@jax_required
-def test_collection_of_nans_jax():
+    # JAX array of NaN values
     assert _standardize_value(jnp.array(float('nan'))) == None
     assert _standardize_value(jnp.array([float('nan')])) == [None]
 
@@ -226,9 +211,7 @@ def test_empty_collections():
     assert _standardize_value(pd.Series([])) == []
     assert _standardize_value(pd.array([])) == []
 
-
-@jax_required
-def test_empty_collections_jax():
+    # JAX array of empty collections
     assert _standardize_value(jnp.array([])) == []
 
 
@@ -285,7 +268,6 @@ def test_perf_float_pandas_series():
     assert standardized_large_series[-1] == 42.0     # Normal constant untouched
 
 
-@jax_required
 @pytest.mark.timeout(10)
 def test_perf_float_jax_array():
     huge_arr = jnp.full((3_000 * 3_000), 42.0, dtype=jnp.float32)
@@ -376,18 +358,18 @@ def test_perf_datetime_pandas_series():
     assert standardized_large_series[-1] == 1672576245000.0     # Normal datetime converted to epoch millis
 
 
-def test_is_ndarray_numpy():
+def test_is_ndarray():
     assert is_ndarray(np.array([1, 2, 3])) == True
-
-
-@jax_required
-def test_is_ndarray_jax():
     assert is_ndarray(jnp.array([4, 5, 6])) == True
 
 
-def test_lazy_is_instance_numpy():
+def test_lazy_is_instance():
     lazy_numpy = LazyModule('numpy')
     assert lazy_numpy.lazy_is_instance(np.array([1, 2, 3]), 'ndarray') == True
+
+    lazy_jax = LazyModule('jax')
+    assert lazy_jax.lazy_is_instance(jnp.array([1, 2, 3]), 'numpy.ndarray') == True
+
 
 def test_shapely_geometry():
     from shapely.geometry import Point, Polygon
@@ -562,3 +544,5 @@ def test_standardize_value_numpy_datetime64_consistency():
     assert standardized_start_time == standardized_array[0]
 
     assert standardized_list == standardized_array
+
+
