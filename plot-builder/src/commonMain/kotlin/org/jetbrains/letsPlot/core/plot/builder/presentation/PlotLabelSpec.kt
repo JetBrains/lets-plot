@@ -18,13 +18,8 @@ class PlotLabelSpec(
 
     override val defaultLineHeight: Double get() = LineLayoutMetrics.plainText(font).height
 
-    override fun measure(labelText: String, lineInterval: Double, trimLines: Boolean): MeasuredText =
-        RichText.measure(
-            labelText, font,
-            markdown = markdown,
-            lineInterval = lineInterval,
-            trimLines = trimLines,
-        )
+    override fun measure(labelText: String, lineInterval: Double): MeasuredText =
+        RichText.measure(labelText, font, markdown = markdown, lineInterval = lineInterval)
 
     companion object {
         val DUMMY: LabelSpec = object : LabelSpec {
@@ -37,7 +32,7 @@ class PlotLabelSpec(
             override val defaultLineHeight: Double
                 get() = UNSUPPORTED("Dummy Label Spec")
 
-            override fun measure(labelText: String, lineInterval: Double, trimLines: Boolean): MeasuredText =
+            override fun measure(labelText: String, lineInterval: Double): MeasuredText =
                 UNSUPPORTED("Dummy Label Spec")
         }
     }

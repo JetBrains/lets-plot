@@ -20,8 +20,8 @@ import kotlin.math.max
 object PlotLayoutUtil {
     internal fun plotInsets(plotInset: Thickness) = DoubleInsets(plotInset.leftTop, plotInset.rightBottom)
 
-    internal fun textDimensions(text: String, labelSpec: LabelSpec, trimLines: Boolean = false): DoubleVector {
-        return labelSpec.measure(text, trimLines = trimLines).totalSize
+    internal fun textDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
+        return labelSpec.measure(text).totalSize
     }
 
     private fun titleThickness(title: String?, labelSpec: LabelSpec, margin: Double): Double {

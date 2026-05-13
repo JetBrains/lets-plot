@@ -25,7 +25,7 @@ object RichText {
         anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
         initialX: Double? = null
     ): List<SvgTextElement> {
-        val lines = parse(text, font, wrapLength, maxLinesCount, markdown, trimLines = false)
+        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
         val svgLines = render(lines, font, anchorCoefficients = anchorCoefficients(lines, anchor), initialX = initialX)
         return svgLines
     }
@@ -37,9 +37,8 @@ object RichText {
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
         lineInterval: Double = 0.0,
-        trimLines: Boolean = false,
     ): MeasuredText {
-        val (lineMetrics, width) = estimateTextLayoutAndWidth(text, font, wrapLength, maxLinesCount, markdown, trimLines)
+        val (lineMetrics, width) = estimateTextLayoutAndWidth(text, font, wrapLength, maxLinesCount, markdown)
         return MeasuredText(layout = TextLayout(lineMetrics, lineInterval), width = width)
     }
 
@@ -49,11 +48,10 @@ object RichText {
         wrapLength: Int,
         maxLinesCount: Int,
         markdown: Boolean,
-        trimLines: Boolean,
     ): Pair<List<LineLayoutMetrics>, Double> {
         val defaultMetrics = LineLayoutMetrics.plainText(font)
 
-        val lines = parse(text, font, wrapLength, maxLinesCount, markdown, trimLines)
+        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
         if (lines.isEmpty()) {
             return listOf(defaultMetrics) to 0.0
         }
@@ -80,7 +78,6 @@ object RichText {
         wrapLength: Int,
         maxLinesCount: Int,
         markdown: Boolean,
-        trimLines: Boolean,
     ): List<List<RichTextNode>> {
         fun parse(nodes: List<RichTextNode>, parser: (String) -> List<RichTextNode>): List<RichTextNode> {
             return nodes.flatMap { node ->
@@ -100,7 +97,7 @@ object RichText {
                 }
             }
             .let { parse(it, Latex(font)::parse) }
-            .let { parseBreaks(it, trimLines) }
+            .let { parseBreaks(it) }
 
         val lines = buildLines(terms)
 
@@ -119,11 +116,7 @@ object RichText {
         }
     }
 
-    // When `trimLines` is true, whitespace adjacent to a '\n' is stripped from each line.
-    // TODO: Suspicious - only legend/colorbar layouts pass `trimLines = true`, and only for width
-    //       measurement, never for rendering (e.g. ColorBarComponentLayout measures with trimming
-    //       while ColorBarComponent renders the raw label). The two sides should agree.
-    private fun parseBreaks(terms: List<RichTextNode>, trimLines: Boolean): List<RichTextNode> {
+    private fun parseBreaks(terms: List<RichTextNode>): List<RichTextNode> {
         val result = mutableListOf<RichTextNode>()
         terms.forEach { term ->
             if (term is RichTextNode.Text) {
@@ -131,7 +124,6 @@ object RichText {
 
                 lines.forEachIndexed { i, line ->
                     val content = when {
-                        !trimLines -> line
                         lines.size == 1 -> line                    // no '\n' in this fragment
                         i == 0 -> line.trimEnd()                   // only trailing '\n' is adjacent
                         i == lines.lastIndex -> line.trimStart()   // only leading '\n' is adjacent

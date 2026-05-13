@@ -122,7 +122,7 @@ abstract class LegendComponentLayout(
 
         override fun labelSize(index: Int): DoubleVector {
             val label = breaks[index].label
-            return PlotLayoutUtil.textDimensions(label, PlotLabelSpecFactory.legendItem(theme), trimLines = true)
+            return PlotLayoutUtil.textDimensions(label, PlotLabelSpecFactory.legendItem(theme))
         }
     }
 
@@ -169,8 +169,7 @@ abstract class LegendComponentLayout(
         override fun labelSize(index: Int): DoubleVector {
             return PlotLayoutUtil.textDimensions(
                 breaks[index].label,
-                PlotLabelSpecFactory.legendItem(theme),
-                trimLines = true,
+                PlotLabelSpecFactory.legendItem(theme)
             )
         }
     }
