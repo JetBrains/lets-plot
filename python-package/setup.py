@@ -141,7 +141,6 @@ setup(name='lets-plot',
       keywords=["ggplot", "ggplot2", "geospatial", "geopandas", "geocoding"],
       classifiers=[
           "Development Status :: 5 - Production/Stable",
-          "Programming Language :: Python :: 3.9",
           "Programming Language :: Python :: 3.10",
           "Programming Language :: Python :: 3.11",
           "Programming Language :: Python :: 3.12",
