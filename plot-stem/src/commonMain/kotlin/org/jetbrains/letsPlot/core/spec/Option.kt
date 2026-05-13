@@ -463,6 +463,7 @@ object Option {
             const val NUDGE_Y = "nudge_y"
             const val NUDGE_UNIT = "nudge_unit"
             const val CHECK_OVERLAP = "check_overlap"
+            const val STROKE_COLOR = "stroke_color"
         }
 
         object Label {

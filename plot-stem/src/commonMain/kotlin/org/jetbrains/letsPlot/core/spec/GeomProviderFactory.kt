@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
+import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -504,6 +505,9 @@ internal object GeomProviderFactory {
         }
         layerConfig.getBoolean(Option.Geom.Text.CHECK_OVERLAP).let {
             geom.checkOverlap = it
+        }
+        layerConfig.getString(Option.Geom.Text.STROKE_COLOR)?.let {
+            geom.haloColor = Colors.parseColor(it)
         }
     }
 

@@ -71,7 +71,9 @@ class CorrPlotSpecChange : SpecChange {
                 type = it.getString(Corr.Layer.TYPE),
                 diag = it.getBool(Corr.Layer.DIAG),
                 mapSize = it.getBool(Corr.Layer.MAP_SIZE),
-                color = it.getString(Corr.Layer.COLOR)
+                color = it.getString(Corr.Layer.COLOR),
+                stroke = it.getDouble(Corr.Layer.STROKE),
+                strokeColor = it.getString(Corr.Layer.STROKE_COLOR)
             )
         }
 

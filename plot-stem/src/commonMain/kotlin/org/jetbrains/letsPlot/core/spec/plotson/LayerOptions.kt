@@ -144,11 +144,13 @@ class TextLayer : LayerOptions(GeomKind.TEXT) {
     var naText: String? by map(NA_TEXT.key)
     var labelFormat: String? by map(LABEL_FORMAT.key)
     var sizeUnit: Aes<*>? by map(SIZE_UNIT.key)
+    var strokeColor: String? by map(STROKE_COLOR.key)
 
     companion object {
         val NA_TEXT = PropSpec<String?>(Geom.Text.NA_TEXT)
         val LABEL_FORMAT = PropSpec<String?>(Geom.Text.LABEL_FORMAT)
         val SIZE_UNIT = PropSpec<Aes<*>>(Geom.Text.SIZE_UNIT)
+        val STROKE_COLOR = PropSpec<String?>(Geom.Text.STROKE_COLOR)
     }
 }
 

@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.math.areEqual
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
@@ -166,6 +167,30 @@ object TextUtil {
         }
     }
 
+    fun decorateHalo(label: Label, p: DataPointAesthetics, haloColor: Color, scale: Double = 1.0) {
+        val stroke = p.stroke() ?: 0.0
+        if (stroke <= 0.0) {
+            return
+        }
+
+        val resolvedHaloColor = AestheticsUtil.resolveFill(p, haloColor)
+        label.setFillNone()
+        label.textStrokeColor().set(resolvedHaloColor)
+        // SVG stroke is centered on the glyph outline: half lands inside the fill area (hidden by fill:none),
+        // half is visible outside. Doubling ensures the visible outside width equals `stroke`.
+        label.setStrokeWidth(stroke * 2)
+        label.setStrokeLinejoin("round")
+
+        label.setFontSize(fontSize(p, scale))
+        label.setLineHeight(lineheight(p, scale))
+        label.setFontFamily(fontFamily(p))
+
+        with(FontFace.fromString(p.fontface())) {
+            if (bold) label.setFontWeight("bold")
+            if (italic) label.setFontStyle("italic")
+        }
+    }
+
     fun measure(text: String, p: DataPointAesthetics, ctx: GeomContext, scale: Double = 1.0): DoubleVector {
         val lines = Label.splitLines(text)
         val fontSize = fontSize(p, scale)
@@ -229,12 +254,23 @@ object TextUtil {
         flipAngle: Boolean = false,
         sizeUnitRatio: Double = 1.0,
         boundsCenter: DoubleVector? = null,
-        labelNudge: (location: DoubleVector, size: DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE
+        labelNudge: (location: DoubleVector, size: DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE,
+        haloColor: Color? = null
     ): SvgGElement {
+        val hAnchor = hAnchor(p, location, boundsCenter)
+
         val label = Label(text)
         decorate(label, p, sizeUnitRatio, applyAlpha = true)
-        val hAnchor = hAnchor(p, location, boundsCenter)
         label.setHorizontalAnchor(hAnchor)
+
+        // Build halo label alongside the main label so layout properties stay in sync.
+        // Vertical position is handled through moveTo (below), not setVerticalAnchor.
+        val haloLabel = if (haloColor != null && (p.stroke() ?: 0.0) > 0.0) {
+            Label(text).also { halo ->
+                decorateHalo(halo, p, haloColor, sizeUnitRatio)
+                halo.setHorizontalAnchor(hAnchor)
+            }
+        } else null
 
         val fontSize = fontSize(p, sizeUnitRatio)
         val textSize = measure(text, p, ctx, sizeUnitRatio)
@@ -244,9 +280,12 @@ object TextUtil {
         }
 
         val textLocation = DoubleVector(location.x, yPosition)
-        label.moveTo(labelNudge(textLocation, textSize))
+        val nudgedLocation = labelNudge(textLocation, textSize)
+        label.moveTo(nudgedLocation)
+        haloLabel?.moveTo(nudgedLocation)
 
         val g = SvgGElement()
+        if (haloLabel != null) g.children().add(haloLabel.rootGroup)
         g.children().add(label.rootGroup)
         SvgUtils.transformRotate(g, orientedAngle(p, flipAngle, ctx), location.x, location.y)
         return g

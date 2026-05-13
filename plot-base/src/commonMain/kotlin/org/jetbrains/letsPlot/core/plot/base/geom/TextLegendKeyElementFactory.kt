@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.DataPointAesthetics
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
@@ -18,7 +19,9 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
-internal class TextLegendKeyElementFactory :
+internal class TextLegendKeyElementFactory(
+    private val haloColor: Color? = null
+) :
     LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
@@ -35,6 +38,15 @@ internal class TextLegendKeyElementFactory :
 
         val g = SvgGElement()
         g.children().add(rect)
+        if (haloColor != null && (p.stroke() ?: 0.0) > 0.0) {
+            val haloLabel = Label("a")
+            TextUtil.decorateHalo(haloLabel, p, haloColor)
+            haloLabel.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
+            haloLabel.setVerticalAnchor(Text.VerticalAnchor.CENTER)
+            haloLabel.rotate(angle(p.angle()!!))
+            haloLabel.moveTo(size.x / 2, size.y / 2)
+            g.children().add(haloLabel.rootGroup)
+        }
         g.children().add(label.rootGroup)
         return g
     }

@@ -403,6 +403,7 @@ object GeomMeta {
             GeomKind.TEXT -> listOf(
                 Aes.X, Aes.Y,
                 Aes.SIZE,
+                Aes.STROKE,
                 Aes.COLOR,
                 Aes.ALPHA,
                 Aes.LABEL,
@@ -432,6 +433,7 @@ object GeomMeta {
             GeomKind.TEXT_REPEL -> listOf(
                 Aes.X, Aes.Y,
                 Aes.SIZE,
+                Aes.STROKE,
                 Aes.COLOR,
                 Aes.ALPHA,
                 Aes.LABEL,

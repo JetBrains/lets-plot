@@ -7,15 +7,63 @@ package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.max
 import kotlin.test.Test
 
 class LabelTest {
+    @Test
+    fun strokeStyleIsNotSetByDefault() {
+        val label = Label("text")
+
+        val line = label.rootGroup.children().single() as SvgTextElement
+        val style = line.getAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE).get() as? String ?: ""
+        assertThat(style).doesNotContain("stroke:")
+        assertThat(style).doesNotContain("stroke-width:")
+        assertThat(style).doesNotContain("stroke-linejoin:")
+    }
+
+    @Test
+    fun strokeStyleCanBeAppliedToText() {
+        val label = Label("text")
+
+        label.setFillNone()
+        label.textStrokeColor().set(Color.WHITE)
+        label.setStrokeWidth(4.0)
+        label.setStrokeLinejoin("round")
+
+        val line = label.rootGroup.children().single() as SvgTextElement
+        val style = line.getAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE).get() as? String ?: ""
+        assertThat(style).contains("fill:none;")
+        assertThat(style).contains("stroke:${Color.WHITE.toHexColor()};")
+        assertThat(style).contains("stroke-width:4.0px;")
+        assertThat(style).contains("stroke-linejoin:round;")
+        assertThat(line.stroke().get()).isNotNull()
+        assertThat(line.strokeWidth().get()).isEqualTo(4.0)
+    }
+
+    @Test
+    fun strokeColorAlphaIsEmittedAsStrokeOpacity() {
+        val label = Label("text")
+        val strokeColor = Color(255, 255, 255, 128)
+
+        label.textStrokeColor().set(strokeColor)
+
+        val line = label.rootGroup.children().single() as SvgTextElement
+        val style = line.getAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE).get() as? String ?: ""
+        assertThat(style).contains("stroke:${strokeColor.toHexColorNoAlpha()};")
+        assertThat(style).contains("stroke-opacity:${SvgUtils.opacity(strokeColor)};")
+        assertThat(style).doesNotContain(strokeColor.toHexColor())
+        assertThat(line.strokeOpacity().get()).isEqualTo(SvgUtils.opacity(strokeColor))
+    }
+
     @Test
     fun setHorizontalAnchorBasic() {
         val text = """text"""

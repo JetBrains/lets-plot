@@ -185,7 +185,7 @@ class corr_plot:
         """
         return self._duplicate()._set_points(type, diag)
 
-    def labels(self, type=None, diag=None, map_size=None, color=None):
+    def labels(self, type=None, diag=None, map_size=None, color=None, stroke=None, stroke_color=None):
         """
         Method defines correlation matrix layer drawn with geom_text to the plot.
 
@@ -203,13 +203,17 @@ class corr_plot:
             Set text color.
             For more info see `Color and Fill <https://lets-plot.org/python/pages/aesthetics.html#color-and-fill>`__.
             Default - contextual.
+        stroke : float, default=None
+            Set width of the text stroke (``stroke`` aesthetic).
+        stroke_color : str, default=None
+            Fixed color of the text stroke. Unlike ``color``, this cannot be used as an aesthetic mapping.
 
         Returns
         -------
         ``corr_plot``
             Correlation plot specification.
         """
-        return self._duplicate()._set_labels(type, diag, map_size, color)
+        return self._duplicate()._set_labels(type, diag, map_size, color, stroke, stroke_color)
 
     def tiles(self, type=None, diag=None):
         """
@@ -354,8 +358,15 @@ class corr_plot:
         self._points_params = {'type': type, 'diag': diag, 'threshold': self.threshold}
         return self
 
-    def _set_labels(self, type=None, diag=None, map_size=None, color=None):
-        self._labels_params = {'type': type, 'diag': diag, 'color': color, 'threshold': self.threshold}
+    def _set_labels(self, type=None, diag=None, map_size=None, color=None, stroke=None, stroke_color=None):
+        self._labels_params = {
+            'type': type,
+            'diag': diag,
+            'color': color,
+            'stroke': stroke,
+            'stroke_color': stroke_color,
+            'threshold': self.threshold
+        }
         self._labels_map_size = map_size
         return self
 
@@ -400,6 +411,8 @@ class corr_plot:
                 'type': self._labels_params['type'],
                 'diag': self._labels_params['diag'],
                 'color': self._labels_params['color'],
+                'stroke': self._labels_params['stroke'],
+                'stroke_color': self._labels_params['stroke_color'],
                 'map_size': self._labels_map_size
             }
         else:
