@@ -127,7 +127,7 @@ abstract class LegendBox : SvgComponent() {
         justification: TextJustification
     ): Label {
         val labelSpec = PlotLabelSpecFactory.legendTitle(theme)
-        val textLayout = labelSpec.measureLayout(title)
+        val textLayout = labelSpec.layout(title).layout
         val fontSize = labelSpec.font.size.toDouble()
 
         val label = Label(title)

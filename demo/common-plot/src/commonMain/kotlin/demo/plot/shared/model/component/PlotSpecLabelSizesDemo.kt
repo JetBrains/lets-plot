@@ -117,7 +117,7 @@ class PlotSpecLabelSizesDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
         if (spec.text.isEmpty()) {
             return DoubleVector.ZERO
         }
-        return spec.plotLabelSpec.measure(spec.text).totalSize
+        return spec.plotLabelSpec.layout(spec.text).totalSize
     }
 
     companion object {

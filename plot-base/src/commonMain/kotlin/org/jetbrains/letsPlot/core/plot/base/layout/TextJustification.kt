@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
-import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 
 class TextJustification(val x: Double, val y: Double) {
 
@@ -21,7 +21,7 @@ class TextJustification(val x: Double, val y: Double) {
         fun applyJustification(
             boundRect: DoubleRectangle,
             fontSize: Double,
-            textLayout: TextLayout,
+            textLayout: TextBlockLayout,
             justification: TextJustification,
             rotation: TextRotation? = null
         ): Pair<DoubleVector, Text.HorizontalAnchor> {
@@ -58,10 +58,10 @@ class TextJustification(val x: Double, val y: Double) {
         private fun yPosition(
             boundRect: DoubleRectangle,
             fontSize: Double,
-            textLayout: TextLayout,
+            textLayout: TextBlockLayout,
             vjust: Double,
         ): Double {
-            val textHeight = textLayout.totalHeight
+            val textHeight = textLayout.blockHeight
             val y = boundRect.bottom - (boundRect.height - textHeight) * vjust
             return y - textHeight + TextAnchoring.offsetEmBoxTop(textLayout, fontSize)
         }

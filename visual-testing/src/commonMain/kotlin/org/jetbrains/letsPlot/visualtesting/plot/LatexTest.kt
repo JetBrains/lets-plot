@@ -34,6 +34,8 @@ class LatexTest(
         registerTest(::`geom_label aligns mixed text and inline latex formulas correctly`)
         registerTest(::`geom_text renders multiline labels with latex formulas for different vjust values`)
         registerTest(::`geom_label renders multiline labels with latex formulas for different vjust values`)
+        registerTest(::`fractional y axis labels`)
+        registerTest(::`discrete x axis labels render consistently for multiline and latex labels across angle settings`)
     }
 
     fun `latex symbols`(): Bitmap {
@@ -2192,6 +2194,264 @@ class LatexTest(
               ]
             }
         """.trimMargin()
+
+        return paint(parseJson(spec))
+    }
+
+    fun `fractional y axis labels`(): Bitmap {
+        val spec = """
+            {
+              "kind": "subplots",
+              "layout": {
+                "ncol": 2.0,
+                "nrow": 1.0,
+                "name": "grid"
+              },
+              "figures": [
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "kind": "plot",
+                  "scales": [
+                    {
+                      "aesthetic": "y",
+                      "breaks": [
+                        0.3333333333333333,
+                        0.6666666666666666,
+                        1.0
+                      ],
+                      "labels": [
+                        "\\(\\frac{1}{3}\\)",
+                        "\\(\\frac{2}{3}\\)",
+                        "1"
+                      ]
+                    }
+                  ],
+                  "layers": [
+                    {
+                      "geom": "point",
+                      "mapping": {
+                        "y": [
+                          0.3333333333333333,
+                          0.6666666666666666,
+                          1.0
+                        ]
+                      },
+                      "data_meta": {}
+                    }
+                  ],
+                  "metainfo_list": []
+                },
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "kind": "plot",
+                  "scales": [
+                    {
+                      "aesthetic": "y",
+                      "breaks": [
+                        0.3333333333333333,
+                        0.6666666666666666,
+                        1.0
+                      ],
+                      "labels": [
+                        "\\(\\frac{1}{3}\\)",
+                        "\\(\\frac{2}{3}\\)",
+                        "1"
+                      ],
+                      "trans": "reverse"
+                    }
+                  ],
+                  "layers": [
+                    {
+                      "geom": "point",
+                      "mapping": {
+                        "y": [
+                          0.3333333333333333,
+                          0.6666666666666666,
+                          1.0
+                        ]
+                      },
+                      "data_meta": {}
+                    }
+                  ],
+                  "metainfo_list": []
+                }
+              ]
+            }
+        """.trimIndent()
+
+        return paint(parseJson(spec))
+    }
+
+    fun `discrete x axis labels render consistently for multiline and latex labels across angle settings`(): Bitmap {
+        val spec = """
+            {
+              "kind": "subplots",
+              "layout": {
+                "ncol": 2.0,
+                "nrow": 2.0,
+                "name": "grid"
+              },
+              "figures": [
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "theme": {
+                    "axis_text": {
+                      "size": 16.0,
+                      "blank": false
+                    }
+                  },
+                  "kind": "plot",
+                  "scales": [
+                    {
+                      "aesthetic": "x",
+                      "breaks": [
+                        "A",
+                        "B\nC",
+                        "D\n\nE",
+                        "F G H",
+                        "I\nJ K L M N\nO P",
+                        "\\(\\frac{Q+R}{S}\\)",
+                        "\\(\\frac{T}{U+V}\\)",
+                        "\\(\\frac{W}{X}\\)\n\\(\\frac{Y}{Z}\\)"
+                      ],
+                      "discrete": true,
+                      "reverse": false
+                    }
+                  ],
+                  "layers": [
+                    {
+                      "geom": "blank",
+                      "mapping": {},
+                      "inherit_aes": false,
+                      "tooltips": "none",
+                      "data_meta": {}
+                    }
+                  ],
+                  "metainfo_list": []
+                },
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "theme": {
+                    "axis_text": {
+                      "size": 16.0,
+                      "angle": 0.0,
+                      "blank": false
+                    }
+                  },
+                  "kind": "plot",
+                  "scales": [
+                    {
+                      "aesthetic": "x",
+                      "breaks": [
+                        "A",
+                        "B\nC",
+                        "D\n\nE",
+                        "F G H",
+                        "I\nJ K L M N\nO P",
+                        "\\(\\frac{Q+R}{S}\\)",
+                        "\\(\\frac{T}{U+V}\\)",
+                        "\\(\\frac{W}{X}\\)\n\\(\\frac{Y}{Z}\\)"
+                      ],
+                      "discrete": true,
+                      "reverse": false
+                    }
+                  ],
+                  "layers": [
+                    {
+                      "geom": "blank",
+                      "mapping": {},
+                      "inherit_aes": false,
+                      "tooltips": "none",
+                      "data_meta": {}
+                    }
+                  ],
+                  "metainfo_list": []
+                },
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "theme": {
+                    "axis_text": {
+                      "size": 16.0,
+                      "angle": 45.0,
+                      "blank": false
+                    }
+                  },
+                  "kind": "plot",
+                  "scales": [
+                    {
+                      "aesthetic": "x",
+                      "breaks": [
+                        "A",
+                        "B\nC",
+                        "D\n\nE",
+                        "F G H",
+                        "I\nJ K L M N\nO P",
+                        "\\(\\frac{Q+R}{S}\\)",
+                        "\\(\\frac{T}{U+V}\\)",
+                        "\\(\\frac{W}{X}\\)\n\\(\\frac{Y}{Z}\\)"
+                      ],
+                      "discrete": true,
+                      "reverse": false
+                    }
+                  ],
+                  "layers": [
+                    {
+                      "geom": "blank",
+                      "mapping": {},
+                      "inherit_aes": false,
+                      "tooltips": "none",
+                      "data_meta": {}
+                    }
+                  ],
+                  "metainfo_list": []
+                },
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "theme": {
+                    "axis_text": {
+                      "size": 16.0,
+                      "angle": 90.0,
+                      "blank": false
+                    }
+                  },
+                  "kind": "plot",
+                  "scales": [
+                    {
+                      "aesthetic": "x",
+                      "breaks": [
+                        "A",
+                        "B\nC",
+                        "D\n\nE",
+                        "F G H",
+                        "I\nJ K L M N\nO P",
+                        "\\(\\frac{Q+R}{S}\\)",
+                        "\\(\\frac{T}{U+V}\\)",
+                        "\\(\\frac{W}{X}\\)\n\\(\\frac{Y}{Z}\\)"
+                      ],
+                      "discrete": true,
+                      "reverse": false
+                    }
+                  ],
+                  "layers": [
+                    {
+                      "geom": "blank",
+                      "mapping": {},
+                      "inherit_aes": false,
+                      "tooltips": "none",
+                      "data_meta": {}
+                    }
+                  ],
+                  "metainfo_list": []
+                }
+              ]
+            }
+        """.trimIndent()
 
         return paint(parseJson(spec))
     }

@@ -12,9 +12,9 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.LineType
 import org.jetbrains.letsPlot.core.plot.base.render.svg.*
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineBoxMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
-import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
@@ -471,16 +471,16 @@ class TooltipBox(
             val titleComponent = Label(titleLine)
             titleComponent.addClassName(TooltipStyle.TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            val defaultMetrics = LineLayoutMetrics.ascentOnly(fontSize)
+            val defaultMetrics = LineBoxMetrics.ascentOnly(fontSize)
             val metricsByLine = estimateLineLayoutMetrics(titleLine, TooltipStyle.TOOLTIP_TITLE).map { it ?: defaultMetrics }
-            titleComponent.setTextLayout(TextLayout.fromLineMetrics(metricsByLine))
+            titleComponent.setTextLayout(TextBlockLayout.fromLineBoxes(metricsByLine))
             titleComponent.setFontSize(fontSize)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
         }
 
-        private fun estimateLineLayoutMetrics(line: String, className: String): List<LineLayoutMetrics?> {
+        private fun estimateLineLayoutMetrics(line: String, className: String): List<LineBoxMetrics?> {
             val style = styleSheet.getTextStyle(className)
             return line
                 .split("\n")
@@ -511,18 +511,18 @@ class TooltipBox(
             line: String,
             style: TextStyle,
             estimatedHeights: List<Double?>
-        ): List<LineLayoutMetrics?> {
+        ): List<LineBoxMetrics?> {
             val font = Font(
                 family = DefaultFontFamilyRegistry().get(style.family),
                 size = style.size.roundToInt(),
                 isBold = style.face.bold,
                 isItalic = style.face.italic
             )
-            val estimatedMetrics = RichText.measure(line, font).layout.lineMetrics
+            val estimatedMetrics = RichText.measure(line, font).layout.lineBoxes
             if (estimatedMetrics.size == estimatedHeights.size) {
                 // One scale for the whole block, not per line: keeps (ascent - descent) equal
                 // across lines so Label's baseline stacking stays consistent between plain and fraction lines.
-                val scale = estimatedMetrics.sumOf(LineLayoutMetrics::height).let { totalMetricsHeight ->
+                val scale = estimatedMetrics.sumOf(LineBoxMetrics::height).let { totalMetricsHeight ->
                     if (totalMetricsHeight > 0) {
                         estimatedHeights.filterNotNull().sum() / totalMetricsHeight
                     } else 1.0
@@ -531,7 +531,7 @@ class TooltipBox(
                     if (height == null) {
                         null
                     } else {
-                        LineLayoutMetrics(
+                        LineBoxMetrics(
                             metrics.ascent * scale + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS,
                             metrics.descent * scale
                         )
@@ -590,9 +590,9 @@ class TooltipBox(
             }
 
             // calculate LineLayoutMetrics of original label/value lines
-            val defaultLabelMetrics = LineLayoutMetrics.ascentOnly(labelFontSize)
-            val defaultValueMetrics = LineLayoutMetrics.ascentOnly(valueFontSize)
-            val metricsByLine: List<Pair<List<LineLayoutMetrics>?, List<LineLayoutMetrics>>> = lines.map { line ->
+            val defaultLabelMetrics = LineBoxMetrics.ascentOnly(labelFontSize)
+            val defaultValueMetrics = LineBoxMetrics.ascentOnly(valueFontSize)
+            val metricsByLine: List<Pair<List<LineBoxMetrics>?, List<LineBoxMetrics>>> = lines.map { line ->
                 Pair(
                     line.label?.let {
                         estimateLineLayoutMetrics(it, TooltipStyle.TOOLTIP_LABEL).map { labelMetrics -> labelMetrics ?: defaultLabelMetrics }
@@ -605,8 +605,8 @@ class TooltipBox(
             metricsByLine.zip(components).onEach { (metrics, component) ->
                 val (labelMetrics, valueMetrics) = metrics
                 val (labelComponent, valueComponent) = component
-                labelMetrics?.let { labelComponent?.setTextLayout(TextLayout.fromLineMetrics(it)) }
-                valueComponent.setTextLayout(TextLayout.fromLineMetrics(valueMetrics))
+                labelMetrics?.let { labelComponent?.setTextLayout(TextBlockLayout.fromLineBoxes(it)) }
+                valueComponent.setTextLayout(TextBlockLayout.fromLineBoxes(valueMetrics))
             }
 
             val rawBBoxes = components.map { (label, value) -> getBBox(label) to getBBox(value) }
@@ -618,8 +618,8 @@ class TooltipBox(
             val defaultLineHeight = metricsByLine
                 .flatMap { (labelMetrics, valueMetrics) ->
                     listOfNotNull(
-                        labelMetrics?.maxOfOrNull(LineLayoutMetrics::height),
-                        valueMetrics.maxOfOrNull(LineLayoutMetrics::height)
+                        labelMetrics?.maxOfOrNull(LineBoxMetrics::height),
+                        valueMetrics.maxOfOrNull(LineBoxMetrics::height)
                     )
                 }
                 .maxOrNull()

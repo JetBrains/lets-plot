@@ -175,7 +175,7 @@ class AxisComponent(
         tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
 
         val labelSpec = PlotLabelSpecFactory.axisTick(axisTheme)
-        val textLayout = labelSpec.measureLayout(label)
+        val textLayout = labelSpec.layout(label).layout
         tickLabel.setFontSize(labelSpec.font.size.toDouble())
         tickLabel.setTextLayout(textLayout)
         tickLabel.rotate(labelAdjustments.rotationDegree)
@@ -185,7 +185,7 @@ class AxisComponent(
         // aligned with the top of a plain-text label.
         val firstAscentExcess = if (orientation.isHorizontal) {
             val fontSize = labelSpec.font.size.toDouble()
-            (textLayout.firstLineMetrics.ascent - fontSize).coerceAtLeast(0.0)
+            (textLayout.firstLineBox.ascent - fontSize).coerceAtLeast(0.0)
         } else {
             0.0
         }

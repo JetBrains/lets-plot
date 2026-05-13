@@ -280,7 +280,7 @@ internal class Latex(
         override fun estimateWidth(font: Font): Double =
             node.estimateWidth(font)
 
-        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics =
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics =
             node.estimateLineLayoutMetrics(font)
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -294,8 +294,8 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
-        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
-            return LineLayoutMetrics.plainText(font)
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            return LineBoxMetrics.plainText(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -309,10 +309,10 @@ internal class Latex(
             return children.sumOf { it.estimateWidth(font) }
         }
 
-        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
-            return LineLayoutMetrics.mergeOnBaseline(
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            return LineBoxMetrics.mergeOnBaseline(
                 metrics = children.map { it.estimateLineLayoutMetrics(font) },
-                defaultIfEmpty = LineLayoutMetrics.plainText(font)
+                defaultIfEmpty = LineBoxMetrics.plainText(font)
             )
         }
 
@@ -333,7 +333,7 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
             return content.estimateLineLayoutMetrics(font)
         }
 
@@ -348,7 +348,7 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
             return content.estimateLineLayoutMetrics(font)
         }
 
@@ -378,12 +378,12 @@ internal class Latex(
             return max(numerator.estimateWidth(font), denominator.estimateWidth(font))
         }
 
-        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
             val numeratorMetrics = numerator.estimateLineLayoutMetrics(font)
             val denominatorMetrics = denominator.estimateLineLayoutMetrics(font)
             val numeratorBaselineShift = (barGlyphOffset + fractionGap + numeratorBottomAllowance) * font.size
             val denominatorBaselineShift = denominatorMetrics.ascent + (fractionGap - barGlyphOffset) * font.size
-            return LineLayoutMetrics(
+            return LineBoxMetrics(
                 ascent = numeratorMetrics.ascent + numeratorBaselineShift,
                 descent = denominatorMetrics.descent + denominatorBaselineShift
             )

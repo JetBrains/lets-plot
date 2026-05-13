@@ -13,13 +13,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
-import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.roundToInt
 
@@ -30,24 +27,26 @@ class Label(
     private val markdown: Boolean = false
 ) : SvgComponent() {
     private val myLines: List<SvgTextElement>
+    private val myLineAnchors = mutableListOf<HorizontalAnchor>()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
-    private val myMetrics = mutableListOf<LineLayoutMetrics>()
-    private var myLineInterval: Double = 0.0
+    private var myTextLayout: TextBlockLayout? = null
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
     private var yStart = 0.0
 
     init {
-        myLines = getLines()
+        val renderedLines = renderLines()
+        myLines = renderedLines.map(RichText.RenderedLine::element)
+        myLineAnchors += renderedLines.map(RichText.RenderedLine::anchor)
         myLines.forEach(rootGroup.children()::add)
         updateStyleAttribute()
         verticalRepositionLines()
-        horizontalRepositionLines(updateHorizontalAnchor = true)
+        horizontalRepositionLines()
     }
 
     override fun buildComponent() {
@@ -72,7 +71,7 @@ class Label(
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myHorizontalAnchor = anchor
-        horizontalRepositionLines(updateHorizontalAnchor = true)
+        horizontalRepositionLines()
     }
 
     fun setVerticalAnchor(anchor: VerticalAnchor) {
@@ -137,25 +136,22 @@ class Label(
         verticalRepositionLines()
     }
 
-    fun setTextLayout(textLayout: TextLayout) {
-        myMetrics.clear()
+    fun setTextLayout(textLayout: TextBlockLayout) {
         if (myLines.isEmpty()) return
-        require(textLayout.lineMetrics.size == linesCount()) { "Line layout metrics count must match line count." }
-        myMetrics.addAll(textLayout.lineMetrics)
-        myLineInterval = textLayout.lineInterval
+        require(textLayout.lineBoxes.size == linesCount()) { "Line layout metrics count must match line count." }
+        myTextLayout = textLayout
         verticalRepositionLines()
     }
 
     private fun verticalRepositionLines() {
-        if (myMetrics.isEmpty()) {
+        val textLayout = myTextLayout
+        if (textLayout == null) {
             myLines.forEach { it.y().set(yStart) }
             return
         }
 
-        val baselineOffsets = myMetrics
-            .zipWithNext { prev, next -> prev.descent + next.ascent + myLineInterval }
-            .runningFold(0.0, Double::plus)
-        val totalBaselineShift = baselineOffsets.last()
+        val baselineOffsets = textLayout.baselineOffsets
+        val totalBaselineShift = textLayout.baselineSpan
 
         val firstLineY = yStart - when (myVerticalAnchor) {
             VerticalAnchor.TOP -> 0.0
@@ -169,45 +165,37 @@ class Label(
         }
     }
 
-    // After changing some font properties, RichText may regenerate the line subtree
-    // with updated tspan x/text values. Keep the original line elements, but replace
-    // their direct children so line-level state (style, classes, y, text-anchor) stays intact.
-    private fun horizontalRepositionLines(updateHorizontalAnchor: Boolean = false) {
-        // Update rendered subtree inside each line.
-        val recalculatedLines = getLines()
-        require(myLines.size == recalculatedLines.size) { "Line counts must be the same." }
-        (myLines zip recalculatedLines).forEach { (originalLine, recalculatedLine) ->
-            originalLine.replaceChildrenFrom(recalculatedLine)
+    // After changing font properties or anchor policy, RichText may regenerate the line subtree.
+    // Keep the original line elements, but replace their direct children so line-level state
+    // (style, classes, y, text-anchor) stays intact.
+    private fun horizontalRepositionLines() {
+        val renderedLines = renderLines()
+        require(myLines.size == renderedLines.size) { "Line counts must be the same." }
+        myLineAnchors.clear()
+        myLineAnchors += renderedLines.map(RichText.RenderedLine::anchor)
+        (myLines zip renderedLines).forEach { (originalLine, renderedLine) ->
+            originalLine.replaceChildrenFrom(renderedLine.element)
         }
-        // Update x-attribute of lines
         xStart?.let { newX -> myLines.forEach { line -> line.x().set(newX) } }
-        // Update text-anchor attribute of lines
-        if (updateHorizontalAnchor) {
-            updateHorizontalAnchor()
-        }
+        updateHorizontalAnchor()
     }
 
     private fun updateHorizontalAnchor() {
-        myLines.forEach { line ->
-            val firstTSpanHasExplicitX = findFirstTSpan(line)?.x()?.get() != null
-            val anchorAttr = when {
-                firstTSpanHasExplicitX -> toTextAnchor(HorizontalAnchor.LEFT)
-                else -> toTextAnchor(myHorizontalAnchor)
-            }
-            line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchorAttr)
+        (myLines zip myLineAnchors).forEach { (line, anchor) ->
+            line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
         }
     }
 
     fun linesCount() = myLines.size
 
-    private fun getLines(): List<SvgTextElement> {
+    private fun renderLines(): List<RichText.RenderedLine> {
         val font = Font(
             family = FONT_FAMILY_REGISTRY.get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
             size = myFontSize.roundToInt(),
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
         )
-        return RichText.toSvg(
+        return RichText.renderLines(
             text,
             font,
             wrapWidth,
@@ -221,12 +209,6 @@ class Label(
         private val FONT_FAMILY_REGISTRY = DefaultFontFamilyRegistry()
 
         fun splitLines(text: String) = text.split('\n').map(String::trim)
-
-        private fun findFirstTSpan(root: SvgNode): SvgTSpanElement? =
-            when (root) {
-                is SvgTSpanElement -> root
-                else -> root.children().firstNotNullOfOrNull { findFirstTSpan(it) }
-            }
 
         private fun SvgTextElement.replaceChildrenFrom(other: SvgTextElement) {
             val newChildren = other.children().toList()

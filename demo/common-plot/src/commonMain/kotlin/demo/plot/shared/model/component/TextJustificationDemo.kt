@@ -16,8 +16,8 @@ import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
-import org.jetbrains.letsPlot.core.plot.base.render.text.LineLayoutMetrics
-import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineBoxMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Defaults.FONT_FAMILY_NORMAL
 import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
@@ -106,7 +106,7 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
 
             val lineHeight = FONT_SIZE
             val lineFont = Font(FontFamily(FONT_FAMILY_NORMAL, false), FONT_SIZE.toInt())
-            val textLayout = PlotLabelSpec(lineFont).measureLayout(text)
+            val textLayout = PlotLabelSpec(lineFont).layout(text).layout
             val (position, hAnchor) = applyJustification(
                 boundRect,
                 lineFont.size.toDouble(),
@@ -114,7 +114,7 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 justification,
                 rotation
             )
-            label.setTextLayout(TextLayout.uniform(label.linesCount(), LineLayoutMetrics.ascentOnly(lineHeight)))
+            label.setTextLayout(TextBlockLayout.uniform(label.linesCount(), LineBoxMetrics.ascentOnly(lineHeight)))
             label.setHorizontalAnchor(hAnchor)
             rotation?.angle?.let(label::rotate)
             label.moveTo(position)

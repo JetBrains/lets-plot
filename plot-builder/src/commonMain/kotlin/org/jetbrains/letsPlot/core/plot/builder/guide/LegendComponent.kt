@@ -67,7 +67,7 @@ class LegendComponent(
         val labelSpec = PlotLabelSpecFactory.legendItem(theme)
         label.addClassName(Style.LEGEND_ITEM)
         label.setFontSize(labelSpec.font.size.toDouble())
-        label.setTextLayout(labelSpec.measureLayout(br.label))
+        label.setTextLayout(labelSpec.layout(br.label).layout)
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(labelBox.origin)

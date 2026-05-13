@@ -71,7 +71,7 @@ internal class HorizontalMultilineLabelsLayout(
         }
 
         val linesCount = boundsByShelfIndex.size
-        val shelfLineInterval = labelSpec.defaultLineHeight * (LINE_HEIGHT - 1)
+        val shelfLineInterval = labelSpec.plainTextLineBoxHeight * (LINE_HEIGHT - 1)
         val shelfOffsets = shelfOffsets(boundsByShelfIndex.map(DoubleRectangle::height), shelfLineInterval)
         for ((shelfBounds, shelfOffset) in boundsByShelfIndex zip shelfOffsets) {
             bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, shelfOffset)))

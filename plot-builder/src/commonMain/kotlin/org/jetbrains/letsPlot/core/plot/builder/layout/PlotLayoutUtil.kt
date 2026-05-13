@@ -21,7 +21,7 @@ object PlotLayoutUtil {
     internal fun plotInsets(plotInset: Thickness) = DoubleInsets(plotInset.leftTop, plotInset.rightBottom)
 
     internal fun textDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
-        return labelSpec.measure(text).totalSize
+        return labelSpec.layout(text).totalSize
     }
 
     private fun titleThickness(title: String?, labelSpec: LabelSpec, margin: Double): Double {

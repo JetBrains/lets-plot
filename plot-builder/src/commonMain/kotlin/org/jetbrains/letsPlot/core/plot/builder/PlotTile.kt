@@ -226,7 +226,7 @@ internal class PlotTile constructor(
         }
 
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val textLayout = labelSpec.measureLayout(label)
+        val textLayout = labelSpec.layout(label).layout
         val className = if (isColumnLabel) "x" else "y"
         val themeAngle = theme.stripTextAngle()
         val defaultRotation = if (isColumnLabel) null else TextRotation.CLOCKWISE

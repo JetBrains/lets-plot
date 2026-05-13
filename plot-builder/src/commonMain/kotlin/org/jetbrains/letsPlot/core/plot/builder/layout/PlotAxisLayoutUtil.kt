@@ -29,7 +29,7 @@ internal object PlotAxisLayoutUtil {
     }
 
     private fun initialTickLabelSize(orientation: Orientation, tickLabelSpec: LabelSpec): Double {
-        val measuredText = tickLabelSpec.measure(INITIAL_TICK_LABEL_IN_CHARS)
+        val measuredText = tickLabelSpec.layout(INITIAL_TICK_LABEL_IN_CHARS)
         return if (orientation.isHorizontal)
             measuredText.totalHeight
         else

@@ -217,7 +217,7 @@ internal object PlotSvgComponentHelper {
     ) {
         if (text == null) return
 
-        val textLayout = labelSpec.measureLayout(text)
+        val textLayout = labelSpec.layout(text).layout
         val textLabel = Label(text, markdown = labelSpec.markdown)
         textLabel.addClassName(className)
         val fontSize = labelSpec.font.size.toDouble()

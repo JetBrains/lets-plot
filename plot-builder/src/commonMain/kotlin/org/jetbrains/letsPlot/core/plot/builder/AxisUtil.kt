@@ -213,8 +213,8 @@ object AxisUtil {
             rotationDegree: Double,
             labelOffset: DoubleVector
         ): DoubleRectangle {
-            val measuredText = labelSpec.measure(label)
-            val labelNormalExtent = DoubleVector(measuredText.width, measuredText.layout.firstLineMetrics.height)
+            val measuredText = labelSpec.layout(label)
+            val labelNormalExtent = measuredText.totalSize
             val wh = labelNormalExtent.flipIf(isVertical(rotationDegree))
             val origin = if (horizontalAxis) DoubleVector(loc, 0.0) else DoubleVector(0.0, loc)
             return DoubleRectangle(origin, wh)

@@ -41,8 +41,8 @@ internal object Hyperlink {
             return widthCalculator(text, font)
         }
 
-        override fun estimateLineLayoutMetrics(font: Font): LineLayoutMetrics {
-            return LineLayoutMetrics.plainText(font)
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            return LineBoxMetrics.plainText(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {

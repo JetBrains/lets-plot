@@ -7,16 +7,12 @@ package org.jetbrains.letsPlot.core.plot.builder.presentation
 
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.MeasuredText
-import org.jetbrains.letsPlot.core.plot.base.render.text.TextLayout
 
 interface LabelSpec {
     val font: Font
     val markdown: Boolean
 
-    val defaultLineHeight: Double
+    val plainTextLineBoxHeight: Double
 
-    fun measure(labelText: String, lineInterval: Double = 0.0): MeasuredText
-
-    fun measureLayout(labelText: String, lineInterval: Double = 0.0): TextLayout =
-        measure(labelText, lineInterval).layout
+    fun layout(labelText: String, lineSpacing: Double = 0.0): MeasuredText
 }
