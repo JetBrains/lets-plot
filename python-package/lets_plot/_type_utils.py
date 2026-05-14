@@ -7,14 +7,18 @@ import decimal
 import importlib
 import json
 import math
+import sys
 from datetime import datetime, date, time, timezone, timedelta
 from typing import Any, Union, Type, Dict
 
 
 class LazyModule:
     """
-    A wrapper for optional libraries that delays importing until a specific
-    class or function is actually needed.
+    Lazy wrapper for optional libraries.
+
+    Attribute access and truthiness checks import the wrapped module. The
+    type-check helpers do not import: they either inspect already-loaded
+    modules or use type metadata from the value itself.
     """
 
     def __init__(self, name: str):
@@ -34,60 +38,35 @@ class LazyModule:
             self._tried = True
         return self._module
 
+    @property
+    def is_loaded(self) -> bool:
+        """
+        Return True if the module is already loaded, without importing it.
+
+        If the module is found in sys.modules, cache it locally for later
+        attribute and type checks.
+        """
+        if self._module is not None:
+            return True
+
+        module = sys.modules.get(self._name)
+        if module is not None:
+            self._module = module
+            self._tried = True
+            return True
+        return False
+
     def likely_defines(self, v: Any) -> bool:
         """
-        Check whether object `v` appears to originate from this lazy module or its subpackages,
-        without triggering an import of the underlying module.
+        Return True if `v` appears to be owned by this module, without importing it.
 
-        This is a non-invasive, heuristic check that inspects the object's type information
-        (MRO/module strings) to decide if the object is likely provided by the optional
-        dependency wrapped by this LazyModule instance.
-
-        Args:
-            v: Any Python object to test. Passing None will always return False.
-
-        Returns:
-            bool: True if `v`'s type (or any of its base types) is defined in the module
-                  identified by this LazyModule (self._name) or one of its subpackages.
-                  False otherwise.
-
-        Behavior summary:
-        - Never triggers an actual import of the wrapped module. This function is safe to
-          call during import-time or early startup where importing heavy optional dependencies
-          would be undesirable.
-        - If we previously attempted to import the module and that attempt failed
-          (self._tried is True and self._module is None), we treat this LazyModule as
-          "owns nothing" and return False immediately.
-        - Otherwise we delegate to _check_mro_strings(v), which inspects type(v).mro()
-          and compares parent.__module__ strings against self._name.
-
-        Examples:
-            # If the LazyModule wraps 'numpy' and v is an ndarray instance coming from numpy,
-            # this will return True (but it will not import numpy).
-            numpy = LazyModule('numpy')
-            lazy_is_module_obj(some_ndarray)  # -> True (heuristic from MRO/module strings)
-
-            # If module import was attempted and failed before, function returns False quickly.
-            lazy_mod = LazyModule('heavy_optional')
-            lazy_mod._tried = True
-            lazy_mod._module = None
-            lazy_mod.lazy_is_module_obj(obj)  # -> False
-
-        Notes and caveats:
-        - Because the check is based on strings in __module__, it is a heuristic and may
-          produce false positives if third-party code reuses module names, or false negatives
-          for some dynamic types. It is intended as a best-effort guard to avoid importing
-          optional dependencies unnecessarily.
-        - The function intentionally avoids any attribute access on `self` that could
-          trigger __getattr__ and import the module; it only reads lightweight flags and
-          uses type introspection on the object.
-        - This method does not catch exceptions from _check_mro_strings; that helper should
-          itself be safe (it catches AttributeError/TypeError).
+        This is a heuristic based on the value type's MRO module names. It is used
+        before library-specific conversions to prevent a loaded library from
+        applying broad helper APIs to values owned by another library.
         """
         if v is None:
             return False
 
-        # If we already tried to load the lib and it failed, it owns nothing.
         if self._tried and self._module is None:
             return False
 
@@ -95,19 +74,10 @@ class LazyModule:
 
     def lazy_is_instance(self, v: Any, module_classinfo: Union[str, Type]) -> bool:
         """
-        Check whether object `v` is an instance of the class described by
-        `module_classinfo`, but avoid importing the target module unless necessary.
+        Return True if `v` is an instance of `module_classinfo`, without importing.
 
-        This method supports two modes:
-        - Fast path: if the wrapped module has already been imported (self._module
-          is not None), resolve the requested class against that module and use
-          normal isinstance() checking.
-        - Lazy path: if the wrapped module is not yet imported, we first inspect
-          the object's MRO/module strings (via `lazy_is_module_obj`) to see if the
-          object appears to originate from this library (or its subpackages). Only
-          if that heuristic matches we attempt to resolve the class against `self`
-          which intentionally triggers the import (via __getattr__/_inst) and then
-          perform isinstance().
+        If the wrapped module is not already loaded, or if a string class path does
+        not exist in the loaded module version, return False.
 
         Args:
             v: The object to test.
@@ -119,64 +89,35 @@ class LazyModule:
         Returns:
             True if `v` is an instance of the resolved class, False otherwise.
 
-        Notes and behavior details:
-        - Passing an actual Type avoids any string resolution and is the simplest
-          case.
-        - The method is careful to avoid importing heavy optional libraries (e.g.
-          numpy, pandas) unless the object clearly originates from that library.
-          This keeps startup time and side-effects minimal.
-        - If the lazy path decides to resolve against `self`, that resolution will
-          trigger the actual import of the optional module and thus may raise
-          ImportError if the module is not installed. Such exceptions are not
-          caught here and will propagate to the caller.
-        - _resolve_class supports nested attribute strings (e.g. 'subpkg.Class').
-        - isinstance semantics are used, so subclass relationships are honored.
-        - If the module was attempted to be imported before and failed, the fast
-          path will treat it as not present and lazy_is_module_obj will return False
-          (so this method returns False).
-
         Example:
-            # Fast path (module already loaded)
-            numpy = LazyModule('numpy')
-            # assume numpy._module is a real module object here
-            lazy_is_instance(array_obj, 'ndarray')  -> uses numpy.ndarray
-
-            # Lazy path (module not loaded yet)
-            lazy_is_instance(array_obj, 'numpy.ndarray')  -> only imports numpy if
-            array_obj's module string indicates it came from 'numpy' or a subpackage.
-
-        Raises:
-            AttributeError: if the dotted class string cannot be resolved after the
-                module is imported.
-            ImportError: if the lazy path triggers an import and the module is missing.
+            # Does not import numpy just to answer False for non-numpy values.
+            # If array_obj is a NumPy array, numpy is already present in sys.modules.
+            LazyModule('numpy').lazy_is_instance(array_obj, 'ndarray')
         """
-        # Fast path: If module is already in memory
-        if self._module is not None:
-            target_cls = self._resolve_class(self._module, module_classinfo)
-            return isinstance(v, target_cls)
+        module = self._module if self.is_loaded else None
+        if module is None:
+            return False
 
-        # Lazy path: Only trigger import if the object's module string matches
-        if self.likely_defines(v):
-            # We use 'self' here to trigger the __getattr__ import logic
-            target_cls = self._resolve_class(self, module_classinfo)
-            return isinstance(v, target_cls)
-
-        return False
+        try:
+            target_cls = self._resolve_class(module, module_classinfo)
+        except AttributeError:
+            return False
+        return isinstance(v, target_cls)
 
     @staticmethod
-    def _resolve_class(root: Any, class_info: Union[str, Type]) -> Type:
-        """Helper to resolve strings (including nested 'a.b.C') into class objects."""
+    def _resolve_class(module: Any, class_info: Union[str, Type]) -> Type:
+        """Resolve strings such as 'DataFrame' or 'api.extensions.ExtensionArray'."""
         if not isinstance(class_info, str):
             return class_info
 
         # Handle nested attributes like 'numpy.ndarray'
-        curr = root
+        clazz = module
         for part in class_info.split("."):
-            curr = getattr(curr, part)
-        return curr
+            clazz = getattr(clazz, part)
+        return clazz
 
     def _check_mro_strings(self, v: Any) -> bool:
-        """Internal helper: Scans MRO strings. Does NOT trigger imports."""
+        """Check value ownership by scanning type MRO module names."""
         try:
             mro = type(v).mro()
         except (AttributeError, TypeError):
@@ -189,13 +130,13 @@ class LazyModule:
         return False
 
     def __getattr__(self, item):
-        """Triggered by direct access (e.g., pd.DataFrame). Triggers an actual import."""
+        """Resolve module attributes, importing the wrapped module if needed."""
         if self._inst is None:
             raise ImportError(f"Module '{self._name}' is required but not installed.")
         return getattr(self._inst, item)
 
     def __bool__(self):
-        """Triggered by 'if pd:'. Triggers an actual import to verify availability."""
+        """Import the wrapped module to verify that it is available."""
         return self._inst is not None
 
 
@@ -220,7 +161,10 @@ def is_ndarray(data) -> bool:
     if numpy.lazy_is_instance(data, 'ndarray'):
         return True
 
-    if jax.lazy_is_instance(data, 'numpy.ndarray'):
+    if jax.is_loaded and isinstance(data, jax.numpy.ndarray):
+        return True
+
+    if jax.lazy_is_instance(data, 'Array'):
         return True
 
     return False
@@ -310,6 +254,12 @@ def _standardize_value(v):
                 return standardize_dict(v.to_dict())
             if isinstance(v, polars.Series):
                 return _standardize_value(v.to_numpy())
+
+        # Modern JAX arrays may be jax.Array without reporting a jax.* implementation module.
+        # Do not use jax.likely_defines() - can be provided by jaxlib and won't pass the check.
+        # Use string lookup because the dependency floor (>=0.3.25) still allows JAX versions without jax.Array.
+        if jax.lazy_is_instance(v, 'Array'):
+            return _standardize_value(numpy.array(v))
 
         if jax.likely_defines(v):
             if isinstance(v, jax.numpy.ndarray):
