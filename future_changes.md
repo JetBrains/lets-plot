@@ -47,6 +47,11 @@
   - `breaks`, `labels`, `lablim`, `format`
 
 
+- LaTeX: support for fractions (`\frac{...}{...}`) in plot text elements.
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/latex_fractions.html).
+
+
 - Memo for Kotlin API users:
   - Added WasmJS support [[LPK-296](https://github.com/JetBrains/lets-plot-kotlin/issues/296)], [[LPC-52](https://github.com/JetBrains/lets-plot-compose/issues/52)].
 
