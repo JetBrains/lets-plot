@@ -112,7 +112,7 @@ class PlotSvgComponent constructor(
             }
             errorLabel.textColor().set(textColor)
             errorLabel.setFontSize(12.0)
-            errorLabel.setTextLayout(TextBlockLayout.uniform(errorLabel.linesCount(), LineBoxMetrics.ascentOnly(16.0)))
+            errorLabel.setTextLayout(TextBlockLayout.uniform(errorLabel.linesCount(), LineBoxMetrics.fromBoxHeight(16.0)))
             errorLabel.setFontWeight("normal")
             errorLabel.setFontStyle("normal")
             errorLabel.setHorizontalAnchor(HorizontalAnchor.MIDDLE)

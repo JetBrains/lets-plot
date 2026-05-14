@@ -29,7 +29,7 @@ internal class TextLegendKeyElementFactory :
 
         val label = Label("a")
         TextUtil.decorateLabelStyle(label, p, 1.0, true)
-        label.setTextLayout(TextBlockLayout.uniform(label.linesCount(), LineBoxMetrics.ascentOnly(fontSize(p, 1.0))))
+        label.setTextLayout(TextBlockLayout.uniform(label.linesCount(), LineBoxMetrics.fromBoxHeight(fontSize(p, 1.0))))
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.rotate(angle(p.angle()!!))

@@ -63,7 +63,7 @@ class RasterGeom : GeomBase() {
             val label = Label(text)
             label.textColor().set(Color.DARK_MAGENTA.withOpacity(0.5))
             label.setFontSize(12.0)
-            label.setTextLayout(TextBlockLayout.uniform(label.linesCount(), LineBoxMetrics.ascentOnly(16.0)))
+            label.setTextLayout(TextBlockLayout.uniform(label.linesCount(), LineBoxMetrics.fromBoxHeight(16.0)))
             label.setFontWeight("bold")
             label.setHorizontalAnchor(HorizontalAnchor.MIDDLE)
             label.setVerticalAnchor(VerticalAnchor.CENTER)

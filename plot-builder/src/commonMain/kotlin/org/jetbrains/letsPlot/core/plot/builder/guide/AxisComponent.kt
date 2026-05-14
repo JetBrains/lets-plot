@@ -181,15 +181,15 @@ class AxisComponent(
         tickLabel.rotate(labelAdjustments.rotationDegree)
 
         // On a horizontal axis, push the label down by the first line's extra
-        // ascent (e.g. a LaTeX fraction's numerator) so its visible top stays
+        // top-to-baseline distance (e.g. a LaTeX fraction's numerator) so its visible top stays
         // aligned with the top of a plain-text label.
-        val firstAscentExcess = if (orientation.isHorizontal) {
+        val firstTopToBaselineExcess = if (orientation.isHorizontal) {
             val fontSize = labelSpec.font.size.toDouble()
-            (textLayout.firstLineBox.ascent - fontSize).coerceAtLeast(0.0)
+            (textLayout.firstLineBox.topToBaseline - fontSize).coerceAtLeast(0.0)
         } else {
             0.0
         }
-        tickLabel.moveTo(labelOffset.x, labelOffset.y + firstAscentExcess)
+        tickLabel.moveTo(labelOffset.x, labelOffset.y + firstTopToBaselineExcess)
 
         return tickLabel.rootGroup
     }

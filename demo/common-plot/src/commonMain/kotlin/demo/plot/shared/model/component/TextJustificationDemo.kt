@@ -114,7 +114,7 @@ class TextJustificationDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 justification,
                 rotation
             )
-            label.setTextLayout(TextBlockLayout.uniform(label.linesCount(), LineBoxMetrics.ascentOnly(lineHeight)))
+            label.setTextLayout(TextBlockLayout.uniform(label.linesCount(), LineBoxMetrics.fromBoxHeight(lineHeight)))
             label.setHorizontalAnchor(hAnchor)
             rotation?.angle?.let(label::rotate)
             label.moveTo(position)

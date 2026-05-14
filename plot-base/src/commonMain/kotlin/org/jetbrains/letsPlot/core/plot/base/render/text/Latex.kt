@@ -382,10 +382,11 @@ internal class Latex(
             val numeratorMetrics = numerator.estimateLineLayoutMetrics(font)
             val denominatorMetrics = denominator.estimateLineLayoutMetrics(font)
             val numeratorBaselineShift = (barGlyphOffset + fractionGap + numeratorBottomAllowance) * font.size
-            val denominatorBaselineShift = denominatorMetrics.ascent + (fractionGap - barGlyphOffset) * font.size
+            val denominatorBaselineShift = denominatorMetrics.topToBaseline + (fractionGap - barGlyphOffset) * font.size
+            val topToBaseline = numeratorMetrics.topToBaseline + numeratorBaselineShift
             return LineBoxMetrics(
-                ascent = numeratorMetrics.ascent + numeratorBaselineShift,
-                descent = denominatorMetrics.descent + denominatorBaselineShift
+                boxHeight = topToBaseline + denominatorMetrics.bottomToBaseline + denominatorBaselineShift,
+                topToBaseline = topToBaseline
             )
         }
 
@@ -397,8 +398,8 @@ internal class Latex(
 
             // Baseline positions relative to the original line baseline.
             val numeratorBaselineEm = -(barGlyphOffset + fractionGap + numeratorBottomAllowance)
-            val denominatorAscentEm = denominator.estimateLineLayoutMetrics(font).ascent / max(1, font.size)
-            val denominatorBaselineEm = denominatorAscentEm + fractionGap - barGlyphOffset
+            val denominatorTopToBaselineEm = denominator.estimateLineLayoutMetrics(font).topToBaseline / max(1, font.size)
+            val denominatorBaselineEm = denominatorTopToBaselineEm + fractionGap - barGlyphOffset
             val numeratorDy = formatEm(numeratorBaselineEm)
             val denominatorDy = formatEm(denominatorBaselineEm - numeratorBaselineEm)
             // Bar baseline lands at y = barBaselineShift instead of 0; restoreBaselineTSpan undoes it.

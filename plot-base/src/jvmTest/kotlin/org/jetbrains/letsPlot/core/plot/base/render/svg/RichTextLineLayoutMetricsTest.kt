@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.data.Offset.offset
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineBoxMetrics
@@ -22,9 +23,12 @@ class RichTextLineLayoutMetricsTest {
             font = DEF_FONT
         ).layout.lineBoxes
 
-        assertThat(layoutMetrics).containsExactly(
-            LineBoxMetrics(16.0, 0.0),
-            LineBoxMetrics(16.0, 0.0)
+        assertLineBoxMetrics(
+            actual = layoutMetrics,
+            expected = listOf(
+                LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0),
+                LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0)
+            )
         )
     }
 
@@ -35,9 +39,12 @@ class RichTextLineLayoutMetricsTest {
             font = DEF_FONT
         ).layout.lineBoxes
 
-        assertThat(layoutMetrics).containsExactly(
-            LineBoxMetrics(16.0, 0.0),
-            LineBoxMetrics(23.36, 12.16)
+        assertLineBoxMetrics(
+            actual = layoutMetrics,
+            expected = listOf(
+                LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0),
+                LineBoxMetrics(boxHeight = 35.52, topToBaseline = 23.36)
+            )
         )
     }
 
@@ -48,9 +55,12 @@ class RichTextLineLayoutMetricsTest {
             font = DEF_FONT
         ).layout.lineBoxes
 
-        assertThat(layoutMetrics).containsExactly(
-            LineBoxMetrics(23.36, 12.16),
-            LineBoxMetrics(16.0, 0.0)
+        assertLineBoxMetrics(
+            actual = layoutMetrics,
+            expected = listOf(
+                LineBoxMetrics(boxHeight = 35.52, topToBaseline = 23.36),
+                LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0)
+            )
         )
     }
 
@@ -59,7 +69,14 @@ class RichTextLineLayoutMetricsTest {
         val label = Label("A\n\\( \\frac{B}{C} \\)")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.setTextLayout(TextBlockLayout.fromLineBoxes(listOf(LineBoxMetrics(16.0, 0.0), LineBoxMetrics(24.0, 8.0))))
+        label.setTextLayout(
+            TextBlockLayout.fromLineBoxes(
+                listOf(
+                    LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0),
+                    LineBoxMetrics(boxHeight = 32.0, topToBaseline = 24.0)
+                )
+            )
+        )
 
         assertThat(lineYPositions(label)).containsExactly(88.0, 112.0)
     }
@@ -69,7 +86,14 @@ class RichTextLineLayoutMetricsTest {
         val label = Label("\\( \\frac{A}{B} \\)\nC")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
-        label.setTextLayout(TextBlockLayout.fromLineBoxes(listOf(LineBoxMetrics(24.0, 8.0), LineBoxMetrics(16.0, 0.0))))
+        label.setTextLayout(
+            TextBlockLayout.fromLineBoxes(
+                listOf(
+                    LineBoxMetrics(boxHeight = 32.0, topToBaseline = 24.0),
+                    LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0)
+                )
+            )
+        )
 
         assertThat(lineYPositions(label)).containsExactly(88.0, 112.0)
     }
@@ -79,7 +103,14 @@ class RichTextLineLayoutMetricsTest {
         val label = Label("A\n\\( \\frac{B}{C} \\)")
         label.setY(100.0)
         label.setVerticalAnchor(Text.VerticalAnchor.TOP)
-        label.setTextLayout(TextBlockLayout.fromLineBoxes(listOf(LineBoxMetrics(16.0, 0.0), LineBoxMetrics(24.0, 8.0))))
+        label.setTextLayout(
+            TextBlockLayout.fromLineBoxes(
+                listOf(
+                    LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0),
+                    LineBoxMetrics(boxHeight = 32.0, topToBaseline = 24.0)
+                )
+            )
+        )
 
         assertThat(lineYPositions(label)).containsExactly(100.0, 124.0)
     }
@@ -88,14 +119,27 @@ class RichTextLineLayoutMetricsTest {
     fun textBlockLayoutExposesBaselineOffsetsAndSpan() {
         val layout = TextBlockLayout.fromLineBoxes(
             listOf(
-                LineBoxMetrics(16.0, 0.0),
-                LineBoxMetrics(24.0, 8.0)
+                LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0),
+                LineBoxMetrics(boxHeight = 32.0, topToBaseline = 24.0)
             )
         )
 
         assertThat(layout.baselineOffsets).containsExactly(0.0, 24.0)
         assertThat(layout.baselineSpan).isEqualTo(24.0)
         assertThat(layout.blockHeight).isEqualTo(48.0)
+    }
+
+    @Test
+    fun mergeOnBaselinePreservesMaxTopAndBottomExtents() {
+        val merged = LineBoxMetrics.mergeOnBaseline(
+            metrics = listOf(
+                LineBoxMetrics(boxHeight = 16.0, topToBaseline = 16.0),
+                LineBoxMetrics(boxHeight = 35.52, topToBaseline = 23.36)
+            ),
+            defaultIfEmpty = LineBoxMetrics.fromBoxHeight(1.0)
+        )
+
+        assertThat(merged).isEqualTo(LineBoxMetrics(boxHeight = 35.52, topToBaseline = 23.36))
     }
 
     @Test
@@ -124,6 +168,14 @@ class RichTextLineLayoutMetricsTest {
             @Suppress("UNCHECKED_CAST")
             val lines = label.rootGroup.children() as List<SvgTextElement>
             return lines.map { it.y().get()!! }
+        }
+
+        private fun assertLineBoxMetrics(actual: List<LineBoxMetrics>, expected: List<LineBoxMetrics>) {
+            assertThat(actual).hasSameSizeAs(expected)
+            (actual zip expected).forEach { (actualMetrics, expectedMetrics) ->
+                assertThat(actualMetrics.boxHeight).isCloseTo(expectedMetrics.boxHeight, offset(1e-9))
+                assertThat(actualMetrics.topToBaseline).isCloseTo(expectedMetrics.topToBaseline, offset(1e-9))
+            }
         }
     }
 }

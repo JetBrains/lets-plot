@@ -24,13 +24,13 @@ class TextBlockLayout internal constructor(
 
     val baselineOffsets: List<Double>
         get() = lineBoxes
-            .zipWithNext { prev, next -> prev.descent + next.ascent + lineSpacing }
+            .zipWithNext { prev, next -> prev.bottomToBaseline + next.topToBaseline + lineSpacing }
             .runningFold(0.0, Double::plus)
 
     val baselineSpan: Double get() = baselineOffsets.last()
 
     val blockHeight: Double
-        get() = lineBoxes.sumOf(LineBoxMetrics::height) + lineSpacing * (lineBoxes.size - 1)
+        get() = lineBoxes.sumOf(LineBoxMetrics::boxHeight) + lineSpacing * (lineBoxes.size - 1)
 
     companion object {
         fun uniform(

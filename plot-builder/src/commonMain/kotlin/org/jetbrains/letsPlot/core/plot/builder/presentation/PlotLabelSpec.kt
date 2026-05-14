@@ -16,7 +16,7 @@ class PlotLabelSpec(
     override val markdown: Boolean = false
 ) : LabelSpec {
 
-    override val plainTextLineBoxHeight: Double get() = LineBoxMetrics.plainText(font).height
+    override val plainTextLineBoxHeight: Double get() = LineBoxMetrics.plainText(font).boxHeight
 
     override fun layout(labelText: String, lineSpacing: Double): MeasuredText =
         RichText.measure(labelText, font, markdown = markdown, lineInterval = lineSpacing)

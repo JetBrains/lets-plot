@@ -8,27 +8,33 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 import org.jetbrains.letsPlot.commons.values.Font
 
 /**
- * Baseline-relative extents of one laid-out line box.
+ * Box-local vertical metrics of one laid-out line box.
  *
  * These values describe the line box used for placement and baseline-to-baseline
  * stacking. They are not raw font metrics returned by a shaping or rasterization
  * engine.
  */
 data class LineBoxMetrics(
-    val ascent: Double,   // Distance from the baseline to the top of the line box.
-    val descent: Double   // Distance from the baseline to the bottom of the line box.
+    val boxHeight: Double,        // Total height of the line box.
+    val topToBaseline: Double     // Distance from the line-box top to its placement baseline.
 ) {
-    val height: Double get() = ascent + descent
+    init {
+        require(boxHeight >= 0.0) { "boxHeight must be non-negative." }
+        require(topToBaseline >= 0.0) { "topToBaseline must be non-negative." }
+        require(topToBaseline <= boxHeight) { "topToBaseline must not exceed boxHeight." }
+    }
+
+    val bottomToBaseline: Double get() = boxHeight - topToBaseline
 
     companion object {
         // Creates a line box whose whole height lives above the baseline.
-        fun ascentOnly(height: Double): LineBoxMetrics {
-            return LineBoxMetrics(height, 0.0)
+        fun fromBoxHeight(boxHeight: Double): LineBoxMetrics {
+            return LineBoxMetrics(boxHeight, boxHeight)
         }
 
         // Returns the default line box used for a plain-text line in the current layout model.
         fun plainText(font: Font): LineBoxMetrics {
-            return ascentOnly(font.size.toDouble())
+            return fromBoxHeight(font.size.toDouble())
         }
 
         internal fun mergeOnBaseline(
@@ -37,9 +43,10 @@ data class LineBoxMetrics(
         ): LineBoxMetrics {
             if (metrics.isEmpty()) return defaultIfEmpty
             return metrics.reduce { left, right ->
+                val mergedTopToBaseline = maxOf(left.topToBaseline, right.topToBaseline)
                 LineBoxMetrics(
-                    ascent = maxOf(left.ascent, right.ascent),
-                    descent = maxOf(left.descent, right.descent)
+                    boxHeight = mergedTopToBaseline + maxOf(left.bottomToBaseline, right.bottomToBaseline),
+                    topToBaseline = mergedTopToBaseline
                 )
             }
         }

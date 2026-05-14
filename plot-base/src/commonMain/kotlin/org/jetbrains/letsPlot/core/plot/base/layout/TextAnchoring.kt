@@ -16,13 +16,13 @@ import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 object TextAnchoring {
     internal fun offsetEmBoxTop(textLayout: TextBlockLayout, fontSize: Double): Double {
         val first = textLayout.firstLineBox
-        return first.ascent - EM_BOX_TOP_NUDGE * fontSize
+        return first.topToBaseline - EM_BOX_TOP_NUDGE * fontSize
     }
 
     internal fun offsetCap(vjust: Double, textLayout: TextBlockLayout, fontSize: Double): Double {
         val first = textLayout.firstLineBox
         val totalHeight = textLayout.blockHeight
-        return first.ascent + (vjust - 1) * totalHeight - CAP_VJUST_NUDGE * vjust * fontSize
+        return first.topToBaseline + (vjust - 1) * totalHeight - CAP_VJUST_NUDGE * vjust * fontSize
     }
 
     fun offsetCap(anchor: VerticalAnchor, textLayout: TextBlockLayout, fontSize: Double): Double {

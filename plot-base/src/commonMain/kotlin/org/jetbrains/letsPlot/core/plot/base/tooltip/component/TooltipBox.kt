@@ -471,7 +471,7 @@ class TooltipBox(
             val titleComponent = Label(titleLine)
             titleComponent.addClassName(TooltipStyle.TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
-            val defaultMetrics = LineBoxMetrics.ascentOnly(fontSize)
+            val defaultMetrics = LineBoxMetrics.fromBoxHeight(fontSize)
             val metricsByLine = estimateLineLayoutMetrics(titleLine, TooltipStyle.TOOLTIP_TITLE).map { it ?: defaultMetrics }
             titleComponent.setTextLayout(TextBlockLayout.fromLineBoxes(metricsByLine))
             titleComponent.setFontSize(fontSize)
@@ -520,9 +520,9 @@ class TooltipBox(
             )
             val estimatedMetrics = RichText.measure(line, font).layout.lineBoxes
             if (estimatedMetrics.size == estimatedHeights.size) {
-                // One scale for the whole block, not per line: keeps (ascent - descent) equal
+                // One scale for the whole block, not per line: keeps the baseline split
                 // across lines so Label's baseline stacking stays consistent between plain and fraction lines.
-                val scale = estimatedMetrics.sumOf(LineBoxMetrics::height).let { totalMetricsHeight ->
+                val scale = estimatedMetrics.sumOf(LineBoxMetrics::boxHeight).let { totalMetricsHeight ->
                     if (totalMetricsHeight > 0) {
                         estimatedHeights.filterNotNull().sum() / totalMetricsHeight
                     } else 1.0
@@ -532,8 +532,8 @@ class TooltipBox(
                         null
                     } else {
                         LineBoxMetrics(
-                            metrics.ascent * scale + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS,
-                            metrics.descent * scale
+                            boxHeight = metrics.boxHeight * scale + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS,
+                            topToBaseline = metrics.topToBaseline * scale + TooltipDefaults.INTERVAL_BETWEEN_SUBSTRINGS
                         )
                     }
                 }
@@ -590,8 +590,8 @@ class TooltipBox(
             }
 
             // calculate LineLayoutMetrics of original label/value lines
-            val defaultLabelMetrics = LineBoxMetrics.ascentOnly(labelFontSize)
-            val defaultValueMetrics = LineBoxMetrics.ascentOnly(valueFontSize)
+            val defaultLabelMetrics = LineBoxMetrics.fromBoxHeight(labelFontSize)
+            val defaultValueMetrics = LineBoxMetrics.fromBoxHeight(valueFontSize)
             val metricsByLine: List<Pair<List<LineBoxMetrics>?, List<LineBoxMetrics>>> = lines.map { line ->
                 Pair(
                     line.label?.let {
@@ -618,8 +618,8 @@ class TooltipBox(
             val defaultLineHeight = metricsByLine
                 .flatMap { (labelMetrics, valueMetrics) ->
                     listOfNotNull(
-                        labelMetrics?.maxOfOrNull(LineBoxMetrics::height),
-                        valueMetrics.maxOfOrNull(LineBoxMetrics::height)
+                        labelMetrics?.maxOfOrNull(LineBoxMetrics::boxHeight),
+                        valueMetrics.maxOfOrNull(LineBoxMetrics::boxHeight)
                     )
                 }
                 .maxOrNull()
