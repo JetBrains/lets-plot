@@ -244,6 +244,78 @@ class TextTest {
     }
 
 
+    @Test
+    fun `tspan with x - positioned at absolute coordinate`() {
+        val doc = mapSvg {
+            svgDocument(width = 400, height = 300) {
+                text(x = 10, y = 10, id = "txt") {
+                    tspan("Hello", x = 200, id = "span")
+                }
+            }
+        }
+
+        val spanEl = doc.findElement<TSpan>("span")
+
+        assertThat(spanEl.bBoxLocal.left)
+            .describedAs("TSpan with x should be positioned at absolute x, not relative to Text")
+            .isEqualTo(200.0)
+    }
+
+    @Test
+    fun `tspan with x and text-anchor end`() {
+        val doc = mapSvg {
+            svgDocument(width = 400, height = 300) {
+                text(x = 10, y = 10, id = "txt") {
+                    tspan("Hello", x = 200, textAnchor = "end", id = "span")
+                }
+            }
+        }
+
+        val spanEl = doc.findElement<TSpan>("span")
+
+        // "Hello" width = 48, end-anchored at x=200: 200 - 48 = 152
+        assertThat(spanEl.bBoxLocal.left).isEqualTo(152.0)
+    }
+
+    @Test
+    fun `tspan with x and text-anchor middle`() {
+        val doc = mapSvg {
+            svgDocument(width = 400, height = 300) {
+                text(x = 10, y = 10, id = "txt") {
+                    tspan("Hello", x = 200, textAnchor = "middle", id = "span")
+                }
+            }
+        }
+
+        val spanEl = doc.findElement<TSpan>("span")
+
+        // "Hello" width = 48, middle-anchored at x=200: 200 - 24 = 176
+        assertThat(spanEl.bBoxLocal.left).isEqualTo(176.0)
+    }
+
+    @Test
+    fun `tspan with x and text-anchor middle - chunk centering`() {
+        val doc = mapSvg {
+            svgDocument(width = 400, height = 300) {
+                text(x = 0, y = 10, id = "txt") {
+                    tspan("A", x = 100, textAnchor = "middle", id = "A")
+                    tspan("B", id = "B")
+                    tspan("C", id = "C")
+                }
+            }
+        }
+
+        val a = doc.findElement<TSpan>("A")
+        val b = doc.findElement<TSpan>("B")
+        val c = doc.findElement<TSpan>("C")
+
+        // Each char is 10px wide. Chunk "ABC" total width = 30, centered at x=100.
+        // Chunk starts at 100 - 30/2 = 85
+        assertThat(a.bBoxLocal.left).isEqualTo(85.0)
+        assertThat(b.bBoxLocal.left).isEqualTo(95.0)
+        assertThat(c.bBoxLocal.left).isEqualTo(105.0)
+    }
+
     @Ignore("Fails due to conflict between style and attribute precedence")
     @Test
     fun `tspan with style in parent`() {

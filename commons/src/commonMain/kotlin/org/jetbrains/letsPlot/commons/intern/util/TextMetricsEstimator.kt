@@ -8,7 +8,7 @@ package org.jetbrains.letsPlot.commons.intern.util
 import org.jetbrains.letsPlot.commons.values.Font
 
 // Clustering and coefficients calculation: https://github.com/ASmirnov-HORIS/text-width-estimation/blob/main/notebooks/prepare_model.ipynb
-object TextWidthEstimator {
+object TextMetricsEstimator {
     private const val DEFAULT_CHAR_WIDTH = 12.327791262135923
     private const val DEFAULT_FAMILY = "Lucida Grande"
     private const val DEFAULT_FONT_SIZE = 14
@@ -939,4 +939,10 @@ object TextWidthEstimator {
             it * font.family.widthFactor
         }
     }
+
+    // Font height ratios, both as a fraction of font size. Hardcoded for now;
+    // future per-family refinement could mirror the FAMILY_COEFFICIENT pattern
+    // used for width.
+    fun baselineRatio(): Double = 0.8   // Distance from em-box top down to baseline.
+    fun capHeightRatio(): Double = 0.7  // Distance from baseline up to visible cap-top.
 }

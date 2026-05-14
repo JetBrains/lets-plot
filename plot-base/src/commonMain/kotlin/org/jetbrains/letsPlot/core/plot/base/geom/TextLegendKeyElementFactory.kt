@@ -15,6 +15,8 @@ import org.jetbrains.letsPlot.core.plot.base.geom.util.TextUtil.fontSize
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineBoxMetrics
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
@@ -26,8 +28,8 @@ internal class TextLegendKeyElementFactory :
         AestheticsUtil.updateFill(rect, p)
 
         val label = Label("a")
-        TextUtil.decorate(label, p)
-        label.setLineHeight(fontSize(p, 1.0))
+        TextUtil.decorateLabelStyle(label, p, 1.0, true)
+        label.setTextLayout(TextBlockLayout.uniform(label.linesCount(), LineBoxMetrics.fromBoxHeight(fontSize(p, 1.0))))
         label.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.rotate(angle(p.angle()!!))

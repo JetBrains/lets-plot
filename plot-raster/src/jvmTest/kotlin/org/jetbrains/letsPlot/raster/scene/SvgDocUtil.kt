@@ -216,6 +216,7 @@ internal fun SvgTextElement.tspan(
     text: String? = null,
     x: Number? = null,
     y: Number? = null,
+    textAnchor: String? = null,
     fill: SvgColor? = null,
     stroke: SvgColor? = null,
     strokeWidth: Number? = null,
@@ -226,6 +227,7 @@ internal fun SvgTextElement.tspan(
     id?.let { el.id().set(it) }
     x?.let { el.x().set(it.toDouble()) }
     y?.let { el.y().set(it.toDouble()) }
+    textAnchor?.let { el.textAnchor().set(it) }
     text?.let { el.setText(it) }
     fill?.let { el.fill().set(it) }
     stroke?.let { el.stroke().set(it) }

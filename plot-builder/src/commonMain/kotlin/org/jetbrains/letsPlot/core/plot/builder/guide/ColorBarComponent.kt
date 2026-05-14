@@ -10,11 +10,10 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.ScaleMapper
+import org.jetbrains.letsPlot.core.plot.base.layout.TextAnchoring
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
-import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
@@ -80,18 +79,15 @@ class ColorBarComponent(
             }
 
             // Label
-            val brHeight = PlotLabelSpecFactory.legendItem(theme).height()
+            val labelSpec = PlotLabelSpecFactory.legendItem(theme)
+            val fontSize = theme.textStyle().size
+            val textLayout = labelSpec.layout(brLabel).layout
             val label = Label(brLabel)
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
-            label.setFontSize(brHeight)
-            label.setLineHeight(brHeight)
-            fun labelSize() = PlotLayoutUtil.textDimensions(brLabel, PlotLabelSpecFactory.legendItem(theme))
-            val yOffset = when (brInfo.labelVerticalAnchor) {
-                Text.VerticalAnchor.TOP -> brHeight * 0.7
-                Text.VerticalAnchor.BOTTOM -> -labelSize().y + brHeight
-                Text.VerticalAnchor.CENTER -> -labelSize().y / 2 + brHeight * 0.85
-            }
+            label.setFontSize(fontSize)
+            label.setTextLayout(textLayout)
+            val yOffset = TextAnchoring.offsetCap(brInfo.labelVerticalAnchor, textLayout, fontSize)
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
             guideBarGroup.children().add(label.rootGroup)
         }

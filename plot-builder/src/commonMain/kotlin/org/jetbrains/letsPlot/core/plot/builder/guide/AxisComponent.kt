@@ -171,14 +171,25 @@ class AxisComponent(
         val tickLabel = Label(label)
         tickLabel.addClassName("${Style.AXIS_TEXT}-${axisTheme.axis}")
 
-        tickLabel.moveTo(labelOffset.x, labelOffset.y)
         tickLabel.setHorizontalAnchor(labelAdjustments.horizontalAnchor)
         tickLabel.setVerticalAnchor(labelAdjustments.verticalAnchor)
 
-        val tickHeight = PlotLabelSpecFactory.axisTick(axisTheme).height()
-        tickLabel.setFontSize(tickHeight)
-        tickLabel.setLineHeight(tickHeight)
+        val labelSpec = PlotLabelSpecFactory.axisTick(axisTheme)
+        val textLayout = labelSpec.layout(label).layout
+        tickLabel.setFontSize(labelSpec.font.size.toDouble())
+        tickLabel.setTextLayout(textLayout)
         tickLabel.rotate(labelAdjustments.rotationDegree)
+
+        // On a horizontal axis, push the label down by the first line's extra
+        // top-to-baseline distance (e.g. a LaTeX fraction's numerator) so its visible top stays
+        // aligned with the top of a plain-text label.
+        val firstTopToBaselineExcess = if (orientation.isHorizontal) {
+            val fontSize = labelSpec.font.size.toDouble()
+            (textLayout.firstLineBox.topToBaseline - fontSize).coerceAtLeast(0.0)
+        } else {
+            0.0
+        }
+        tickLabel.moveTo(labelOffset.x, labelOffset.y + firstTopToBaselineExcess)
 
         return tickLabel.rootGroup
     }
@@ -216,4 +227,3 @@ class AxisComponent(
         }
     }
 }
-

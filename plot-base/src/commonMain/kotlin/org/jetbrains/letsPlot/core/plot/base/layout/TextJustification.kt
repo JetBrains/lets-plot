@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 
 class TextJustification(val x: Double, val y: Double) {
 
@@ -19,15 +20,15 @@ class TextJustification(val x: Double, val y: Double) {
 
         fun applyJustification(
             boundRect: DoubleRectangle,
-            textSize: DoubleVector,
-            lineHeight: Double,
+            fontSize: Double,
+            textLayout: TextBlockLayout,
             justification: TextJustification,
             rotation: TextRotation? = null
         ): Pair<DoubleVector, Text.HorizontalAnchor> {
             val rect = if (rotation != null) boundRect.flip() else boundRect
 
             val (x, hAnchor) = xPosition(rect, justification.x)
-            val y = yPosition(rect, textSize, lineHeight, justification.y)
+            val y = yPosition(rect, fontSize, textLayout, justification.y)
 
             val position = when (rotation) {
                 null -> DoubleVector(x, y)
@@ -56,13 +57,13 @@ class TextJustification(val x: Double, val y: Double) {
 
         private fun yPosition(
             boundRect: DoubleRectangle,
-            textSize: DoubleVector,
-            lineHeight: Double,
+            fontSize: Double,
+            textLayout: TextBlockLayout,
             vjust: Double,
         ): Double {
-            val y = boundRect.bottom - (boundRect.height - textSize.y) * vjust
-            // use 0.8 for better alignment: like vertical_anchor = 'top' (dy="0.8em")
-            return y - textSize.y + lineHeight * 0.8
+            val textHeight = textLayout.blockHeight
+            val y = boundRect.bottom - (boundRect.height - textHeight) * vjust
+            return y - textHeight + TextAnchoring.offsetEmBoxTop(textLayout, fontSize)
         }
     }
 }

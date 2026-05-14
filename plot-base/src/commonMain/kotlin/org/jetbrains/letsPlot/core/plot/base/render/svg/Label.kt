@@ -14,12 +14,10 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextNode
 import kotlin.math.roundToInt
 
 
@@ -29,23 +27,26 @@ class Label(
     private val markdown: Boolean = false
 ) : SvgComponent() {
     private val myLines: List<SvgTextElement>
+    private val myLineAnchors = mutableListOf<HorizontalAnchor>()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
     private var myFontStyle: String? = null
-    private var myLineHeight = 0.0
+    private var myTextLayout: TextBlockLayout? = null
     private var myHorizontalAnchor: HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
     private var yStart = 0.0
 
     init {
-        myLines = getLines()
+        val renderedLines = renderLines()
+        myLines = renderedLines.map(RichText.RenderedLine::element)
+        myLineAnchors += renderedLines.map(RichText.RenderedLine::anchor)
         myLines.forEach(rootGroup.children()::add)
         updateStyleAttribute()
         verticalRepositionLines()
-        horizontalRepositionLines(updateHorizontalAnchor = true)
+        horizontalRepositionLines()
     }
 
     override fun buildComponent() {
@@ -70,7 +71,7 @@ class Label(
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
         myHorizontalAnchor = anchor
-        horizontalRepositionLines(updateHorizontalAnchor = true)
+        horizontalRepositionLines()
     }
 
     fun setVerticalAnchor(anchor: VerticalAnchor) {
@@ -135,75 +136,72 @@ class Label(
         verticalRepositionLines()
     }
 
-    fun setLineHeight(v: Double) {
-        myLineHeight = v
+    fun setTextLayout(textLayout: TextBlockLayout) {
+        if (myLines.isEmpty()) return
+        require(textLayout.lineBoxes.size == linesCount()) { "Line layout metrics count must match line count." }
+        myTextLayout = textLayout
         verticalRepositionLines()
     }
 
     private fun verticalRepositionLines() {
-        val totalHeightShift = myLineHeight * (myLines.size - 1)
+        val textLayout = myTextLayout
+        if (textLayout == null) {
+            myLines.forEach { it.y().set(yStart) }
+            return
+        }
 
-        val adjustedYStart = yStart - when (myVerticalAnchor) {
+        val baselineOffsets = textLayout.baselineOffsets
+        val totalBaselineShift = textLayout.baselineSpan
+
+        val firstLineY = yStart - when (myVerticalAnchor) {
             VerticalAnchor.TOP -> 0.0
-            VerticalAnchor.CENTER -> totalHeightShift / 2
-            VerticalAnchor.BOTTOM -> totalHeightShift
+            VerticalAnchor.CENTER -> totalBaselineShift / 2.0
+            VerticalAnchor.BOTTOM -> totalBaselineShift
             else -> 0.0
         }
 
         myLines.forEachIndexed { index, elem ->
-            elem.y().set(adjustedYStart + myLineHeight * index)
+            elem.y().set(firstLineY + baselineOffsets[index])
         }
     }
 
-    // After changing some font properties, some SVG text attributes (like x) may change.
-    // So, we need to recalculate them and update the original elements.
-    private fun horizontalRepositionLines(updateHorizontalAnchor: Boolean = false) {
-        // Update tspan elements in lines
-        val recalculatedLines = getLines()
-        require(myLines.size == recalculatedLines.size) { "Line counts must be the same." }
-        (myLines zip recalculatedLines).forEach { (originalLine, recalculatedLine) ->
-            walkPair(originalLine, recalculatedLine) { originalNode, recalculatedNode ->
-                if (originalNode is SvgTSpanElement && recalculatedNode is SvgTSpanElement) {
-                    originalNode.x().set(recalculatedNode.x().get()) // x-attribute of tspan's in fraction may change
-                    originalNode.copyText(recalculatedNode) // count of fraction bar symbols "–" may change
-                }
-            }
+    // After changing font properties or anchor policy, RichText may regenerate the line subtree.
+    // Keep the original line elements, but replace their direct children so line-level state
+    // (style, classes, y, text-anchor) stays intact.
+    private fun horizontalRepositionLines() {
+        val renderedLines = renderLines()
+        require(myLines.size == renderedLines.size) { "Line counts must be the same." }
+        myLineAnchors.clear()
+        myLineAnchors += renderedLines.map(RichText.RenderedLine::anchor)
+        (myLines zip renderedLines).forEach { (originalLine, renderedLine) ->
+            originalLine.replaceChildrenFrom(renderedLine.element)
         }
-        // Update x-attribute of lines
         xStart?.let { newX -> myLines.forEach { line -> line.x().set(newX) } }
-        // Update text-anchor attribute of lines
-        if (updateHorizontalAnchor) {
-            updateHorizontalAnchor()
-        }
+        updateHorizontalAnchor()
     }
 
     private fun updateHorizontalAnchor() {
-        myLines.forEach { line ->
-            val firstTSpanHasExplicitX = findFirstTSpan(line)?.x()?.get() != null
-            val anchorAttr = when {
-                firstTSpanHasExplicitX -> toTextAnchor(HorizontalAnchor.LEFT)
-                else -> toTextAnchor(myHorizontalAnchor)
-            }
-            line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, anchorAttr)
+        (myLines zip myLineAnchors).forEach { (line, anchor) ->
+            line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
         }
     }
 
     fun linesCount() = myLines.size
 
-    private fun getLines(): List<SvgTextElement> {
+    private fun renderLines(): List<RichText.RenderedLine> {
         val font = Font(
             family = FONT_FAMILY_REGISTRY.get(myFontFamily ?: FontFamily.DEF_FAMILY_NAME),
             size = myFontSize.roundToInt(),
             isBold = myFontWeight == "bold",
             isItalic = myFontStyle == "italic"
         )
-        return RichText.toSvg(
+        return RichText.renderLines(
             text,
             font,
             wrapWidth,
             markdown = markdown,
             anchor = myHorizontalAnchor,
-            initialX = xStart ?: 0.0
+            initialX = xStart
         )
     }
 
@@ -212,42 +210,12 @@ class Label(
 
         fun splitLines(text: String) = text.split('\n').map(String::trim)
 
-        private fun walkPair(
-            node1: SvgNode,
-            node2: SvgNode,
-            action: (SvgNode, SvgNode) -> Unit
-        ) {
-            require(node1::class == node2::class) { "Node classes must be the same: ${node1::class} != ${node2::class}" }
-            val children1 = node1.children()
-            val children2 = node2.children()
-            require(children1.size == children2.size) { "Node lists must have the same size." }
-            (children1 zip children2).forEach { (child1, child2) ->
-                walkPair(child1, child2, action)
-            }
-            action(node1, node2)
-        }
-
-        private fun findFirstTSpan(root: SvgNode): SvgTSpanElement? =
-            when (root) {
-                is SvgTSpanElement -> root
-                else -> root.children().firstNotNullOfOrNull { findFirstTSpan(it) }
-            }
-
-        // Copy text content from another tspan element, or clear text if other has no text node.
-        // Does not copy any attributes, and does not change any attributes of this element.
-        // Uses the fact that tspan has either 0 or 1 text node of type SvgTextNode, see SvgTSpanElement.setText()/addText().
-        fun SvgTSpanElement.copyText(other: SvgTSpanElement) {
-            val otherTextNode = other.children().singleOrNull() as? SvgTextNode
-            if (otherTextNode == null) {
-                children().clear()
-                return
-            }
-            val text = otherTextNode.textContent().get()
-            val textNode = children().singleOrNull() as? SvgTextNode
-            if (textNode == null) {
-                setText(text)
-            } else {
-                textNode.textContent().set(text)
+        private fun SvgTextElement.replaceChildrenFrom(other: SvgTextElement) {
+            val newChildren = other.children().toList()
+            children().clear()
+            newChildren.forEach { child ->
+                child.removeFromParent()
+                children().add(child)
             }
         }
     }

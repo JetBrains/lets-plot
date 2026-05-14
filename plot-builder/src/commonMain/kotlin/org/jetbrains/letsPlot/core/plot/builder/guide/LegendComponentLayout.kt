@@ -73,8 +73,8 @@ abstract class LegendComponentLayout(
 
     private fun doLayout() {
         val labelSpec = PlotLabelSpecFactory.legendItem(theme)
-        val keyLabelGap = labelSpec.width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2.0
-        val minVerticalDistanceBetweenLabels = labelSpec.height() / 3.0
+        val keyLabelGap = labelSpec.layout(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS).width / 2.0
+        val minVerticalDistanceBetweenLabels = labelSpec.plainTextLineBoxHeight / 3.0
 
         val colWidths = DoubleArray(colCount)
         val rowHeights = DoubleArray(rowCount)
@@ -167,7 +167,10 @@ abstract class LegendComponentLayout(
     ) : LegendComponentLayout(title, breaks, keySizes, legendDirection, theme) {
 
         override fun labelSize(index: Int): DoubleVector {
-            return PlotLayoutUtil.textDimensions(breaks[index].label, PlotLabelSpecFactory.legendItem(theme))
+            return PlotLayoutUtil.textDimensions(
+                breaks[index].label,
+                PlotLabelSpecFactory.legendItem(theme)
+            )
         }
     }
 

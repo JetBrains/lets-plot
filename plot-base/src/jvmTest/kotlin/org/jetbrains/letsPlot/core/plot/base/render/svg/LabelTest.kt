@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
@@ -136,14 +136,16 @@ class LabelTest {
             label.setFontStyle(if (font.isItalic) "italic" else null)
 
             val svg = label.rootGroup.children().single() as SvgTextElement
-            assertThat(svg.tspans()).hasSize(5)
-            val (_, num, denom, bar, restoreShift) = svg.tspans()
+            assertThat(svg.tspans()).hasSize(6)
+            val (_, baseline, num, denom, bar) = svg.tspans()
+            val restoreShift = svg.tspans().drop(5).single()
             val level = TestUtil.FormulaLevel()
             val prefixWidth = widthCalculator("a+", font)
             val formulaWidth = max(widthCalculator("b", font), widthCalculator("c", font))
             val expectedWidth = prefixWidth + formulaWidth
 
             val fracPosition = prefixWidth + formulaWidth / 2.0
+            assertFormulaTSpan(baseline, "\u200B", level = level.pass(), expectedAnchor = "start")
             assertFormulaTSpan(num, "b", level = level.num(), expectedX = fracPosition, expectedAnchor = "middle")
             assertFormulaTSpan(denom, "c", level = level.denom(), expectedX = fracPosition, expectedAnchor = "middle")
             assertFormulaTSpan(bar, null, level = level.bar(), expectedX = fracPosition, expectedAnchor = "middle")

@@ -30,7 +30,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.NullGeomT
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetCollectorWithLocator
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayersByMargin
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadTotalHeight
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
@@ -226,9 +225,8 @@ internal class PlotTile constructor(
             add(rect)
         }
 
-        val textSize = FacetedPlotLayout.titleSize(label, theme)
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val lineHeight = labelSpec.height()
+        val textLayout = labelSpec.layout(label).layout
         val className = if (isColumnLabel) "x" else "y"
         val themeAngle = theme.stripTextAngle()
         val defaultRotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
@@ -243,17 +241,18 @@ internal class PlotTile constructor(
 
         val lab = Label(label)
         lab.addClassName("${Style.FACET_STRIP_TEXT}-$className")
+        val fontSize = theme.stripTextStyle().size
 
         val (pos, hAnchor) = applyJustification(
             textBounds,
-            textSize,
-            lineHeight,
+            fontSize,
+            textLayout,
             theme.stripTextJustification(),
             rotation
         )
         lab.setHorizontalAnchor(hAnchor)
-        lab.setFontSize(lineHeight)
-        lab.setLineHeight(lineHeight)
+        lab.setFontSize(labelSpec.font.size.toDouble())
+        lab.setTextLayout(textLayout)
         lab.moveTo(pos)
         if (!themeAngle.isNaN() && themeAngle != 0.0) {
             lab.rotate(themeAngle)

@@ -64,10 +64,10 @@ class LegendComponent(
 
         // add label at position as was layout
         val label = Label(br.label)
-        val brHeight = PlotLabelSpecFactory.legendItem(theme).height()
+        val labelSpec = PlotLabelSpecFactory.legendItem(theme)
         label.addClassName(Style.LEGEND_ITEM)
-        label.setFontSize(brHeight)
-        label.setLineHeight(brHeight)
+        label.setFontSize(labelSpec.font.size.toDouble())
+        label.setTextLayout(labelSpec.layout(br.label).layout)
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)
         label.moveTo(labelBox.origin)

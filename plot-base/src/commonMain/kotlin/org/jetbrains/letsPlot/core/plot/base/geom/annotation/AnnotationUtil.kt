@@ -29,7 +29,7 @@ internal object AnnotationUtil {
                 text,
                 toTextDataPointAesthetics(TextParams(textStyle), p),
                 ctx
-            )
+            ).totalSize
         }
 
     fun textColorAndLabelAlpha(

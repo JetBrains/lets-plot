@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.xml.Xml.XmlNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
@@ -39,6 +39,10 @@ internal object Hyperlink {
         override val visualCharCount: Int = text.length
         override fun estimateWidth(font: Font): Double {
             return widthCalculator(text, font)
+        }
+
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            return LineBoxMetrics.plainText(font)
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {

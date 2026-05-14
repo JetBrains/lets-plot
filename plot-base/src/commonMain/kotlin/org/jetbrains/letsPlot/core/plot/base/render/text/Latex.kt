@@ -5,7 +5,8 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedSvgElement
@@ -279,6 +280,9 @@ internal class Latex(
         override fun estimateWidth(font: Font): Double =
             node.estimateWidth(font)
 
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics =
+            node.estimateLineLayoutMetrics(font)
+
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return node.render(context, prefixWidth)
         }
@@ -290,6 +294,10 @@ internal class Latex(
             return widthCalculator(content, font)
         }
 
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            return LineBoxMetrics.plainText(font)
+        }
+
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return listOf(context.apply(SvgTSpanElement(content)).wrap())
         }
@@ -299,6 +307,13 @@ internal class Latex(
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
         override fun estimateNodeWidth(font: Font): Double {
             return children.sumOf { it.estimateWidth(font) }
+        }
+
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            return LineBoxMetrics.mergeOnBaseline(
+                metrics = children.map { it.estimateLineLayoutMetrics(font) },
+                defaultIfEmpty = LineBoxMetrics.plainText(font)
+            )
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -318,6 +333,10 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            return content.estimateLineLayoutMetrics(font)
+        }
+
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefixWidth = prefixWidth)
         }
@@ -329,19 +348,46 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            return content.estimateLineLayoutMetrics(font)
+        }
+
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefixWidth = prefixWidth)
         }
     }
 
+    // Nested fractions are not supported: numerator and denominator are assumed to contain non-fraction content.
     internal inner class FractionNode(
         private val numerator: LatexNode,
         private val denominator: LatexNode,
         level: Int
     ) : LatexNode(listOf(numerator, denominator), level) {
+        private val barGlyphOffset = 0.25
+        // Clearance between the bar and the nearest edge of numerator/denominator (when barBaselineShift == 0).
+        private val fractionGap = 0.01
+        // Extra allowance below the numerator, in em, equal to the nominal
+        // plain-text space below the baseline in the current layout model.
+        private val numeratorBottomAllowance = 1.0 - TextMetricsEstimator.baselineRatio()
+        // Shift the bar baseline below the original line baseline by this amount (em). Redistributes
+        // gap from the numerator side to the denominator side without changing total fraction height.
+        private val barBaselineShift = 0.1
+
         override val visualCharCount: Int = max(numerator.visualCharCount, denominator.visualCharCount)
         override fun estimateNodeWidth(font: Font): Double {
             return max(numerator.estimateWidth(font), denominator.estimateWidth(font))
+        }
+
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+            val numeratorMetrics = numerator.estimateLineLayoutMetrics(font)
+            val denominatorMetrics = denominator.estimateLineLayoutMetrics(font)
+            val numeratorBaselineShift = (barGlyphOffset + fractionGap + numeratorBottomAllowance) * font.size
+            val denominatorBaselineShift = denominatorMetrics.topToBaseline + (fractionGap - barGlyphOffset) * font.size
+            val topToBaseline = numeratorMetrics.topToBaseline + numeratorBaselineShift
+            return LineBoxMetrics(
+                boxHeight = topToBaseline + denominatorMetrics.bottomToBaseline + denominatorBaselineShift,
+                topToBaseline = topToBaseline
+            )
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -349,11 +395,27 @@ internal class Latex(
             val fractionCenter = prefixWidth + fractionWidth / 2.0
             val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font)
             val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
+
+            // Baseline positions relative to the original line baseline.
+            val numeratorBaselineEm = -(barGlyphOffset + fractionGap + numeratorBottomAllowance)
+            val denominatorTopToBaselineEm = denominator.estimateLineLayoutMetrics(font).topToBaseline / max(1, font.size)
+            val denominatorBaselineEm = denominatorTopToBaselineEm + fractionGap - barGlyphOffset
+            val numeratorDy = formatEm(numeratorBaselineEm)
+            val denominatorDy = formatEm(denominatorBaselineEm - numeratorBaselineEm)
+            // Bar baseline lands at y = barBaselineShift instead of 0; restoreBaselineTSpan undoes it.
+            val barDy = formatEm(barBaselineShift - denominatorBaselineEm)
+            val restoreDy = formatEm(-barBaselineShift)
+
+            // The following 'tspan' element marks the current baseline before the fraction
+            val setBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
+                // The baseline marker should stay at the current x instead of using the fraction center
+                setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
+            }).wrap()
             val numeratorTSpanElements = numerator.render(context, prefixWidth).mapIndexed { i, wrappedElement ->
                 wrappedElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
-                        setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
+                        setAttribute(SvgTextContent.TEXT_DY, numeratorDy)
                     }
                 }.wrap(if (i == 0) { fractionCenter } else { wrappedElement.x })
             }
@@ -361,18 +423,24 @@ internal class Latex(
                 wrappedElement.svg.apply {
                     if (i == 0) {
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
-                        setAttribute(SvgTextContent.TEXT_DY, "${2 * FRACTION_RELATIVE_SHIFT}em")
+                        setAttribute(SvgTextContent.TEXT_DY, denominatorDy)
                     }
                 }.wrap(if (i == 0) { fractionCenter } else { wrappedElement.x })
             }
             val fractionBarTSpanElement = context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
-                setAttribute(SvgTextContent.TEXT_DY, "-${FRACTION_RELATIVE_SHIFT}em")
+                setAttribute(SvgTextContent.TEXT_DY, barDy)
                 setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
             }).wrap(fractionCenter)
             val restoreBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
                 setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
+                setAttribute(SvgTextContent.TEXT_DY, restoreDy)
             }).wrap(prefixWidth + fractionWidth)
-            return numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
+            return listOf(setBaselineTSpan) + numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
+        }
+
+        private fun formatEm(value: Double): String {
+            // Round to 4 decimals to keep emitted SVG tidy despite float arithmetic noise.
+            return "${(value * 10000).roundToInt() / 10000.0}em"
         }
     }
 
@@ -409,7 +477,6 @@ internal class Latex(
         private const val INDENT_SIZE_FACTOR = 0.1
         private const val INDEX_SIZE_FACTOR = 0.7
         private const val INDEX_RELATIVE_SHIFT = 0.4
-        private const val FRACTION_RELATIVE_SHIFT = 0.5
         private const val FRACTION_BAR_SYMBOL = "–"
 
         private val GREEK_LETTERS = mapOf(
@@ -477,6 +544,7 @@ internal class Latex(
         private val MISCELLANEOUS = mapOf(
             "infty" to "∞",
         )
+        // If you add symbols here, also update LatexTest (`latex symbols`) and https://lets-plot.org/python/pages/latex.html.
         private val SYMBOLS = GREEK_LETTERS + OPERATIONS + RELATIONS + MISCELLANEOUS
     }
 }

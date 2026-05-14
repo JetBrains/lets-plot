@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.guide.LegendDirection
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.scale.Mappers
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.base.theme.LegendTheme
@@ -55,7 +56,7 @@ abstract class ColorBarComponentLayout(
         val tickLocation: Double,
         val labelLocation: DoubleVector,
         val labelHorizontalAnchor: Text.HorizontalAnchor,
-        val labelVerticalAnchor: Text.VerticalAnchor
+        val labelVerticalAnchor: VerticalAnchor
     )
 
     private class HorizontalLayout(
@@ -72,7 +73,7 @@ abstract class ColorBarComponentLayout(
         theme
     ) {
         override val graphSize: DoubleVector
-        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).height() / 3
+        private val labelDistance: Double get() = PlotLabelSpecFactory.legendItem(theme).plainTextLineBoxHeight / 3
         override val guideBarLength: Double get() = guideBarSize.x
 
         init {
@@ -92,7 +93,7 @@ abstract class ColorBarComponentLayout(
                 tickLocation,
                 labelLocation,
                 Text.HorizontalAnchor.MIDDLE,
-                Text.VerticalAnchor.TOP
+                VerticalAnchor.TOP
             )
         }
     }
@@ -113,13 +114,13 @@ abstract class ColorBarComponentLayout(
 
         override val graphSize: DoubleVector
         private val labelDistance: Double
-            get() = PlotLabelSpecFactory.legendItem(theme).width(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS) / 2
+            get() = PlotLabelSpecFactory.legendItem(theme).layout(PlotLabelSpecFactory.DISTANCE_TO_LABEL_IN_CHARS).width / 2
         override val guideBarLength: Double get() = guideBarSize.y
 
         init {
             check(!breaks.isEmpty) { "Colorbar VerticalLayout received empty breaks list." }
             val maxLabelWidth: Double = breaks.labels
-                .maxOf { PlotLabelSpecFactory.legendItem(theme).width(it) }
+                .maxOf { PlotLabelSpecFactory.legendItem(theme).layout(it).width }
 
             // Bar + labels bounds
             graphSize = DoubleVector(guideBarSize.x + labelDistance + maxLabelWidth, guideBarSize.y)
@@ -131,7 +132,7 @@ abstract class ColorBarComponentLayout(
                 tickLocation,
                 labelLocation,
                 Text.HorizontalAnchor.LEFT,
-                Text.VerticalAnchor.CENTER
+                VerticalAnchor.CENTER
             )
         }
     }

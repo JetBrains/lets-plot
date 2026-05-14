@@ -217,18 +217,19 @@ internal object PlotSvgComponentHelper {
     ) {
         if (text == null) return
 
-        val lineHeight = labelSpec.height()
+        val textLayout = labelSpec.layout(text).layout
         val textLabel = Label(text, markdown = labelSpec.markdown)
         textLabel.addClassName(className)
+        val fontSize = labelSpec.font.size.toDouble()
         val (position, hAnchor) = applyJustification(
             boundRect,
-            textSize = PlotLayoutUtil.textDimensions(text, labelSpec),
-            lineHeight,
+            fontSize,
+            textLayout,
             justification,
             rotation
         )
-        textLabel.setFontSize(labelSpec.font.size.toDouble())
-        textLabel.setLineHeight(lineHeight)
+        textLabel.setFontSize(fontSize)
+        textLabel.setTextLayout(textLayout)
         textLabel.setHorizontalAnchor(hAnchor)
         textLabel.moveTo(position)
         rotation?.angle?.let(textLabel::rotate)
