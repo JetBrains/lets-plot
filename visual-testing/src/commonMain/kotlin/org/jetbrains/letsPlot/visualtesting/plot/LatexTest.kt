@@ -14777,7 +14777,7 @@ class LatexTest(
                         ]
                       },
                       "y": 1.0,
-                      "size": 2.0,
+                      "size": 0.0,
                       "fill": "black"
                     },
                     {
@@ -14873,7 +14873,7 @@ class LatexTest(
                         ]
                       },
                       "y": 1.0,
-                      "size": 2.0,
+                      "size": 0.0,
                       "fill": "black"
                     },
                     {
