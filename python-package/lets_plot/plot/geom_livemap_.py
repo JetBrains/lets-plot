@@ -96,7 +96,7 @@ def geom_livemap(*,
 
     Notes
     -----
-    ``geom_livemap()`` draws a map, which can be dragged and zoomed unless ``static=True``.
+    ``geom_livemap()`` draws a map, which can be dragged and zoomed unless ``interactive=False``.
 
     ----
 

@@ -51,6 +51,11 @@
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/latex_fractions.html).
 
 
+- `geom_livemap()`: the new `interactive` parameter controls map interactivity. Set `interactive=False` to disable panning and zooming and hide map controls.
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/geom_livemap_interactive.html).
+
+
 - Memo for Kotlin API users:
   - Added WasmJS support [[LPK-296](https://github.com/JetBrains/lets-plot-kotlin/issues/296)], [[LPC-52](https://github.com/JetBrains/lets-plot-compose/issues/52)].
 
