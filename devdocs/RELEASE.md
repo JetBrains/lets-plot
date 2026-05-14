@@ -122,7 +122,7 @@ Fill `pypi` and `sonatype` sections with credentials in the `local.properties` f
 Build release JVM artifacts from one of the build machines:
 
 ```shell
-./gradlew publishLetsPlotJvmCommonPublicationToMavenRepository \
+./gradlew :jvm-package:jvm-publish-common:publishAllPublicationsToMavenRepository \
           publishLetsPlotJvmSwingPublicationToMavenRepository \
           publishLetsPlotJvmBatikPublicationToMavenRepository \
           publishLetsPlotGISPublicationToMavenRepository \
