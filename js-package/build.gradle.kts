@@ -53,9 +53,8 @@ kotlin {
     }
 }
 
-
 val jsPackageBuildDir = project.layout.buildDirectory.get().asFile.path as String // 'project.buildDir' has been deprecated.
-val prodJsExecDistDir = "${jsPackageBuildDir}/dist/js/productionExecutable/"
+val prodJsExecDistDir = "${jsPackageBuildDir}/kotlin-webpack/js/productionExecutable/"
 val jsArtifactName = "lets-plot.js"
 
 tasks.register<Copy>("copyForPublish") {
