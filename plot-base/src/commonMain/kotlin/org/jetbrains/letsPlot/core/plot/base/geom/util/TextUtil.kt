@@ -167,18 +167,13 @@ object TextUtil {
         }
     }
 
-    fun decorateHalo(label: Label, p: DataPointAesthetics, haloColor: Color, scale: Double = 1.0) {
-        val stroke = p.stroke() ?: 0.0
-        if (stroke <= 0.0) {
-            return
-        }
-
+    fun decorateHalo(label: Label, p: DataPointAesthetics, haloColor: Color, haloWidth: Double, scale: Double = 1.0) {
         val resolvedHaloColor = AestheticsUtil.resolveFill(p, haloColor)
         label.setFillNone()
         label.textStrokeColor().set(resolvedHaloColor)
         // SVG stroke is centered on the glyph outline: half lands inside the fill area (hidden by fill:none),
-        // half is visible outside. Doubling ensures the visible outside width equals `stroke`.
-        label.setStrokeWidth(stroke * 2)
+        // half is visible outside. Doubling ensures the visible outside width equals `haloWidth`.
+        label.setStrokeWidth(haloWidth * 2)
         label.setStrokeLinejoin("round")
 
         label.setFontSize(fontSize(p, scale))
@@ -255,6 +250,7 @@ object TextUtil {
         sizeUnitRatio: Double = 1.0,
         boundsCenter: DoubleVector? = null,
         labelNudge: (location: DoubleVector, size: DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE,
+        haloWidth: Double = 0.0,
         haloColor: Color? = null
     ): SvgGElement {
         val hAnchor = hAnchor(p, location, boundsCenter)
@@ -265,9 +261,10 @@ object TextUtil {
 
         // Build halo label alongside the main label so layout properties stay in sync.
         // Vertical position is handled through moveTo (below), not setVerticalAnchor.
-        val haloLabel = if (haloColor != null && (p.stroke() ?: 0.0) > 0.0) {
+        val effectiveHaloColor = haloColor ?: p.fill()
+        val haloLabel = if (haloWidth > 0.0 && effectiveHaloColor != null) {
             Label(text).also { halo ->
-                decorateHalo(halo, p, haloColor, sizeUnitRatio)
+                decorateHalo(halo, p, effectiveHaloColor, haloWidth, sizeUnitRatio)
                 halo.setHorizontalAnchor(hAnchor)
             }
         } else null

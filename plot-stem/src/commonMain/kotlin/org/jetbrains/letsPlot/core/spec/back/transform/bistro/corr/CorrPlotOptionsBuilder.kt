@@ -93,12 +93,12 @@ class CorrPlotOptionsBuilder private constructor(
                 added = true
                 field = v
             }
-        var stroke: Double? = null
+        var haloWidth: Double? = null
             set(v) {
                 added = true
                 field = v
             }
-        var strokeColor: String? = null
+        var haloColor: String? = null
             set(v) {
                 added = true
                 field = v
@@ -119,8 +119,8 @@ class CorrPlotOptionsBuilder private constructor(
             if (type != other.type) return false
             if (diag != other.diag) return false
             if (color != other.color) return false
-            if (stroke != other.stroke) return false
-            if (strokeColor != other.strokeColor) return false
+            if (haloWidth != other.haloWidth) return false
+            if (haloColor != other.haloColor) return false
             if (mapSize != other.mapSize) return false
 
             return true
@@ -131,8 +131,8 @@ class CorrPlotOptionsBuilder private constructor(
             result = 31 * result + (type?.hashCode() ?: 0)
             result = 31 * result + (diag?.hashCode() ?: 0)
             result = 31 * result + (color?.hashCode() ?: 0)
-            result = 31 * result + (stroke?.hashCode() ?: 0)
-            result = 31 * result + (strokeColor?.hashCode() ?: 0)
+            result = 31 * result + (haloWidth?.hashCode() ?: 0)
+            result = 31 * result + (haloColor?.hashCode() ?: 0)
             result = 31 * result + (mapSize?.hashCode() ?: 0)
             return result
         }
@@ -157,16 +157,16 @@ class CorrPlotOptionsBuilder private constructor(
         diag: Boolean? = null,
         mapSize: Boolean? = null,
         color: String? = null,
-        stroke: Double? = null,
-        strokeColor: String? = null
+        haloWidth: Double? = null,
+        haloColor: String? = null
     ): CorrPlotOptionsBuilder {
         checkTypeArg(type)
         labels.type = type
         labels.diag = diag
         labels.mapSize = mapSize
         labels.color = color
-        labels.stroke = stroke
-        labels.strokeColor = strokeColor
+        labels.haloWidth = haloWidth
+        labels.haloColor = haloColor
 
         return this
     }
@@ -319,8 +319,8 @@ class CorrPlotOptionsBuilder private constructor(
                     )
                     size = if (labels.mapSize == true) null else 1.0
                     color = labels.color
-                    stroke = labels.stroke
-                    prop[TextLayer.STROKE_COLOR] = labels.strokeColor
+                    prop[TextLayer.HALO_WIDTH] = labels.haloWidth
+                    prop[TextLayer.HALO_COLOR] = labels.haloColor
                 }
             )
         }

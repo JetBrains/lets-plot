@@ -506,7 +506,10 @@ internal object GeomProviderFactory {
         layerConfig.getBoolean(Option.Geom.Text.CHECK_OVERLAP).let {
             geom.checkOverlap = it
         }
-        layerConfig.getString(Option.Geom.Text.STROKE_COLOR)?.let {
+        layerConfig.getDouble(Option.Geom.Text.HALO_WIDTH)?.let {
+            geom.haloWidth = it
+        }
+        layerConfig.getString(Option.Geom.Text.HALO_COLOR)?.let {
             geom.haloColor = Colors.parseColor(it)
         }
     }

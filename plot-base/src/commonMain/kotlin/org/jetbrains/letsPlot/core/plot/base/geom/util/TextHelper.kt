@@ -29,6 +29,7 @@ class TextHelper(
     private var naValue: String = DEF_NA_VALUE
     private var sizeUnit: String? = null
     private var checkOverlap: Boolean = false
+    private var haloWidth: Double = 0.0
     private var haloColor: Color? = null
     private var toLocation: (DataPointAesthetics) -> DoubleVector? = DEF_COORD_OR_NULL
 
@@ -54,6 +55,11 @@ class TextHelper(
 
     fun setSizeUnit(sizeUnit: String?): TextHelper {
         this.sizeUnit = sizeUnit
+        return this
+    }
+
+    fun setHaloWidth(haloWidth: Double): TextHelper {
+        this.haloWidth = haloWidth
         return this
     }
 
@@ -113,6 +119,7 @@ class TextHelper(
                 sizeUnitRatio,
                 boundsCenter,
                 labelNudge,
+                haloWidth,
                 haloColor
             )
         } else {

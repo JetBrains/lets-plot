@@ -20,11 +20,16 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 
 internal class TextLegendKeyElementFactory(
+    private val haloWidth: Double = 0.0,
     private val haloColor: Color? = null
 ) :
     LegendKeyElementFactory {
 
     override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
+        return createKeyElement(p, size, keyFill = null)
+    }
+
+    override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector, keyFill: Color?): SvgGElement {
         val rect = SvgRectElement(0.0, 0.0, size.x, size.y)
         AestheticsUtil.updateFill(rect, p)
 
@@ -38,9 +43,10 @@ internal class TextLegendKeyElementFactory(
 
         val g = SvgGElement()
         g.children().add(rect)
-        if (haloColor != null && (p.stroke() ?: 0.0) > 0.0) {
+        val effectiveHaloColor = haloColor ?: keyFill ?: p.fill()
+        if (haloWidth > 0.0 && effectiveHaloColor != null) {
             val haloLabel = Label("a")
-            TextUtil.decorateHalo(haloLabel, p, haloColor)
+            TextUtil.decorateHalo(haloLabel, p, effectiveHaloColor, haloWidth)
             haloLabel.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             haloLabel.setVerticalAnchor(Text.VerticalAnchor.CENTER)
             haloLabel.rotate(angle(p.angle()!!))

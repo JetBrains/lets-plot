@@ -19,10 +19,11 @@ open class TextGeom : GeomBase() {
     var naValue = TextHelper.DEF_NA_VALUE
     var sizeUnit: String? = null
     var checkOverlap: Boolean = false
+    var haloWidth: Double = 0.0
     var haloColor: Color? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = TextLegendKeyElementFactory(haloColor)
+        get() = TextLegendKeyElementFactory(haloWidth, haloColor)
 
     override fun buildIntern(
         root: SvgRoot,
@@ -51,6 +52,7 @@ open class TextGeom : GeomBase() {
             .setNaValue(naValue)
             .setSizeUnit(sizeUnit)
             .setCheckOverlap(checkOverlap)
+            .setHaloWidth(haloWidth)
             .setHaloColor(haloColor)
     }
 
