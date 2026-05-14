@@ -56,6 +56,7 @@
 
 ### Changed
 
+ - [**BREAKING**] Dropped support for Python 3.9 as it is in the ["end-of-life"](https://devguide.python.org/versions/#unsupported-versions) of its release cycle.
 
 ### Fixed
 
