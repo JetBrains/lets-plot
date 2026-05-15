@@ -41,6 +41,11 @@
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/color_alpha.html).
 
+
+- Facet strip labels now honor `angle` in `element_text()` for `strip_text_*` [[#1383](https://github.com/JetBrains/lets-plot/issues/1383)].
+  
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/strip_text_angle.html).
+
             
 - In `geom_imshow()`, new parameters for controlling the colorbar breaks and labels [[#1486](https://github.com/JetBrains/lets-plot/issues/1486)]:
   - `breaks`, `labels`, `lablim`, `format`
