@@ -3,24 +3,33 @@
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
-package org.jetbrains.letsPlot.visualtesting.plot
+package org.jetbrains.letsPlot.awt.plot
 
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
-import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
+import kotlin.test.Test
 
-class PlotThemeAwtTest(
-    override val canvasPeer: CanvasPeer,
-    override val imageComparer: ImageComparer,
-) : PlotTestSuitBase() {
-    init {
-        registerTest(::plot_theme_bottomLegendWithMultilineText)
-        registerTest(::plot_theme_bottomLegendContinuousScale)
-        registerTest(::plot_theme_titleWithBlankLine)
-    }
+class PlotThemeTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
 
-    fun plot_theme_bottomLegendWithMultilineText(): Bitmap {
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "rendering"))
+
+    override fun currentTestName(): String? = currentTest.methodName
+
+    
+    
+    
+    @Test
+    fun plot_theme_bottomLegendWithMultilineText() {
         val spec = """
             |{
             |  "data": {
@@ -127,10 +136,14 @@ class PlotThemeAwtTest(
 
         val plotCanvasDrawable = createPlot(parseJson(spec))
 
-        return paint(plotCanvasDrawable)
+        assertBitmap(plotCanvasDrawable)
     }
 
-    fun plot_theme_bottomLegendContinuousScale(): Bitmap {
+    
+    
+    
+    @Test
+    fun plot_theme_bottomLegendContinuousScale() {
         val spec = """
             |{
             |  "data": {
@@ -172,10 +185,14 @@ class PlotThemeAwtTest(
 
         val plotCanvasDrawable = createPlot(parseJson(spec))
 
-        return paint(plotCanvasDrawable)
+        assertBitmap(plotCanvasDrawable)
     }
 
-    fun plot_theme_titleWithBlankLine(): Bitmap {
+    
+    
+    
+    @Test
+    fun plot_theme_titleWithBlankLine() {
         val spec = """
             |{
             |  "mapping": {},
@@ -200,6 +217,6 @@ class PlotThemeAwtTest(
 
         val plotCanvasDrawable = createPlot(parseJson(spec))
 
-        return paint(plotCanvasDrawable)
+        assertBitmap(plotCanvasDrawable)
     }
 }

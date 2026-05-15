@@ -9,8 +9,6 @@ import org.jetbrains.letsPlot.awt.NotoFontManager
 import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.visualtesting.plot.AllPlotTests
 import org.jetbrains.letsPlot.visualtesting.plot.PlotInteractivityTest
-import org.jetbrains.letsPlot.visualtesting.plot.PlotLatexAwtTest
-import org.jetbrains.letsPlot.visualtesting.plot.PlotThemeAwtTest
 import kotlin.test.Test
 
 class AwtAllPlotTests {
@@ -22,18 +20,6 @@ class AwtAllPlotTests {
     @Test
     fun runAllPlotTests() {
         AllPlotTests.runAllTests(canvasPeer, imageComparer)
-    }
-
-    @Test
-    fun runAwtOnlyPlotTests() {
-        var failedTestsCount = 0
-
-        failedTestsCount += PlotLatexAwtTest(canvasPeer, imageComparer).runTests()
-        failedTestsCount += PlotThemeAwtTest(canvasPeer, imageComparer).runTests()
-
-        if (failedTestsCount > 0) {
-            error("$failedTestsCount tests failed!")
-        }
     }
 
     @Test
