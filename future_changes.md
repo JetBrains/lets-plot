@@ -43,7 +43,9 @@
 
 
 - Facet strip labels now honor `angle` in `element_text()` for `strip_text_*` [[#1383](https://github.com/JetBrains/lets-plot/issues/1383)].
-  
+
+  Thanks to a contribution by [tentrillion](https://github.com/tentrillion).
+
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/strip_text_angle.html).
 
             
