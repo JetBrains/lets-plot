@@ -51,11 +51,6 @@
   - `breaks`, `labels`, `lablim`, `format`
 
 
-- LaTeX: support for fractions (`\frac{...}{...}`) in plot text elements.
-
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/latex_fractions.html).
-
-
 - `geom_livemap()`: the new `interactive` parameter controls map interactivity. Set `interactive=False` to disable panning and zooming and hide map controls.
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/geom_livemap_interactive.html).
