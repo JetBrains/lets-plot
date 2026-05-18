@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.awt.plot
 
-object PlotTooltipsSpecs {
+object TooltipsSpecs {
 
     val BAR_ANCHOR_WITH_AXIS_TOOLTIP_VISIBLE = """
         |{

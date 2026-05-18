@@ -6,12 +6,28 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
 import org.jetbrains.letsPlot.core.util.PlotExportCommon.SizeUnit.CM
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
-class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "export") {
+class ImageExportVisualTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "export"))
+
+    override fun currentTestName(): String? = currentTest.methodName
+
     @Test
-    fun plotExportImplicitSize() {
+    fun plot_export_implicitSize() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -22,11 +38,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        assertPlot("plot_implicit_size_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun plotExportExplicitSize() {
+    fun plot_export_explicitSize() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -37,14 +53,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        // 3x3 inches with 300 DPI means the bitmap will be 900x900 pixels (3 * 300 = 900).
-        assertPlot("plot_explicit_size_test.png", plotSpec, width = 3, height = 3)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), width = 3, height = 3)
     }
 
     @Test
-    fun plotExportImplicitSizeScaled() {
+    fun plot_export_implicitSize2Xscale() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -55,14 +68,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        // 200x200 is the size in pixels, scale = 2.0 means the bitmap will be 400x400 pixels.
-        assertPlot("plot_implicit_size_scaled_test.png", plotSpec, scale = 2.0)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), scale = 2.0)
     }
 
     @Test
-    fun plotExportExplicitSizeScaled() {
+    fun plot_export_explicitSize2Xscale() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -73,15 +83,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        // 3x3 inches with 300 DPI and scale = 2.0 means the bitmap will be 1800x1800 pixels.
-        assertPlot("plot_explicit_size_scaled_test.png", plotSpec, width = 3, height = 3, scale = 2.0)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), width = 3, height = 3, scale = 2.0)
     }
 
     @Test
-    fun plot5x2cm96dpi() {
-        val (w, h, dpi) = Triple(5, 2, 96)
+    fun plot_export_5x2cm96dpi() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -91,14 +97,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), width = 5, height = 2, unit = CM, dpi = 96)
     }
 
     @Test
-    fun plot5x2cm300dpi() {
-        val (w, h, dpi) = Triple(5, 2, 300)
+    fun plot_export_5x2cm300dpi() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -108,14 +111,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), width = 5, height = 2, unit = CM, dpi = 300)
     }
 
     @Test
-    fun plot5x2cm300dpi2Xscale() {
-        val (w, h, dpi) = Triple(5, 2, 300)
+    fun plot_export_5x2cm300dpi2Xscale() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -125,22 +125,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        assertPlot(
-            "plot_${w}x${h}cm${dpi}dpi2Xscale_test.png",
-            plotSpec,
-            width = w,
-            height = h,
-            unit = CM,
-            dpi = dpi,
-            scale = 2
-        )
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), width = 5, height = 2, unit = CM, dpi = 300, scale = 2)
     }
 
     @Test
-    fun plot12x4cm96dpi() {
-        val (w, h, dpi) = Triple(12, 4, 96)
+    fun plot_export_12x4cm96dpi() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -150,14 +139,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), width = 12, height = 4, unit = CM, dpi = 96)
     }
 
     @Test
-    fun plot12x4cm300dpi() {
-        val (w, h, dpi) = Triple(12, 4, 300)
+    fun plot_export_12x4cm300dpi() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -167,13 +153,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        assertPlot("plot_${w}x${h}cm${dpi}dpi_test.png", plotSpec, width = w, height = h, unit = CM, dpi = dpi)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), width = 12, height = 4, unit = CM, dpi = 300)
     }
 
     @Test
-    fun plot400pxx200Dpx150dpi() {
+    fun plot_export_400x200px150dpi() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -184,13 +168,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        assertPlot("plot_400pxx200px150dpi_test.png", plotSpec, dpi = 150)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), dpi = 150)
     }
 
     @Test
-    fun plot400pxx200Dpx() {
+    fun plot_export_400x200px() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -201,11 +183,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        assertPlot("plot_400pxx200px_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun plot400pxx200Dpx2Xscale() {
+    fun plot_export_400x200px2Xscale() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -216,13 +198,11 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |}
         """.trimMargin()
 
-        val plotSpec = parsePlotSpec(spec)
-
-        assertPlot("plot_400pxx200px2Xscale_test.png", plotSpec, scale = 2)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), scale = 2)
     }
 
     @Test
-    fun `with dpi=NaN`() {
+    fun plot_export_dpiNaN() {
         val spec = parsePlotSpec(
             """
             |{
@@ -232,9 +212,9 @@ class PlotImageExportVisualTest : VisualPlotTestBase(expectedImagesSubdir = "exp
             |  "layers": [ { "geom": "point" } ],
             |  "ggsize": { "width": 200, "height": 200 }
             |}
-        """.trimMargin()
+            """.trimMargin()
         )
 
-        assertPlot("plot_dpi_nan_test.png", spec, dpi = Double.NaN)
+        assertExportedPlot(currentTestName() + ".png", spec, dpi = Double.NaN)
     }
 }

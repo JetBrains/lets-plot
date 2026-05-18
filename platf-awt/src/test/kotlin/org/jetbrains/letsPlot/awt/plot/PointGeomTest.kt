@@ -6,12 +6,28 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestName
 
-class PointGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
+class PointGeomTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "geoms"))
+
+    override fun currentTestName(): String? = currentTest.methodName
+
     @Test
-    fun sizeUnit() {
+    fun plot_geomPoint_sizeUnit() {
         val spec = """
             |{
             |  "kind": "subplots",
@@ -55,11 +71,13 @@ class PointGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}            
         """.trimMargin()
 
-        assertPlot("geom_point_size_unit.png", parseJson(spec))
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun defaultScaleSize() {
+    fun plot_geomPoint_defaultScaleSize() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -79,11 +97,13 @@ class PointGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}            
         """.trimMargin()
 
-        assertPlot("geom_point_default_scale_size.png", parseJson(spec))
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `geom_point with stroke`() {
+    fun plot_geomPoint_stroke() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -105,11 +125,13 @@ class PointGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin()
 
-        assertPlot("plot_geom_point_with_stroke_test.png", parsePlotSpec(spec))
+        val plotCanvasDrawable = createPlotFromSpec(parsePlotSpec(spec))
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `shape with 90 degree rotation`() {
+    fun plot_geomPoint_shapeRotation90() {
         val spec = parsePlotSpec(
             """
             |{
@@ -137,6 +159,8 @@ class PointGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("plot_constant_stroke_size_test.png", spec, scale = 1.0)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 }

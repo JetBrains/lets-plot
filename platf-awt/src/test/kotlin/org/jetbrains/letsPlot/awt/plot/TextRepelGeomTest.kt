@@ -6,13 +6,28 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.math.cos
 import kotlin.math.ln
 import kotlin.math.sqrt
 import kotlin.random.Random
 import kotlin.test.Test
 
-class TextRepelGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
+class TextRepelGeomTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "geoms"))
+
+    override fun currentTestName(): String? = currentTest.methodName
 
     data class PointRow(
         val x: Double,
@@ -21,7 +36,7 @@ class TextRepelGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
     )
 
     @Test
-    fun `text outside the point cloud`() {
+    fun plot_geomTextRepel_outsidePointCloud() {
         val rows = generatePointCloudWithThreeLabels(
             n = 4000,
             seed = 0
@@ -114,7 +129,9 @@ class TextRepelGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             """.trimMargin()
         )
 
-        assertPlot("text_outside_the_point_cloud.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     // ---------------- helpers ----------------

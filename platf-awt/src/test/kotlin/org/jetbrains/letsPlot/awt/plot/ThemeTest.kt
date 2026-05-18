@@ -16,7 +16,7 @@ import org.junit.Rule
 import org.junit.rules.TestName
 import kotlin.test.Test
 
-class PlotThemeTest : PlotVisualTestBase() {
+class ThemeTest : PlotVisualTestBase() {
     @get:Rule
     var currentTest = TestName()
 
