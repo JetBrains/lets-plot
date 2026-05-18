@@ -58,67 +58,46 @@ Also read:
 - [Scientific mode in PyCharm](https://www.jetbrains.com/help/pycharm/matplotlib-support.html)
 - [Scientific mode in IntelliJ IDEA](https://www.jetbrains.com/help/idea/matplotlib-support.html)
 
-## What is new in 4.9.0
+## What is new in 4.10.0
 
-- #### Statistical Summaries Directly on `geom_smooth()` Plot Layer
+- #### `ggdeck()`
 
-  The `geom_smooth()` layer now includes a `labels` parameter designed to display statistical summaries of the fitted model directly on the plot. \
-  This parameter accepts a `smooth_labels()` object, which provides access to model-specific variables like $R^2$ and the regression equation.
-  
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/smooth_summary.png" alt="f-26a/images/smooth_summary.png" width="400" height="265">
+  The new `ggdeck()` function overlays multiple independent plots in a shared plotting area.
+  Typically, all plots share one axis — enabling dual-axis charts and multivariate comparisons.<br><br>
+    - **Dual Axis:**
+   
+      <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26b/images/ggdeck_dual_axis.png" alt="f-26b/images/ggdeck_dual_axis.png" width="550" height="295">
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/smooth_summary.html).
-                         
-- #### Plot Tags
-  Plot tags are short labels attached to a plot.
+      See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/ggdeck_dual_axis.html).<br><br>
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/plot_tags.png" alt="f-26a/images/plot_tags.png" width="600" height="185">
+    - **Multivariate Comparison:**
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/plot_tags.html).
+      <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26b/images/ggdeck_plot_overlay.png" alt="f-26b/images/ggdeck_plot_overlay.png" width="600" height="283">
 
-- #### New `geom_bracket()` and `geom_bracket_dodge()` Geometries
-  New geometries designed primarily for significance bars (*p-values*) annotations in categorical plots.
+      See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/ggdeck_plot_overlay.html).
+              
+                 
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/geom_bracket.png" alt="f-26a/images/geom_bracket.png" width="400" height="261">
+- #### Alpha Channel in Color Strings
 
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/geom_bracket.html).
+  - Named colors accept an opacity suffix after a slash: `"steelblue/0.35"`.
+  - Hex colors accept an alpha channel: `#RRGGBBAA` or short form `#RGBA`.
 
-- #### Custom Color Palettes in `geom_imshow()`
-  The `cmap` parameter now allows you to specify a list of hex color codes for visualizing grayscale images. \
-  Also, the new `cguide` parameter lets you customize the colorbar for grayscale images.
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26b/images/color_alpha_componnet.png" alt="f-26b/images/color_alpha_componnet.png" width="400" height="214">
 
-  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26a/images/image_custom_cmap.png" alt="f-26a/images/image_custom_cmap.png" width="400" height="248">
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/color_alpha.html).
 
-  See [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/image_custom_cmap.html).
 
-- #### New `palette()` Method in Color Scales
-  Generates a list of hex color codes that can be used with `scale_color_manual()` to maintain consistent colors across multiple plots.
+- #### Text Angle in Facet Strip Labels
 
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_color_palette.html).
+  Facet strip labels can now be rotated via the `angle` parameter of `element_text()`, applied to `strip_text`, `strip_text_x`, or `strip_text_y`.
 
-- #### New `overflow` parameter in `scale_color_brewer()`, `scale_fill_brewer()`
-  Controls how colors are generated when more colors are needed than the palette provides. \
-  Options: `'interpolate'` (`'i'`), `'cycle'` (`'c'`), `'generate'` (`'g'`).
+  Thanks to a contribution by [tentrillion](https://github.com/tentrillion).
 
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_brewer_overflow.html).
+  <img src="https://raw.githubusercontent.com/JetBrains/lets-plot/master/docs/f-26b/images/facet_strip_text_angle.png" alt="f-26b/images/facet_strip_text_angle.png" width="400" height="225">
 
-- #### New `break_width` Parameter in Positional Scales
-  Specifies a fixed distance between axis breaks.
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26b/strip_text_angle.html).
 
-  See examples:
-  - [datetime scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_datetime.html)
-  - [time (duration) scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_duration.html)
-  - [log10 scale](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/scale_break_width_log10.html)
-
-- #### Axis Minor Ticks Customization
-  The `axis_minor_ticks` and `axis_minor_ticks_length` parameters in `theme()`.
-
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/axis_minor_ticks.html).
-
-- #### Pan/Zoom in `gggrid()` with Shared Axes
-  Pan/Zoom now propagates across subplots with shared axes (`sharex`/`sharey`).
-
-  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26a/gggrid_scale_share_zoom.html).
 
 
 - #### And More
