@@ -63,9 +63,9 @@
 
 ### Changed
 
- - [**BREAKING**] Dropped support for Python 3.9 as it is in the ["end-of-life"](https://devguide.python.org/versions/#unsupported-versions) of its release cycle. The minimum supported Python version is now 3.10.
+- [**BREAKING**] Dropped support for Python 3.9 as it is in the ["end-of-life"](https://devguide.python.org/versions/#unsupported-versions) of its release cycle. The minimum supported Python version is now 3.10.
    
- - Swing-Batik components are deprecated. Use the Swing/AWT components instead.
+- Swing-Batik components are deprecated. Use the Swing/AWT components instead (doesn't affect Python users).
  
 
 ### Fixed
