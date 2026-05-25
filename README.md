@@ -107,6 +107,12 @@ Also read:
 
 ## Recent Updates in the [Gallery](https://lets-plot.org/python/pages/gallery.html)
 
+  <a href="https://lets-plot.org/examples/demo/math_manual_legend.html">
+    <img src="https://github.com/JetBrains/lets-plot-docs/blob/aac7117cd185070618311a3beb27dbcd8f1dec0a/source/_static/images/changelog/4.10.0/square-math_manual_legend.png?raw=true" alt="images/changelog/4.10.0/square-math_manual_legend.png" width="128" height="128">
+  </a>
+  <a href="https://datalore.jetbrains.com/report/static/HZqq77cegYd.E7get_WnChZ/YXn54IpSaCcYhFGKzKN7cb">
+    <img src="https://github.com/JetBrains/lets-plot-docs/blob/aac7117cd185070618311a3beb27dbcd8f1dec0a/source/_static/images/changelog/4.10.0/square-earthquakes_in_2025.png?raw=true" alt="images/changelog/4.10.0/square-earthquakes_in_2025.png" width="128" height="128">
+  </a>
   <a href="https://lets-plot.org/examples/demo/cities_density.html">
     <img src="https://github.com/JetBrains/lets-plot-docs/blob/bcc63703214b5b02a8a374668d8bba7a451a9152/source/_static/images/changelog/4.8.0/square-cities_density.png?raw=true" alt="images/changelog/4.8.0/square-cities_density.png" width="128" height="128">
   </a>
