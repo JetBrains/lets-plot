@@ -1,0 +1,12 @@
+---
+
+name: lets-plot-python-test-basic
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy>=1.24.2
+  - pandas>=1.5.3
+  - pytest>=8.1.1
+  - pytest-timeout

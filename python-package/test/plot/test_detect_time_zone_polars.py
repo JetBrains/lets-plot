@@ -4,11 +4,16 @@
 from datetime import datetime, date, time, timezone, timedelta
 from zoneinfo import ZoneInfo
 
-import polars as pl
+import pytest
+
+from lets_plot._type_utils import LazyModule
+
+pl = LazyModule("polars")
 
 from lets_plot.plot.series_meta import _detect_time_zone
 
 
+@pytest.mark.skipif(not pl, reason="Requires polars")
 def test_detect_time_zone_polars_datetime():
     utc_tz = timezone.utc
     est_tz = ZoneInfo("US/Eastern")
@@ -54,6 +59,7 @@ def test_detect_time_zone_polars_datetime():
     assert _detect_time_zone('nonexistent', df) is None
 
 
+@pytest.mark.skipif(not pl, reason="Requires polars")
 def test_detect_time_zone_polars_date():
     df = pl.DataFrame({
         'date_col': pl.Series([
@@ -66,6 +72,7 @@ def test_detect_time_zone_polars_date():
     assert _detect_time_zone('date_col', df) is None
 
 
+@pytest.mark.skipif(not pl, reason="Requires polars")
 def test_detect_time_zone_polars_time():
     df = pl.DataFrame({
         'time_col': pl.Series([

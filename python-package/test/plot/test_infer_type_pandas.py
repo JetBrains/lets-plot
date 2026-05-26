@@ -3,14 +3,16 @@
 
 from datetime import date, time
 
-import numpy as np
-import pandas as pd
+import pytest
 
-from lets_plot.plot.series_meta import TYPE_DATE, TYPE_TIME, TYPE_UNKNOWN
-from lets_plot.plot.series_meta import _infer_type, TYPE_INTEGER, TYPE_FLOATING, TYPE_STRING, TYPE_BOOLEAN, \
-    TYPE_DATE_TIME
+from lets_plot._type_utils import LazyModule
+from lets_plot.plot import series_meta
+
+np = LazyModule("numpy")
+pd = LazyModule("pandas")
 
 
+@pytest.mark.skipif(not pd, reason="Requires pandas")
 def test_infer_type_pandas_dataframe():
     # Create a test DataFrame with various types
     df = pd.DataFrame({
@@ -28,32 +30,33 @@ def test_infer_type_pandas_dataframe():
     })
 
     # Get type info
-    type_info = _infer_type(df)
+    type_info = series_meta._infer_type(df)
 
     # Check inferred types
-    assert type_info['int_col'] == TYPE_INTEGER
-    assert type_info['float_col'] == TYPE_FLOATING
-    assert type_info['str_col'] == TYPE_STRING
-    assert type_info['bool_col'] == TYPE_BOOLEAN
-    assert type_info['datetime_col'] == TYPE_DATE_TIME
-    assert type_info['date_col'] == TYPE_DATE
-    assert type_info['time_col'] == TYPE_TIME
-    assert type_info['cat_int_col'] == TYPE_INTEGER
-    assert type_info['cat_str_col'] == TYPE_STRING
-    assert type_info['empty_col'] == TYPE_UNKNOWN
+    assert type_info['int_col'] == series_meta.TYPE_INTEGER
+    assert type_info['float_col'] == series_meta.TYPE_FLOATING
+    assert type_info['str_col'] == series_meta.TYPE_STRING
+    assert type_info['bool_col'] == series_meta.TYPE_BOOLEAN
+    assert type_info['datetime_col'] == series_meta.TYPE_DATE_TIME
+    assert type_info['date_col'] == series_meta.TYPE_DATE
+    assert type_info['time_col'] == series_meta.TYPE_TIME
+    assert type_info['cat_int_col'] == series_meta.TYPE_INTEGER
+    assert type_info['cat_str_col'] == series_meta.TYPE_STRING
+    assert type_info['empty_col'] == series_meta.TYPE_UNKNOWN
 
     # For mixed types, the behavior depends on pandas' infer_dtype, but it should return some value
     assert 'mixed_col' in type_info
 
     # Test empty dataframe
     empty_df = pd.DataFrame({})
-    assert _infer_type(empty_df) == {}
+    assert series_meta._infer_type(empty_df) == {}
 
     # Test a single-column empty dataframe
     empty_col_df = pd.DataFrame({'empty': []})
-    assert _infer_type(empty_col_df)['empty'] == TYPE_UNKNOWN
+    assert series_meta._infer_type(empty_col_df)['empty'] == series_meta.TYPE_UNKNOWN
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_infer_type_pandas_with_numpy_types():
     # Create DataFrame with explicit NumPy types
     df = pd.DataFrame({
@@ -69,16 +72,16 @@ def test_infer_type_pandas_with_numpy_types():
         'np_datetime64': pd.Series(np.array(['2023-01-01', '2023-01-02', '2023-01-03'], dtype='datetime64[ns]')),
     })
 
-    type_info = _infer_type(df)
+    type_info = series_meta._infer_type(df)
 
     # Verify correct type inference for NumPy types
-    assert type_info['np_int8'] == TYPE_INTEGER
-    assert type_info['np_int16'] == TYPE_INTEGER
-    assert type_info['np_int32'] == TYPE_INTEGER
-    assert type_info['np_int64'] == TYPE_INTEGER
-    assert type_info['np_uint8'] == TYPE_INTEGER
-    assert type_info['np_float16'] == TYPE_FLOATING
-    assert type_info['np_float32'] == TYPE_FLOATING
-    assert type_info['np_float64'] == TYPE_FLOATING
-    assert type_info['np_bool'] == TYPE_BOOLEAN
-    assert type_info['np_datetime64'] == TYPE_DATE_TIME
+    assert type_info['np_int8'] == series_meta.TYPE_INTEGER
+    assert type_info['np_int16'] == series_meta.TYPE_INTEGER
+    assert type_info['np_int32'] == series_meta.TYPE_INTEGER
+    assert type_info['np_int64'] == series_meta.TYPE_INTEGER
+    assert type_info['np_uint8'] == series_meta.TYPE_INTEGER
+    assert type_info['np_float16'] == series_meta.TYPE_FLOATING
+    assert type_info['np_float32'] == series_meta.TYPE_FLOATING
+    assert type_info['np_float64'] == series_meta.TYPE_FLOATING
+    assert type_info['np_bool'] == series_meta.TYPE_BOOLEAN
+    assert type_info['np_datetime64'] == series_meta.TYPE_DATE_TIME

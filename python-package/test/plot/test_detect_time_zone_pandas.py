@@ -3,12 +3,17 @@
 
 from datetime import datetime, date, time, timezone, timedelta
 
-import numpy as np
-import pandas as pd
+import pytest
+
+from lets_plot._type_utils import LazyModule
+
+np = LazyModule("numpy")
+pd = LazyModule("pandas")
 
 from lets_plot.plot.series_meta import _detect_time_zone
 
 
+@pytest.mark.skipif(not pd, reason="Requires pandas")
 def test_detect_time_zone_pandas_datetime():
     df = pd.DataFrame({
         'utc_datetime': pd.Series(pd.date_range('2023-01-01', periods=3, tz='UTC')),
@@ -35,6 +40,7 @@ def test_detect_time_zone_pandas_datetime():
     assert _detect_time_zone('nonexistent', df) is None
 
 
+@pytest.mark.skipif(not pd, reason="Requires pandas")
 def test_detect_time_zone_pandas_date():
     df = pd.DataFrame({
         'date_col': pd.Series([
@@ -53,6 +59,7 @@ def test_detect_time_zone_pandas_date():
     assert _detect_time_zone('date_as_object', df) is None
 
 
+@pytest.mark.skipif(not pd, reason="Requires pandas")
 def test_detect_time_zone_pandas_time():
     df = pd.DataFrame({
         'time_col': pd.Series([
@@ -79,6 +86,7 @@ def test_detect_time_zone_pandas_time():
     assert _detect_time_zone('mixed_time_with_tz', df) is None
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_detect_time_zone_pandas_numpy():
     # NumPy datetime columns
     df = pd.DataFrame({
