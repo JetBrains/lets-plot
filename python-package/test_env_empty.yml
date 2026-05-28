@@ -1,6 +1,6 @@
 ---
 
-name: lets-plot-python-test-minimal
+name: lets-plot-python-test-empty
 channels:
   - conda-forge
   - defaults

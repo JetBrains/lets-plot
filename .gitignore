@@ -6,6 +6,7 @@
 *.iml
 .gradle
 /.gradle-local/
+/.gradle-user/
 .kotlin/
 .DS_Store
 **/build
