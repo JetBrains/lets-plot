@@ -1,9 +1,12 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from unittest import mock
 
 import pytest
+
+pytest.importorskip('geopandas')
+
 from pandas import DataFrame
 
 from lets_plot.geo_data import geocode
@@ -302,4 +305,3 @@ def test_regions_to_data_frame_should_skip_highlights():
     regions = make_geocode_region(REQUEST, REGION_NAME, REGION_ID, REGION_HIGHLIGHTS)
     regions_df = regions.to_data_frame()
     assert [DF_COLUMN_ID, COLUMN_NAME_CITY, DF_COLUMN_FOUND_NAME, DF_COLUMN_CENTROID, DF_COLUMN_POSITION, DF_COLUMN_LIMIT] == list(regions_df.columns.values)
-

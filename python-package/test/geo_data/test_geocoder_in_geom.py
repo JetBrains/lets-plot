@@ -1,7 +1,10 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
-import pandas
 import pytest
+
+pytest.importorskip('geopandas')
+
+import pandas
 from geopandas import GeoDataFrame
 from pandas import DataFrame
 from shapely.geometry import Point, Polygon, LinearRing, MultiPolygon

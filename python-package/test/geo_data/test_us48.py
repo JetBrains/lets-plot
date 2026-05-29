@@ -1,5 +1,9 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+import pytest
+
+pytest.importorskip('geopandas')
+
 import lets_plot.geo_data as geodata
 from geo_data_test_util import assert_error, assert_row, assert_request_and_found_name_are_equal
 
@@ -81,5 +85,4 @@ def test_error_us48_in_request_not_available():
         "us-48 can't be used in requests with parents.",
         lambda: geodata.geocode_states('us-48').countries('usa').get_geocodes()
     )
-
 

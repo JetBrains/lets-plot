@@ -1,9 +1,11 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from unittest import mock
 
 import pytest
+
+pytest.importorskip('geopandas')
 
 from geo_data_test_util import make_success_response, features_to_queries, features_to_answers, assert_row, \
     assert_request_and_found_name_are_equal
