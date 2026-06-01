@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder.layout
 import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
@@ -20,7 +21,10 @@ import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayoutUtil.geo
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLayoutUtil.plotInsets
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FixedScalesTilesLayouter
 import org.jetbrains.letsPlot.core.plot.builder.layout.facet.FreeScalesTilesLayouter
+import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.sin
 
 internal class FacetedPlotLayout(
     private val facets: PlotFacets,
@@ -79,7 +83,7 @@ internal class FacetedPlotLayout(
                             val labHeight = facetLabelSize(
                                 colLab,
                                 facetsTheme.horizontalFacetStrip(),
-                                marginSize = Thickness::height
+                                FacetStripOrientation.HORIZONTAL
                             )
                             subColLabels[index] = max(labHeight, subColLabels[index] ?: 0.0)
                         }
@@ -98,7 +102,7 @@ internal class FacetedPlotLayout(
         if (facetsTheme.verticalFacetStrip().showStrip()) {
             facetRowTabWidth = facetTiles
                 .mapNotNull { it.rowLab }
-                .maxOfOrNull { facetLabelSize(it, facetsTheme.verticalFacetStrip(), marginSize = Thickness::width) }
+                .maxOfOrNull { facetLabelSize(it, facetsTheme.verticalFacetStrip(), FacetStripOrientation.VERTICAL) }
                 ?: 0.0
             totalAddedWidth = facetRowTabWidth + facetsTheme.verticalFacetStrip().stripSpacing().x
         } else {
@@ -250,7 +254,7 @@ internal class FacetedPlotLayout(
                         facetLabelSize(
                             it,
                             facetsTheme.horizontalFacetStrip(),
-                            marginSize = Thickness::height
+                            FacetStripOrientation.HORIZONTAL
                         )
                     }
                     facetTile.colLabs.zip(colHeights)
@@ -285,14 +289,19 @@ internal class FacetedPlotLayout(
 
     companion object {
         // label height + margins
-        fun facetLabelSize(title: String, theme: FacetStripTheme, marginSize: (Thickness) -> Double) =
-            titleSize(title, theme).y + marginSize(theme.stripMargins())
+        private fun facetLabelSize(title: String, theme: FacetStripTheme, orientation: FacetStripOrientation): Double {
+            val textSize = rotatedTitleSize(title, theme, orientation)
+            return when (orientation) {
+                FacetStripOrientation.HORIZONTAL -> textSize.y + theme.stripMargins().height
+                FacetStripOrientation.VERTICAL -> textSize.x + theme.stripMargins().width
+            }
+        }
 
         // Total head sizes: tab size with additional padding
 
         private fun facetColHeadTotalHeight(colLabs: List<String>, facetsTheme: FacetStripTheme): Double {
             return if (colLabs.isNotEmpty()) {
-                colLabs.sumOf { facetLabelSize(it, facetsTheme, Thickness::height) } + facetsTheme.stripSpacing().y
+                colLabs.sumOf { facetLabelSize(it, facetsTheme, FacetStripOrientation.HORIZONTAL) } + facetsTheme.stripSpacing().y
             } else {
                 0.0
             }
@@ -307,5 +316,34 @@ internal class FacetedPlotLayout(
 
         fun titleSize(title: String, theme: FacetStripTheme) =
             PlotLayoutUtil.textDimensions(title, PlotLabelSpecFactory.facetText(theme))
+
+        private fun rotatedTitleSize(
+            title: String,
+            theme: FacetStripTheme,
+            orientation: FacetStripOrientation
+        ): DoubleVector {
+            val textSize = titleSize(title, theme)
+            val angle = theme.stripTextAngle().takeIf { !it.isNaN() } ?: when (orientation) {
+                FacetStripOrientation.HORIZONTAL -> 0.0
+                FacetStripOrientation.VERTICAL -> 90.0
+            }
+            return rotatedRectangleDimensions(textSize, angle)
+        }
+
+        private fun rotatedRectangleDimensions(size: DoubleVector, degreeAngle: Double): DoubleVector {
+            val angle = toRadians(degreeAngle)
+            val sin = abs(sin(angle))
+            val cos = abs(cos(angle))
+
+            val w = size.x * cos + size.y * sin
+            val h = size.y * cos + size.x * sin
+
+            return DoubleVector(w, h)
+        }
+
+        private enum class FacetStripOrientation {
+            HORIZONTAL,
+            VERTICAL
+        }
     }
 }

@@ -1,9 +1,9 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
-from geo_data_test_util import features_to_answers, assert_row, FOUND_NAME, GEO_RECT_MIN_LON, GEO_RECT_MAX_LON, \
-    GEO_RECT_MIN_LAT, GEO_RECT_MAX_LAT
-from pandas import DataFrame
+import pytest
+
+pytest.importorskip('geopandas')
 
 from lets_plot.geo_data.gis.request import RegionQuery, LevelKind
 from lets_plot.geo_data.gis.response import SuccessResponse, FeatureBuilder
@@ -84,7 +84,7 @@ def test_geo_limit_response():
     ).build()
     assert_success_response(response)
 
-    data_frame: DataFrame = LimitsGeoDataFrame().to_data_frame(
+    data_frame: 'DataFrame' = LimitsGeoDataFrame().to_data_frame(
         answers=features_to_answers(response.features),
         queries=features_to_queries(response.features),
         level_kind=LevelKind.city
@@ -111,7 +111,7 @@ def test_geo_centroid_response():
     ).build()
     assert_success_response(response)
 
-    data_frame: DataFrame = CentroidsGeoDataFrame().to_data_frame(
+    data_frame: 'DataFrame' = CentroidsGeoDataFrame().to_data_frame(
         answers=features_to_answers(response.features),
         queries=features_to_queries(response.features),
         level_kind=LevelKind.city
@@ -134,7 +134,7 @@ def test_geo_boundaries_point_response():
     ).build()
 
     assert_success_response(response)
-    boundary: DataFrame = BoundariesGeoDataFrame().to_data_frame(
+    boundary: 'DataFrame' = BoundariesGeoDataFrame().to_data_frame(
         queries=features_to_queries(response.features),
         answers=features_to_answers(response.features),
         level_kind=LevelKind.city
@@ -175,7 +175,7 @@ def test_geo_boundaries_polygon_response():
     ).build()
 
     assert_success_response(response)
-    boundary: DataFrame = BoundariesGeoDataFrame().to_data_frame(
+    boundary: 'DataFrame' = BoundariesGeoDataFrame().to_data_frame(
         queries=features_to_queries(response.features),
         answers=features_to_answers(response.features),
         level_kind=LevelKind.city
@@ -219,7 +219,7 @@ def test_geo_boundaries_multipolygon_response():
     ).build()
 
     assert_success_response(response)
-    boundary: DataFrame = BoundariesGeoDataFrame().to_data_frame(
+    boundary: 'DataFrame' = BoundariesGeoDataFrame().to_data_frame(
         queries=features_to_queries(response.features),
         answers=features_to_answers(response.features),
         level_kind=LevelKind.city
@@ -228,7 +228,7 @@ def test_geo_boundaries_multipolygon_response():
     assert_geo_multiboundary(boundary, index=1, multipolygon=[[r3]])
 
 
-def assert_geo_limit(limit: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME):
+def assert_geo_limit(limit: 'DataFrame', index: int, name=FOUND_NAME, found_name=FOUND_NAME):
     assert_row(
         df=limit,
         index=index,
@@ -241,14 +241,13 @@ def assert_geo_limit(limit: DataFrame, index: int, name=FOUND_NAME, found_name=F
     )
 
 
-def assert_geo_centroid(centroid: DataFrame, index: int, name=FOUND_NAME, found_name=FOUND_NAME, lon=CENTROID_LON, lat=CENTROID_LAT):
+def assert_geo_centroid(centroid: 'DataFrame', index: int, name=FOUND_NAME, found_name=FOUND_NAME, lon=CENTROID_LON, lat=CENTROID_LAT):
     assert_row(df=centroid, index=index, names=name, found_name=found_name, lon=lon, lat=lat)
 
 
-def assert_geo_boundary(boundary: DataFrame, index: int, polygon: GJPolygon, name=FOUND_NAME, found_name=FOUND_NAME):
+def assert_geo_boundary(boundary: 'DataFrame', index: int, polygon: GJPolygon, name=FOUND_NAME, found_name=FOUND_NAME):
     assert_row(df=boundary, index=index, names=name, found_name=found_name, boundary=polygon)
 
 
-def assert_geo_multiboundary(boundary: DataFrame, index: int, multipolygon: GJMultipolygon, name=FOUND_NAME, found_name=FOUND_NAME):
+def assert_geo_multiboundary(boundary: 'DataFrame', index: int, multipolygon: GJMultipolygon, name=FOUND_NAME, found_name=FOUND_NAME):
     assert_row(df=boundary, index=index, names=name, found_name=found_name, boundary=multipolygon)
-

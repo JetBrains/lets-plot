@@ -6,12 +6,27 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
-class AreaGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
+class AreaGeomTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "geoms"))
+
+    override fun currentTestName(): String? = currentTest.methodName
 
     @Test
-    fun `example from #1295 Incorrectly rendered Area chart`() {
+    fun plot_geomArea_issue1295() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -53,11 +68,13 @@ class AreaGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("area_geom_1.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#1 example from documentation geom_area`() {
+    fun plot_geomArea_docExample1() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -93,11 +110,13 @@ class AreaGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("area_geom_2.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#2 example from documentation geom_area`() {
+    fun plot_geomArea_docExample2() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -184,11 +203,13 @@ class AreaGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("area_geom_3.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `geom_area with NaN`() {
+    fun plot_geomArea_withNaN() {
         val spec = parsePlotSpec("""
             |{
             |  "kind": "subplots",
@@ -298,6 +319,8 @@ class AreaGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("area_geom_4.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 }

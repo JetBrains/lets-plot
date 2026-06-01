@@ -72,7 +72,6 @@ abstract class LegendBox : SvgComponent() {
         if (hasTitle()) {
             val label = createTitleLabel(
                 titleBoundingRect,
-                l.titleSize,
                 theme.titleJustification()
             )
             innerGroup.children().add(label.rootGroup)
@@ -125,22 +124,23 @@ abstract class LegendBox : SvgComponent() {
 
     private fun createTitleLabel(
         boundRect: DoubleRectangle,
-        titleSize: DoubleVector,
         justification: TextJustification
     ): Label {
-        val lineHeight = PlotLabelSpecFactory.legendTitle(theme).height()
+        val labelSpec = PlotLabelSpecFactory.legendTitle(theme)
+        val textLayout = labelSpec.layout(title).layout
+        val fontSize = labelSpec.font.size.toDouble()
 
         val label = Label(title)
         val (pos, hAnchor) = applyJustification(
             boundRect,
-            textSize = titleSize,
-            lineHeight,
+            fontSize,
+            textLayout,
             justification
         )
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
-        label.setFontSize(lineHeight)
-        label.setLineHeight(lineHeight)
+        label.setFontSize(fontSize)
+        label.setTextLayout(textLayout)
         label.moveTo(pos)
         return label
     }

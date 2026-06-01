@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.BOTTOM
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation.TOP
-import org.jetbrains.letsPlot.core.plot.builder.presentation.LabelSpec
 
 internal class HorizontalMultilineLabelsLayout(
     orientation: Orientation,
@@ -70,21 +69,25 @@ internal class HorizontalMultilineLabelsLayout(
         } else {
             boundsByShelfIndex[0]
         }
-        val h = labelSpec.height() * LINE_HEIGHT
-        for ((i, shelfBounds) in boundsByShelfIndex.withIndex()) {
-            bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, i * h)))
-        }
 
         val linesCount = boundsByShelfIndex.size
+        val shelfLineInterval = labelSpec.plainTextLineBoxHeight * (LINE_HEIGHT - 1)
+        val shelfOffsets = shelfOffsets(boundsByShelfIndex.map(DoubleRectangle::height), shelfLineInterval)
+        for ((shelfBounds, shelfOffset) in boundsByShelfIndex zip shelfOffsets) {
+            bounds = bounds.union(shelfBounds.add(DoubleVector(0.0, shelfOffset)))
+        }
         val labelAdditionalOffsets = labelAdditionalOffsets(
-            labelSpec,
             breaks,
-            shelfIndexForTickIndex
+            shelfIndexForTickIndex,
+            shelfOffsets
         ).let { offsets ->
             when (orientation) {
                 BOTTOM -> offsets
                 else -> offsets.map { DoubleVector(it.x, -it.y) }
             }
+        }
+        val adjustedLabelBoundsList = boundsList.mapIndexed { i, labelBounds ->
+            labelBounds.add(labelAdditionalOffsets[i])
         }
 
         val labelBounds = applyLabelMargins(bounds)
@@ -99,6 +102,7 @@ internal class HorizontalMultilineLabelsLayout(
             .labelAdditionalOffsets(labelAdditionalOffsets)
             .labelHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
             .labelVerticalAnchor(verticalAnchor)
+            .labelBoundsList(adjustedLabelBoundsList.map(::alignToLabelMargin))
             .build()
     }
 
@@ -113,14 +117,23 @@ internal class HorizontalMultilineLabelsLayout(
         private const val MIN_DISTANCE = 60
 
         private fun labelAdditionalOffsets(
-            labelSpec: LabelSpec,
             breaks: ScaleBreaks,
-            shelfIndexForTickIndex: List<Int>
+            shelfIndexForTickIndex: List<Int>,
+            shelfOffsets: List<Double>
         ): List<DoubleVector> {
-            val h = labelSpec.height() * LINE_HEIGHT
             val result = ArrayList<DoubleVector>()
             for (i in 0 until breaks.size) {
-                result.add(DoubleVector(0.0, shelfIndexForTickIndex[i] * h))
+                result.add(DoubleVector(0.0, shelfOffsets[shelfIndexForTickIndex[i]]))
+            }
+            return result
+        }
+
+        internal fun shelfOffsets(shelfHeights: List<Double>, lineInterval: Double): List<Double> {
+            val result = ArrayList<Double>(shelfHeights.size)
+            var cumulative = 0.0
+            for (height in shelfHeights) {
+                result.add(cumulative)
+                cumulative += height + lineInterval
             }
             return result
         }

@@ -6,11 +6,27 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
-class RasterImageGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
+class RasterImageGeomTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "geoms"))
+
+    override fun currentTestName(): String? = currentTest.methodName
+
     @Test
-    fun `geom_raster() should not fail on image export`() {
+    fun plot_geomRaster_export() {
         val spec = parsePlotSpec(
             """
             {
@@ -39,11 +55,13 @@ class RasterImageGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimIndent()
         )
 
-        assertPlot("geom_raster_export_test.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `geom_imshow() should not fail on image export`() {
+    fun plot_geomImshow_export() {
         val spec = parsePlotSpec(
             """
             |{
@@ -62,6 +80,8 @@ class RasterImageGeomTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("geom_imshow_export_test.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 }

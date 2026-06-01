@@ -9,7 +9,6 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleInsets
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.layout.Thickness
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.theme.PlotTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TagLocation
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -21,29 +20,8 @@ import kotlin.math.max
 object PlotLayoutUtil {
     internal fun plotInsets(plotInset: Thickness) = DoubleInsets(plotInset.leftTop, plotInset.rightBottom)
 
-    private fun labelDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
-        if (text.isEmpty()) {
-            return DoubleVector(0.0, labelSpec.height())
-        }
-        return DoubleVector(
-            labelSpec.width(text),
-            labelSpec.height()
-        )
-    }
-
-    private fun textLinesDimensions(text: String, labelSpec: LabelSpec): List<DoubleVector> {
-        return Label.splitLines(text).map { line -> labelDimensions(line, labelSpec) }
-    }
-
     internal fun textDimensions(text: String, labelSpec: LabelSpec): DoubleVector {
-        fun DoubleVector.union(p: DoubleVector): DoubleVector {
-            return DoubleVector(
-                x = max(x, p.x),
-                y = y + p.y
-            )
-        }
-        return textLinesDimensions(text, labelSpec)
-            .fold(DoubleVector.ZERO) { acc, dv -> acc.union(dv) }
+        return labelSpec.layout(text).totalSize
     }
 
     private fun titleThickness(title: String?, labelSpec: LabelSpec, margin: Double): Double {

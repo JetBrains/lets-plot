@@ -44,11 +44,11 @@ internal class HorizontalTiltedLabelsLayout(
         axisLength: Double,
     ): AxisLabelsLayoutInfo {
 
-        val height = labelSpec.height()
+        val maxHeight = breaks.labels.maxOf { labelSpec.layout(it).totalHeight }
         val ticks = breaks.projectOnAxis(axisDomain, axisLength, isHorizontal = true)
         var overlap = false
         if (breaks.size >= 2) {
-            val minTickDistance = abs((height + MIN_DISTANCE) / SIN)
+            val minTickDistance = abs((maxHeight + MIN_DISTANCE) / SIN)
             val tickDistance = abs(ticks[0] - ticks[1])
             overlap = tickDistance < minTickDistance
         }

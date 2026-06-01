@@ -41,11 +41,6 @@ class Color @JvmOverloads constructor(
         return withAlpha(alpha)
     }
 
-    fun multiplyOpacity(opacity: Double): Color {
-        val newOpacity = alpha / 255.0 * opacity
-        return withOpacity(newOpacity)
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
 

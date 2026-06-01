@@ -6,7 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator
 import org.jetbrains.letsPlot.commons.values.Colors.parseColor
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
@@ -40,12 +40,12 @@ object TestUtil {
         wrapLength: Int = -1,
         markdown: Boolean = false,
     ): Double {
-        return RichText.estimateWidth(
+        return RichText.measure(
             text = text,
             font = font,
             wrapLength = wrapLength,
             markdown = markdown
-        )
+        ).width
     }
 
     internal fun toTestWidth(text: String, baseFont: Font = DEF_FONT, level: FormulaLevel = FormulaLevel()): Double {
@@ -53,7 +53,7 @@ object TestUtil {
             val levelFontSize = max(1, (baseFont.size * levelSizeScale).roundToInt())
             Font(baseFont.family, levelFontSize, baseFont.isBold, baseFont.isItalic)
         } ?: baseFont
-        return TextWidthEstimator.widthCalculator(text, font)
+        return TextMetricsEstimator.widthCalculator(text, font)
     }
 
     internal fun toTestWidth(texts: Iterable<String>, baseFont: Font = DEF_FONT, level: FormulaLevel = FormulaLevel()): Double {
@@ -213,16 +213,16 @@ object TestUtil {
                     }
                     Shift.NUMERATOR -> {
                         size = sizeByLevel(level)
-                        dy = -0.5
+                        dy = -0.46
                     }
                     Shift.DENOMINATOR -> {
                         size = sizeByLevel(level)
-                        dy = 1.0
+                        dy = 1.22
                     }
                     Shift.FRACTION_BAR -> {
                         shiftsStack.addLast(Shift.FRACTION_BAR)
                         size = sizeByLevel(level)
-                        dy = -0.5
+                        dy = -0.66
                     }
                     Shift.REVERT -> {
                         size = sizeByLevel(level)
@@ -236,7 +236,7 @@ object TestUtil {
                                 dy = -0.4
                             }
                             Shift.FRACTION_BAR -> {
-                                dy = null
+                                dy = -0.1
                             }
                             else -> IllegalStateException("Unbalanced shift stack")
                         }

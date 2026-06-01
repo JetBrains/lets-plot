@@ -213,8 +213,9 @@ object AxisUtil {
             rotationDegree: Double,
             labelOffset: DoubleVector
         ): DoubleRectangle {
-            val labelNormalSize = labelSpec.dimensions(label)
-            val wh = labelNormalSize.flipIf(isVertical(rotationDegree))
+            val measuredText = labelSpec.layout(label)
+            val labelNormalExtent = measuredText.totalSize
+            val wh = labelNormalExtent.flipIf(isVertical(rotationDegree))
             val origin = if (horizontalAxis) DoubleVector(loc, 0.0) else DoubleVector(0.0, loc)
             return DoubleRectangle(origin, wh)
                 .subtract(wh.mul(0.5)) // labels use central adjustments

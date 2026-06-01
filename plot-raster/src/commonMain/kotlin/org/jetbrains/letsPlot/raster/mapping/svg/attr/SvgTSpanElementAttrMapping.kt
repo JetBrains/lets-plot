@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg.attr
 
 import org.jetbrains.letsPlot.core.canvas.FontStyle
 import org.jetbrains.letsPlot.core.canvas.FontWeight
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgShape
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
@@ -15,6 +16,7 @@ import org.jetbrains.letsPlot.raster.mapping.svg.SvgUtils.toColor
 import org.jetbrains.letsPlot.raster.scene.TSpan
 import org.jetbrains.letsPlot.raster.scene.Text.BaselineShift
 import org.jetbrains.letsPlot.raster.scene.Text.Companion.DEFAULT_FONT_FAMILY
+import org.jetbrains.letsPlot.raster.scene.Text.HorizontalAlignment
 
 internal object SvgTSpanElementAttrMapping : SvgShapeMapping<TSpan>() {
     override fun setAttribute(target: TSpan, name: String, value: Any?) {
@@ -52,6 +54,15 @@ internal object SvgTSpanElementAttrMapping : SvgShapeMapping<TSpan>() {
                     "%" in value -> value.removeSuffix("%").toFloat() / 100.0f
                     else -> 0f
                 }
+            }
+
+            SvgTextContent.X.name -> target.x = value?.asFloat
+
+            SvgTextContent.TEXT_ANCHOR.name -> target.textAnchor = when (value) {
+                SvgConstants.SVG_TEXT_ANCHOR_END -> HorizontalAlignment.RIGHT
+                SvgConstants.SVG_TEXT_ANCHOR_MIDDLE -> HorizontalAlignment.CENTER
+                SvgConstants.SVG_TEXT_ANCHOR_START -> HorizontalAlignment.LEFT
+                else -> HorizontalAlignment.LEFT
             }
 
             SvgTSpanElement.BASELINE_SHIFT.name -> target.baselineShift = when (value) {

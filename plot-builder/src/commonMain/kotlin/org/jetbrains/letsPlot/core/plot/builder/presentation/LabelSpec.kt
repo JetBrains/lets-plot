@@ -5,20 +5,14 @@
 
 package org.jetbrains.letsPlot.core.plot.builder.presentation
 
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Font
+import org.jetbrains.letsPlot.core.plot.base.render.text.MeasuredText
 
 interface LabelSpec {
     val font: Font
     val markdown: Boolean
 
-    fun dimensions(labelText: String): DoubleVector
+    val plainTextLineBoxHeight: Double
 
-    fun multilineDimensions(labelText: String): DoubleVector
-
-    fun width(labelText: String): Double
-
-    fun height(): Double
-
-    fun multilineHeight(labelText: String): Double
+    fun layout(labelText: String, lineSpacing: Double = 0.0): MeasuredText
 }

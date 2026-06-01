@@ -1,13 +1,10 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 import json
 from typing import List, Union, Callable, Any
 
-import shapely
-from geopandas import GeoDataFrame
-from shapely.geometry import Point
-
+from lets_plot._type_utils import LazyModule
 from lets_plot.geo_data import DF_COLUMN_ID, DF_COLUMN_FOUND_NAME, DF_COLUMN_COUNTY, DF_COLUMN_STATE, DF_COLUMN_COUNTRY
 from lets_plot.geo_data.geocodes import Geocodes
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
@@ -19,6 +16,9 @@ from lets_plot.geo_data.gis.response import Answer, GeocodedFeature, FeatureBuil
 
 GEOJSON_TYPE = ResponseField.boundary_type.value
 GEOJSON_COORDINATES = ResponseField.boundary_coordinates.value
+
+shapely = LazyModule('shapely')
+geopandas = LazyModule('geopandas')
 
 LEVEL: LevelKind = LevelKind.county
 ID: str = 'iddd'
@@ -128,13 +128,15 @@ def assert_row(
     assert_str(DF_COLUMN_STATE, state)
     assert_str(DF_COLUMN_COUNTRY, country)
     if lon is not None:
-        assert Point(df.geometry[index]).x == lon, 'lon {} != {}'.format(lon, Point(df.geometry[index]).x)
+        point = shapely.geometry.Point(df.geometry[index])
+        assert point.x == lon, 'lon {} != {}'.format(lon, point.x)
 
     if lat is not None:
-        assert Point(df.geometry[index]).y == lat, 'lat {} != {}'.format(lat, Point(df.geometry[index]).y)
+        point = shapely.geometry.Point(df.geometry[index])
+        assert point.y == lat, 'lat {} != {}'.format(lat, point.y)
 
     if any([v is not None for v in [lon_min, lon_max, lat_min, lat_max]]):
-        if isinstance(df, GeoDataFrame):
+        if geopandas.lazy_is_instance(df, 'GeoDataFrame'):
             bounds = df.geometry[index].bounds
 
             if lon_min is not None:

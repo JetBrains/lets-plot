@@ -6,12 +6,27 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
-class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
+class ViolinGeomTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "geoms"))
+
+    override fun currentTestName(): String? = currentTest.methodName
 
     @Test
-    fun `example from #1381 support for group aesthetic mapping parameter unclear`() {
+    fun plot_geomViolin_issue1381GroupMapping() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -77,11 +92,13 @@ class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("violin_geom_1.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#1 example from documentation geom_violin`() {
+    fun plot_geomViolin_docExample1() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -117,11 +134,13 @@ class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("violin_geom_2.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#2 example from documentation geom_violin`() {
+    fun plot_geomViolin_docExample2() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -168,11 +187,13 @@ class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("violin_geom_3.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#3 example from documentation geom_violin`() {
+    fun plot_geomViolin_docExample3() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -217,11 +238,13 @@ class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("violin_geom_4.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#4 example from documentation geom_violin`() {
+    fun plot_geomViolin_docExample4() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -280,11 +303,13 @@ class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("violin_geom_5.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#5 example from documentation geom_violin`() {
+    fun plot_geomViolin_docExample5() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -339,11 +364,13 @@ class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("violin_geom_6.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `violin with none`() {
+    fun plot_geomViolin_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -374,6 +401,8 @@ class ViolinGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("violin_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 }

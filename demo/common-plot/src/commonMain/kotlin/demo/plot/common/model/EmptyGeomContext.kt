@@ -6,7 +6,6 @@
 package demo.plot.common.model
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
-import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.*
@@ -15,7 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
-import org.jetbrains.letsPlot.core.plot.builder.presentation.PlotLabelSpec
+import kotlin.math.roundToInt
 
 /**
  * Used in demos only.
@@ -62,22 +61,20 @@ class EmptyGeomContext : GeomContext {
     }
 
     override fun isMappedAes(aes: Aes<*>): Boolean = false
-    override fun estimateTextSize(
-        text: String,
+
+    override fun resolveFont(
         family: String,
         size: Double,
         isBold: Boolean,
         isItalic: Boolean
-    ): DoubleVector {
+    ): Font {
         @Suppress("NAME_SHADOWING")
         val family = DefaultFontFamilyRegistry().get(family)
-        return PlotLabelSpec(
-            Font(
-                family = family,
-                size = size.toInt(),
-                isBold = isBold,
-                isItalic = isItalic
-            ),
-        ).dimensions(text)
+        return Font(
+            family = family,
+            size = size.roundToInt(),
+            isBold = isBold,
+            isItalic = isItalic
+        )
     }
 }

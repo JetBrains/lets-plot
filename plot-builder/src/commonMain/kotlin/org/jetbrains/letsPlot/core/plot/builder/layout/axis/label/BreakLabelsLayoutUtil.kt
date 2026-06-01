@@ -205,15 +205,13 @@ internal object BreakLabelsLayoutUtil {
         projectedBreaks: List<Double>,  // coordinates on axis
         tickLabelSpec: LabelSpec
     ): DoubleRectangle {
-        val maxLabelWidth = breaks.labels.maxOfOrNull(tickLabelSpec::width) ?: 0.0
+        val maxLabelWidth = breaks.labels.maxOfOrNull { tickLabelSpec.layout(it).width } ?: 0.0
         var y1 = 0.0
         var y2 = 0.0
         if (!breaks.isEmpty) {
-
-            y1 = min(projectedBreaks[0], projectedBreaks.last())
-            y2 = max(projectedBreaks[0], projectedBreaks.last())
-            y1 -= tickLabelSpec.height() / 2
-            y2 += tickLabelSpec.height() / 2
+            val halfLine = tickLabelSpec.plainTextLineBoxHeight / 2
+            y1 = min(projectedBreaks[0], projectedBreaks.last()) - halfLine
+            y2 = max(projectedBreaks[0], projectedBreaks.last()) + halfLine
         }
 
         val origin = DoubleVector(0.0, y1)
@@ -227,7 +225,11 @@ internal object BreakLabelsLayoutUtil {
         rotationAngle: Double?,
         side: (DoubleVector) -> Double
     ): Int {
-        val initialDim = tickLabelSpec.dimensions(AxisLabelsLayout.INITIAL_TICK_LABEL)
+        val initialMeasuredText = tickLabelSpec.layout(AxisLabelsLayout.INITIAL_TICK_LABEL)
+        val initialDim = DoubleVector(
+            initialMeasuredText.width,
+            initialMeasuredText.totalHeight  // Makes sense to use the total height because INITIAL_TICK_LABEL is a single-line plain-text label.
+        )
         val dimension = if (rotationAngle != null) {
             rotatedLabelBounds(initialDim, rotationAngle).dimension
         } else {
@@ -244,10 +246,11 @@ internal object BreakLabelsLayoutUtil {
         side: (DoubleVector) -> Double
     ): Int {
         val dims = labels.map { label ->
+            val measuredText = tickLabelSpec.layout(label)
             if (rotationAngle != null) {
-                rotatedLabelBounds(tickLabelSpec.multilineDimensions(label), rotationAngle).dimension
+                rotatedLabelBounds(measuredText.totalSize, rotationAngle).dimension
             } else {
-                tickLabelSpec.dimensions(label)
+                measuredText.totalSize
             }
         }
         val longestSide = dims.maxOfOrNull(side) ?: 0.0

@@ -6,12 +6,27 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
-class SmoothGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
+class SmoothGeomTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "geoms"))
+
+    override fun currentTestName(): String? = currentTest.methodName
 
     @Test
-    fun `example from #143 Broken colors with scale_color_discrete and groups`() {
+    fun plot_geomSmooth_issue143DiscreteColorGroups() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -70,11 +85,13 @@ class SmoothGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("smooth_geom_1.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `example from #82 geom_smooth with LOESS the shown confidence interval is random`() {
+    fun plot_geomSmooth_issue82LoessBand() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -121,11 +138,13 @@ class SmoothGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("smooth_geom_2.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#1 example from documentation geom_smooth`() {
+    fun plot_geomSmooth_docExample1() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -166,11 +185,13 @@ class SmoothGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("smooth_geom_3.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#2 example from documentation geom_smooth`() {
+    fun plot_geomSmooth_docExample2() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -214,11 +235,13 @@ class SmoothGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("smooth_geom_4.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#3 example from documentation geom_smooth`() {
+    fun plot_geomSmooth_docExample3() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -276,11 +299,13 @@ class SmoothGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("smooth_geom_5.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `smooth with none`() {
+    fun plot_geomSmooth_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -324,6 +349,8 @@ class SmoothGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("smooth_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 }

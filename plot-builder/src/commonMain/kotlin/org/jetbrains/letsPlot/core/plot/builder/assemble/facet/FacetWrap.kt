@@ -150,8 +150,8 @@ class FacetWrap constructor(
     companion object {
 
         private fun shape(tilesCount: Int, ncol: Int?, nrow: Int?, dir: Direction): Pair<Int, Int> {
-            require(ncol?.let { ncol > 0 } ?: true) { "'ncol' must be positive, was $ncol" }
-            require(nrow?.let { nrow > 0 } ?: true) { "'nrow' must be positive, was $nrow" }
+            require(ncol == null || ncol > 0) { "'ncol' must be positive, was $ncol" }
+            require(nrow == null || nrow > 0) { "'nrow' must be positive, was $nrow" }
             val shape = when {
                 ncol != null -> {
                     val ncolActual = min(ncol, tilesCount)

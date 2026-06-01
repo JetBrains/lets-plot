@@ -5,7 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.render.text
 
-import org.jetbrains.letsPlot.commons.intern.util.TextWidthEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalculator
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
@@ -16,6 +16,11 @@ object RichText {
     val DEF_HORIZONTAL_ANCHOR = Text.HorizontalAnchor.LEFT
     const val HYPERLINK_ELEMENT_CLASS = "hyperlink-element"
 
+    internal data class RenderedLine(
+        val element: SvgTextElement,
+        val anchor: Text.HorizontalAnchor
+    )
+
     fun toSvg(
         text: String,
         font: Font,
@@ -23,34 +28,72 @@ object RichText {
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
         anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
-        initialX: Double = 0.0
+        initialX: Double? = null
     ): List<SvgTextElement> {
-        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
-        val svgLines = render(lines, font, anchorCoefficients = anchorCoefficients(lines, anchor), initialX = initialX)
-        return svgLines
+        return renderLines(text, font, wrapLength, maxLinesCount, markdown, anchor, initialX).map(RenderedLine::element)
     }
 
-    fun estimateWidth(
+    internal fun renderLines(
         text: String,
         font: Font,
         wrapLength: Int = -1,
         maxLinesCount: Int = -1,
         markdown: Boolean = false,
-    ): Double {
+        anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
+        initialX: Double? = null
+    ): List<RenderedLine> {
         val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
-        val widths = lines.map { line ->
-            line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font) ?: 0.0 }
-        }
+        return render(lines, font, renderPlans = renderPlans(lines, anchor), initialX = initialX)
+    }
 
-        return widths.maxOrNull() ?: 0.0
+    fun measure(
+        text: String,
+        font: Font,
+        wrapLength: Int = -1,
+        maxLinesCount: Int = -1,
+        markdown: Boolean = false,
+        lineInterval: Double = 0.0,
+    ): MeasuredText {
+        val (lineMetrics, width) = estimateTextLayoutAndWidth(text, font, wrapLength, maxLinesCount, markdown)
+        return MeasuredText(layout = TextBlockLayout.fromLineBoxes(lineMetrics, lineInterval), width = width)
+    }
+
+    private fun estimateTextLayoutAndWidth(
+        text: String,
+        font: Font,
+        wrapLength: Int,
+        maxLinesCount: Int,
+        markdown: Boolean,
+    ): Pair<List<LineBoxMetrics>, Double> {
+        val defaultMetrics = LineBoxMetrics.plainText(font)
+
+        val lines = parse(text, font, wrapLength, maxLinesCount, markdown)
+        if (lines.isEmpty()) {
+            return listOf(defaultMetrics) to 0.0
+        }
+        val measuredLines = lines.map { line ->
+            if (line.isEmpty()) {
+                defaultMetrics to 0.0
+            }
+            else {
+                val terms = line.mapNotNull { term -> term as? RichTextNode.RichSpan }
+                LineBoxMetrics.mergeOnBaseline(
+                    metrics = terms.map { term -> term.estimateLineLayoutMetrics(font) },
+                    defaultIfEmpty = defaultMetrics
+                ) to terms.sumOf { term -> term.estimateWidth(font) }
+            }
+        }
+        val lineMetrics = measuredLines.map { it.first }
+        val width = measuredLines.maxOf { it.second }
+        return lineMetrics to width
     }
 
     private fun parse(
         text: String,
         font: Font,
-        wrapLength: Int = -1,
-        maxLinesCount: Int = -1,
-        markdown: Boolean = false
+        wrapLength: Int,
+        maxLinesCount: Int,
+        markdown: Boolean,
     ): List<List<RichTextNode>> {
         fun parse(nodes: List<RichTextNode>, parser: (String) -> List<RichTextNode>): List<RichTextNode> {
             return nodes.flatMap { node ->
@@ -96,8 +139,14 @@ object RichText {
                 val lines = term.text.split("\n")
 
                 lines.forEachIndexed { i, line ->
-                    if (line.isNotEmpty()) {
-                        result.add(RichTextNode.Text(line))
+                    val content = when {
+                        lines.size == 1 -> line                    // no '\n' in this fragment
+                        i == 0 -> line.trimEnd()                   // only trailing '\n' is adjacent
+                        i == lines.lastIndex -> line.trimStart()   // only leading '\n' is adjacent
+                        else -> line.trim()                        // sandwiched between '\n's
+                    }
+                    if (content.isNotEmpty()) {
+                        result.add(RichTextNode.Text(content))
                     }
 
                     if (i != lines.lastIndex) {
@@ -175,36 +224,50 @@ object RichText {
         return wrappedLines
     }
 
-    private fun anchorCoefficients(
+    private data class LineRenderPlan(
+        val lineAnchor: Text.HorizontalAnchor,
+        val lineOriginShiftCoefficient: Double?
+    )
+
+    private fun renderPlans(
         lines: List<List<RichTextNode>>,
         anchor: Text.HorizontalAnchor
-    ): List<Double?> {
+    ): List<LineRenderPlan> {
         return lines.map { line ->
             val containsLatexFractionNode = line.any { term ->
                 term is Latex.LatexElement && term.node.flatListOfAllDescendants().any { latexNode ->
                     latexNode is Latex.FractionNode
                 }
             }
-            // The coefficient is dependent on the anchor but only if there is a fraction node in the line
             if (!containsLatexFractionNode) {
-                return@map null
+                return@map LineRenderPlan(
+                    lineAnchor = anchor,
+                    lineOriginShiftCoefficient = null
+                )
             }
-            when (anchor) {
-                Text.HorizontalAnchor.LEFT -> null // no shift needed when text is left-aligned
+            val originShiftCoefficient = when (anchor) {
+                Text.HorizontalAnchor.LEFT -> 0.0
                 Text.HorizontalAnchor.MIDDLE -> 0.5
                 Text.HorizontalAnchor.RIGHT -> 1.0
             }
+            // Fraction lines are rendered in a line-local coordinate frame so all nested tspans
+            // use the same origin. The block still honors the requested anchor, but that anchor is
+            // resolved to an explicit line origin shift here instead of being inferred later from SVG.
+            LineRenderPlan(
+                lineAnchor = Text.HorizontalAnchor.LEFT,
+                lineOriginShiftCoefficient = originShiftCoefficient
+            )
         }
     }
 
     private fun render(
         lines: List<List<RichTextNode>>,
         font: Font,
-        anchorCoefficients: List<Double?>,
-        initialX: Double
-    ): List<SvgTextElement> {
+        renderPlans: List<LineRenderPlan>,
+        initialX: Double?
+    ): List<RenderedLine> {
         val stack = mutableListOf(RenderState())
-        val svgLines = (lines zip anchorCoefficients).map { (line, anchorCoefficient) ->
+        return (lines zip renderPlans).map { (line, renderPlan) ->
             val svg = mutableListOf<SvgElement>()
             val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font) ?: 0.0 }
             var prefixWidth = 0.0
@@ -219,11 +282,14 @@ object RichText {
                     is RichTextNode.ColorEnd -> stack.removeLast()
 
                     is RichTextNode.RichSpan -> {
-                        // Based on the whole line the `anchorCoefficient` was calculated
-                        // and if it is not null, it means that the line contains [at least] a fraction node,
-                        // and then we need to add x attribute to the first tspan in the line with shift,
-                        // that corresponds to the anchorCoefficient.
-                        val x = anchorCoefficient?.let { initialX - it * lineWidth }
+                        // For complex lines (for example with fractions), the line may be anchored by
+                        // shifting its explicit origin instead of by SVG `text-anchor`.
+                        val x = when {
+                            renderPlan.lineOriginShiftCoefficient == null -> null
+                            initialX == null && renderPlan.lineOriginShiftCoefficient == 0.0 -> null
+                            initialX == null -> -renderPlan.lineOriginShiftCoefficient * lineWidth
+                            else -> initialX - renderPlan.lineOriginShiftCoefficient * lineWidth
+                        }
                         svg += term.render(stack.last(), prefixWidth, x, isFirstRichSpanInLine)
                         prefixWidth += term.estimateWidth(font)
                         isFirstRichSpanInLine = false
@@ -232,10 +298,11 @@ object RichText {
                     is RichTextNode.LineBreak -> throw IllegalStateException("Line breaks should be parsed before rendering")
                 }
             }
-            svg
+            RenderedLine(
+                element = SvgTextElement().apply { children().addAll(svg) },
+                anchor = renderPlan.lineAnchor
+            )
         }
-
-        return svgLines.map { SvgTextElement().apply { children().addAll(it) } }
     }
 
     internal sealed interface RichTextNode {
@@ -254,6 +321,7 @@ object RichText {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
             abstract fun estimateWidth(font: Font): Double
+            abstract fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics
             abstract fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>>
 
             // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
@@ -298,6 +366,10 @@ object RichText {
 
             override fun estimateWidth(font: Font): Double {
                 return widthCalculator(text, font)
+            }
+
+            override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
+                return LineBoxMetrics.plainText(font)
             }
 
             override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {

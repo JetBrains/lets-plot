@@ -1,0 +1,10 @@
+---
+
+name: lets-plot-python-test-empty
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pytest>=8.1.1
+  - pytest-timeout

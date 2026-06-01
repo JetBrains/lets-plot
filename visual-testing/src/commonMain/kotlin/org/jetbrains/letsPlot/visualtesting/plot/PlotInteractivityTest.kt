@@ -26,6 +26,7 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_panInProgress_withIncompleteBuffer)
         registerTest(::plot_interactivity_composite_tooltip)
         registerTest(::plot_interactivity_nestedComposite_tooltip)
+        registerTest(::plot_interactivity_latexTooltip)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
@@ -94,4 +95,45 @@ class PlotInteractivityTest(
         return paint(plotCanvasDrawable, dragEndPos)
     }
 
+    fun plot_interactivity_latexTooltip(): Bitmap {
+        val spec = """
+            |{
+            |  "data": {
+            |    "x": [ 0.5 ],
+            |    "y": [ 0.5 ],
+            |    "label": [ "\\( \\frac{A}{B} \\)" ]
+            |  },
+            |  "mapping": {
+            |    "x": "x",
+            |    "y": "y"
+            |  },
+            |  "ggsize": {
+            |    "width": 300.0,
+            |    "height": 200.0
+            |  },
+            |  "kind": "plot",
+            |  "theme": {
+            |    "axis": "blank",
+            |    "panel_grid": "blank"
+            |  },
+            |  "layers": [
+            |    {
+            |      "geom": "point",
+            |      "size": 8.0,
+            |      "tooltips": {
+            |        "lines": [ "@|@label" ],
+            |        "title": "@label"
+            |      }
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        val cursorPos = Vector(150, 100)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
 }

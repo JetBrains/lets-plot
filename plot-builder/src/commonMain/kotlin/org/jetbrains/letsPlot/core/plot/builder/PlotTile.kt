@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.builder
 import org.jetbrains.letsPlot.commons.event.MouseEventSpec
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.intern.math.toRadians
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.FeatureSwitch.PLOT_DEBUG_DRAWING
 import org.jetbrains.letsPlot.core.canvas.CanvasDrawable
@@ -15,12 +16,15 @@ import org.jetbrains.letsPlot.core.interact.InteractionContext
 import org.jetbrains.letsPlot.core.interact.UnsupportedInteractionException
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapGeom
 import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
+import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
 import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
 import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
+import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
@@ -30,13 +34,15 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.NullGeomT
 import org.jetbrains.letsPlot.core.plot.base.tooltip.NullGeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LayerTargetCollectorWithLocator
 import org.jetbrains.letsPlot.core.plot.builder.MarginalLayerUtil.marginalLayersByMargin
-import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout
 import org.jetbrains.letsPlot.core.plot.builder.layout.FacetedPlotLayout.Companion.facetColHeadTotalHeight
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.layout.TileLayoutInfo
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransformBuilder
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.sin
 
 internal class PlotTile constructor(
     private val coreLayers: List<GeomLayer>,
@@ -226,9 +232,9 @@ internal class PlotTile constructor(
             add(rect)
         }
 
-        val textSize = FacetedPlotLayout.titleSize(label, theme)
         val labelSpec = PlotLabelSpecFactory.facetText(theme)
-        val lineHeight = labelSpec.height()
+        val measuredText = labelSpec.layout(label)
+        val textLayout = measuredText.layout
         val className = if (isColumnLabel) "x" else "y"
         val themeAngle = theme.stripTextAngle()
         val defaultRotation = if (isColumnLabel) null else TextRotation.CLOCKWISE
@@ -243,17 +249,31 @@ internal class PlotTile constructor(
 
         val lab = Label(label)
         lab.addClassName("${Style.FACET_STRIP_TEXT}-$className")
+        val fontSize = theme.stripTextStyle().size
 
-        val (pos, hAnchor) = applyJustification(
-            textBounds,
-            textSize,
-            lineHeight,
-            theme.stripTextJustification(),
-            rotation
-        )
+        // ToDo:  angle normalization
+        val hasSupportedRightAngle = themeAngle in setOf(0.0, 90.0, -90.0, 270.0)
+        val (pos, hAnchor) = if (themeAngle.isNaN() || hasSupportedRightAngle) {
+            applyJustification(
+                textBounds,
+                fontSize,
+                textLayout,
+                theme.stripTextJustification(),
+                rotation
+            )
+        } else {
+            applyRotatedJustification(
+                textBounds,
+                measuredText.totalSize,
+                fontSize,
+                textLayout,
+                theme.stripTextJustification(),
+                themeAngle
+            )
+        }
         lab.setHorizontalAnchor(hAnchor)
-        lab.setFontSize(lineHeight)
-        lab.setLineHeight(lineHeight)
+        lab.setFontSize(labelSpec.font.size.toDouble())
+        lab.setTextLayout(textLayout)
         lab.moveTo(pos)
         if (!themeAngle.isNaN() && themeAngle != 0.0) {
             lab.rotate(themeAngle)
@@ -262,6 +282,72 @@ internal class PlotTile constructor(
         }
 
         add(lab)
+    }
+
+    private fun applyRotatedJustification(
+        boundRect: DoubleRectangle,
+        textSize: DoubleVector,
+        fontSize: Double,
+        textLayout: TextBlockLayout,
+        justification: TextJustification,
+        angle: Double
+    ): Pair<DoubleVector, Text.HorizontalAnchor> {
+        val hAnchor = when {
+            justification.x < 0.5 -> Text.HorizontalAnchor.LEFT
+            justification.x == 0.5 -> Text.HorizontalAnchor.MIDDLE
+            else -> Text.HorizontalAnchor.RIGHT
+        }
+
+        val localLeft = when (hAnchor) {
+            Text.HorizontalAnchor.LEFT -> 0.0
+            Text.HorizontalAnchor.MIDDLE -> -textSize.x / 2.0
+            Text.HorizontalAnchor.RIGHT -> -textSize.x
+        }
+        val localRight = localLeft + textSize.x
+
+        val baselineAtTop = applyJustification(
+            DoubleRectangle(0.0, 0.0, textSize.x, textSize.y),
+            fontSize,
+            textLayout,
+            TextJustification(0.0, 1.0)
+        ).first.y
+        val localTop = -baselineAtTop
+        val localBottom = localTop + textSize.y
+
+        val rotatedBounds = rotatedBounds(
+            listOf(
+                DoubleVector(localLeft, localTop),
+                DoubleVector(localRight, localTop),
+                DoubleVector(localRight, localBottom),
+                DoubleVector(localLeft, localBottom)
+            ),
+            angle
+        )
+
+        val targetLeft = boundRect.left + (boundRect.width - rotatedBounds.width) * justification.x
+        val targetTop = boundRect.top + (boundRect.height - rotatedBounds.height) * (1.0 - justification.y)
+        val origin = DoubleVector(
+            targetLeft - rotatedBounds.left,
+            targetTop - rotatedBounds.top
+        )
+        return origin to hAnchor
+    }
+
+    private fun rotatedBounds(points: List<DoubleVector>, angle: Double): DoubleRectangle {
+        val radians = toRadians(angle)
+        val sin = sin(radians)
+        val cos = cos(radians)
+        val rotatedPoints = points.map { p ->
+            DoubleVector(
+                p.x * cos - p.y * sin,
+                p.x * sin + p.y * cos
+            )
+        }
+        val left = rotatedPoints.minOf(DoubleVector::x)
+        val right = rotatedPoints.maxOf(DoubleVector::x)
+        val top = rotatedPoints.minOf(DoubleVector::y)
+        val bottom = rotatedPoints.maxOf(DoubleVector::y)
+        return DoubleRectangle(left, top, max(0.0, right - left), max(0.0, bottom - top))
     }
 
     /**

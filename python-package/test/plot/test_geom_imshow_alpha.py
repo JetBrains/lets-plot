@@ -3,10 +3,13 @@
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 
-import numpy as np
 import pytest
-from palettable.matplotlib import matplotlib as palettable
 
+from lets_plot._type_utils import LazyModule
+
+np = LazyModule("numpy")
+png = LazyModule("png")
+palettable_module = LazyModule("palettable")
 from lets_plot.plot.geom_imshow_ import geom_imshow
 from test_geom_imshow_util import _image_spec, _image_bbox
 
@@ -15,13 +18,15 @@ from test_geom_imshow_util import _image_spec, _image_bbox
 #       docs/testing/testing_imshow_alpha.ipynb
 
 
-class Test:
-    test_params_list = []
+def _test_params_list():
+    if not np or not palettable_module:
+        return []
+    from palettable.matplotlib import matplotlib as palettable
 
     # Grayscale images
 
     # Basic
-    test_params_list.append((
+    test_params_list = [(
         np.array([
             [50, 150, 200],
             [200, 100, 50]
@@ -34,7 +39,7 @@ class Test:
             data_min=50,
             data_max=200
         )
-    ))
+    )]
 
     # No normalization
     test_params_list.append((
@@ -152,9 +157,12 @@ class Test:
         )
     ))
 
-    @pytest.mark.parametrize('image_data, cmap, norm, expected', test_params_list)
-    def test_image_spec(self, image_data, cmap, norm, expected):
-        image_data.flags.writeable = False
-        # spec = geom_imshow(image_data, extent=_extent)
-        spec = geom_imshow(image_data, cmap=cmap, norm=norm, alpha=0.5)
-        assert spec.as_dict() == expected
+    return test_params_list
+
+
+@pytest.mark.skipif(not np or not png or not palettable_module, reason="Requires numpy, pypng and palettable")
+@pytest.mark.parametrize('image_data, cmap, norm, expected', _test_params_list())
+def test_image_spec(image_data, cmap, norm, expected):
+    image_data.flags.writeable = False
+    spec = geom_imshow(image_data, cmap=cmap, norm=norm, alpha=0.5)
+    assert spec.as_dict() == expected

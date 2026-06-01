@@ -65,15 +65,53 @@ internal class Text : Container() {
         var curX = 0f
         var dy = 0f
 
-        children.forEach { tSpan ->
-            tSpan as TSpan
+        var i = 0
+        while (i < children.size) {
+            val tSpan = children[i] as TSpan
 
             dy += (tSpan.dy * tSpan.lineHeight).toFloat()
 
-            tSpan.layoutX = x + cx + curX
-            tSpan.layoutY = y + cy + dy
+            val tSpanWidth = tSpan.bBoxLocal.width.toFloat()
 
-            curX += tSpan.bBoxLocal.width.toFloat()
+            tSpan.layoutY = y + cy + dy
+            if (tSpan.x != null) {
+                // SVG text chunk: starts at a tspan with explicit x and includes
+                // all following tspans without their own x.
+                // text-anchor on the first tspan aligns the entire chunk.
+                var chunkWidth = tSpanWidth
+                var chunkEnd = i + 1
+                while (chunkEnd < children.size && (children[chunkEnd] as TSpan).x == null) {
+                    chunkWidth += (children[chunkEnd] as TSpan).bBoxLocal.width.toFloat()
+                    chunkEnd++
+                }
+
+                val anchorOffset = when (tSpan.textAnchor) {
+                    HorizontalAlignment.CENTER -> -chunkWidth / 2
+                    HorizontalAlignment.RIGHT -> -chunkWidth
+                    else -> 0f
+                }
+
+                tSpan.layoutX = tSpan.x!! + anchorOffset
+                var chunkCurX = tSpanWidth
+
+                for (k in (i + 1) until chunkEnd) {
+                    val chunkTSpan = children[k] as TSpan
+                    dy += (chunkTSpan.dy * chunkTSpan.lineHeight).toFloat()
+                    chunkTSpan.layoutY = y + cy + dy
+                    chunkTSpan.layoutX = tSpan.x!! + anchorOffset + chunkCurX
+                    chunkCurX += chunkTSpan.bBoxLocal.width.toFloat()
+                }
+
+                val absoluteTextPosition = x + cx
+                val absoluteChunkEndPosition = tSpan.x!! + anchorOffset + chunkWidth
+                curX = absoluteChunkEndPosition - absoluteTextPosition
+
+                i = chunkEnd
+            } else {
+                tSpan.layoutX = x + cx + curX
+                curX += tSpanWidth
+                i++
+            }
         }
 
         needLayout = false

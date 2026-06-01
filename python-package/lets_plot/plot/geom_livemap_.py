@@ -96,13 +96,13 @@ def geom_livemap(*,
 
     Notes
     -----
-    ``geom_livemap()`` draws a map, which can be dragged and zoomed unless ``static=True``.
+    ``geom_livemap()`` draws a map, which can be dragged and zoomed unless ``interactive=False``.
 
     ----
 
     By default the livemap area has a non-zero inset. You can get rid of this with the theme: ``theme(plot_inset=0)``.
 
-    ---
+    ----
 
     When drawing a path with two points, the shortest route is taken. To create a longer arc, add intermediate points.
 
@@ -120,7 +120,7 @@ def geom_livemap(*,
 
     .. jupyter-execute::
         :linenos:
-        :emphasize-lines: 10
+        :emphasize-lines: 10-11
 
         from lets_plot import *
         from lets_plot import tilesets
@@ -131,7 +131,8 @@ def geom_livemap(*,
             'lat': [40.6408, 50.073658],
         }
         ggplot(data, aes(x='lon', y='lat')) + \\
-            geom_livemap(projection='epsg4326', tiles=tilesets.LETS_PLOT_DARK) + \\
+            geom_livemap(projection='epsg4326', tiles=tilesets.LETS_PLOT_DARK,
+                         interactive=False) + \\
             geom_path(color='white', geodesic=True) + \\
             geom_point(color='white', tooltips=layer_tooltips().line('@city')) + \\
             ggtitle("The shortest path between New York and Prague")

@@ -1,0 +1,16 @@
+---
+
+name: lets-plot-python-test-extended
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy>=1.24.2
+  - pandas>=1.5.3
+  - geopandas>=0.12.2
+  - pytest>=8.1.1
+  - pytest-timeout
+  - pip
+  - pip:
+      - pypng

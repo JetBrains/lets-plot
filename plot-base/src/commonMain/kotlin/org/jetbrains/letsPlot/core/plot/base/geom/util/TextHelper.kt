@@ -164,7 +164,7 @@ class TextHelper(
         sizeUnitRatio: Double = 1.0,
         boundsCenter: DoubleVector? = null
     ): List<DoubleVector> {
-        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio)
+        val textSize = TextUtil.measure(text, p, ctx, sizeUnitRatio).totalSize
         val hAnchor = TextUtil.hAnchor(p, location, boundsCenter)
         val vAnchor = TextUtil.vAnchor(p, location, boundsCenter)
         val fontSize = TextUtil.fontSize(p, sizeUnitRatio)

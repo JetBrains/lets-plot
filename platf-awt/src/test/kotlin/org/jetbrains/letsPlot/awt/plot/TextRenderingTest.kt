@@ -6,11 +6,27 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
-class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering") {
+class TextRenderingTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "rendering"))
+
+    override fun currentTestName(): String? = currentTest.methodName
+
     @Test
-    fun `italic from theme`() {
+    fun plot_text_italicTheme() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -39,11 +55,11 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
         """.trimMargin()
 
-        assertPlot("plot_italic_from_theme_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun `latex formula`() {
+    fun plot_text_latexFormula() {
         val spec = """
             |{
             |  "theme": { "name": "classic", "line": "blank", "axis": "blank" },
@@ -60,11 +76,11 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
         """.trimMargin()
 
-        assertPlot("plot_latex_formula_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun superscript() {
+    fun plot_text_superscript() {
         val spec = """
             |{
             |  "kind": "subplots",
@@ -106,11 +122,11 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
             |""".trimMargin()
 
-        assertPlot("plot_superscript_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun `multi-level latex formula`() {
+    fun plot_text_multilevelLatexFormula() {
         val spec = """
             |{
             |  "data": {
@@ -128,11 +144,11 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
         """.trimMargin()
 
-        assertPlot("plot_multi_level_latex_formula_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun `bold_italic geom_bar label`() {
+    fun plot_text_boldItalicBarLabel() {
         val spec = """
             |{
             |  "theme": {
@@ -166,11 +182,11 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
             |""".trimMargin()
 
-        assertPlot("plot_bold_italic_geom_bar_label_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun labels() {
+    fun plot_text_labels() {
         val spec = """
             {
               "kind": "plot",
@@ -185,11 +201,11 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             }
         """.trimIndent()
 
-        assertPlot("plot_labels_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun markdown2Xscale() {
+    fun plot_text_markdown2Xscale() {
         val spec = """
             |{
             |  "theme": {
@@ -226,11 +242,11 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
         """.trimMargin()
 
-        assertPlot("plot_markdown2Xscale_test.png", parsePlotSpec(spec), scale = 2)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), scale = 2)
     }
 
     @Test
-    fun markdown() {
+    fun plot_text_markdown() {
         val spec = """
             |{
             |  "theme": {
@@ -267,11 +283,11 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
         """.trimMargin()
 
-        assertPlot("plot_markdown_test.png", parsePlotSpec(spec))
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec))
     }
 
     @Test
-    fun plotFauxObliqueBoldFontStyle2Xscale() {
+    fun plot_text_markdownFauxObliqueBold2Xscale() {
         val spec = """
             |{
             |  "kind": "plot",
@@ -288,6 +304,6 @@ class TextRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
         """.trimMargin()
 
-        assertPlot("plot_markdown_faux_oblique_bold_font_style2Xscale_test.png", parsePlotSpec(spec), scale = 2)
+        assertExportedPlot(currentTestName() + ".png", parsePlotSpec(spec), scale = 2)
     }
 }

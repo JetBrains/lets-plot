@@ -43,11 +43,14 @@ internal object PlotAssemblerUtil {
             for (aes in aesList) {
                 val scale = ctx.getScale(aes)
 
-                val colorBarOptions: ColorBarOptions? = guideOptionsMap[GuideKey.fromAes(aes)]
+                val guideOptions = guideOptionsMap[GuideKey.fromAes(aes)]
+                val colorBarOptions: ColorBarOptions? = guideOptions
                     ?.getColorBarOptions()
                     ?.also { checkFitsColorBar(aes, scale) }
 
-                if (colorBarOptions != null || fitsColorBar(aes, scale)) {
+                val legendExplicitlyRequested = guideOptions?.getLegendOptions() != null
+
+                if (!legendExplicitlyRequested && (colorBarOptions != null || fitsColorBar(aes, scale))) {
                     // Colorbar
                     @Suppress("UNCHECKED_CAST")
                     val colorBarAssembler = createColorBarAssembler(

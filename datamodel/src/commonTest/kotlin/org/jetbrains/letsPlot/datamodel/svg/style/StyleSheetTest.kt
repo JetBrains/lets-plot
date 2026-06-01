@@ -46,22 +46,25 @@ class StyleSheetTest {
     // --- fromCSS roundtrip ---
 
     @Test
-    fun `semi-transparent color alpha survives CSS roundtrip`() {
+    fun `semi-transparent color alpha is stored as fill opacity after CSS roundtrip`() {
         val original = Color(255, 0, 0, 128)
         val css = sheetWith(original).toCSS()
         val parsed = StyleSheet.fromCSS(css, defaultFamily = "Arial", defaultSize = 12.0)
-        val color = parsed.getTextStyle("cls").color
-        assertEquals(original.red, color.red)
-        assertEquals(original.green, color.green)
-        assertEquals(original.blue, color.blue)
-        assertEquals(original.alpha, color.alpha)
+        val style = parsed.getTextStyle("cls")
+        assertEquals(original.red, style.color.red)
+        assertEquals(original.green, style.color.green)
+        assertEquals(original.blue, style.color.blue)
+        assertEquals(255, style.color.alpha)
+        assertEquals(original.alpha / 255.0, style.fillOpacity)
     }
 
     @Test
-    fun `fully transparent alpha survives CSS roundtrip`() {
+    fun `fully transparent alpha is stored as zero fill opacity after CSS roundtrip`() {
         val css = sheetWith(Color(0, 255, 0, 0)).toCSS()
         val parsed = StyleSheet.fromCSS(css, defaultFamily = "Arial", defaultSize = 12.0)
-        assertEquals(0, parsed.getTextStyle("cls").color.alpha)
+        val style = parsed.getTextStyle("cls")
+        assertEquals(255, style.color.alpha)
+        assertEquals(0.0, style.fillOpacity)
     }
 
     @Test
@@ -69,10 +72,11 @@ class StyleSheetTest {
         val css = sheetWith(Color.BLUE).toCSS()
         val parsed = StyleSheet.fromCSS(css, defaultFamily = "Arial", defaultSize = 12.0)
         assertEquals(255, parsed.getTextStyle("cls").color.alpha)
+        assertEquals(null, parsed.getTextStyle("cls").fillOpacity)
     }
 
     @Test
-    fun `color alpha and fill-opacity are composed`() {
+    fun `explicit fill-opacity is stored separately and color remains solid`() {
         val css = """
             .cls {
                 fill: #ff000080;
@@ -80,6 +84,8 @@ class StyleSheetTest {
             }
         """.trimIndent()
         val parsed = StyleSheet.fromCSS(css, defaultFamily = "Arial", defaultSize = 12.0)
-        assertEquals(64, parsed.getTextStyle("cls").color.alpha)
+        val style = parsed.getTextStyle("cls")
+        assertEquals(255, style.color.alpha)
+        assertEquals(0.5, style.fillOpacity)
     }
 }

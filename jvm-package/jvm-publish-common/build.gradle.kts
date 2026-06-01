@@ -37,11 +37,14 @@ val artifactBaseName = "lets-plot-common"
 val artifactGroupId = project.group as String
 val artifactVersion = project.version as String
 val mavenLocalPath = rootProject.project.extra["localMavenRepository"]
-val jarJavaDocs by tasks.registering(Jar::class) {
-    archiveClassifier.set("javadoc")
-    from("$rootDir/README.md")
+
+fun getJarJavaDocsTask(distributeName: String): TaskProvider<Jar> {
+    return tasks.register<Jar>("${distributeName}JarJavaDoc") {
+        archiveClassifier.set("javadoc")
+        archiveBaseName.set(distributeName)
+        from("$rootDir/README.md")
+    }
 }
-val jarJavaDocsFile = jarJavaDocs.flatMap { it.archiveFile }
 
 tasks.withType<Jar>().configureEach {
     metaInf {
@@ -62,11 +65,7 @@ publishing {
             artifactId = artifactId.replace(project.name, artifactBaseName)
         }
 
-        artifact(jarJavaDocsFile) {
-            builtBy(jarJavaDocs)
-            classifier = "javadoc"
-            extension = "jar"
-        }
+        artifact(getJarJavaDocsTask("${name}-${project.name}"))
 
         pom {
             name.set("Lets-Plot common modules")
