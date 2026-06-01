@@ -7755,7 +7755,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
     halo_width : float, default=None
         Width of the text halo. A halo is rendered only when ``halo_width > 0``.
     halo_color : str, default=None
-        Fixed color of the text halo. If omitted, the theme fill (paper) color is used.
+        Fixed color of the text halo. If omitted, the panel background color is used
+        (falling back to the plot background color when the panel has no fill).
         Unlike ``color``, this cannot be used as an aesthetic mapping.
     nudge_x : float
         Horizontal adjustment to nudge labels by.
@@ -8295,7 +8296,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
     halo_width : float, default=None
         Width of the text halo. A halo is rendered only when ``halo_width > 0``.
     halo_color : str, default=None
-        Fixed color of the text halo. If omitted, the theme fill (paper) color is used.
+        Fixed color of the text halo. If omitted, the panel background color is used
+        (falling back to the plot background color when the panel has no fill).
         Unlike ``color``, this cannot be used as an aesthetic mapping.
     nudge_x : float
         Horizontal adjustment to nudge labels by.

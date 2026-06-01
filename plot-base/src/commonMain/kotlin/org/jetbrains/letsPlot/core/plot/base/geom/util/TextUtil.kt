@@ -256,8 +256,10 @@ object TextUtil {
         // Vertical position is handled through moveTo (below), not setVerticalAnchor.
         val fontSize = fontSize(p, sizeUnitRatio)
         val measuredText = measure(text, p, ctx, sizeUnitRatio)
-        val effectiveHaloColor = haloColor ?: p.fill()
-        val haloLabel = if (haloWidth > 0.0 && effectiveHaloColor != null) {
+        // Default halo color is the panel background (falls back to the plot background),
+        // so the halo blends into whatever the text sits on rather than the 'paper' fill.
+        val effectiveHaloColor = haloColor ?: ctx.backgroundColor
+        val haloLabel = if (haloWidth > 0.0) {
             Label(text).also { halo ->
                 decorateHalo(halo, p, effectiveHaloColor, haloWidth, sizeUnitRatio)
                 halo.setTextLayout(measuredText.layout)
