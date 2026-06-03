@@ -328,6 +328,24 @@ internal class Latex(
             val group = SvgGElement().apply {
                 addClass(VECTOR_FORMULA_CLASS)
                 children().add(node.renderVectorGroup(context.color))
+
+                // Invisible bbox guide. Downstream layout measures the rendered SVG bbox, not
+                // estimateWidth. Glyph paths provide tight ink bounds and omit space glyphs, while
+                // formula positioning uses the logical advance width. This guide makes the group
+                // bbox match that advance box without painting anything.
+                val formulaFont = this@Latex.font
+                val width = node.vectorWidth(formulaFont)
+                if (width > 0.0) {
+                    val metrics = node.vectorMetrics(formulaFont)
+                    val top = -metrics.topToBaseline
+                    val bottom = metrics.bottomToBaseline
+                    val guide = SvgPathElement().apply {
+                        addClass(VECTOR_BBOX_CLASS)
+                        setAttribute("d", "M0 $top L$width $top L$width $bottom L0 $bottom Z")
+                        // Intentionally no fillColor / stroke: measured but not rendered.
+                    }
+                    children().add(guide)
+                }
             }
             return listOf(group.wrap(x = prefixWidth))
         }
@@ -666,6 +684,7 @@ internal class Latex(
         private const val INDEX_RELATIVE_SHIFT = 0.4
         private const val FRACTION_BAR_SYMBOL = "–"
         internal const val VECTOR_FORMULA_CLASS = "lp-latex-vector-formula"
+        internal const val VECTOR_BBOX_CLASS = "lp-latex-vector-bbox"
 
         private val GREEK_LETTERS = mapOf(
             "Alpha" to "Α",

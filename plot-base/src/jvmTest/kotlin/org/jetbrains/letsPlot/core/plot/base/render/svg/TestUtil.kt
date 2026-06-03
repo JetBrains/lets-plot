@@ -83,20 +83,24 @@ object TestUtil {
     }
 
     // Find all path elements anywhere under this element (used by vector-formula tests).
-    fun SvgElement.pathElements(): List<org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement> =
+    fun SvgElement.pathElements(): List<SvgPathElement> =
         children().flatMap { child ->
             when (child) {
-                is org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement -> listOf(child)
+                is SvgPathElement ->
+                    if (child.classAttribute().get()
+                            ?.split(' ')
+                            ?.contains(org.jetbrains.letsPlot.core.plot.base.render.text.Latex.VECTOR_BBOX_CLASS) == true
+                    ) emptyList() else listOf(child)
                 is SvgElement -> child.pathElements()
                 else -> emptyList()
             }
         }
 
     // Find all vector-formula groups (SvgGElement with the marker class) under this element.
-    fun SvgElement.vectorFormulaGroups(): List<org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement> {
-        val out = mutableListOf<org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement>()
+    fun SvgElement.vectorFormulaGroups(): List<SvgGElement> {
+        val out = mutableListOf<SvgGElement>()
         fun walk(e: SvgElement) {
-            if (e is org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement &&
+            if (e is SvgGElement &&
                 e.classAttribute().get()?.split(' ')?.contains(org.jetbrains.letsPlot.core.plot.base.render.text.Latex.VECTOR_FORMULA_CLASS) == true) {
                 out.add(e)
             }

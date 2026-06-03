@@ -13,6 +13,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
+import org.jetbrains.letsPlot.core.plot.base.render.text.Latex
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
@@ -217,8 +218,7 @@ class Label(
             font,
             wrapWidth,
             markdown = markdown,
-            anchor = myHorizontalAnchor,
-            initialX = xStart
+            anchor = myHorizontalAnchor
         )
     }
 
@@ -249,7 +249,14 @@ class Label(
     private fun applyFillColor(el: SvgElement, color: Color?) {
         when (el) {
             is SvgTextElement -> el.fillColor().set(color)
-            is SvgPathElement -> el.fillColor().set(color)
+            is SvgPathElement -> {
+                val isVectorBBoxGuide = el.classAttribute().get()
+                    ?.split(' ')
+                    ?.contains(Latex.VECTOR_BBOX_CLASS) == true
+                if (!isVectorBBoxGuide) {
+                    el.fillColor().set(color)
+                }
+            }
             is SvgGElement -> el.children().forEach { child ->
                 if (child is SvgElement) applyFillColor(child, color)
             }
