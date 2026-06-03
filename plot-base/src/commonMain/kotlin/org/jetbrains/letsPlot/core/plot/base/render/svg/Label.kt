@@ -190,6 +190,12 @@ class Label(
         (myLines zip renderedLines).forEach { (originalLine, renderedLine) ->
             replaceLineChildrenFrom(originalLine, renderedLine.element)
         }
+        // Regenerated children (e.g. vector LaTeX glyph paths) are born with the default color and
+        // carry no inheritable parent style, unlike legacy <tspan>s under a persistent <text>.
+        // Re-apply an explicitly-set text color so the fresh paths pick it up. Guard on non-null:
+        // labels colored via a stylesheet class never set myTextColor, and clobbering their fill
+        // with null here would hide them (titles, axis labels, legend, caption).
+        myTextColor?.let { color -> myLines.forEach { applyFillColor(it, color) } }
         xStart?.let { newX -> myLines.forEach { line -> setLineX(line, newX) } }
         updateHorizontalAnchor()
     }
