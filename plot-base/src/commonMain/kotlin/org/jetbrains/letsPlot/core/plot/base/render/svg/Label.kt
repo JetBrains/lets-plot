@@ -240,9 +240,24 @@ class Label(
         }
     }
 
+    // Vertical-anchor offset (in em) that text lines receive via the SVG `dy` attribute
+    // (Text.toDY -> SvgConstants.SVG_TEXT_DY_TOP / SVG_TEXT_DY_CENTER). Group lines (vector
+    // LaTeX formulas) have no `dy`, so we add the same offset to their transform instead.
+    // Keep these numbers in sync with SVG_TEXT_DY_TOP ("0.7em") and SVG_TEXT_DY_CENTER ("0.35em").
+    private fun verticalAnchorDyEm(anchor: VerticalAnchor?): Double {
+        return when (anchor) {
+            VerticalAnchor.TOP -> 0.7
+            VerticalAnchor.CENTER -> 0.35
+            else -> 0.0   // BOTTOM and null: text gets no dy, so group gets no offset.
+        }
+    }
+
     private fun buildLineTransform(el: SvgElement): SvgTransform {
         val tx = myLineX[el] ?: 0.0
-        val ty = myLineY[el] ?: 0.0
+        // Group lines (vector LaTeX formulas) do not get the SVG `dy` ascent push that text
+        // lines get from setVerticalAnchor, so add the equivalent offset here to keep group
+        // and text lines vertically aligned under every anchor and rotation.
+        val ty = (myLineY[el] ?: 0.0) + verticalAnchorDyEm(myVerticalAnchor) * myFontSize
         return SvgTransformBuilder().translate(tx, ty).build()
     }
 
