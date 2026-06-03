@@ -24,7 +24,7 @@ object TestUtil {
         wrapLength: Int = -1,
         markdown: Boolean = false,
         anchor: Text.HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
-    ): List<SvgTextElement> {
+    ): List<SvgElement> {
         return RichText.toSvg(
             text = text,
             font = DEF_FONT,
@@ -68,6 +68,44 @@ object TestUtil {
 
     fun SvgTextElement.tspans(): List<SvgTSpanElement> = children().map { it as SvgTSpanElement }
 
+    // Convenience for tests that operate on a generic line element. For text-only lines this is the
+    // same as SvgTextElement.tspans(). For mixed lines (vector formulas + text) it recursively
+    // collects tspans from all descendant <text> children, in document order.
+    fun SvgElement.tspans(): List<SvgTSpanElement> = when (this) {
+        is SvgTextElement -> children().map { it as SvgTSpanElement }
+        else -> children().flatMap { child ->
+            when (child) {
+                is SvgTextElement -> child.tspans()
+                is SvgElement -> child.tspans()
+                else -> emptyList()
+            }
+        }
+    }
+
+    // Find all path elements anywhere under this element (used by vector-formula tests).
+    fun SvgElement.pathElements(): List<org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement> =
+        children().flatMap { child ->
+            when (child) {
+                is org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathElement -> listOf(child)
+                is SvgElement -> child.pathElements()
+                else -> emptyList()
+            }
+        }
+
+    // Find all vector-formula groups (SvgGElement with the marker class) under this element.
+    fun SvgElement.vectorFormulaGroups(): List<org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement> {
+        val out = mutableListOf<org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement>()
+        fun walk(e: SvgElement) {
+            if (e is org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement &&
+                e.classAttribute().get()?.split(' ')?.contains(org.jetbrains.letsPlot.core.plot.base.render.text.Latex.VECTOR_FORMULA_CLASS) == true) {
+                out.add(e)
+            }
+            e.children().forEach { c -> if (c is SvgElement) walk(c) }
+        }
+        walk(this)
+        return out
+    }
+
     fun SvgTextElement.stringParts(): List<String> = children().flatMap { item ->
         when (item) {
             is SvgTextNode -> listOf(item.textContent().get())
@@ -81,7 +119,21 @@ object TestUtil {
         }
     }
 
-    fun Iterable<SvgTextElement>.lineParts(): List<List<String>> = map { it.stringParts() }
+    // SvgElement-receiver variant — for tests that may receive either an SvgTextElement (legacy
+    // tspan-only line) or an SvgGElement wrapper (mixed line with vector formulas). For groups,
+    // collects parts from descendant <text> children in document order.
+    fun SvgElement.stringParts(): List<String> = when (this) {
+        is SvgTextElement -> stringParts()
+        else -> children().flatMap { child ->
+            when (child) {
+                is SvgTextElement -> child.stringParts()
+                is SvgElement -> child.stringParts()
+                else -> emptyList()
+            }
+        }
+    }
+
+    fun Iterable<SvgElement>.lineParts(): List<List<String>> = map { it.stringParts() }
 
 
     fun assertTSpan(

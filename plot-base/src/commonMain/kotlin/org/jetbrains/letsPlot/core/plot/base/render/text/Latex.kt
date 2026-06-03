@@ -7,15 +7,14 @@ package org.jetbrains.letsPlot.core.plot.base.render.text
 
 import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator
 import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalculator
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedSvgElement
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_START
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextContent
 import kotlin.math.max
 import kotlin.math.pow
 import kotlin.math.roundToInt
@@ -26,7 +25,10 @@ internal class Latex(
     internal fun parse(text: String): List<RichTextNode> {
         val formulas = extractFormulas(text).map { (formula, range) ->
             val prettyFormula = formula.replace("-", "−") // Use minus sign instead of hyphen
-            LatexElement(parse(Token.tokenize(prettyFormula))) to range
+            val node = parse(Token.tokenize(prettyFormula))
+            val wrapper: RichTextNode.RichSpan =
+                if (node.isVectorSupported()) VectorLatexElement(node) else LatexElement(node)
+            wrapper to range
         }.toList()
 
         return fillTextTermGaps(text, formulas)
@@ -272,6 +274,30 @@ internal class Latex(
             val nodeFont = Font(formulaFont.family, nodeFontSize, formulaFont.isBold, formulaFont.isItalic)
             return estimateNodeWidth(nodeFont)
         }
+
+        // Vector-glyph support: true if every glyph and structure in this subtree can be rendered
+        // with LatexVectorFont. The default is "all children supported"; leaf nodes override.
+        open fun isVectorSupported(): Boolean = children.all { it.isVectorSupported() }
+
+        // Vector advance in pixels, using only LatexVectorFont em-advances. Drift-free against
+        // the corresponding renderVectorGroup() output. Only valid when isVectorSupported() is true.
+        open fun vectorWidth(font: Font): Double = children.sumOf { it.vectorWidth(font) }
+
+        // Vertical line-box metrics in pixels for the vector rendering. Only valid when supported.
+        open fun vectorMetrics(font: Font): LineBoxMetrics =
+            LineBoxMetrics.mergeOnBaseline(
+                metrics = children.map { it.vectorMetrics(font) },
+                defaultIfEmpty = LineBoxMetrics.plainText(font)
+            )
+
+        // Render this node into an SvgGElement. All coordinates inside are pixels in the formula's
+        // local frame: x=0 is the left edge, y=0 is the line baseline; ascenders are y<0.
+        // The caller composes by translating the returned group.
+        abstract fun renderVectorGroup(color: Color?): SvgGElement
+
+        // Effective font size in pixels at this node's level.
+        internal fun levelFontSize(font: Font): Double =
+            font.size.toDouble() * INDEX_SIZE_FACTOR.pow(level)
     }
 
     internal inner class LatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
@@ -288,6 +314,25 @@ internal class Latex(
         }
     }
 
+    // Vector-glyph counterpart of LatexElement. Used when every glyph and structure in the formula
+    // is supported by LatexVectorFont. Width comes from the same em advances used to render the
+    // paths, so there is no drift between measurement and rendering.
+    internal inner class VectorLatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
+        override val visualCharCount: Int = node.visualCharCount
+
+        override fun estimateWidth(font: Font): Double = node.vectorWidth(font)
+
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics = node.vectorMetrics(font)
+
+        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            val group = SvgGElement().apply {
+                addClass(VECTOR_FORMULA_CLASS)
+                children().add(node.renderVectorGroup(context.color))
+            }
+            return listOf(group.wrap(x = prefixWidth))
+        }
+    }
+
     private inner class TextNode(val content: String, level: Int) : LatexNode(emptyList(), level) {
         override val visualCharCount: Int = content.length
         override fun estimateNodeWidth(font: Font): Double {
@@ -300,6 +345,46 @@ internal class Latex(
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return listOf(context.apply(SvgTSpanElement(content)).wrap())
+        }
+
+        override fun isVectorSupported(): Boolean = content.all(LatexVectorFont::isSupported)
+
+        override fun vectorWidth(font: Font): Double {
+            val sizePx = levelFontSize(font)
+            return content.sumOf { LatexVectorFont.advanceEm(it) } * sizePx
+        }
+
+        override fun vectorMetrics(font: Font): LineBoxMetrics {
+            val sizePx = levelFontSize(font)
+            return LineBoxMetrics(boxHeight = sizePx, topToBaseline = sizePx)
+        }
+
+        override fun renderVectorGroup(color: Color?): SvgGElement {
+            val g = SvgGElement()
+            val sizePx = levelFontSize(this@Latex.font)
+            val unitsToPx = sizePx / LatexVectorFont.UPM.toDouble()
+            var cursorPx = 0.0
+            for (c in content) {
+                val glyph = LatexVectorFont.glyphOrNull(c) ?: continue
+                if (glyph.pathData != null) {
+                    val path = SvgPathElement().apply {
+                        setAttribute("d", glyph.pathData)
+                        // The raster Path scene node only renders when fillPaint is non-null.
+                        // Default to black if no explicit color was provided by the surrounding
+                        // RenderState — text styling later may set this to currentColor.
+                        fillColor().set(color ?: Color.BLACK)
+                        transform().set(
+                            SvgTransformBuilder()
+                                .translate(cursorPx, 0.0)
+                                .scale(unitsToPx)
+                                .build()
+                        )
+                    }
+                    g.children().add(path)
+                }
+                cursorPx += glyph.advanceEm * sizePx
+            }
+            return g
         }
     }
 
@@ -325,6 +410,21 @@ internal class Latex(
             }
             return wrappedElements
         }
+
+        override fun renderVectorGroup(color: Color?): SvgGElement {
+            val g = SvgGElement()
+            val font = this@Latex.font
+            var cursorPx = 0.0
+            for (child in children) {
+                val childGroup = child.renderVectorGroup(color)
+                if (cursorPx != 0.0) {
+                    childGroup.transform().set(SvgTransformBuilder().translate(cursorPx, 0.0).build())
+                }
+                g.children().add(childGroup)
+                cursorPx += child.vectorWidth(font)
+            }
+            return g
+        }
     }
 
     private inner class SuperscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
@@ -340,6 +440,19 @@ internal class Latex(
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefixWidth = prefixWidth)
         }
+
+        override fun isVectorSupported(): Boolean = content.isVectorSupported()
+        override fun vectorWidth(font: Font): Double = content.vectorWidth(font)
+        override fun vectorMetrics(font: Font): LineBoxMetrics = content.vectorMetrics(font)
+
+        override fun renderVectorGroup(color: Color?): SvgGElement {
+            val g = SvgGElement()
+            val contentGroup = content.renderVectorGroup(color)
+            val dyPx = -INDEX_RELATIVE_SHIFT * content.levelFontSize(this@Latex.font)
+            contentGroup.transform().set(SvgTransformBuilder().translate(0.0, dyPx).build())
+            g.children().add(contentGroup)
+            return g
+        }
     }
 
     private inner class SubscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
@@ -354,6 +467,19 @@ internal class Latex(
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefixWidth = prefixWidth)
+        }
+
+        override fun isVectorSupported(): Boolean = content.isVectorSupported()
+        override fun vectorWidth(font: Font): Double = content.vectorWidth(font)
+        override fun vectorMetrics(font: Font): LineBoxMetrics = content.vectorMetrics(font)
+
+        override fun renderVectorGroup(color: Color?): SvgGElement {
+            val g = SvgGElement()
+            val contentGroup = content.renderVectorGroup(color)
+            val dyPx = INDEX_RELATIVE_SHIFT * content.levelFontSize(this@Latex.font)
+            contentGroup.transform().set(SvgTransformBuilder().translate(0.0, dyPx).build())
+            g.children().add(contentGroup)
+            return g
         }
     }
 
@@ -388,6 +514,67 @@ internal class Latex(
                 boxHeight = topToBaseline + denominatorMetrics.bottomToBaseline + denominatorBaselineShift,
                 topToBaseline = topToBaseline
             )
+        }
+
+        override fun isVectorSupported(): Boolean =
+            numerator.isVectorSupported() && denominator.isVectorSupported()
+
+        override fun vectorWidth(font: Font): Double =
+            max(numerator.vectorWidth(font), denominator.vectorWidth(font))
+
+        override fun vectorMetrics(font: Font): LineBoxMetrics {
+            val numMetrics = numerator.vectorMetrics(font)
+            val denomMetrics = denominator.vectorMetrics(font)
+            val em = levelFontSize(font)
+            val numBaselineShift = (barGlyphOffset + fractionGap + numeratorBottomAllowance) * em
+            val denomBaselineShift = denomMetrics.topToBaseline + (fractionGap - barGlyphOffset) * em
+            val topToBaseline = numMetrics.topToBaseline + numBaselineShift
+            return LineBoxMetrics(
+                boxHeight = topToBaseline + denomMetrics.bottomToBaseline + denomBaselineShift,
+                topToBaseline = topToBaseline
+            )
+        }
+
+        override fun renderVectorGroup(color: Color?): SvgGElement {
+            val g = SvgGElement()
+            val font = this@Latex.font
+            val em = levelFontSize(font)
+
+            val numWidth = numerator.vectorWidth(font)
+            val denomWidth = denominator.vectorWidth(font)
+            val fractionWidthPx = max(numWidth, denomWidth)
+
+            val numGroup = numerator.renderVectorGroup(color)
+            val denomGroup = denominator.renderVectorGroup(color)
+
+            val numShiftX = (fractionWidthPx - numWidth) / 2.0
+            val denomShiftX = (fractionWidthPx - denomWidth) / 2.0
+            // Vertical positioning mirrors legacy FractionNode metrics.
+            val numShiftY = -(barGlyphOffset + fractionGap + numeratorBottomAllowance) * em
+            val denomTopToBaseline = denominator.vectorMetrics(font).topToBaseline
+            val denomShiftY = denomTopToBaseline + (fractionGap - barGlyphOffset) * em
+
+            numGroup.transform().set(SvgTransformBuilder().translate(numShiftX, numShiftY).build())
+            denomGroup.transform().set(SvgTransformBuilder().translate(denomShiftX, denomShiftY).build())
+
+            // Bar: rectangle centered at y = (-barGlyphOffset + barBaselineShift) em, matching
+            // the visual position of the legacy en-dash glyph at its baseline shift.
+            val barCenterY = (-barGlyphOffset + barBaselineShift) * em
+            val barHalfThick = LatexVectorFont.FRACTION_BAR_THICKNESS_EM / 2.0 * em
+            val barTop = barCenterY - barHalfThick
+            val barBottom = barCenterY + barHalfThick
+            val barPath = SvgPathElement().apply {
+                setAttribute(
+                    "d",
+                    "M0 $barTop L$fractionWidthPx $barTop L$fractionWidthPx $barBottom L0 $barBottom Z"
+                )
+                fillColor().set(color ?: Color.BLACK)
+            }
+
+            g.children().add(numGroup)
+            g.children().add(denomGroup)
+            g.children().add(barPath)
+            return g
         }
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
@@ -478,6 +665,7 @@ internal class Latex(
         private const val INDEX_SIZE_FACTOR = 0.7
         private const val INDEX_RELATIVE_SHIFT = 0.4
         private const val FRACTION_BAR_SYMBOL = "–"
+        internal const val VECTOR_FORMULA_CLASS = "lp-latex-vector-formula"
 
         private val GREEK_LETTERS = mapOf(
             "Alpha" to "Α",

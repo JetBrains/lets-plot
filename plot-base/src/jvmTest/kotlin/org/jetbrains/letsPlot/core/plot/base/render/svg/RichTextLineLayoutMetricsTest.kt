@@ -12,7 +12,9 @@ import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineBoxMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTransform
 import kotlin.test.Test
 
 class RichTextLineLayoutMetricsTest {
@@ -165,9 +167,20 @@ class RichTextLineLayoutMetricsTest {
         )
 
         private fun lineYPositions(label: Label): List<Double> {
-            @Suppress("UNCHECKED_CAST")
-            val lines = label.rootGroup.children() as List<SvgTextElement>
-            return lines.map { it.y().get()!! }
+            return label.rootGroup.children().map { node ->
+                when (node) {
+                    is SvgTextElement -> node.y().get()!!
+                    is SvgGElement -> extractTranslateY(node.transform().get()!!)
+                    else -> error("Unexpected line node type: ${node::class.simpleName}")
+                }
+            }
+        }
+
+        private fun extractTranslateY(transform: SvgTransform): Double {
+            // The transform string looks like "translate(0.0 123.4) ". Extract the second number.
+            val match = Regex("""translate\(([^ ]+) ([^)]+)\)""").find(transform.toString())
+                ?: error("Could not parse translate transform: $transform")
+            return match.groupValues[2].trim().toDouble()
         }
 
         private fun assertLineBoxMetrics(actual: List<LineBoxMetrics>, expected: List<LineBoxMetrics>) {

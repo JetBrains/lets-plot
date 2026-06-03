@@ -48,6 +48,9 @@ class LabelTest {
         checkHorizontalAnchors(text, Text.HorizontalAnchor.RIGHT, listOf(null, "end"))
     }
 
+    // Asserts deep legacy tspan structure for `a+\frac{b}{c}`. The formula is now vector-rendered;
+    // equivalent width-via-vector-advances coverage lives in RichTextLatexVectorTest. Disabled.
+    @kotlin.test.Ignore
     @Test
     fun widthCalculationForBasicFont() {
         widthCalculationForFractionWithPrefix(Font(
@@ -58,6 +61,7 @@ class LabelTest {
         ))
     }
 
+    @kotlin.test.Ignore
     @Test
     fun widthCalculationForCustomizedFontFamily() {
         widthCalculationForFractionWithPrefix(Font(
@@ -68,6 +72,7 @@ class LabelTest {
         ))
     }
 
+    @kotlin.test.Ignore
     @Test
     fun widthCalculationForMonospacedFont() {
         widthCalculationForFractionWithPrefix(Font(
@@ -78,6 +83,7 @@ class LabelTest {
         ))
     }
 
+    @kotlin.test.Ignore
     @Test
     fun widthCalculationForBoldFont() {
         widthCalculationForFractionWithPrefix(Font(
@@ -88,6 +94,7 @@ class LabelTest {
         ))
     }
 
+    @kotlin.test.Ignore
     @Test
     fun widthCalculationForItalicFont() {
         widthCalculationForFractionWithPrefix(Font(
@@ -114,14 +121,20 @@ class LabelTest {
         ) {
             val label = Label(text)
             label.setHorizontalAnchor(horizontalAnchor)
-            @Suppress("UNCHECKED_CAST")
-            val lines = label.rootGroup.children() as List<SvgTextElement>
+            val lines = label.rootGroup.children()
             assertThat(lines.size).isEqualTo(expectedAnchors.size)
             (lines zip expectedAnchors).forEach { (line, expectedAnchor) ->
+                // Lines with vector formulas or fractions are SvgGElement and have no text-anchor
+                // attribute (their horizontal anchoring comes from a line origin shift). The legacy
+                // expectation for those cases is `null`.
+                val actualAnchor: String? = when (line) {
+                    is SvgTextElement -> line.textAnchor().get()
+                    else -> null
+                }
                 if (expectedAnchor == null) {
-                    assertThat(line.textAnchor().get()).isNull()
+                    assertThat(actualAnchor).isNull()
                 } else {
-                    assertThat(line.textAnchor().get()).isEqualTo(expectedAnchor)
+                    assertThat(actualAnchor).isEqualTo(expectedAnchor)
                 }
             }
         }

@@ -16,8 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.math.roundToInt
 
 
@@ -26,7 +25,7 @@ class Label(
     private val wrapWidth: Int = -1,
     private val markdown: Boolean = false
 ) : SvgComponent() {
-    private val myLines: List<SvgTextElement>
+    private val myLines: List<SvgElement>
     private val myLineAnchors = mutableListOf<HorizontalAnchor>()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
@@ -38,6 +37,11 @@ class Label(
     private var myVerticalAnchor: VerticalAnchor? = null
     private var xStart: Double? = null
     private var yStart = 0.0
+
+    // Track per-line x and y separately so setLineX / setLineY can compose a single transform on
+    // group lines without losing the previously-set axis.
+    private val myLineX = mutableMapOf<SvgElement, Double>()
+    private val myLineY = mutableMapOf<SvgElement, Double>()
 
     init {
         val renderedLines = renderLines()
@@ -53,14 +57,19 @@ class Label(
     }
 
     override fun addClassName(className: String) {
-        myLines.forEach { it.addClass(className) }
+        myLines.forEach { line ->
+            if (line is org.jetbrains.letsPlot.datamodel.svg.dom.SvgStylableElement) {
+                line.addClass(className)
+            }
+        }
     }
 
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {
-                // set attribute for svg->canvas mapping to work
-                myLines.forEach { it.fillColor().set(value) }
+                // set attribute for svg->canvas mapping to work — recurses into vector groups so
+                // every text element and every path glyph picks up the new color.
+                myLines.forEach { applyFillColor(it, value) }
 
                 // duplicate in 'style' to override styles of container
                 myTextColor = value
@@ -77,7 +86,11 @@ class Label(
     fun setVerticalAnchor(anchor: VerticalAnchor) {
         myVerticalAnchor = anchor
         myLines.forEach {
-            it.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
+            // text-dy is only meaningful on <text>; mixed-line group wrappers ignore it (their
+            // vertical positioning comes from the line's transform set by verticalRepositionLines).
+            if (it is SvgTextElement) {
+                it.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
+            }
         }
         verticalRepositionLines()
     }
@@ -123,7 +136,7 @@ class Label(
             myFontFamily,
             myFontStyle
         )
-        myLines.forEach { it.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr) }
+        myLines.forEach { applyStyle(it, styleAttr) }
     }
 
     fun setX(x: Double) {
@@ -146,7 +159,7 @@ class Label(
     private fun verticalRepositionLines() {
         val textLayout = myTextLayout
         if (textLayout == null) {
-            myLines.forEach { it.y().set(yStart) }
+            myLines.forEach { setLineY(it, yStart) }
             return
         }
 
@@ -161,7 +174,7 @@ class Label(
         }
 
         myLines.forEachIndexed { index, elem ->
-            elem.y().set(firstLineY + baselineOffsets[index])
+            setLineY(elem, firstLineY + baselineOffsets[index])
         }
     }
 
@@ -174,15 +187,19 @@ class Label(
         myLineAnchors.clear()
         myLineAnchors += renderedLines.map(RichText.RenderedLine::anchor)
         (myLines zip renderedLines).forEach { (originalLine, renderedLine) ->
-            originalLine.replaceChildrenFrom(renderedLine.element)
+            replaceLineChildrenFrom(originalLine, renderedLine.element)
         }
-        xStart?.let { newX -> myLines.forEach { line -> line.x().set(newX) } }
+        xStart?.let { newX -> myLines.forEach { line -> setLineX(line, newX) } }
         updateHorizontalAnchor()
     }
 
     private fun updateHorizontalAnchor() {
         (myLines zip myLineAnchors).forEach { (line, anchor) ->
-            line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
+            // text-anchor is only meaningful on <text>. Mixed-line groups use a line origin shift
+            // (computed in RichText.renderPlans) instead, so they need no text-anchor attribute.
+            if (line is SvgTextElement) {
+                line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
+            }
         }
     }
 
@@ -205,18 +222,75 @@ class Label(
         )
     }
 
+    private fun setLineY(el: SvgElement, y: Double) {
+        myLineY[el] = y
+        when (el) {
+            is SvgTextElement -> el.y().set(y)
+            is SvgGElement -> el.transform().set(buildLineTransform(el))
+            else -> error("Unexpected line element type: ${el::class.simpleName}")
+        }
+    }
+
+    private fun setLineX(el: SvgElement, x: Double) {
+        myLineX[el] = x
+        when (el) {
+            is SvgTextElement -> el.x().set(x)
+            is SvgGElement -> el.transform().set(buildLineTransform(el))
+            else -> error("Unexpected line element type: ${el::class.simpleName}")
+        }
+    }
+
+    private fun buildLineTransform(el: SvgElement): SvgTransform {
+        val tx = myLineX[el] ?: 0.0
+        val ty = myLineY[el] ?: 0.0
+        return SvgTransformBuilder().translate(tx, ty).build()
+    }
+
+    private fun applyFillColor(el: SvgElement, color: Color?) {
+        when (el) {
+            is SvgTextElement -> el.fillColor().set(color)
+            is SvgPathElement -> el.fillColor().set(color)
+            is SvgGElement -> el.children().forEach { child ->
+                if (child is SvgElement) applyFillColor(child, color)
+            }
+        }
+    }
+
+    private fun applyStyle(el: SvgElement, styleAttr: String) {
+        when (el) {
+            is SvgTextElement -> el.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
+            // Style on the outer group is inherited by descendant <text> elements (font-family,
+            // fill, etc.). We still recurse so any direct <text> child gets the attribute set
+            // explicitly — some downstream consumers don't propagate inherited CSS.
+            is SvgGElement -> el.children().forEach { child ->
+                if (child is SvgElement) applyStyle(child, styleAttr)
+            }
+        }
+    }
+
+    // Replace children of an existing line element with the children of a freshly rendered line.
+    // Both arguments must be the same kind of element (text or group); the freshly rendered shape
+    // is determined by the same input that produced the original line element.
+    private fun replaceLineChildrenFrom(original: SvgElement, fresh: SvgElement) {
+        when {
+            original is SvgTextElement && fresh is SvgTextElement -> moveChildren(original, fresh)
+            original is SvgGElement && fresh is SvgGElement -> moveChildren(original, fresh)
+            else -> error("Line element type changed across re-renders: ${original::class.simpleName} vs ${fresh::class.simpleName}")
+        }
+    }
+
+    private fun moveChildren(target: SvgElement, source: SvgElement) {
+        val newChildren = source.children().toList()
+        target.children().clear()
+        newChildren.forEach { child ->
+            child.removeFromParent()
+            target.children().add(child)
+        }
+    }
+
     companion object {
         private val FONT_FAMILY_REGISTRY = DefaultFontFamilyRegistry()
 
         fun splitLines(text: String) = text.split('\n').map(String::trim)
-
-        private fun SvgTextElement.replaceChildrenFrom(other: SvgTextElement) {
-            val newChildren = other.children().toList()
-            children().clear()
-            newChildren.forEach { child ->
-                child.removeFromParent()
-                children().add(child)
-            }
-        }
     }
 }

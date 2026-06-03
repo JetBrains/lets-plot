@@ -17,7 +17,7 @@ object RichText {
     const val HYPERLINK_ELEMENT_CLASS = "hyperlink-element"
 
     internal data class RenderedLine(
-        val element: SvgTextElement,
+        val element: SvgElement,
         val anchor: Text.HorizontalAnchor
     )
 
@@ -29,7 +29,7 @@ object RichText {
         markdown: Boolean = false,
         anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
         initialX: Double? = null
-    ): List<SvgTextElement> {
+    ): List<SvgElement> {
         return renderLines(text, font, wrapLength, maxLinesCount, markdown, anchor, initialX).map(RenderedLine::element)
     }
 
@@ -234,12 +234,14 @@ object RichText {
         anchor: Text.HorizontalAnchor
     ): List<LineRenderPlan> {
         return lines.map { line ->
-            val containsLatexFractionNode = line.any { term ->
-                term is Latex.LatexElement && term.node.flatListOfAllDescendants().any { latexNode ->
-                    latexNode is Latex.FractionNode
+            val needsLocalFrame = line.any { term ->
+                when (term) {
+                    is Latex.VectorLatexElement -> true
+                    is Latex.LatexElement -> term.node.flatListOfAllDescendants().any { it is Latex.FractionNode }
+                    else -> false
                 }
             }
-            if (!containsLatexFractionNode) {
+            if (!needsLocalFrame) {
                 return@map LineRenderPlan(
                     lineAnchor = anchor,
                     lineOriginShiftCoefficient = null
@@ -250,9 +252,9 @@ object RichText {
                 Text.HorizontalAnchor.MIDDLE -> 0.5
                 Text.HorizontalAnchor.RIGHT -> 1.0
             }
-            // Fraction lines are rendered in a line-local coordinate frame so all nested tspans
-            // use the same origin. The block still honors the requested anchor, but that anchor is
-            // resolved to an explicit line origin shift here instead of being inferred later from SVG.
+            // Fraction lines and vector-formula lines are rendered in a line-local coordinate frame
+            // so all nested elements share a single origin. The block still honors the requested
+            // anchor, but that anchor is resolved here to an explicit line origin shift.
             LineRenderPlan(
                 lineAnchor = Text.HorizontalAnchor.LEFT,
                 lineOriginShiftCoefficient = originShiftCoefficient
@@ -272,6 +274,9 @@ object RichText {
             val lineWidth = line.sumOf { term -> (term as? RichTextNode.RichSpan)?.estimateWidth(font) ?: 0.0 }
             var prefixWidth = 0.0
             var isFirstRichSpanInLine = true
+            // After a non-tspan element (e.g. a vector formula group), the next text run starts in
+            // a fresh SvgTextElement and its first tspan must have x set explicitly.
+            var spanContinuityBroken = false
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -290,19 +295,48 @@ object RichText {
                             initialX == null -> -renderPlan.lineOriginShiftCoefficient * lineWidth
                             else -> initialX - renderPlan.lineOriginShiftCoefficient * lineWidth
                         }
-                        svg += term.render(stack.last(), prefixWidth, x, isFirstRichSpanInLine)
+                        val effectiveIsFirst = isFirstRichSpanInLine || spanContinuityBroken
+                        val effectiveX = if (spanContinuityBroken) (x ?: 0.0) + prefixWidth else x
+                        svg += term.render(stack.last(), prefixWidth, effectiveX, effectiveIsFirst)
                         prefixWidth += term.estimateWidth(font)
                         isFirstRichSpanInLine = false
+                        spanContinuityBroken = term is Latex.VectorLatexElement
                     }
 
                     is RichTextNode.LineBreak -> throw IllegalStateException("Line breaks should be parsed before rendering")
                 }
             }
             RenderedLine(
-                element = SvgTextElement().apply { children().addAll(svg) },
+                element = assembleLineElement(svg),
                 anchor = renderPlan.lineAnchor
             )
         }
+    }
+
+    // If the line has only tspan-like children, wrap in a single SvgTextElement (unchanged shape).
+    // Otherwise wrap in an SvgGElement with runs of tspan-like children grouped into SvgTextElement
+    // siblings and any SvgGElement children kept as siblings — this is required for vector formulas,
+    // since SVG <text> may not contain <g> or <path>.
+    private fun assembleLineElement(svg: List<SvgElement>): SvgElement {
+        val anyGroup = svg.any { it is SvgGElement }
+        if (!anyGroup) {
+            return SvgTextElement().apply { children().addAll(svg) }
+        }
+        val outer = SvgGElement()
+        var currentText: SvgTextElement? = null
+        for (el in svg) {
+            if (el is SvgGElement) {
+                currentText = null
+                outer.children().add(el)
+            } else {
+                val tx = currentText ?: SvgTextElement().also {
+                    currentText = it
+                    outer.children().add(it)
+                }
+                tx.children().add(el)
+            }
+        }
+        return outer
     }
 
     internal sealed interface RichTextNode {
@@ -357,6 +391,15 @@ object RichText {
                     return this
                 }
             }
+
+            // Wraps an SvgGElement (used for vector LaTeX formulas). Positioning is via a
+            // translate transform on the group itself, since <g> has no x/y attributes.
+            class WrappedGElement(svg: SvgGElement, x: Double? = null) : WrappedSvgElement<SvgGElement>(svg, x) {
+                override fun updateSvgXAttribute(): WrappedSvgElement<SvgGElement> {
+                    x?.let { svg.transform().set(SvgTransformBuilder().translate(it, 0.0).build()) }
+                    return this
+                }
+            }
         }
 
         class Text(
@@ -393,10 +436,16 @@ object RichText {
         return WrappedAElement(this, x) as WrappedSvgElement<SvgElement>
     }
 
+    internal fun SvgGElement.wrap(x: Double? = null): WrappedSvgElement<SvgElement> {
+        @Suppress("UNCHECKED_CAST")
+        return WrappedGElement(this, x) as WrappedSvgElement<SvgElement>
+    }
+
     internal fun SvgElement.wrap(x: Double? = null): WrappedSvgElement<SvgElement> {
         return when (this) {
             is SvgTSpanElement -> wrap(x)
             is SvgAElement -> wrap(x)
+            is SvgGElement -> wrap(x)
             else -> throw IllegalArgumentException("Unsupported SVG element type: ${this::class.simpleName}")
         }
     }
