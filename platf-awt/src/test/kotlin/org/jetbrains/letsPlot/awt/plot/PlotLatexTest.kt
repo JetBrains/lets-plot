@@ -27,9 +27,6 @@ class PlotLatexTest : PlotVisualTestBase() {
 
     override fun currentTestName(): String? = currentTest.methodName
 
-    
-    
-    
     @Test
     fun plot_latex_symbols() {
         val greekLetters = listOf(
@@ -84,18 +81,18 @@ class PlotLatexTest : PlotVisualTestBase() {
         )
         val operations = listOf(
             "pm",
-            //"mp",     // Maps to U+2213 (`∓`), but the bundled Noto fonts used by the AWT and Magick backends don't have this glyph
+            "mp",
             "times",
             "div",
             "cdot",
         )
-        val relations = emptyList<String>(
-            //"leq",    // The bundled Noto fonts used by the AWT and Magick backends don't have this glyph
-            //"geq",    // The bundled Noto fonts used by the AWT and Magick backends don't have this glyph
-            //"neq",    // The bundled Noto fonts used by the AWT and Magick backends don't have this glyph
+        val relations = listOf(
+            "leq",
+            "geq",
+            "neq",
         )
-        val miscellaneous = emptyList<String>(
-            //"infty",  // The bundled Noto fonts used by the AWT and Magick backends don't have this glyph
+        val miscellaneous = listOf(
+            "infty",
         )
         val symbols = greekLetters + operations + relations + miscellaneous
         val cols = 12
@@ -160,9 +157,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_fractionalYAxisLabels() {
         val spec = """
@@ -252,9 +246,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_xAxisLabelsAngleMatrix() {
         val spec = """
@@ -430,9 +421,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomLabelRegressionHjustMatrix() {
         val spec = """
@@ -835,9 +823,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomLabelNudgeXMatrix() {
         val spec = """
@@ -2874,9 +2859,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomTextHjustMatrix() {
         val spec = """
@@ -5345,9 +5327,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomTextNudgeXMatrix() {
         val spec = """
@@ -7816,9 +7795,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_titleHjustMatrix() {
         val spec = """
@@ -11023,9 +10999,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomLabelVjustLineheightMatrix() {
         val spec = """
@@ -11674,9 +11647,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_titleAxisGeomTextConsistency() {
         val spec = """
@@ -11873,9 +11843,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_facetStripLabels() {
         val spec = """
@@ -11932,9 +11899,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_discreteLegendLabels() {
         val spec = """
@@ -12315,9 +12279,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_continuousLegendLabels() {
         val spec = """
@@ -12382,9 +12343,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomTextAppearanceSettings() {
         val spec = """
@@ -12725,9 +12683,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_embeddedInPlainText() {
         val spec = """
@@ -12941,9 +12896,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomLabelInlineAlignment() {
         val spec = """
@@ -13261,9 +13213,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomTextVjustMatrix() {
         val spec = """
@@ -15070,9 +15019,6 @@ class PlotLatexTest : PlotVisualTestBase() {
         assertBitmap(plotCanvasDrawable)
     }
 
-    
-    
-    
     @Test
     fun plot_latex_geomLabelVjustMatrix() {
         val spec = """
