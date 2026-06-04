@@ -143,6 +143,28 @@ class RichTextLatexVectorTest {
     }
 
     @Test
+    fun formulaWithEmbeddedWhitespaceStillRendersAsVector() {
+        // Legend labels are wrapped by commons WordWrapper.wrap(), which can inject a '\n' inside a
+        // "\( ... \)" formula (it splits the raw LaTeX source on spaces). Whitespace must therefore
+        // count as a supported (blank) glyph, otherwise the whole formula falls back to the legacy
+        // tspan renderer — the "legend looks as before glyphs" regression.
+        val svg = toSvg("\\(a\nb\\)").single()
+        assertThat(svg).isInstanceOf(SvgGElement::class.java)
+        assertThat(svg.tspans()).isEmpty()
+        // 'a' and 'b' both produce a glyph path; the newline is a blank glyph (no path).
+        assertThat(svg.pathElements()).hasSize(2)
+    }
+
+    @Test
+    fun embeddedNewlineHasSameWidthAsSpace() {
+        // The wrapper replaces a space with '\n', so the newline must contribute exactly the space
+        // advance — keeping the wrapped formula pixel-identical to its unwrapped form.
+        val withSpace = RichText.measure(text = "\\(a b\\)", font = font)
+        val withNewline = RichText.measure(text = "\\(a\nb\\)", font = font)
+        assertThat(withNewline.width).isCloseTo(withSpace.width, offset(1e-9))
+    }
+
+    @Test
     fun mixedLineFormulaIsTranslatedByPrefixWidth() {
         // The vector formula group inside a mixed line should be translated horizontally by the
         // prefix's vector width (in pixels). This is the core "no-drift" guarantee.
