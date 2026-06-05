@@ -61,7 +61,7 @@ internal class MeasuredTooltipBuilder private constructor(
                 title = null,
                 lines = makeText(myText!!).map(TooltipModel.Line.Companion::withValue),
                 fill = myFillColor!!,
-                markerColors = emptyList(),
+                marker = emptyList(),
                 isSide = true,
                 anchor = myAnchor
             ),

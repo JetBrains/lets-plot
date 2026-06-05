@@ -67,15 +67,15 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         }
 
         return when (hintConfig.placement) {
-            Placement.VERTICAL -> verticalTooltip(coord, objectRadius, fillColor = color, markerColors = emptyList())
+            Placement.VERTICAL -> verticalTooltip(coord, objectRadius, fillColor = color, marker = emptyList())
             Placement.HORIZONTAL -> horizontalTooltip(
                 coord,
                 objectRadius,
                 fillColor = color,
-                markerColors = emptyList()
+                marker = emptyList()
             )
 
-            Placement.CURSOR -> cursorTooltip(coord, markerColors = emptyList())
+            Placement.CURSOR -> cursorTooltip(coord, marker = emptyList())
             Placement.ROTATED -> rotatedTooltip(coord, objectRadius, color)
             else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.placement)
         }

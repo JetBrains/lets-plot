@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -69,7 +69,7 @@ open class PointGeom : GeomBase() {
                 p.index(),
                 location,
                 (shape.size(p, scaleFactor) + shape.strokeWidth(p)) / 2,
-                GeomTargetCollector.TooltipParams(markerColors = colorsByDataPoint(p))
+                GeomTargetCollector.TooltipParams(marker = colorsByDataPoint(p))
             )
             PointShapeSvg.create(shape, location, p, scaleFactor)
                 .appendTo(slimGroup)

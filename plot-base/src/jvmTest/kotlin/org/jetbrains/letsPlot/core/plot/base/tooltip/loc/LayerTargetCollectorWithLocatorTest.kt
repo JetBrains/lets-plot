@@ -91,7 +91,7 @@ class LayerTargetCollectorWithLocatorTest {
                     point = point,
                     radius = radius,
                     tooltipParams = TooltipParams(
-                        markerColors = listOf(color)
+                        marker = listOf(color)
                     )
                 )
             }
@@ -103,7 +103,7 @@ class LayerTargetCollectorWithLocatorTest {
                     index = 0,
                     rectangle = rect,
                     tooltipParams = TooltipParams(
-                        markerColors = listOf(color)
+                        marker = listOf(color)
                     )
                 )
             }

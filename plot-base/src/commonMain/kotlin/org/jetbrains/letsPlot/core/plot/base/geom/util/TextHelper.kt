@@ -115,7 +115,7 @@ class TextHelper(
                 location,
                 sizeUnitRatio * AesScaling.textSize(p) / 2,
                 GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(p)
+                    marker = colorsByDataPoint(p)
                 ),
                 TooltipHint.Placement.CURSOR
             )

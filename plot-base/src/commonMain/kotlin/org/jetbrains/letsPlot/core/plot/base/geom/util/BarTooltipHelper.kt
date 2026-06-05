@@ -59,7 +59,7 @@ object BarTooltipHelper {
                 GeomTargetCollector.TooltipParams(
                     tooltipHints = hintConfigs.hints,
                     fillColor = fillColorMapper(p),
-                    markerColors = colorMarkerMapper(p)
+                    marker = colorMarkerMapper(p)
                 ),
                 tooltipPlacement = defaultTooltipPlacement
             )

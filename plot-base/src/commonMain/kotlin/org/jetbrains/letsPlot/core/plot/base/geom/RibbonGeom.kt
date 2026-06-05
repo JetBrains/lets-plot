@@ -72,7 +72,7 @@ class RibbonGeom : GeomBase() {
 
             val tooltipParams = GeomTargetCollector.TooltipParams(
                 tooltipHints = hintsCollection.hints,
-                markerColors = colorMapper(p)
+                marker = colorMapper(p)
             )
 
             helper.toClient(DoubleVector(x, (ymin + ymax) / 2.0), p)?.let { center ->
