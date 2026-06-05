@@ -124,6 +124,22 @@ class RichTextLatexVectorTest {
     }
 
     @Test
+    fun superscriptLineBoxMetricsIncludeRenderedShift() {
+        // A fraction inside a superscript: the measured line box must reflect the same upward shift
+        // the renderer applies (-INDEX_RELATIVE_SHIFT * content.levelFontSize), so the box top grows
+        // and the bottom shrinks instead of leaving a phantom band below the formula.
+        // Derivation (font 16, SERIF): fraction-in-superscript content top=16.352, bottom=8.512;
+        // shift = 0.4 * 16 * 0.7 = 4.48; raised -> top=20.832, bottom=4.032; merged with 'A' (16, 0).
+        // Under the old (buggy) behavior this would be top=16.352 (no shift) — so this test
+        // distinguishes the fix.
+        val measured = RichText.measure(text = """\(A^{\frac{b}{c}}\)""", font = font)
+        assertThat(measured.layout.lineBoxes).hasSize(1)
+        val m = measured.layout.lineBoxes.single()
+        assertThat(m.boxHeight).isCloseTo(24.864, offset(1e-6))
+        assertThat(m.topToBaseline).isCloseTo(20.832, offset(1e-6))
+    }
+
+    @Test
     fun vectorGlyphTableCoversEntireSymbolMap() {
         // Every symbol mapped by Latex.SYMBOLS must have a vector glyph, otherwise visual tests
         // that exercise the full symbol set will fall back to legacy for some symbols and produce

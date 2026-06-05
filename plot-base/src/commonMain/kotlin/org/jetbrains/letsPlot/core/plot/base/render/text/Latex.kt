@@ -445,15 +445,30 @@ internal class Latex(
         }
     }
 
+    // Shift a line box up by `shift` (for a superscript): the top grows and the bottom shrinks
+    // (clamped at 0), mirroring the renderer's negative dy. Preserves LineBoxMetrics invariants.
+    private fun LineBoxMetrics.raisedBy(shift: Double): LineBoxMetrics {
+        val newTop = topToBaseline + shift
+        val newBottom = maxOf(0.0, bottomToBaseline - shift)
+        return LineBoxMetrics(boxHeight = newTop + newBottom, topToBaseline = newTop)
+    }
+
+    // Shift a line box down by `shift` (for a subscript): the bottom grows and the top shrinks
+    // (clamped at 0), mirroring the renderer's positive dy. Preserves LineBoxMetrics invariants.
+    private fun LineBoxMetrics.loweredBy(shift: Double): LineBoxMetrics {
+        val newBottom = bottomToBaseline + shift
+        val newTop = maxOf(0.0, topToBaseline - shift)
+        return LineBoxMetrics(boxHeight = newTop + newBottom, topToBaseline = newTop)
+    }
+
     private inner class SuperscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
         override val visualCharCount: Int = content.visualCharCount
         override fun estimateNodeWidth(font: Font): Double {
             return content.estimateWidth(font)
         }
 
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
-            return content.estimateLineLayoutMetrics(font)
-        }
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics =
+            content.estimateLineLayoutMetrics(font).raisedBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefixWidth = prefixWidth)
@@ -461,7 +476,8 @@ internal class Latex(
 
         override fun isVectorSupported(): Boolean = content.isVectorSupported()
         override fun vectorWidth(font: Font): Double = content.vectorWidth(font)
-        override fun vectorMetrics(font: Font): LineBoxMetrics = content.vectorMetrics(font)
+        override fun vectorMetrics(font: Font): LineBoxMetrics =
+            content.vectorMetrics(font).raisedBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
 
         override fun renderVectorGroup(color: Color?): SvgGElement {
             val g = SvgGElement()
@@ -479,9 +495,8 @@ internal class Latex(
             return content.estimateWidth(font)
         }
 
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
-            return content.estimateLineLayoutMetrics(font)
-        }
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics =
+            content.estimateLineLayoutMetrics(font).loweredBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
             return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefixWidth = prefixWidth)
@@ -489,7 +504,8 @@ internal class Latex(
 
         override fun isVectorSupported(): Boolean = content.isVectorSupported()
         override fun vectorWidth(font: Font): Double = content.vectorWidth(font)
-        override fun vectorMetrics(font: Font): LineBoxMetrics = content.vectorMetrics(font)
+        override fun vectorMetrics(font: Font): LineBoxMetrics =
+            content.vectorMetrics(font).loweredBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
 
         override fun renderVectorGroup(color: Color?): SvgGElement {
             val g = SvgGElement()
