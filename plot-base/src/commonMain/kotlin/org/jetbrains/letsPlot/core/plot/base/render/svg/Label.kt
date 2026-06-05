@@ -190,6 +190,12 @@ class Label(
         (myLines zip renderedLines).forEach { (originalLine, renderedLine) ->
             replaceLineChildrenFrom(originalLine, renderedLine.element)
         }
+        // Regenerated children of a mixed line (plain text + vector LaTeX formula) are born without
+        // the font 'style' attribute: it lived on the previous inner <text>, which was just replaced.
+        // Unlike a pure-text line — whose <text> wrapper is preserved across child replacement — the
+        // fresh inner <text> would otherwise fall back to the renderer's default font size/family/face.
+        // Re-apply the style so the prefix matches the formula's font size (and family/weight/style).
+        updateStyleAttribute()
         // Regenerated children (e.g. vector LaTeX glyph paths) are born with the default color and
         // carry no inheritable parent style, unlike legacy <tspan>s under a persistent <text>.
         // Re-apply an explicitly-set text color so the fresh paths pick it up. Guard on non-null:
