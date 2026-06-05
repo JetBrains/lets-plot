@@ -277,6 +277,14 @@ object RichText {
             // After a non-tspan element (e.g. a vector formula group), the next text run starts in
             // a fresh SvgTextElement and its first tspan must have x set explicitly.
             var spanContinuityBroken = false
+            // A leading plain-text run rendered by the host font, immediately followed by a vector
+            // formula placed by the (host-font-independent) width estimate, drifts at their boundary:
+            // the formula overlaps the text when the estimate is too small, gaps it when too large.
+            // Detect that shape so the leading run can be right-anchored to the formula's left edge.
+            val richSpans = line.filterIsInstance<RichTextNode.RichSpan>()
+            val leadingTextPrecedesVectorFormula = richSpans.size >= 2 &&
+                    richSpans[0] is RichTextNode.Text &&
+                    richSpans[1] is Latex.VectorLatexElement
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -297,8 +305,21 @@ object RichText {
                         }
                         val effectiveIsFirst = isFirstRichSpanInLine || spanContinuityBroken
                         val effectiveX = if (spanContinuityBroken) (x ?: 0.0) + prefixWidth else x
-                        svg += term.render(stack.last(), prefixWidth, effectiveX, effectiveIsFirst)
-                        prefixWidth += term.estimateWidth(font)
+                        val termWidth = term.estimateWidth(font)
+                        val rendered = term.render(stack.last(), prefixWidth, effectiveX, effectiveIsFirst)
+                        // Boundary fix: pin the leading text run's right edge to the formula's left edge
+                        // (text-anchor=end) so the host-font/estimator mismatch can no longer make the
+                        // following vector formula overlap (or gap) the text. Only the leading run is
+                        // pinned; the formula and suffix keep their exact em-based positions.
+                        if (isFirstRichSpanInLine && term is RichTextNode.Text && leadingTextPrecedesVectorFormula) {
+                            val rightEdge = (x ?: 0.0) + prefixWidth + termWidth
+                            rendered.filterIsInstance<SvgTSpanElement>().forEach { tspan ->
+                                tspan.setAttribute(SvgTextContent.TEXT_ANCHOR, SvgConstants.SVG_TEXT_ANCHOR_END)
+                                tspan.setAttribute(SvgTextContent.X, rightEdge)
+                            }
+                        }
+                        svg += rendered
+                        prefixWidth += termWidth
                         isFirstRichSpanInLine = false
                         spanContinuityBroken = term is Latex.VectorLatexElement
                     }
