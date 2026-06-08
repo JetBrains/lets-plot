@@ -50,7 +50,7 @@ class TooltipBoxTest {
                 title = null,
                 textClassName = "anyStyle",
                 borderRadius = 0.0,
-                marker = emptyList()
+                marker = TooltipMarker.NONE
             )
         }
     }

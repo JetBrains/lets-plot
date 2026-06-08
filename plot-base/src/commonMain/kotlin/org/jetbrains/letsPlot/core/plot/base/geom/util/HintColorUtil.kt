@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.GeomMeta
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.plot.base.render.point.TinyPointShape
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 
 object HintColorUtil {
     fun colorWithAlpha(p: DataPointAesthetics): Color {
@@ -26,7 +27,7 @@ object HintColorUtil {
 
     fun createColorMarkerMapper(
         ctx: GeomContext,
-    ): (DataPointAesthetics) -> List<Color> {
+    ): (DataPointAesthetics) -> TooltipMarker {
         return createColorMarkerMapper(
             ctx.geomKind(),
             isMappedFill = { p: DataPointAesthetics -> ctx.isMappedAes(p.fillAes) },
@@ -63,7 +64,7 @@ object HintColorUtil {
         geomKind: GeomKind?,
         isMappedFill: (DataPointAesthetics) -> Boolean,
         isMappedColor: (DataPointAesthetics) -> Boolean
-    ): (DataPointAesthetics) -> List<Color> {
+    ): (DataPointAesthetics) -> TooltipMarker {
         val fillColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
             SINA, POINT -> this::pointFillMapper
             else -> this::fillWithAlpha
@@ -80,7 +81,7 @@ object HintColorUtil {
         }
 
         return { p: DataPointAesthetics ->
-            when (geomKind) {
+            TooltipMarker.of(when (geomKind) {
                 null -> listOf(
                     // should be mapped and visible
                     fillColorGetter(p).takeIf { isMappedFill(p) },
@@ -118,6 +119,7 @@ object HintColorUtil {
                 }
             }
                 .filterNotNull()
+            )
 
         }
     }

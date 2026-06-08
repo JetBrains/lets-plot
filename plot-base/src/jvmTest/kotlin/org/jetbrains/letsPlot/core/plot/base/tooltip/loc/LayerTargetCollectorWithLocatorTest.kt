@@ -15,6 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.StatKind
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomInteractionTestingFactory
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.GeomInteraction
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.mockito.Mockito
@@ -91,7 +92,7 @@ class LayerTargetCollectorWithLocatorTest {
                     point = point,
                     radius = radius,
                     tooltipParams = TooltipParams(
-                        marker = listOf(color)
+                        marker = TooltipMarker.of(color)
                     )
                 )
             }
@@ -103,7 +104,7 @@ class LayerTargetCollectorWithLocatorTest {
                     index = 0,
                     rectangle = rect,
                     tooltipParams = TooltipParams(
-                        marker = listOf(color)
+                        marker = TooltipMarker.of(color)
                     )
                 )
             }

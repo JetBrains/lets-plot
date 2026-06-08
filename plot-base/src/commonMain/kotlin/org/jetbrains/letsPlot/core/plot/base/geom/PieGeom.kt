@@ -21,6 +21,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgPathDataBuilder
@@ -225,7 +226,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             points = resampleArc(outerArc = true) + resampleArc(outerArc = false).reversed(),
             index = sector.p.index(),
             GeomTargetCollector.TooltipParams(
-                marker = listOf(
+                marker = TooltipMarker.of(
                     AestheticsUtil.resolveFill(sector.p)
                 )
             )

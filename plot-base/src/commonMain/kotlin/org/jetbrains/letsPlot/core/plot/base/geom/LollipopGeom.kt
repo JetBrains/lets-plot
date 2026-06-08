@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.geom
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.legend.LollipopLegendKeyElementFactory
@@ -19,6 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.plot.base.render.point.PointShapeSvg
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgLineElement
 import kotlin.math.pow
@@ -74,7 +74,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         lollipop: Lollipop,
         helper: GeomHelper,
         targetCollector: GeomTargetCollector,
-        colorsByDataPoint: (DataPointAesthetics) -> List<Color>
+        colorsByDataPoint: (DataPointAesthetics) -> TooltipMarker
     ) {
         targetCollector.addPoint(
             lollipop.point.index(),

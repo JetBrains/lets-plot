@@ -36,6 +36,7 @@ internal class TestingTooltipModelsBuilder private constructor(
         `when`(tooltipHint.placement).thenReturn(VERTICAL)
         `when`(tooltipHint.coord).thenReturn(DoubleVector.ZERO)
         `when`(tooltipHint.objectRadius).thenReturn(0.0)
+        `when`(tooltipHint.marker).thenReturn(TooltipMarker.NONE)
 
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tooltipHint).thenReturn(tooltipHint)

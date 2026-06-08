@@ -12,7 +12,7 @@ class TooltipModel(
     val title: String?,
     val lines: List<Line>,
     val fill: Color?,
-    val marker: List<Color>,
+    val marker: TooltipMarker,
     val isSide: Boolean,
     val anchor: TooltipAnchor? = null,
     val minWidth: Double? = null,

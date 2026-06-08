@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
-import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTarget
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector.TooltipParams
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HitShape
@@ -17,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.horiz
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.rotatedTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.verticalTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 
 class TargetPrototype(
     internal val hitShape: HitShape,
@@ -48,8 +48,8 @@ class TargetPrototype(
             hitShapeKind: HitShape.Kind,
             tooltipPlacement: TooltipHint.Placement,
             stemLength: TooltipHint.StemLength,
-            fillColor: Color?,
-            marker: List<Color>,
+            fillColor: org.jetbrains.letsPlot.commons.values.Color?,
+            marker: TooltipMarker,
             objectRadius: Double
         ): TooltipHint {
 

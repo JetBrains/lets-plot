@@ -10,6 +10,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipModel
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.MeasuredTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.TooltipLayoutTestBase.Companion.makeText
@@ -61,7 +62,7 @@ internal class MeasuredTooltipBuilder private constructor(
                 title = null,
                 lines = makeText(myText!!).map(TooltipModel.Line.Companion::withValue),
                 fill = myFillColor!!,
-                marker = emptyList(),
+                marker = TooltipMarker.NONE,
                 isSide = true,
                 anchor = myAnchor
             ),
