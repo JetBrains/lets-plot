@@ -200,7 +200,6 @@ internal object PlotGeomTilesUtil {
 
         geomInteraction?.let {
             layerBuilder
-                .locatorLookupSpec(it.createLookupSpec())
                 .contextualMappingProvider(it)
         }
         // annotations

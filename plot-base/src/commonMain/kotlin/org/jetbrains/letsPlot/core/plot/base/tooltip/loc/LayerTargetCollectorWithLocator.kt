@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 
 class LayerTargetCollectorWithLocator(
     private val geomKind: GeomKind,
-    private val lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping
 ) : GeomTargetCollector, GeomTargetLocator {
 

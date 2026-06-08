@@ -128,7 +128,6 @@ class LayerTargetCollectorWithLocatorTest {
             )
             return LayerTargetCollectorWithLocator(
                 geomKind = geomKind,
-                lookupSpec = builder.createLookupSpec(),
                 contextualMapping = contextualMapping
             )
         }
