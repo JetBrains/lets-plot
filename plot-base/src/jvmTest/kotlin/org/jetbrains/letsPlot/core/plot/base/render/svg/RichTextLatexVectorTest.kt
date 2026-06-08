@@ -11,11 +11,14 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.pathElements
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toSvg
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toTestWidth
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.vectorFormulaGroups
 import org.jetbrains.letsPlot.core.plot.base.render.text.LatexVectorFont
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.test.Test
 
@@ -192,5 +195,97 @@ class RichTextLatexVectorTest {
         assertThat(transform).isNotNull
         val transformStr = transform.toString()
         assertThat(transformStr).startsWith("translate(")
+    }
+
+    @Test
+    fun plainTextPrefixPinBehaviorUnchanged() {
+        // Regression guard: a single plain-Text prefix before a vector formula was already pinned;
+        // the new code must produce identical attributes.
+        val svg = toSvg("""prefix \(a + b\)""").single() as SvgGElement
+        val prefixTextEl = svg.children()[0] as SvgTextElement
+        val prefixTspan  = prefixTextEl.children()[0] as SvgTSpanElement
+        val formulaLeftEdge = toTestWidth("prefix ")
+        assertThat(prefixTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(prefixTspan.x().get()).isEqualTo(formulaLeftEdge)
+    }
+
+    @Test
+    fun pureFormulaLineHasNoPrefixPin() {
+        // A line that starts with a vector formula has no text-like prefix; no pin is applied.
+        val svg = toSvg("""\(a + b\)""").single()
+        assertThat(svg.tspans()).isEmpty()
+    }
+
+    @Test
+    fun linkPrefixBeforeVectorFormulaPinsRightEdge() {
+        // Hyperlink prefix: <a>GitHub</a> & \(a + b\)
+        // Text("") from Plaintext::parse is dropped by parseBreaks (empty content), so the prefix
+        // spans are [HyperlinkElement("GitHub"), Text(" & ")]. The chunk anchor sits on the first
+        // addressable tspan — the one inside <a> — with x=formulaLeftEdge, text-anchor=end.
+        val svg = toSvg("""<a href="https://example.com">GitHub</a> & \(a + b\)""").single()
+        assertThat(svg).isInstanceOf(SvgGElement::class.java)
+        val outer = svg as SvgGElement
+        // outer has 2 children: SvgTextElement (prefix) and SvgGElement (formula).
+        assertThat(outer.children()).hasSize(2)
+        val prefixTextEl = outer.children()[0] as SvgTextElement
+        // prefixTextEl has 2 children: SvgAElement and SvgTSpanElement(" & ").
+        assertThat(prefixTextEl.children()).hasSize(2)
+        val aEl         = prefixTextEl.children()[0] as SvgAElement
+        val githubTspan = aEl.children().single() as SvgTSpanElement
+        val andTspan    = prefixTextEl.children()[1] as SvgTSpanElement
+        val formulaLeftEdge = toTestWidth("GitHub") + toTestWidth(" & ")
+        // GitHub tspan (first prefix tspan) anchors the chunk: text-anchor=end, x=formulaLeftEdge.
+        assertThat(githubTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
+        // " & " tspan: end-anchored, no explicit x (flows within the chunk).
+        assertThat(andTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(andTspan.x().get()).isNull()
+        // Formula group still carries a translate transform (position unchanged).
+        val formulaTransform = (outer.children()[1] as SvgGElement).transform().get()
+        assertThat(formulaTransform).isNotNull
+        assertThat(formulaTransform.toString()).startsWith("translate(")
+    }
+
+    @Test
+    fun markdownBoldPrefixBeforeVectorFormulaPinsRightEdge() {
+        // **GitHub** & \(a + b\) (markdown=true)
+        // Parsed as [StrongStart, Text("GitHub"), StrongEnd, Text(" & "), VectorFormula].
+        val svg = toSvg("""**GitHub** & \(a + b\)""", markdown = true).single() as SvgGElement
+        val prefixTextEl = svg.children()[0] as SvgTextElement
+        val githubTspan  = prefixTextEl.children()[0] as SvgTSpanElement
+        val andTspan     = prefixTextEl.children()[1] as SvgTSpanElement
+        val formulaLeftEdge = toTestWidth("GitHub") + toTestWidth(" & ")
+        assertThat(githubTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
+        assertThat(andTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(andTspan.x().get()).isNull()
+    }
+
+    @Test
+    fun markdownEmphasisPrefixBeforeVectorFormulaPinsRightEdge() {
+        // *GitHub* & \(a + b\) (markdown=true)
+        val svg = toSvg("""*GitHub* & \(a + b\)""", markdown = true).single() as SvgGElement
+        val prefixTextEl = svg.children()[0] as SvgTextElement
+        val githubTspan  = prefixTextEl.children()[0] as SvgTSpanElement
+        val andTspan     = prefixTextEl.children()[1] as SvgTSpanElement
+        val formulaLeftEdge = toTestWidth("GitHub") + toTestWidth(" & ")
+        assertThat(githubTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
+        assertThat(andTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(andTspan.x().get()).isNull()
+    }
+
+    @Test
+    fun markdownColorPrefixBeforeVectorFormulaPinsRightEdge() {
+        // <span style='color:red'>GitHub</span> & \(a + b\) (markdown=true)
+        val svg = toSvg("""<span style='color:red'>GitHub</span> & \(a + b\)""", markdown = true).single() as SvgGElement
+        val prefixTextEl = svg.children()[0] as SvgTextElement
+        val githubTspan  = prefixTextEl.children()[0] as SvgTSpanElement
+        val andTspan     = prefixTextEl.children()[1] as SvgTSpanElement
+        val formulaLeftEdge = toTestWidth("GitHub") + toTestWidth(" & ")
+        assertThat(githubTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
+        assertThat(andTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(andTspan.x().get()).isNull()
     }
 }

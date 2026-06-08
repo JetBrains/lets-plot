@@ -277,14 +277,26 @@ object RichText {
             // After a non-tspan element (e.g. a vector formula group), the next text run starts in
             // a fresh SvgTextElement and its first tspan must have x set explicitly.
             var spanContinuityBroken = false
-            // A leading plain-text run rendered by the host font, immediately followed by a vector
-            // formula placed by the (host-font-independent) width estimate, drifts at their boundary:
-            // the formula overlaps the text when the estimate is too small, gaps it when too large.
-            // Detect that shape so the leading run can be right-anchored to the formula's left edge.
+            // Detect a contiguous text-like prefix (Text runs and/or hyperlinks) before the first
+            // vector formula. If found, the whole prefix is end-anchored as a single SVG chunk so
+            // its right edge meets the formula's left edge — eliminating the estimator-vs-host-font
+            // gap for links and multi-run markdown prefixes, not just single plain-Text prefixes.
             val richSpans = line.filterIsInstance<RichTextNode.RichSpan>()
-            val leadingTextPrecedesVectorFormula = richSpans.size >= 2 &&
-                    richSpans[0] is RichTextNode.Text &&
-                    richSpans[1] is Latex.VectorLatexElement
+            val firstFormulaIdx = richSpans.indexOfFirst { it is Latex.VectorLatexElement }
+            val prefixSpans = if (firstFormulaIdx > 0) richSpans.subList(0, firstFormulaIdx) else emptyList()
+            val pinnablePrefix = prefixSpans.isNotEmpty() &&
+                    prefixSpans.all { it is RichTextNode.Text || it is Hyperlink.HyperlinkElement }
+            // x is constant for the whole line — hoist it so formulaLeftEdge can be pre-computed.
+            val lineX = when {
+                renderPlan.lineOriginShiftCoefficient == null -> null
+                initialX == null && renderPlan.lineOriginShiftCoefficient == 0.0 -> null
+                initialX == null -> -renderPlan.lineOriginShiftCoefficient * lineWidth
+                else -> initialX - renderPlan.lineOriginShiftCoefficient * lineWidth
+            }
+            val formulaLeftEdge = (lineX ?: 0.0) + prefixSpans.sumOf { it.estimateWidth(font) }
+            // Prefix SVG elements are gathered here so the pin can be applied after the loop.
+            val prefixRenderedElements = if (pinnablePrefix) mutableListOf<SvgElement>() else null
+            var prefixSpansProcessed = 0
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -297,26 +309,14 @@ object RichText {
                     is RichTextNode.RichSpan -> {
                         // For complex lines (for example with fractions), the line may be anchored by
                         // shifting its explicit origin instead of by SVG `text-anchor`.
-                        val x = when {
-                            renderPlan.lineOriginShiftCoefficient == null -> null
-                            initialX == null && renderPlan.lineOriginShiftCoefficient == 0.0 -> null
-                            initialX == null -> -renderPlan.lineOriginShiftCoefficient * lineWidth
-                            else -> initialX - renderPlan.lineOriginShiftCoefficient * lineWidth
-                        }
+                        val x = lineX
                         val effectiveIsFirst = isFirstRichSpanInLine || spanContinuityBroken
                         val effectiveX = if (spanContinuityBroken) (x ?: 0.0) + prefixWidth else x
                         val termWidth = term.estimateWidth(font)
                         val rendered = term.render(stack.last(), prefixWidth, effectiveX, effectiveIsFirst)
-                        // Boundary fix: pin the leading text run's right edge to the formula's left edge
-                        // (text-anchor=end) so the host-font/estimator mismatch can no longer make the
-                        // following vector formula overlap (or gap) the text. Only the leading run is
-                        // pinned; the formula and suffix keep their exact em-based positions.
-                        if (isFirstRichSpanInLine && term is RichTextNode.Text && leadingTextPrecedesVectorFormula) {
-                            val rightEdge = (x ?: 0.0) + prefixWidth + termWidth
-                            rendered.filterIsInstance<SvgTSpanElement>().forEach { tspan ->
-                                tspan.setAttribute(SvgTextContent.TEXT_ANCHOR, SvgConstants.SVG_TEXT_ANCHOR_END)
-                                tspan.setAttribute(SvgTextContent.X, rightEdge)
-                            }
+                        if (pinnablePrefix && prefixSpansProcessed < prefixSpans.size) {
+                            prefixRenderedElements!! += rendered
+                            prefixSpansProcessed++
                         }
                         svg += rendered
                         prefixWidth += termWidth
@@ -325,6 +325,24 @@ object RichText {
                     }
 
                     is RichTextNode.LineBreak -> throw IllegalStateException("Line breaks should be parsed before rendering")
+                }
+            }
+            // Post-loop pin: end-anchor the whole prefix chunk so its right edge meets the
+            // formula's left edge. text-anchor=end goes on every prefix tspan; x=formulaLeftEdge
+            // only on the first (which starts the SVG text chunk).
+            if (pinnablePrefix && prefixRenderedElements != null) {
+                val prefixTSpans = prefixRenderedElements.flatMap { el ->
+                    when (el) {
+                        is SvgTSpanElement -> listOf(el)
+                        is SvgAElement -> listOf(el.children().single() as SvgTSpanElement)
+                        else -> emptyList()
+                    }
+                }
+                prefixTSpans.forEachIndexed { i, tspan ->
+                    tspan.setAttribute(SvgTextContent.TEXT_ANCHOR, SvgConstants.SVG_TEXT_ANCHOR_END)
+                    if (i == 0) {
+                        tspan.setAttribute(SvgTextContent.X, formulaLeftEdge)
+                    }
                 }
             }
             RenderedLine(
