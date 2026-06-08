@@ -7,27 +7,25 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.commons.values.Color
 
-data class TooltipMarker(val colors: List<Color>) {
-    val fillColor: Color?
-        get() = colors.firstOrNull()
+class TooltipMarker(
+    val majorColor: Color? = null,
+    val minorColor: Color? = null
+) {
 
-    val strokeColor: Color?
-        get() = colors.getOrNull(1)
-
-    val colorCount: Int
-        get() = colors.size
-
-    fun allTransparent(): Boolean = colors.all { it.alpha == 0 }
-
-    fun distinct(): TooltipMarker = of(colors.distinct())
+    fun allTransparent(): Boolean {
+        return (majorColor == null || majorColor.alpha == 0) &&
+                (minorColor == null || minorColor.alpha == 0)
+    }
 
     companion object {
-        val NONE = TooltipMarker(emptyList())
+        val NONE = TooltipMarker()
 
-        fun of(colors: List<Color>): TooltipMarker {
-            return if (colors.isEmpty()) NONE else TooltipMarker(colors)
+        fun create(majorColor: Color?, minorColor: Color? = null): TooltipMarker {
+            return if (majorColor == null && minorColor == null) {
+                NONE
+            } else {
+                TooltipMarker(majorColor, minorColor)
+            }
         }
-
-        fun of(vararg colors: Color): TooltipMarker = of(colors.toList())
     }
 }

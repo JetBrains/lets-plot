@@ -404,7 +404,13 @@ class TooltipBox(
             )
         }
 
-        private fun colorBarsWidth(barsNum: Int): List<Double> {
+        private fun colorBarsWidth(marker: TooltipMarker): List<Double> {
+            val barsNum = when {
+                marker.majorColor != null && marker.minorColor != null -> 2
+                marker.majorColor != null || marker.minorColor != null -> 1
+                else -> 0
+            }
+
             // make color bar wider if there are more than one
             val middleBarWidth = TooltipDefaults.COLOR_BAR_WIDTH.takeIf { barsNum > 0 } ?: 0.0
             val strokeBarWidth = TooltipDefaults.COLOR_BAR_STROKE_WIDTH.takeIf { barsNum > 1 } ?: 0.0
@@ -416,19 +422,17 @@ class TooltipBox(
         }
 
         private fun calculateColorBarIndent(marker: TooltipMarker) {
-            colorBarIndent = min(myColorBars.size, marker.colorCount).let { colorBarNums ->
-                colorBarsWidth(colorBarNums).sum().let { width ->
-                    if (width != 0.0) width + myHorizontalContentPadding else 0.0
-                }
+            colorBarIndent = colorBarsWidth(marker).sum().let { width ->
+                if (width != 0.0) width + myHorizontalContentPadding else 0.0
             }
         }
 
         private fun layoutColorBars(marker: TooltipMarker) {
-            // stroke | fill | stroke
-            val fillColor = marker.fillColor
-            val strokeColor = marker.strokeColor
+            // minor | major | minor
+            val middleColor = marker.majorColor
+            val sideColor = marker.minorColor
             myColorBars
-                .zip(listOf(strokeColor, fillColor, strokeColor))
+                .zip(listOf(sideColor, middleColor, sideColor))
                 .forEach { (bar, color) ->
                     if (color == null) {
                         bar.fillOpacity().set(0.0)
@@ -440,7 +444,7 @@ class TooltipBox(
 
             var x = contentRect.left + myHorizontalContentPadding
             myColorBars
-                .zip(colorBarsWidth(marker.colorCount))
+                .zip(colorBarsWidth(marker))
                 .filter { (bar, _) -> bar.fillOpacity().get()!! > 0 }
                 .forEach { (bar, width) ->
                     // adjacent vertical bars

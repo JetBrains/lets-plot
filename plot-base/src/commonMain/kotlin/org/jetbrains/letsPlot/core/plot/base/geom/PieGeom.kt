@@ -226,9 +226,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             points = resampleArc(outerArc = true) + resampleArc(outerArc = false).reversed(),
             index = sector.p.index(),
             GeomTargetCollector.TooltipParams(
-                marker = TooltipMarker.of(
-                    AestheticsUtil.resolveFill(sector.p)
-                )
+                marker = TooltipMarker.create(majorColor = AestheticsUtil.resolveFill(sector.p))
             )
         )
     }

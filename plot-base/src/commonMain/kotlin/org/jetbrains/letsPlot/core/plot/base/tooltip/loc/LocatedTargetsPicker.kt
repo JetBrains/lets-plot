@@ -181,8 +181,10 @@ internal class LocatedTargetsPicker(
                         tooltipHint = hint,
                         title = null,
                         lines = linesForAes,
-                        fill = hint.fillColor ?: geomTarget.tooltipHint.fillColor
-                        ?: geomTarget.tooltipHint.marker.fillColor ?: WHITE,
+                        fill = hint.fillColor
+                            ?: geomTarget.tooltipHint.fillColor
+                            ?: geomTarget.tooltipHint.marker.majorColor
+                            ?: WHITE,
                         marker = TooltipMarker.NONE,
                         isSide = true
                     )

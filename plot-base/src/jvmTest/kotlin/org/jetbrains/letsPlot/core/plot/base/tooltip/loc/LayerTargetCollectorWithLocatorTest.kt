@@ -92,7 +92,7 @@ class LayerTargetCollectorWithLocatorTest {
                     point = point,
                     radius = radius,
                     tooltipParams = TooltipParams(
-                        marker = TooltipMarker.of(color)
+                        marker = TooltipMarker.create(majorColor = color)
                     )
                 )
             }
@@ -104,7 +104,7 @@ class LayerTargetCollectorWithLocatorTest {
                     index = 0,
                     rectangle = rect,
                     tooltipParams = TooltipParams(
-                        marker = TooltipMarker.of(color)
+                        marker = TooltipMarker.create(majorColor = color)
                     )
                 )
             }

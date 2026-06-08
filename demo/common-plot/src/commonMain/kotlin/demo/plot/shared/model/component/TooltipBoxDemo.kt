@@ -114,7 +114,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 textColor = Color.BLUE,
                 borderColor = Color.BLACK,
                 lines = listOf(WITH_LABEL, STATIC_TEXT),
-                marker = TooltipMarker.of(Color.DARK_GREEN, Color.GRAY),
+                marker = TooltipMarker.create(majorColor = Color.DARK_GREEN, minorColor = Color.GRAY),
                 pointerCoord = DoubleVector(83.0, 90.0)
             ),
             // with hyperlink
@@ -123,7 +123,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 textColor = Color.BLUE,
                 borderColor = Color.BLACK,
                 lines = listOf(WITH_HYPERLINK),
-                marker = TooltipMarker.of(Color.DARK_GREEN, Color.GRAY),
+                marker = TooltipMarker.create(majorColor = Color.DARK_GREEN, minorColor = Color.GRAY),
                 pointerCoord = DoubleVector(37.0, 40.0)
             ),
            // with horizontal orientation
@@ -132,7 +132,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 textColor = Color.BLUE,
                 borderColor = Color.BLUE,
                 lines = listOf(WITH_LABEL, STATIC_TEXT),
-                marker = TooltipMarker.of(Color.LIGHT_PINK, Color.DARK_BLUE),
+                marker = TooltipMarker.create(majorColor = Color.LIGHT_PINK, minorColor = Color.DARK_BLUE),
                 pointerCoord = DoubleVector(200.0, 20.0),
                 orientation = TooltipBox.Orientation.HORIZONTAL
             ),
@@ -140,7 +140,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             MyTooltipModel(
                 lines = listOf(WITH_LABEL, STATIC_TEXT),
                 title = "Title",
-                marker = TooltipMarker.of(Color.LIGHT_PINK, Color.DARK_BLUE),
+                marker = TooltipMarker.create(majorColor = Color.LIGHT_PINK, minorColor = Color.DARK_BLUE),
                 pointerCoord = DoubleVector(100.0, 120.0)
             ),
             // with multiline title and lines
@@ -148,7 +148,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 lines = listOf(SPLITTED_TEXT),
                 title = "Title #1\nand\nTitle #2",
                 pointerCoord = DoubleVector(120.0, 50.0),
-                marker = TooltipMarker.of(Color.LIGHT_PINK, Color.DARK_BLUE),
+                marker = TooltipMarker.create(majorColor = Color.LIGHT_PINK, minorColor = Color.DARK_BLUE),
                 orientation = TooltipBox.Orientation.HORIZONTAL
             ),
             // with empty line

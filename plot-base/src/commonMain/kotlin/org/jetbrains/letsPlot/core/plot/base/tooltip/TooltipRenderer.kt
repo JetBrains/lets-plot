@@ -391,6 +391,12 @@ class TooltipRenderer(
             else -> TooltipDefaults.BORDER_RADIUS
         }
 
+        var marker = spec.marker
+        if (marker.majorColor == marker.minorColor && marker.majorColor != null) {
+            // Reduce noise by not showing the same minor color
+            marker = TooltipMarker(majorColor = marker.majorColor)
+        }
+
         tooltipBox
             .update(
                 fillColor = fillColor,
@@ -403,7 +409,7 @@ class TooltipRenderer(
                 textClassName = spec.style,
                 tooltipMinWidth = spec.minWidth,
                 borderRadius = borderRadius,
-                marker = spec.marker.distinct(),
+                marker = marker,
                 pointMarkerStrokeColor = plotBackground
             )
     }
