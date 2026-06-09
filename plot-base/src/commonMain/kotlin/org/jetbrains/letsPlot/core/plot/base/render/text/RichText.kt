@@ -234,13 +234,7 @@ object RichText {
         anchor: Text.HorizontalAnchor
     ): List<LineRenderPlan> {
         return lines.map { line ->
-            val needsLocalFrame = line.any { term ->
-                when (term) {
-                    is Latex.VectorLatexElement -> true
-                    is Latex.LatexElement -> term.node.flatListOfAllDescendants().any { it is Latex.FractionNode }
-                    else -> false
-                }
-            }
+            val needsLocalFrame = line.any { term -> term is Latex.VectorLatexElement }
             if (!needsLocalFrame) {
                 return@map LineRenderPlan(
                     lineAnchor = anchor,

@@ -10,10 +10,8 @@ import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalc
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode
-import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.RichTextNode.RichSpan.WrappedSvgElement
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText.wrap
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_MIDDLE
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgConstants.SVG_TEXT_ANCHOR_START
 import kotlin.math.max
 import kotlin.math.pow
@@ -26,8 +24,7 @@ internal class Latex(
         val formulas = extractFormulas(text).map { (formula, range) ->
             val prettyFormula = formula.replace("-", "−") // Use minus sign instead of hyphen
             val node = parse(Token.tokenize(prettyFormula))
-            val wrapper: RichTextNode.RichSpan =
-                if (node.isVectorSupported()) VectorLatexElement(node) else LatexElement(node)
+            val wrapper: RichTextNode.RichSpan = VectorLatexElement(node)
             wrapper to range
         }.toList()
 
@@ -106,48 +103,6 @@ internal class Latex(
             else -> TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" }, level)
         }
     }
-
-    private fun getSvgForIndexNode(content: LatexNode, level: Int, isSuperior: Boolean, ctx: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
-        val (shift, backShift) = if (isSuperior) {
-            "-" to ""
-        } else {
-            "" to "-"
-        }
-
-        val indentTSpan = ctx.apply(SvgTSpanElement(INDENT_SYMBOL).apply {
-            setAttribute(SvgTextContent.FONT_SIZE, "${INDENT_SIZE_FACTOR}em")
-        }).wrap()
-        val indexSize = INDEX_SIZE_FACTOR.pow(level + 1)
-        // It is an analog of restoreBaselineTSpan, but for the initial shifting
-        // This is necessary for more complex formulas in which the index starts from another shift
-        val setBaselineTSpan = ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-            // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
-            setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
-            setAttribute(SvgTextContent.TEXT_DY, "$shift${INDEX_RELATIVE_SHIFT}em")
-        }).wrap()
-        val indexTSpanElements = content.render(ctx, prefixWidth).map { wrappedElement ->
-            wrappedElement.svg.apply {
-                if (getAttribute(SvgTextContent.FONT_SIZE).get() == null) {
-                    setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
-                }
-            }
-            wrappedElement
-        }
-        // The following 'tspan' element is used to restore the baseline after the index
-        // Restoring works only if there is some symbol after the index, so we use ZERO_WIDTH_SPACE_SYMBOL
-        // It could be considered as standard trick, see https://stackoverflow.com/a/65681504
-        // Attribute 'baseline-shift' is better suited for such use case -
-        // it doesn't require to add an empty 'tspan' at the end to restore the baseline (as 'dy').
-        // Sadly we can't use 'baseline-shift' as it is not supported by CairoSVG.
-        val restoreBaselineTSpan = ctx.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-            // Size of shift depends on the font size, and it should be equal to the superscript/subscript shift size
-            setAttribute(SvgTextContent.FONT_SIZE, "${indexSize}em")
-            setAttribute(SvgTextContent.TEXT_DY, "$backShift${INDEX_RELATIVE_SHIFT}em")
-        }).wrap()
-
-        return listOf(indentTSpan, setBaselineTSpan) + indexTSpanElements + restoreBaselineTSpan
-    }
-
 
     private open class Token {
         data class Command(val name: String) : Token() {
@@ -258,32 +213,14 @@ internal class Latex(
         }
     }
 
-    internal abstract inner class LatexNode(val children: List<LatexNode>, protected val level: Int) : RichTextNode.RichSpan() {
-        protected abstract fun estimateNodeWidth(font: Font): Double
-
-        fun flatListOfAllDescendants(): List<LatexNode> {
-            fun childrenWithGrandchildren(nodes: List<LatexNode>): List<LatexNode> {
-                return nodes.flatMap { listOf(it) + childrenWithGrandchildren(it.children) }
-            }
-            return childrenWithGrandchildren(listOf(this))
-        }
-
-        final override fun estimateWidth(font: Font): Double {
-            val formulaFont = this@Latex.font
-            val nodeFontSize = max(1, (formulaFont.size * INDEX_SIZE_FACTOR.pow(level)).roundToInt())
-            val nodeFont = Font(formulaFont.family, nodeFontSize, formulaFont.isBold, formulaFont.isItalic)
-            return estimateNodeWidth(nodeFont)
-        }
-
-        // Vector-glyph support: true if every glyph and structure in this subtree can be rendered
-        // with LatexVectorFont. The default is "all children supported"; leaf nodes override.
-        open fun isVectorSupported(): Boolean = children.all { it.isVectorSupported() }
+    internal abstract inner class LatexNode(val children: List<LatexNode>, protected val level: Int) {
+        abstract val visualCharCount: Int
 
         // Vector advance in pixels, using only LatexVectorFont em-advances. Drift-free against
-        // the corresponding renderVectorGroup() output. Only valid when isVectorSupported() is true.
+        // the corresponding renderVectorGroup() output.
         open fun vectorWidth(font: Font): Double = children.sumOf { it.vectorWidth(font) }
 
-        // Vertical line-box metrics in pixels for the vector rendering. Only valid when supported.
+        // Vertical line-box metrics in pixels for the vector rendering.
         open fun vectorMetrics(font: Font): LineBoxMetrics =
             LineBoxMetrics.mergeOnBaseline(
                 metrics = children.map { it.vectorMetrics(font) },
@@ -300,23 +237,9 @@ internal class Latex(
             font.size.toDouble() * INDEX_SIZE_FACTOR.pow(level)
     }
 
-    internal inner class LatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
-        override val visualCharCount: Int = node.visualCharCount
-
-        override fun estimateWidth(font: Font): Double =
-            node.estimateWidth(font)
-
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics =
-            node.estimateLineLayoutMetrics(font)
-
-        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
-            return node.render(context, prefixWidth)
-        }
-    }
-
-    // Vector-glyph counterpart of LatexElement. Used when every glyph and structure in the formula
-    // is supported by LatexVectorFont. Width comes from the same em advances used to render the
-    // paths, so there is no drift between measurement and rendering.
+    // The formula wrapper placed into a rich-text line. Width comes from the same em advances used
+    // to render the glyph paths, so there is no drift between measurement and rendering; unsupported
+    // glyphs fall back per-box to a <text> run inside renderVectorGroup.
     internal inner class VectorLatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = node.visualCharCount
 
@@ -353,20 +276,6 @@ internal class Latex(
 
     private inner class TextNode(val content: String, level: Int) : LatexNode(emptyList(), level) {
         override val visualCharCount: Int = content.length
-        override fun estimateNodeWidth(font: Font): Double {
-            return widthCalculator(content, font)
-        }
-
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
-            return LineBoxMetrics.plainText(font)
-        }
-
-        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
-            return listOf(context.apply(SvgTSpanElement(content)).wrap())
-        }
-
-        // Always true: unsupported glyphs now fall back per-box to a <text> run (see renderVectorGroup). Legacy LatexElement remains wired as a safety net until cleanup (Step 6).
-        override fun isVectorSupported(): Boolean = true
 
         // A maximal run of characters that are all vector-supported or all unsupported. The
         // "supported vs not" decision lives only here (per the mental model), so both measurement
@@ -471,26 +380,6 @@ internal class Latex(
 
     private inner class GroupNode(children: List<LatexNode>, level: Int) : LatexNode(children, level) {
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
-        override fun estimateNodeWidth(font: Font): Double {
-            return children.sumOf { it.estimateWidth(font) }
-        }
-
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
-            return LineBoxMetrics.mergeOnBaseline(
-                metrics = children.map { it.estimateLineLayoutMetrics(font) },
-                defaultIfEmpty = LineBoxMetrics.plainText(font)
-            )
-        }
-
-        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
-            val wrappedElements = mutableListOf<WrappedSvgElement<SvgElement>>()
-            var previousLatexNodesWidth = 0.0
-            for (child in children) {
-                wrappedElements.addAll(child.render(context, prefixWidth + previousLatexNodesWidth))
-                previousLatexNodesWidth += child.estimateWidth(font)
-            }
-            return wrappedElements
-        }
 
         override fun renderVectorGroup(color: Color?): SvgGElement {
             val g = SvgGElement()
@@ -526,18 +415,6 @@ internal class Latex(
 
     private inner class SuperscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
         override val visualCharCount: Int = content.visualCharCount
-        override fun estimateNodeWidth(font: Font): Double {
-            return content.estimateWidth(font)
-        }
-
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics =
-            content.estimateLineLayoutMetrics(font).raisedBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
-
-        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
-            return getSvgForIndexNode(content, level, isSuperior = true, ctx = context, prefixWidth = prefixWidth)
-        }
-
-        override fun isVectorSupported(): Boolean = content.isVectorSupported()
         override fun vectorWidth(font: Font): Double = content.vectorWidth(font)
         override fun vectorMetrics(font: Font): LineBoxMetrics =
             content.vectorMetrics(font).raisedBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
@@ -554,18 +431,6 @@ internal class Latex(
 
     private inner class SubscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
         override val visualCharCount: Int = content.visualCharCount
-        override fun estimateNodeWidth(font: Font): Double {
-            return content.estimateWidth(font)
-        }
-
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics =
-            content.estimateLineLayoutMetrics(font).loweredBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
-
-        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
-            return getSvgForIndexNode(content, level, isSuperior = false, ctx = context, prefixWidth = prefixWidth)
-        }
-
-        override fun isVectorSupported(): Boolean = content.isVectorSupported()
         override fun vectorWidth(font: Font): Double = content.vectorWidth(font)
         override fun vectorMetrics(font: Font): LineBoxMetrics =
             content.vectorMetrics(font).loweredBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
@@ -597,24 +462,6 @@ internal class Latex(
         private val barBaselineShift = 0.1
 
         override val visualCharCount: Int = max(numerator.visualCharCount, denominator.visualCharCount)
-        override fun estimateNodeWidth(font: Font): Double {
-            return max(numerator.estimateWidth(font), denominator.estimateWidth(font))
-        }
-
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
-            val numeratorMetrics = numerator.estimateLineLayoutMetrics(font)
-            val denominatorMetrics = denominator.estimateLineLayoutMetrics(font)
-            val numeratorBaselineShift = (barGlyphOffset + fractionGap + numeratorBottomAllowance) * font.size
-            val denominatorBaselineShift = denominatorMetrics.topToBaseline + (fractionGap - barGlyphOffset) * font.size
-            val topToBaseline = numeratorMetrics.topToBaseline + numeratorBaselineShift
-            return LineBoxMetrics(
-                boxHeight = topToBaseline + denominatorMetrics.bottomToBaseline + denominatorBaselineShift,
-                topToBaseline = topToBaseline
-            )
-        }
-
-        override fun isVectorSupported(): Boolean =
-            numerator.isVectorSupported() && denominator.isVectorSupported()
 
         override fun vectorWidth(font: Font): Double =
             max(numerator.vectorWidth(font), denominator.vectorWidth(font))
@@ -673,59 +520,6 @@ internal class Latex(
             g.children().add(barPath)
             return g
         }
-
-        override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
-            val fractionWidth = estimateWidth(font)
-            val fractionCenter = prefixWidth + fractionWidth / 2.0
-            val fractionBarWidth = TextNode(FRACTION_BAR_SYMBOL, level).estimateWidth(font)
-            val fractionBarLength = max(1, (fractionWidth / fractionBarWidth).roundToInt())
-
-            // Baseline positions relative to the original line baseline.
-            val numeratorBaselineEm = -(barGlyphOffset + fractionGap + numeratorBottomAllowance)
-            val denominatorTopToBaselineEm = denominator.estimateLineLayoutMetrics(font).topToBaseline / max(1, font.size)
-            val denominatorBaselineEm = denominatorTopToBaselineEm + fractionGap - barGlyphOffset
-            val numeratorDy = formatEm(numeratorBaselineEm)
-            val denominatorDy = formatEm(denominatorBaselineEm - numeratorBaselineEm)
-            // Bar baseline lands at y = barBaselineShift instead of 0; restoreBaselineTSpan undoes it.
-            val barDy = formatEm(barBaselineShift - denominatorBaselineEm)
-            val restoreDy = formatEm(-barBaselineShift)
-
-            // The following 'tspan' element marks the current baseline before the fraction
-            val setBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-                // The baseline marker should stay at the current x instead of using the fraction center
-                setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
-            }).wrap()
-            val numeratorTSpanElements = numerator.render(context, prefixWidth).mapIndexed { i, wrappedElement ->
-                wrappedElement.svg.apply {
-                    if (i == 0) {
-                        setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
-                        setAttribute(SvgTextContent.TEXT_DY, numeratorDy)
-                    }
-                }.wrap(if (i == 0) { fractionCenter } else { wrappedElement.x })
-            }
-            val denominatorTSpanElements = denominator.render(context, prefixWidth).mapIndexed { i, wrappedElement ->
-                wrappedElement.svg.apply {
-                    if (i == 0) {
-                        setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
-                        setAttribute(SvgTextContent.TEXT_DY, denominatorDy)
-                    }
-                }.wrap(if (i == 0) { fractionCenter } else { wrappedElement.x })
-            }
-            val fractionBarTSpanElement = context.apply(SvgTSpanElement(FRACTION_BAR_SYMBOL.repeat(fractionBarLength)).apply {
-                setAttribute(SvgTextContent.TEXT_DY, barDy)
-                setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_MIDDLE)
-            }).wrap(fractionCenter)
-            val restoreBaselineTSpan = context.apply(SvgTSpanElement(ZERO_WIDTH_SPACE_SYMBOL).apply {
-                setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
-                setAttribute(SvgTextContent.TEXT_DY, restoreDy)
-            }).wrap(prefixWidth + fractionWidth)
-            return listOf(setBaselineTSpan) + numeratorTSpanElements + denominatorTSpanElements + listOf(fractionBarTSpanElement, restoreBaselineTSpan)
-        }
-
-        private fun formatEm(value: Double): String {
-            // Round to 4 decimals to keep emitted SVG tidy despite float arithmetic noise.
-            return "${(value * 10000).roundToInt() / 10000.0}em"
-        }
     }
 
     internal fun fillTextTermGaps(
@@ -756,12 +550,8 @@ internal class Latex(
 
 
     companion object {
-        private const val ZERO_WIDTH_SPACE_SYMBOL = "\u200B"
-        private const val INDENT_SYMBOL = " "
-        private const val INDENT_SIZE_FACTOR = 0.1
         private const val INDEX_SIZE_FACTOR = 0.7
         private const val INDEX_RELATIVE_SHIFT = 0.4
-        private const val FRACTION_BAR_SYMBOL = "–"
         internal const val VECTOR_FORMULA_CLASS = "lp-latex-vector-formula"
         internal const val VECTOR_BBOX_CLASS = "lp-latex-vector-bbox"
         // Marks a fallback <text> run emitted for an unsupported glyph; its font is baked
