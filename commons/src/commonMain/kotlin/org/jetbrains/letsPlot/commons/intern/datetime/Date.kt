@@ -67,11 +67,11 @@ class Date : Comparable<Date> {
 
     fun daysFromYearStart(): Int {
         val yearStart = KotlinxLocalDate(year, 1, 1)
-        return kotlinxLocalDate.toEpochDays() - yearStart.toEpochDays()
+        return (kotlinxLocalDate.toEpochDays() - yearStart.toEpochDays()).toInt()
     }
 
     fun daysUntil(other: Date): Int {
-        return kotlinxLocalDate.daysUntil(other.kotlinxLocalDate)
+        return kotlinxLocalDate.daysUntil(other.kotlinxLocalDate).toInt()
     }
 
     override fun compareTo(other: Date) = kotlinxLocalDate.compareTo(other.kotlinxLocalDate)
