@@ -96,6 +96,21 @@ object TestUtil {
             }
         }
 
+    // Find all class-marked LaTeX fallback <text> elements (one per unsupported-glyph run) under
+    // this element, in document order.
+    fun SvgElement.vectorTextElements(): List<SvgTextElement> {
+        val out = mutableListOf<SvgTextElement>()
+        fun walk(e: SvgElement) {
+            if (e is SvgTextElement &&
+                e.classAttribute().get()?.split(' ')?.contains(org.jetbrains.letsPlot.core.plot.base.render.text.Latex.VECTOR_TEXT_CLASS) == true) {
+                out.add(e)
+            }
+            e.children().forEach { c -> if (c is SvgElement) walk(c) }
+        }
+        walk(this)
+        return out
+    }
+
     // Find all vector-formula groups (SvgGElement with the marker class) under this element.
     fun SvgElement.vectorFormulaGroups(): List<SvgGElement> {
         val out = mutableListOf<SvgGElement>()

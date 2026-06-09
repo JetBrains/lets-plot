@@ -14,12 +14,11 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toSvg
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toTestWidth
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.vectorFormulaGroups
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.vectorTextElements
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.wholeText
 import org.jetbrains.letsPlot.core.plot.base.render.text.LatexVectorFont
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgAElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTSpanElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.test.Test
 
 class RichTextLatexVectorTest {
@@ -45,24 +44,27 @@ class RichTextLatexVectorTest {
     }
 
     @Test
-    fun unsupportedSymbolFallsBackToLegacyTspans() {
-        // `\bar` is not in Latex.SYMBOLS, so the parser emits literal text `\bar`. The backslash
-        // is not in the vector glyph table → the whole formula falls back to legacy tspan rendering.
+    fun unsupportedSymbolSplicesOnlyTheUnsupportedBox() {
+        // `\bar` is not in Latex.SYMBOLS, so the parser emits literal text `\bar`. Only the backslash
+        // is missing from the vector glyph table, so just that one box falls back to a <text> run;
+        // the supported letters `b`, `a`, `r` (and `x`) still render as vector paths.
         val svg = toSvg("""\(\bar{x}\)""").single()
-        assertThat(svg).isInstanceOf(SvgTextElement::class.java)
-        assertThat(svg.pathElements()).isEmpty()
-        // We expect tspans (the exact count depends on legacy rendering — just assert non-empty).
-        assertThat(svg.tspans()).isNotEmpty
+        assertThat(svg).isInstanceOf(SvgGElement::class.java)
+        assertThat(svg.pathElements()).hasSize(4) // b, a, r, x
+        val fallback = svg.vectorTextElements().single()
+        assertThat(fallback.tspans().single().wholeText()).isEqualTo("\\")
     }
 
     @Test
-    fun unsupportedNestedFallsBackEntireFormula() {
+    fun unsupportedNestedSplicesOnlyTheUnsupportedBox() {
         val svg = toSvg("""\(\frac{\unknown}{b}\)""").single()
-        // Even though `b` alone would be vector-supported, one unsupported descendant forces the
-        // whole formula into the legacy renderer.
-        assertThat(svg).isInstanceOf(SvgTextElement::class.java)
-        assertThat(svg.pathElements()).isEmpty()
-        assertThat(svg.tspans()).isNotEmpty
+        // A single unsupported box (the backslash of `\unknown`) no longer forces the whole formula
+        // to legacy: the supported letters, `b`, and the fraction bar still render as vector paths.
+        assertThat(svg).isInstanceOf(SvgGElement::class.java)
+        // 7 numerator letter paths (u, n, k, n, o, w, n) + 1 denominator (b) + 1 fraction bar = 9.
+        assertThat(svg.pathElements()).hasSize(9)
+        val fallback = svg.vectorTextElements().single()
+        assertThat(fallback.tspans().single().wholeText()).isEqualTo("\\")
     }
 
     @Test
@@ -80,13 +82,16 @@ class RichTextLatexVectorTest {
     }
 
     @Test
-    fun mixedVectorAndLegacyFormulasInOneLine() {
-        // First formula is vector-supported; second falls back to legacy.
+    fun mixedFullySupportedAndPartiallyUnsupportedFormulas() {
+        // Both formulas are now vector groups; the second splices its unsupported backslash box as a
+        // <text> run while still drawing its supported letters as paths.
         val svg = toSvg("""\(a\) \(\bar{x}\)""").single()
         assertThat(svg).isInstanceOf(SvgGElement::class.java)
-        // We expect a mix of vector group and legacy tspans within a single outer group.
-        assertThat(svg.vectorFormulaGroups()).hasSize(1)
-        assertThat(svg.tspans()).isNotEmpty
+        assertThat(svg.vectorFormulaGroups()).hasSize(2)
+        // 'a' + (b, a, r, x) = 5 glyph paths across the two formulas.
+        assertThat(svg.pathElements()).hasSize(5)
+        val fallback = svg.vectorTextElements().single()
+        assertThat(fallback.tspans().single().wholeText()).isEqualTo("\\")
     }
 
     @Test
@@ -287,5 +292,62 @@ class RichTextLatexVectorTest {
         assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
         assertThat(andTspan.textAnchor().get()).isEqualTo("end")
         assertThat(andTspan.x().get()).isNull()
+    }
+
+    // --- Per-glyph fallback splice (LATEX_PER_GLYPH_FALLBACK_PLAN, Step 4) -------------------
+
+    @Test
+    fun unsupportedGlyphInMixedRunSplicesOneFallbackText() {
+        // `Č` is not in the vector glyph table, so the formula renders the supported boxes as paths
+        // ('+' and 'b') and splices the unsupported `Č` as a single class-marked <text> run.
+        val svg = toSvg("""\(Č + b\)""").single() as SvgGElement
+        // '+' and 'b' are vector paths (spaces inside a formula are dropped by the tokenizer).
+        assertThat(svg.pathElements()).hasSize(2)
+        val fallback = svg.vectorTextElements().single()
+        assertThat(fallback.tspans().single().wholeText()).isEqualTo("Č")
+    }
+
+    @Test
+    fun mixedRunWidthIsSupportedAdvancesPlusEstimatedUnsupportedRun() {
+        // Width = supported boxes via exact em-advances + the unsupported run via the text estimator.
+        // No whole-formula estimator fallback: the supported parts stay drift-free.
+        val measured = RichText.measure(text = """\(Č + b\)""", font = font)
+        val expected = toTestWidth("Č") +
+                (LatexVectorFont.advanceEm('+') + LatexVectorFont.advanceEm('b')) * font.size
+        assertThat(measured.width).isCloseTo(expected, offset(1e-9))
+    }
+
+    @Test
+    fun fallbackTextIsPositionedAfterPrecedingSupportedBoxes() {
+        // In a single TextNode "bČ", the fallback `Č` <text> must start at the advance of the
+        // preceding supported box 'b' — proving box position is independent of drawing mode.
+        val svg = toSvg("""\(bČ\)""").single() as SvgGElement
+        assertThat(svg.pathElements()).hasSize(1) // 'b'
+        val fallback = svg.vectorTextElements().single()
+        assertThat(fallback.tspans().single().wholeText()).isEqualTo("Č")
+        assertThat(fallback.x().get()).isCloseTo(LatexVectorFont.advanceEm('b') * font.size, offset(1e-9))
+    }
+
+    @Test
+    fun fallbackTextInSuperscriptCarriesReducedFontSize() {
+        // `\(b^{Č}\)`: the unsupported `Č` is at superscript level 1, so its baked font-size is the
+        // reduced level size (font.size * INDEX_SIZE_FACTOR^1), confirming per-level sizing.
+        val svg = toSvg("""\(b^{Č}\)""").single() as SvgGElement
+        val fallback = svg.vectorTextElements().single()
+        assertThat(fallback.tspans().single().wholeText()).isEqualTo("Č")
+        val sizePx = fallback.getAttribute(SvgTextContent.FONT_SIZE).get()!!.removeSuffix("px").toDouble()
+        assertThat(sizePx).isCloseTo(font.size * 0.7, offset(1e-9)) // INDEX_SIZE_FACTOR = 0.7
+    }
+
+    @Test
+    fun pureUnsupportedRunIsOneFallbackTextWithNoPaths() {
+        // An all-unsupported run produces a single fallback <text>, no glyph paths, and the group
+        // width equals the text-estimator width of the run.
+        val svg = toSvg("""\(ČŠ\)""").single() as SvgGElement
+        assertThat(svg.pathElements()).isEmpty()
+        val fallback = svg.vectorTextElements().single()
+        assertThat(fallback.tspans().single().wholeText()).isEqualTo("ČŠ")
+        val measured = RichText.measure(text = """\(ČŠ\)""", font = font)
+        assertThat(measured.width).isCloseTo(toTestWidth("ČŠ"), offset(1e-9))
     }
 }

@@ -365,12 +365,49 @@ internal class Latex(
             return listOf(context.apply(SvgTSpanElement(content)).wrap())
         }
 
-        override fun isVectorSupported(): Boolean = content.all(LatexVectorFont::isSupported)
+        // Always true: unsupported glyphs now fall back per-box to a <text> run (see renderVectorGroup). Legacy LatexElement remains wired as a safety net until cleanup (Step 6).
+        override fun isVectorSupported(): Boolean = true
 
-        override fun vectorWidth(font: Font): Double {
-            val sizePx = levelFontSize(font)
-            return content.sumOf { LatexVectorFont.advanceEm(it) } * sizePx
+        // A maximal run of characters that are all vector-supported or all unsupported. The
+        // "supported vs not" decision lives only here (per the mental model), so both measurement
+        // and rendering walk the same runs and can never drift apart.
+        private inner class Run(val text: String, val supported: Boolean)
+
+        private fun segments(): List<Run> {
+            val runs = mutableListOf<Run>()
+            var start = 0
+            while (start < content.length) {
+                val supported = LatexVectorFont.isSupported(content[start])
+                var end = start + 1
+                while (end < content.length && LatexVectorFont.isSupported(content[end]) == supported) {
+                    end++
+                }
+                runs.add(Run(content.substring(start, end), supported))
+                start = end
+            }
+            return runs
         }
+
+        // The level font used by the legacy text estimator for an unsupported run.
+        private fun nodeFontAtLevel(font: Font): Font {
+            // Minor approximation: level font size is rounded to Int here, matching the legacy estimator; could be unified later.
+            val sizePx = max(1, (font.size * INDEX_SIZE_FACTOR.pow(level)).roundToInt())
+            return Font(font.family, sizePx, font.isBold, font.isItalic)
+        }
+
+        // The single shared per-run advance (px) used by BOTH vectorWidth and renderVectorGroup, so
+        // box positions never depend on how a box is drawn. Supported runs sum vector em-advances
+        // (identical to before); unsupported runs use the legacy text estimator at the level font.
+        private fun runAdvancePx(run: Run, font: Font): Double {
+            return if (run.supported) {
+                run.text.sumOf { LatexVectorFont.advanceEm(it) } * levelFontSize(font)
+            } else {
+                widthCalculator(run.text, nodeFontAtLevel(font))
+            }
+        }
+
+        override fun vectorWidth(font: Font): Double =
+            segments().sumOf { runAdvancePx(it, font) }
 
         override fun vectorMetrics(font: Font): LineBoxMetrics {
             val sizePx = levelFontSize(font)
@@ -379,28 +416,54 @@ internal class Latex(
 
         override fun renderVectorGroup(color: Color?): SvgGElement {
             val g = SvgGElement()
-            val sizePx = levelFontSize(this@Latex.font)
+            val font = this@Latex.font
+            val sizePx = levelFontSize(font)
             val unitsToPx = sizePx / LatexVectorFont.UPM.toDouble()
             var cursorPx = 0.0
-            for (c in content) {
-                val glyph = LatexVectorFont.glyphOrNull(c) ?: continue
-                if (glyph.pathData != null) {
-                    val path = SvgPathElement().apply {
-                        setAttribute("d", glyph.pathData)
-                        // The raster Path scene node only renders when fillPaint is non-null.
-                        // Default to black if no explicit color was provided by the surrounding
-                        // RenderState — text styling later may set this to currentColor.
-                        fillColor().set(color ?: Color.BLACK)
-                        transform().set(
-                            SvgTransformBuilder()
-                                .translate(cursorPx, 0.0)
-                                .scale(unitsToPx)
-                                .build()
-                        )
+            for (run in segments()) {
+                if (run.supported) {
+                    for (c in run.text) {
+                        val glyph = LatexVectorFont.glyphOrNull(c) ?: continue
+                        if (glyph.pathData != null) {
+                            val path = SvgPathElement().apply {
+                                setAttribute("d", glyph.pathData)
+                                // The raster Path scene node only renders when fillPaint is non-null.
+                                // Default to black if no explicit color was provided by the surrounding
+                                // RenderState — text styling later may set this to currentColor.
+                                fillColor().set(color ?: Color.BLACK)
+                                transform().set(
+                                    SvgTransformBuilder()
+                                        .translate(cursorPx, 0.0)
+                                        .scale(unitsToPx)
+                                        .build()
+                                )
+                            }
+                            g.children().add(path)
+                        }
+                        cursorPx += glyph.advanceEm * sizePx
                     }
-                    g.children().add(path)
+                } else {
+                    // One <text> run per unsupported segment; not merged across sibling nodes. Could be optimized later.
+                    val textEl = SvgTextElement().apply {
+                        addClass(VECTOR_TEXT_CLASS)
+                        addTSpan(SvgTSpanElement(run.text))
+                        // Formula-local baseline: x = cursor, y = 0. Parent groups carry any
+                        // sup/sub/fraction vertical offset by transforming this whole group.
+                        x().set(cursorPx)
+                        y().set(0.0)
+                        setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
+                        // Bake the full font explicitly so this element is self-contained and not
+                        // re-sized by inherited/outer styling (see Label.applyStyle, Step 5). The
+                        // size is the level font size; family / weight / italic come from the formula.
+                        setAttribute(SvgTextContent.FONT_SIZE, "${sizePx}px")
+                        setAttribute(SvgTextContent.FONT_FAMILY, font.family.name)
+                        if (font.isBold) setAttribute(SvgTextContent.FONT_WEIGHT, "bold")
+                        if (font.isItalic) setAttribute(SvgTextContent.FONT_STYLE, "italic")
+                        fillColor().set(color ?: Color.BLACK)
+                    }
+                    g.children().add(textEl)
+                    cursorPx += runAdvancePx(run, font)
                 }
-                cursorPx += glyph.advanceEm * sizePx
             }
             return g
         }
@@ -701,6 +764,9 @@ internal class Latex(
         private const val FRACTION_BAR_SYMBOL = "–"
         internal const val VECTOR_FORMULA_CLASS = "lp-latex-vector-formula"
         internal const val VECTOR_BBOX_CLASS = "lp-latex-vector-bbox"
+        // Marks a fallback <text> run emitted for an unsupported glyph; its font is baked
+        // explicitly so Label.applyStyle must not overwrite it (see Step 5).
+        internal const val VECTOR_TEXT_CLASS = "lp-latex-vector-text"
 
         private val GREEK_LETTERS = mapOf(
             "Alpha" to "Α",

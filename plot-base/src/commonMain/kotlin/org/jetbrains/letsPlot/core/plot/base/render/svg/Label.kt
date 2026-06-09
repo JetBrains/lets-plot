@@ -292,7 +292,18 @@ class Label(
 
     private fun applyStyle(el: SvgElement, styleAttr: String) {
         when (el) {
-            is SvgTextElement -> el.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
+            is SvgTextElement -> {
+                // A LaTeX vector fallback <text> bakes its own font (size/family/face) so it renders
+                // at the correct per-level size. The outer style carries the full px font-size, which
+                // — as CSS — would override the baked presentation attribute and over-size a nested
+                // glyph (e.g. inside a superscript). Skip it, mirroring applyFillColor's bbox-guide skip.
+                val isVectorFallbackText = el.classAttribute().get()
+                    ?.split(' ')
+                    ?.contains(Latex.VECTOR_TEXT_CLASS) == true
+                if (!isVectorFallbackText) {
+                    el.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
+                }
+            }
             // Style on the outer group is inherited by descendant <text> elements (font-family,
             // fill, etc.). We still recurse so any direct <text> child gets the attribute set
             // explicitly — some downstream consumers don't propagate inherited CSS.
