@@ -158,6 +158,47 @@ class PlotLatexTest : PlotVisualTestBase() {
     }
 
     @Test
+    fun plot_latex_unsupportedGlyphsInlineFallback() {
+        fun figure(title: String, label: String) = """
+            {
+              "ggtitle": { "text": "$title" },
+              "mapping": {},
+              "data_meta": {},
+              "theme": { "name": "gray", "axis": "blank" },
+              "kind": "plot",
+              "scales": [],
+              "layers": [
+                { "geom": "hline", "mapping": {}, "tooltips": "none", "data_meta": {}, "yintercept": 0.0, "color": "salmon" },
+                { "geom": "vline", "mapping": {}, "tooltips": "none", "data_meta": {}, "xintercept": 0.0, "color": "salmon" },
+                { "geom": "label", "mapping": {}, "data_meta": {}, "x": 0.0, "label": "$label", "size": 14.0, "color": "blue", "hjust": "left" }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        val figures = listOf(
+            figure("supported: c + b", """Prefix \\( c + b \\) suffix"""),
+            figure("fallback: Č + b", """Prefix \\( Č + b \\) suffix"""),
+            figure("supported: frac c/b", """Prefix \\( \\frac{c}{b} \\) suffix"""),
+            figure("fallback: frac Č/b", """Prefix \\( \\frac{Č}{b} \\) suffix"""),
+            figure("supported: b^c", """Prefix \\( b^{c} \\) suffix"""),
+            figure("fallback: b^Č", """Prefix \\( b^{Č} \\) suffix"""),
+        )
+        val spec = """
+            {
+              "ggsize": { "width": 1100.0, "height": 600.0 },
+              "kind": "subplots",
+              "layout": { "ncol": 2.0, "nrow": 3.0, "name": "grid" },
+              "figures": [ ${figures.joinToString(",")} ]
+            }
+        """.trimIndent()
+
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        assertBitmap(plotCanvasDrawable)
+    }
+
+    @Test
     fun plot_latex_fractionalYAxisLabels() {
         val spec = """
             {
