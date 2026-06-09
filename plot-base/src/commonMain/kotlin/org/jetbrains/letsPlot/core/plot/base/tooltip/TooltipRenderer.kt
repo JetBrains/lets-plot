@@ -391,10 +391,15 @@ class TooltipRenderer(
             else -> TooltipDefaults.BORDER_RADIUS
         }
 
-        var marker = spec.marker
-        if (marker.majorColor == marker.minorColor && marker.majorColor != null) {
+        val blocks = spec.blocks.map { block ->
+            val marker = block.marker
             // Reduce noise by not showing the same minor color
-            marker = TooltipMarker(majorColor = marker.majorColor)
+            val normalizedMarker = if (marker.majorColor == marker.minorColor && marker.majorColor != null) {
+                TooltipMarker(majorColor = marker.majorColor)
+            } else {
+                marker
+            }
+            TooltipModel.Block(block.title, normalizedMarker, block.lines)
         }
 
         tooltipBox
@@ -404,12 +409,11 @@ class TooltipRenderer(
                 borderColor = borderColor,
                 strokeWidth = strokeWidth,
                 lineType = lineType,
-                lines = spec.lines,
+                blocks = blocks,
                 title = spec.title,
                 textClassName = spec.style,
                 tooltipMinWidth = spec.minWidth,
                 borderRadius = borderRadius,
-                marker = marker,
                 pointMarkerStrokeColor = plotBackground
             )
     }

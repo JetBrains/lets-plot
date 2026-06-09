@@ -80,7 +80,7 @@ internal class LocatedTargetsPicker(
                 closestXAxisTooltip?.value +
                 closestYAxisTooltip?.value
 
-        return finalTooltips.filterNotNull()
+        return mergeGeneralTooltips(finalTooltips.filterNotNull())
     }
 
 
@@ -144,7 +144,7 @@ internal class LocatedTargetsPicker(
             chooseTooltipModels(lookupResult.targets, lookupResult.contextualMapping)
                 .filter { it.lines.isNotEmpty() }
 
-        return tooltipModels
+        return mergeGeneralTooltips(tooltipModels)
             .removeDuplicates { it.tooltipHint.placement == X_AXIS }
             .removeDuplicates { it.tooltipHint.placement == Y_AXIS }
     }
@@ -160,7 +160,7 @@ internal class LocatedTargetsPicker(
             tooltipModels += sideTooltipModels(geomTarget, dataPoints)
             tooltipModels += generalTooltipModels(geomTarget, contextualMapping, dataPoints)
         }
-        return tooltipModels
+        return mergeGeneralTooltips(tooltipModels)
     }
 
     private fun sideTooltipModels(
@@ -259,6 +259,62 @@ internal class LocatedTargetsPicker(
             )
         } else {
             emptyList()
+        }
+    }
+
+    private fun mergeGeneralTooltips(tooltipModels: List<TooltipModel>): List<TooltipModel> {
+        val generalTooltips = tooltipModels.filter { !it.isSide && it.tooltipHint.placement !in listOf(X_AXIS, Y_AXIS) }
+
+        if (generalTooltips.size <= 1) {
+            return tooltipModels
+        }
+
+        val commonTitle = generalTooltips
+            .mapNotNull(TooltipModel::title)
+            .distinct()
+            .singleOrNull()
+
+        val primaryTooltip = generalTooltips.first()
+        val mergedGeneralTooltip = TooltipModel(
+            tooltipHint = primaryTooltip.tooltipHint.let { hint ->
+                TooltipHint(
+                    placement = hint.placement,
+                    coord = cursorCoord,
+                    objectRadius = 0.0,
+                    stemLength = TooltipHint.StemLength.NONE,
+                    fillColor = hint.fillColor,
+                    marker = TooltipMarker.NONE
+                )
+            },
+            title = commonTitle,
+            blocks = generalTooltips.flatMap { tooltipModel ->
+                tooltipModel.blocks.map { block ->
+                    TooltipModel.Block(
+                        title = tooltipModel.title.takeIf { it != commonTitle } ?: block.title,
+                        marker = block.marker,
+                        lines = block.lines
+                    )
+                }
+            },
+            fill = primaryTooltip.fill,
+            isSide = false,
+            anchor = primaryTooltip.anchor,
+            minWidth = generalTooltips.mapNotNull(TooltipModel::minWidth).maxOrNull(),
+            isCrosshairEnabled = generalTooltips.any(TooltipModel::isCrosshairEnabled),
+            crosshairMode = mergeCrosshairMode(generalTooltips.mapNotNull(TooltipModel::crosshairMode))
+        )
+
+        return tooltipModels.filterNot { it in generalTooltips } + mergedGeneralTooltip
+    }
+
+    private fun mergeCrosshairMode(modes: List<CrosshairMode>): CrosshairMode? {
+        return when {
+            modes.isEmpty() -> null
+            CrosshairMode.XY in modes -> CrosshairMode.XY
+            CrosshairMode.X in modes && CrosshairMode.Y in modes -> CrosshairMode.XY
+            CrosshairMode.X in modes -> CrosshairMode.X
+            CrosshairMode.Y in modes -> CrosshairMode.Y
+            else -> null
         }
     }
 

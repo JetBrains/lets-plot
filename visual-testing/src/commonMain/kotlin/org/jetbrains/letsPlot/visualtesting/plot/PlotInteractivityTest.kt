@@ -27,6 +27,13 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_composite_tooltip)
         registerTest(::plot_interactivity_nestedComposite_tooltip)
         registerTest(::plot_interactivity_latexTooltip)
+        registerTest(::plot_interactivity_mergedTooltip)
+        registerTest(::plot_interactivity_mergedTooltipWithTitle)
+        registerTest(::plot_interactivity_mergedTooltipDisableSplitting)
+        registerTest(::plot_interactivity_mergedTooltipDisableSplittingWithTitle)
+        registerTest(::plot_interactivity_mergedTooltipDisableSplittingExplicitLines)
+        registerTest(::plot_interactivity_mergedTooltipDisableSplittingExplicitLinesWithTitle)
+        registerTest(::plot_interactivity_smoothTooltipDisableSplittingExplicitLines)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)
@@ -132,6 +139,69 @@ class PlotInteractivityTest(
         val plotCanvasDrawable = createPlot(parseJson(spec))
 
         val cursorPos = Vector(150, 100)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_mergedTooltip(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP))
+
+        val cursorPos = Vector(160, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_mergedTooltipWithTitle(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_WITH_TITLE))
+
+        val cursorPos = Vector(160, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_mergedTooltipDisableSplitting(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_DISABLE_SPLITTING))
+
+        val cursorPos = Vector(160, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_mergedTooltipDisableSplittingWithTitle(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_DISABLE_SPLITTING_WITH_TITLE))
+
+        val cursorPos = Vector(160, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_mergedTooltipDisableSplittingExplicitLines(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_DISABLE_SPLITTING_EXPLICIT_LINES))
+
+        val cursorPos = Vector(160, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_mergedTooltipDisableSplittingExplicitLinesWithTitle(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_DISABLE_SPLITTING_EXPLICIT_LINES_WITH_TITLE))
+
+        val cursorPos = Vector(160, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_smoothTooltipDisableSplittingExplicitLines(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.SMOOTH_TOOLTIP_DISABLE_SPLITTING_EXPLICIT_LINES))
+
+        val cursorPos = Vector(160, 120)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
 
         return paint(plotCanvasDrawable, cursorPos)

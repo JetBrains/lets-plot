@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -17,7 +17,10 @@ class TooltipConfig {
             redefineDefaults(),
             tooltipAesList(),
             tooltipEmptyList(),
-            sideTooltips()
+            sideTooltips(),
+            mergedTooltips(),
+            mergedTooltipsDisableSplitting(),
+            mergedTooltipsDisableSplittingExplicitLines()
         )
     }
 
@@ -206,6 +209,128 @@ class TooltipConfig {
         }
       ]
     }""".trimMargin()
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun mergedTooltips(): MutableMap<String, Any> {
+        val spec = """
+        {
+          'kind': 'plot',
+          'ggtitle': {'text': 'Merged tooltips'},
+          'mapping': { 'x': 'x', 'y': 'y' },
+          'coord': {
+            'name': 'cartesian',
+            'xlim': [ -1.0, 1.0 ],
+            'ylim': [ -1.0, 1.0 ]
+          },
+          'layers': [
+            {
+              'geom': 'line',
+              'data': { 'x': [ -0.7, 0.0, 0.7 ], 'y': [ -0.2, 0.0, 0.2 ], 'value': [ 18.37, 18.37, 18.37 ] },
+              'color': '#4f8f5b',
+              'size': 2.5,
+              'tooltips': {
+                'title': 'Group 09',
+                'lines': [ 'value|@value' ]
+              }
+            },
+            {
+              'geom': 'line',
+              'data': { 'x': [ -0.7, 0.0, 0.7 ], 'y': [ 0.2, 0.0, -0.2 ], 'value': [ 32.47, 32.47, 32.47 ] },
+              'color': '#e78ad5',
+              'size': 2.5,
+              'tooltips': {
+                'title': 'Group 17',
+                'lines': [ 'value|@value' ]
+              }
+            }
+          ]
+        }
+        """.trimIndent()
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun mergedTooltipsDisableSplitting(): MutableMap<String, Any> {
+        val spec = """
+        {
+          'kind': 'plot',
+          'ggtitle': {'text': 'Merged tooltips with disable_splitting'},
+          'mapping': { 'x': 'x', 'y': 'y' },
+          'layers': [
+            {
+              'geom': 'smooth',
+              'method': 'loess',
+              'data': {
+                'x': [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+                'y': [ -0.3, -0.1, 0.0, 0.1, 0.0, 0.2, 0.35 ]
+              },
+              'color': '#4f8f5b',
+              'se': true,
+              'tooltips': {
+                'title': 'Group 09',
+                'disable_splitting': true
+              }
+            },
+            {
+              'geom': 'smooth',
+              'method': 'loess',
+              'data': {
+                'x': [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+                'y': [ 0.35, 0.2, 0.0, -0.1, 0.0, -0.1, -0.3 ]
+              },
+              'color': '#e78ad5',
+              'se': true,
+              'tooltips': {
+                'title': 'Group 17',
+                'disable_splitting': true
+              }
+            }
+          ]
+        }
+        """.trimIndent()
+        return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun mergedTooltipsDisableSplittingExplicitLines(): MutableMap<String, Any> {
+        val spec = """
+        {
+          'kind': 'plot',
+          'ggtitle': {'text': 'Merged tooltips with disable_splitting and explicit lines'},
+          'mapping': { 'x': 'x', 'y': 'y' },
+          'layers': [
+            {
+              'geom': 'smooth',
+              'method': 'loess',
+              'data': {
+                'x': [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+                'y': [ -0.3, -0.1, 0.0, 0.1, 0.0, 0.2, 0.35 ]
+              },
+              'color': '#4f8f5b',
+              'se': true,
+              'tooltips': {
+                'title': 'Group 09',
+                'disable_splitting': true,
+                'lines': [ 'y|@y' ]
+              }
+            },
+            {
+              'geom': 'smooth',
+              'method': 'loess',
+              'data': {
+                'x': [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+                'y': [ 0.35, 0.2, 0.0, -0.1, 0.0, -0.1, -0.3 ]
+              },
+              'color': '#e78ad5',
+              'se': true,
+              'tooltips': {
+                'title': 'Group 17',
+                'disable_splitting': true,
+                'lines': [ 'y|@y' ]
+              }
+            }
+          ]
+        }
+        """.trimIndent()
         return HashMap(parsePlotSpec(spec))
     }
 }

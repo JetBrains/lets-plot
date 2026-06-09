@@ -203,14 +203,14 @@ class LocatedTargetsPickerFilterTargetsTest {
 
     @Test
     fun `large non bar layer - cap visible tooltips to closest target`() {
-        val targetPrototypes = (0..10)
+        val targetPrototypes = (0..100)
             .map { index -> TestUtil.pointTarget(index, DoubleVector(0.0, index.toDouble()), radius = 1.0) }
 
         val locator = createLocator(GeomKind.POINT, targetPrototypes)
 
         assertTargets(
-            findTargets(locator, cursor = DoubleVector(0.0, 6.2)),
-            6
+            findTargets(locator, cursor = DoubleVector(0.0, 62.2)),
+            62
         )
     }
 

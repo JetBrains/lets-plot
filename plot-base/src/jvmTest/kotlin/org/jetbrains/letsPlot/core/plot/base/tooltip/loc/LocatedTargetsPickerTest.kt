@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
@@ -16,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor.VerticalAncho
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ConstantField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
@@ -257,6 +259,41 @@ class LocatedTargetsPickerTest {
         assertTargetFrom(firstLookupResultConfig)
     }
 
+    @Test
+    fun `general tooltips from multiple targets are merged into blocks`() {
+        val targetsPicker = LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext
+        )
+        val contextualMapping = ContextualMapping(
+            tooltipBehavior = TooltipBehavior.DEFAULT,
+            tooltipLines = listOf(
+                LinePattern("value", "{}", listOf(ConstantField(Aes.Y, "18.37", label = null)))
+            ),
+            tooltipTitle = LinePattern(null, "x = {}", listOf(ConstantField(Aes.X, "12", label = null)))
+        )
+
+        val tooltipModels = targetsPicker.chooseTooltipModels(
+            listOf(
+                geomTarget(marker = TooltipMarker.create(majorColor = Color.DARK_GREEN)),
+                geomTarget(marker = TooltipMarker.create(majorColor = Color.LIGHT_PINK))
+            ),
+            contextualMapping
+        )
+
+        assertThat(tooltipModels).hasSize(1)
+        val mergedTooltip = tooltipModels.single()
+        assertThat(mergedTooltip.title).isEqualTo("x = 12")
+        assertThat(mergedTooltip.blocks).hasSize(2)
+        assertThat(mergedTooltip.blocks.map { it.marker.majorColor }).containsExactly(Color.DARK_GREEN, Color.LIGHT_PINK)
+        assertThat(mergedTooltip.blocks.flatMap { it.lines }.map(TooltipModel.Line::toString))
+            .containsExactly("value: 18.37", "value: 18.37")
+    }
+
     private fun assertTargetFrom(vararg expected: LookupResultConfig?) {
         assertTargetFrom(*expected) {
             listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
@@ -300,6 +337,18 @@ class LocatedTargetsPickerTest {
 
     private fun lookupResult(lookupResultConfig: LookupResultConfig?): LookupResult? {
         return lookupResultConfig?.build()
+    }
+
+    private fun geomTarget(marker: TooltipMarker): GeomTarget {
+        return GeomTarget(
+            hitIndex = 0,
+            tooltipHint = TooltipHint.verticalTooltip(
+                coord = DoubleVector.ZERO,
+                objectRadius = 0.0,
+                marker = marker
+            ),
+            aesTooltipHint = emptyMap()
+        )
     }
 
     internal class LookupResultConfig {
