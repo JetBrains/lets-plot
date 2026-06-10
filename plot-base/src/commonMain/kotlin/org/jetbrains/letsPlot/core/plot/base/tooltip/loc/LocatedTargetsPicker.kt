@@ -15,8 +15,7 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.X_AXIS
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.Y_AXIS
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import kotlin.math.abs
 
@@ -275,17 +274,9 @@ internal class LocatedTargetsPicker(
             .singleOrNull()
 
         val primaryTooltip = generalTooltips.first()
+        val mergedHint = createMergedTooltipHint(generalTooltips, primaryTooltip.tooltipHint)
         val mergedGeneralTooltip = TooltipModel(
-            tooltipHint = primaryTooltip.tooltipHint.let { hint ->
-                TooltipHint(
-                    placement = hint.placement,
-                    coord = cursorCoord,
-                    objectRadius = 0.0,
-                    stemLength = TooltipHint.StemLength.NONE,
-                    fillColor = hint.fillColor,
-                    marker = TooltipMarker.NONE
-                )
-            },
+            tooltipHint = mergedHint,
             title = commonTitle,
             blocks = generalTooltips.flatMap { tooltipModel ->
                 tooltipModel.blocks.map { block ->
@@ -305,6 +296,33 @@ internal class LocatedTargetsPicker(
         )
 
         return tooltipModels.filterNot { it in generalTooltips } + mergedGeneralTooltip
+    }
+
+    private fun createMergedTooltipHint(generalTooltips: List<TooltipModel>, primaryHint: TooltipHint): TooltipHint {
+        val isRegularVerticalHorizontalTooltip = !flippedAxis && primaryHint.placement == HORIZONTAL
+        val coord = if (isRegularVerticalHorizontalTooltip) {
+            DoubleVector(
+                x = (generalTooltips.minOf { it.tooltipHint.coord.x } + generalTooltips.maxOf { it.tooltipHint.coord.x }) / 2.0,
+                y = (generalTooltips.minOf { it.tooltipHint.coord.y } + generalTooltips.maxOf { it.tooltipHint.coord.y }) / 2.0
+            )
+        } else {
+            cursorCoord
+        }
+        val objectRadius = if (isRegularVerticalHorizontalTooltip) {
+            val xRange = generalTooltips.maxOf { it.tooltipHint.coord.x } - generalTooltips.minOf { it.tooltipHint.coord.x }
+            xRange / 2.0 + generalTooltips.maxOf { it.tooltipHint.objectRadius }
+        } else {
+            primaryHint.objectRadius
+        }
+
+        return TooltipHint(
+            placement = primaryHint.placement,
+            coord = coord,
+            objectRadius = objectRadius,
+            stemLength = TooltipHint.StemLength.NONE,
+            fillColor = primaryHint.fillColor,
+            marker = TooltipMarker.NONE
+        )
     }
 
     private fun mergeCrosshairMode(modes: List<CrosshairMode>): CrosshairMode? {
