@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [4.10.2] - 2026-06-10
 
 ### Changed
+
 - Upgrade kotlinx-datetime to 0.7.1.
+                             
 
 ## [4.10.1] - 2026-05-20
 

@@ -4,4 +4,7 @@
 
 ### Changed
 
+- Upgrade WeisJ/jsvg to 2.1.0
+
+
 ### Fixed
