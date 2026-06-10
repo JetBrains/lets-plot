@@ -206,6 +206,86 @@ object PlotSpecs {
         |}
     """.trimMargin()
 
+    val MERGED_TOOLTIP_FLIPPED_WITH_TITLE = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "coord": {
+        |    "name": "flip",
+        |    "flip": true,
+        |    "xlim": [ -1.0, 1.0 ],
+        |    "ylim": [ -1.0, 1.0 ]
+        |  },
+        |  "theme": {
+        |    "panel_grid": "blank"
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ -0.2, 0.0, 0.2 ], "value": [ 18.37, 18.37, 18.37 ] },
+        |      "color": "#4f8f5b",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "tooltip_group": "flipped-lines",
+        |        "title": "Group 09",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    },
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ 0.2, 0.0, -0.2 ], "value": [ 32.47, 32.47, 32.47 ] },
+        |      "color": "#e78ad5",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "tooltip_group": "flipped-lines",
+        |        "title": "Group 17",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val MERGED_TOOLTIP_FLIPPED = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "coord": {
+        |    "name": "flip",
+        |    "flip": true,
+        |    "xlim": [ -1.0, 1.0 ],
+        |    "ylim": [ -1.0, 1.0 ]
+        |  },
+        |  "theme": {
+        |    "panel_grid": "blank"
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ -0.2, 0.0, 0.2 ], "value": [ 18.37, 18.37, 18.37 ] },
+        |      "color": "#4f8f5b",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "tooltip_group": "flipped-lines",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    },
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ 0.2, 0.0, -0.2 ], "value": [ 32.47, 32.47, 32.47 ] },
+        |      "color": "#e78ad5",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "tooltip_group": "flipped-lines",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
     val MERGED_TOOLTIP_DISABLE_SPLITTING_WITH_TITLE = """
         |{
         |  "kind": "plot",

@@ -29,6 +29,8 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_latexTooltip)
         registerTest(::plot_interactivity_mergedTooltip)
         registerTest(::plot_interactivity_mergedTooltipWithTitle)
+        registerTest(::plot_interactivity_mergedTooltipFlipped)
+        registerTest(::plot_interactivity_mergedTooltipFlippedWithTitle)
         registerTest(::plot_interactivity_mergedTooltipDisableSplitting)
         registerTest(::plot_interactivity_mergedTooltipDisableSplittingWithTitle)
         registerTest(::plot_interactivity_mergedTooltipDisableSplittingExplicitLines)
@@ -155,6 +157,24 @@ class PlotInteractivityTest(
 
     fun plot_interactivity_mergedTooltipWithTitle(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_WITH_TITLE))
+
+        val cursorPos = Vector(160, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_mergedTooltipFlipped(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_FLIPPED))
+
+        val cursorPos = Vector(160, 120)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    fun plot_interactivity_mergedTooltipFlippedWithTitle(): Bitmap {
+        val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_FLIPPED_WITH_TITLE))
 
         val cursorPos = Vector(160, 120)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
