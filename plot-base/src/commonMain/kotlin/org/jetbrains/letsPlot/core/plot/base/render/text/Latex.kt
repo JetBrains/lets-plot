@@ -265,7 +265,12 @@ internal class Latex(
                     val guide = SvgPathElement().apply {
                         addClass(VECTOR_BBOX_CLASS)
                         setAttribute("d", "M0 $top L$width $top L$width $bottom L0 $bottom Z")
-                        // Intentionally no fillColor / stroke: measured but not rendered.
+                        // Measured but not painted. Set fill="none" explicitly rather than leaving
+                        // it unset: the raster renderer skips fill-less paths, but a browser paints
+                        // a <path> with no fill using the SVG default (black / inherited text color),
+                        // which would cover the formula. "none" is non-painting in every renderer
+                        // while still contributing to the bbox that downstream layout measures.
+                        fill().set(SvgColors.NONE)
                     }
                     children().add(guide)
                 }
