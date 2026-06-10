@@ -11885,6 +11885,46 @@ class PlotLatexTest : PlotVisualTestBase() {
     }
 
     @Test
+    fun plot_latex_darkFlavorChromeColor() {
+        val spec = """
+            {
+              "theme": {
+                "flavor": "darcula"
+              },
+              "ggtitle": {
+                "text": "\\( \\sigma^2 \\)"
+              },
+              "kind": "plot",
+              "scales": [
+                {
+                  "name": "mass \\( m^2 \\)",
+                  "aesthetic": "x"
+                },
+                {
+                  "name": "\\( \\frac{E}{c^2} \\)",
+                  "aesthetic": "y"
+                }
+              ],
+              "layers": [
+                {
+                  "geom": "point",
+                  "mapping": {
+                    "x": [0.0, 1.0, 2.0],
+                    "y": [0.0, 1.0, 2.0]
+                  },
+                  "data_meta": {}
+                }
+              ],
+              "metainfo_list": []
+            }
+        """.trimIndent()
+
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        assertBitmap(plotCanvasDrawable)
+    }
+
+    @Test
     fun plot_latex_facetStripLabels() {
         val spec = """
             {

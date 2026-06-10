@@ -35,6 +35,18 @@ class RichTextLatexVectorTest {
     }
 
     @Test
+    fun glyphPathHasNoBakedFillWhenUncolored() {
+        val svg = toSvg("""\(a + \frac{b}{c}\)""").single()
+        val paths = svg.pathElements()
+        assertThat(paths).isNotEmpty
+        paths.forEach { path ->
+            assertThat(path.fill().get())
+                .describedAs("uncolored glyph/bar path must have no baked fill")
+                .isNull()
+        }
+    }
+
+    @Test
     fun supportedFractionRendersAsPaths() {
         val svg = toSvg("""\(\frac{a}{b}\)""").single()
         assertThat(svg).isInstanceOf(SvgGElement::class.java)

@@ -61,14 +61,30 @@ internal class SvgTextElementMapper(
         val className = source.fullClass()
         if (className.isNotEmpty()) {
             val style = styleSheet.getTextStyle(className)
-            target.fill = style.color
+            // The element's own class may not carry a color (e.g. the LaTeX fallback <text>, whose only
+            // class is VECTOR_TEXT_CLASS). Fall back to an enclosing line element's class color so chrome
+            // LaTeX matches adjacent text instead of staying the default black.
+            val color = style.safeColor ?: resolveInheritedTextColor(source, styleSheet)
+            if (color != null) {
+                target.fill = color
+                myTextAttrSupport.setAttribute(
+                    SvgConstants.SVG_STYLE_ATTRIBUTE,
+                    SvgUtils.fillAndOpacityStyle(color)
+                )
+            }
             target.fontFamily = style.family.split(",").map { it.trim(' ', '"') }
             target.fontSize = style.size.toFloat()
             target.fontStyle = toFontStyle(style.face)
             target.fontWeight = toFontWeight(style.face)
-
-            val styleAttr = SvgUtils.fillAndOpacityStyle(style.color)
-            myTextAttrSupport.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
+        } else {
+            // No own class: a plain-text run nested inside a mixed LaTeX line carries no class (it sits on
+            // the enclosing <g>). Inherit the effective text color so it isn't left at the default black.
+            val color = resolveInheritedTextColor(source, styleSheet) ?: return
+            target.fill = color
+            myTextAttrSupport.setAttribute(
+                SvgConstants.SVG_STYLE_ATTRIBUTE,
+                SvgUtils.fillAndOpacityStyle(color)
+            )
         }
     }
 

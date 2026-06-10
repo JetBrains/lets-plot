@@ -341,10 +341,12 @@ internal class Latex(
                         if (glyph.pathData != null) {
                             val path = SvgPathElement().apply {
                                 setAttribute("d", glyph.pathData)
-                                // The raster Path scene node only renders when fillPaint is non-null.
-                                // Default to black if no explicit color was provided by the surrounding
-                                // RenderState — text styling later may set this to currentColor.
-                                fillColor().set(color ?: Color.BLACK)
+                                // Bake an explicit fill only when the surrounding RenderState provides one
+                                // (markdown / \color spans, geom_text/label, tooltips). Otherwise leave the
+                                // fill unset so the glyph inherits the effective text color: in browser SVG
+                                // from the stylesheet class on the line element, in raster from the class
+                                // resolved on the line's ancestor group (see SvgPathAttrMapping).
+                                if (color != null) fillColor().set(color)
                                 transform().set(
                                     SvgTransformBuilder()
                                         .translate(cursorPx, 0.0)
@@ -373,7 +375,8 @@ internal class Latex(
                         setAttribute(SvgTextContent.FONT_FAMILY, font.family.name)
                         if (font.isBold) setAttribute(SvgTextContent.FONT_WEIGHT, "bold")
                         if (font.isItalic) setAttribute(SvgTextContent.FONT_STYLE, "italic")
-                        fillColor().set(color ?: Color.BLACK)
+                        // Like the glyph paths: bake a fill only when explicitly provided, else inherit.
+                        if (color != null) fillColor().set(color)
                     }
                     g.children().add(textEl)
                     cursorPx += runAdvancePx(run, font)
@@ -517,7 +520,8 @@ internal class Latex(
                     "d",
                     "M0 $barTop L$fractionWidthPx $barTop L$fractionWidthPx $barBottom L0 $barBottom Z"
                 )
-                fillColor().set(color ?: Color.BLACK)
+                // Like the glyph paths: bake a fill only when explicitly provided, else inherit.
+                if (color != null) fillColor().set(color)
             }
 
             g.children().add(numGroup)

@@ -9,10 +9,7 @@ import org.jetbrains.letsPlot.commons.logging.PortableLogging
 import org.jetbrains.letsPlot.datamodel.mapping.framework.Mapper
 import org.jetbrains.letsPlot.datamodel.mapping.framework.MapperFactory
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import org.jetbrains.letsPlot.raster.scene.Group
-import org.jetbrains.letsPlot.raster.scene.Image
-import org.jetbrains.letsPlot.raster.scene.Node
-import org.jetbrains.letsPlot.raster.scene.Text
+import org.jetbrains.letsPlot.raster.scene.*
 
 internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFactory<SvgNode, Node> {
     companion object {
@@ -33,6 +30,7 @@ internal class SvgNodeMapperFactory(private val peer: SvgCanvasPeer) : MapperFac
             is SvgGElement -> SvgGElementMapper(src, target as Group, peer)
             is SvgSvgElement -> SvgSvgElementMapper(src, peer)
             is SvgTextElement -> SvgTextElementMapper(src, target as Text, peer)
+            is SvgPathElement -> SvgPathElementMapper(src, target as Path, peer)
             is SvgImageElement -> SvgImageElementMapper(src, target as Image, peer)
             is SvgElement -> SvgElementMapper(src, target, peer)
             else -> throw IllegalArgumentException("Unsupported SvgElement: " + src::class.simpleName)

@@ -9,6 +9,7 @@ package org.jetbrains.letsPlot.raster.mapping.svg
 import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 import org.jetbrains.letsPlot.datamodel.svg.style.TextStyle
 import org.jetbrains.letsPlot.raster.mapping.svg.attr.*
 import org.jetbrains.letsPlot.raster.scene.*
@@ -133,3 +134,30 @@ internal object SvgUtils {
 
 val TextStyle.safeColor: Color? get() = if (isNoneColor) null else color
 val TextStyle.safeSize: Double? get() = if (isNoneSize) null else size
+
+/**
+ * Resolves the effective stylesheet text color for [source] by walking up the SVG tree and returning
+ * the first ancestor (including [source] itself) whose class resolves to a concrete text color. Unlike
+ * `SvgStylableElement.fullClass()` — which only sees the element's own class — this reaches the class
+ * on an enclosing line element.
+ *
+ * Needed because plot chrome (titles, axis/legend text, caption, facet strips) is colored via a CSS
+ * class on the line element, while vector LaTeX glyphs render as fill-less `<path>` elements and the
+ * surrounding plain-text runs of a mixed line live in fill-less `<text>` elements nested inside the
+ * classed `<g>` — neither carries the class itself.
+ */
+internal fun resolveInheritedTextColor(source: SvgNode, styleSheet: StyleSheet?): Color? {
+    if (styleSheet == null) return null
+    var node: SvgNode? = source
+    while (node != null) {
+        if (node is SvgStylableElement) {
+            val className = node.fullClass()
+            if (className.isNotEmpty()) {
+                val color = styleSheet.getTextStyle(className).safeColor
+                if (color != null) return color
+            }
+        }
+        node = node.parent().get()
+    }
+    return null
+}
