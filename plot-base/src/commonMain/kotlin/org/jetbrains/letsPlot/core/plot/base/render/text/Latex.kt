@@ -462,6 +462,8 @@ internal class Latex(
         private val barGlyphOffset = 0.25
         // Clearance between the bar and the nearest edge of numerator/denominator (when barBaselineShift == 0).
         private val fractionGap = 0.01
+        // Bar rectangle thickness, em.
+        private val barThickness = 0.06
         // Extra allowance below the numerator, in em, equal to the nominal
         // plain-text space below the baseline in the current layout model.
         private val numeratorBottomAllowance = 1.0 - TextMetricsEstimator.baselineRatio()
@@ -512,7 +514,7 @@ internal class Latex(
             // Bar: rectangle centered at y = (-barGlyphOffset + barBaselineShift) em, matching
             // the visual position of the legacy en-dash glyph at its baseline shift.
             val barCenterY = (-barGlyphOffset + barBaselineShift) * em
-            val barHalfThick = LatexVectorFont.FRACTION_BAR_THICKNESS_EM / 2.0 * em
+            val barHalfThick = barThickness / 2.0 * em
             val barTop = barCenterY - barHalfThick
             val barBottom = barCenterY + barHalfThick
             val barPath = SvgPathElement().apply {

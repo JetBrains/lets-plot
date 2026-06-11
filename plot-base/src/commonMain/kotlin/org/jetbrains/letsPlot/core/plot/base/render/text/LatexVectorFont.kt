@@ -21,18 +21,6 @@ internal object LatexVectorFont {
     // Per-glyph design coordinates are in this UPM. The renderer scales by fontSize/UPM.
     const val UPM: Int = 1000
 
-    // Em-based vertical metrics shared by all vector glyphs. Values match LineBoxMetrics.plainText
-    // so vector and legacy formulas stack identically.
-    const val ASCENT_EM: Double = 0.8
-
-    // Fraction geometry — kept in sync with Latex.FractionNode private constants.
-    const val FRACTION_BAR_GLYPH_OFFSET_EM: Double = 0.25
-    const val FRACTION_GAP_EM: Double = 0.01
-    const val FRACTION_BAR_THICKNESS_EM: Double = 0.06
-    const val FRACTION_BAR_BASELINE_SHIFT_EM: Double = 0.1
-    // Extra allowance below the numerator, in em — equal to plain-text space below baseline.
-    const val NUMERATOR_BOTTOM_ALLOWANCE_EM: Double = 0.2
-
     // Legend labels are wrapped by commons WordWrapper.wrap(), which splits on spaces and rejoins
     // with '\n' at a fixed character limit — operating on the raw LaTeX source. A '\n' that lands
     // inside a "\( ... \)" formula is absorbed into a TextNode's content (unlike a literal ' ',

@@ -122,15 +122,16 @@ internal class GroupLine(private val group: SvgGElement) : LineElement() {
 
     // Vertical-anchor offset (em) that text lines receive via the SVG `dy` attribute
     // (Text.toDY -> SvgConstants.SVG_TEXT_DY_TOP / SVG_TEXT_DY_CENTER). Group lines have no `dy`,
-    // so we add the same offset to their transform instead.
-    // Keep these numbers in sync with SVG_TEXT_DY_TOP ("0.7em") and SVG_TEXT_DY_CENTER ("0.35em").
+    // so we add the matching SvgConstants offset to their transform instead.
     private fun verticalAnchorDyEm(anchor: Text.VerticalAnchor?): Double {
         return when (anchor) {
-            Text.VerticalAnchor.TOP -> 0.7
-            Text.VerticalAnchor.CENTER -> 0.35
+            Text.VerticalAnchor.TOP -> emValue(SvgConstants.SVG_TEXT_DY_TOP)
+            Text.VerticalAnchor.CENTER -> emValue(SvgConstants.SVG_TEXT_DY_CENTER)
             else -> 0.0
         }
     }
+
+    private fun emValue(dy: String): Double = dy.removeSuffix("em").toDouble()
 
     // Recursive descendant walk over a group's heterogeneous SVG contents.
     private fun paintColor(node: SvgElement, color: Color?) {
