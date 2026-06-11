@@ -15,7 +15,8 @@ import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpace
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.X_AXIS
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.Y_AXIS
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LineSpec.DataPoint
 import kotlin.math.abs
 
@@ -65,11 +66,11 @@ internal class LocatedTargetsPicker(
 
         // Filter axis tooltips
         val xAxisTooltips = tooltipModels
-            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == X_AXIS } }
+            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.placement == X_AXIS } }
             .filterNotNullValues()
 
         val yAxisTooltips = tooltipModels
-            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == Y_AXIS } }
+            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.placement == Y_AXIS } }
             .filterNotNullValues()
 
         val closestXAxisTooltip = xAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }
@@ -144,8 +145,8 @@ internal class LocatedTargetsPicker(
                 .filter { it.lines.isNotEmpty() }
 
         return mergeGeneralTooltips(tooltipModels)
-            .removeDuplicates { it.tooltipHint.placement == X_AXIS }
-            .removeDuplicates { it.tooltipHint.placement == Y_AXIS }
+            .removeDuplicates { it.placement == X_AXIS }
+            .removeDuplicates { it.placement == Y_AXIS }
     }
 
     internal fun chooseTooltipModels(
@@ -176,7 +177,7 @@ internal class LocatedTargetsPicker(
                 .map(TooltipModel.Line.Companion::withValue)
             if (linesForAes.isNotEmpty()) {
                 tooltipModels.add(
-                    TooltipModel(
+                    TooltipModel.forTarget(
                         tooltipHint = hint,
                         title = null,
                         lines = linesForAes,
@@ -209,7 +210,7 @@ internal class LocatedTargetsPicker(
             if (lines.isNotEmpty()) {
                 val hint = createHintForAxis(aes, geomTarget.tooltipHint)
                 tooltipModels.add(
-                    TooltipModel(
+                    TooltipModel.forTarget(
                         tooltipHint = hint,
                         title = null,
                         lines = lines,
@@ -237,7 +238,7 @@ internal class LocatedTargetsPicker(
 
         return if (generalLines.isNotEmpty()) {
             listOf(
-                TooltipModel(
+                TooltipModel.forTarget(
                     tooltipHint = geomTarget.tooltipHint,
                     title = contextualMapping.getTitle(geomTarget.hitIndex, ctx),
                     lines = generalLines,
@@ -262,7 +263,7 @@ internal class LocatedTargetsPicker(
     }
 
     private fun mergeGeneralTooltips(tooltipModels: List<TooltipModel>): List<TooltipModel> {
-        val generalTooltips = tooltipModels.filter { !it.isSide && it.tooltipHint.placement !in listOf(X_AXIS, Y_AXIS) }
+        val generalTooltips = tooltipModels.filter { !it.isSide && it.placement !in listOf(X_AXIS, Y_AXIS) }
 
         if (generalTooltips.size <= 1) {
             return tooltipModels
@@ -274,19 +275,26 @@ internal class LocatedTargetsPicker(
             .singleOrNull()
 
         val primaryTooltip = generalTooltips.first()
-        val mergedHint = createMergedTooltipHint(generalTooltips, primaryTooltip.tooltipHint)
+
         val mergedGeneralTooltip = TooltipModel(
-            tooltipHint = mergedHint,
+            placement = primaryTooltip.placement,
+            // merged tooltips draw no stem pointer; the stem length acts as a gap
+            // between the box and the targets area, keeping point markers visible
+            stemLength = TooltipHint.StemLength.NORMAL,
             title = commonTitle,
             blocks = generalTooltips.flatMap { tooltipModel ->
                 tooltipModel.blocks.map { block ->
                     TooltipModel.Block(
                         title = tooltipModel.title.takeIf { it != commonTitle } ?: block.title,
                         marker = block.marker,
-                        lines = block.lines
+                        lines = block.lines,
+                        targetCoord = block.targetCoord,
+                        targetRadius = block.targetRadius
                     )
                 }
-            },
+            }.sortedWith( // read top-to-bottom, left-to-right - same order as target markers on the plot
+                compareBy(nullsLast(compareBy<DoubleVector>({ it.y }, { it.x }))) { it.targetCoord }
+            ),
             fill = primaryTooltip.fill,
             isSide = false,
             anchor = primaryTooltip.anchor,
@@ -296,33 +304,6 @@ internal class LocatedTargetsPicker(
         )
 
         return tooltipModels.filterNot { it in generalTooltips } + mergedGeneralTooltip
-    }
-
-    private fun createMergedTooltipHint(generalTooltips: List<TooltipModel>, primaryHint: TooltipHint): TooltipHint {
-        val isRegularVerticalHorizontalTooltip = !flippedAxis && primaryHint.placement == HORIZONTAL
-        val coord = if (isRegularVerticalHorizontalTooltip) {
-            DoubleVector(
-                x = (generalTooltips.minOf { it.tooltipHint.coord.x } + generalTooltips.maxOf { it.tooltipHint.coord.x }) / 2.0,
-                y = (generalTooltips.minOf { it.tooltipHint.coord.y } + generalTooltips.maxOf { it.tooltipHint.coord.y }) / 2.0
-            )
-        } else {
-            cursorCoord
-        }
-        val objectRadius = if (isRegularVerticalHorizontalTooltip) {
-            val xRange = generalTooltips.maxOf { it.tooltipHint.coord.x } - generalTooltips.minOf { it.tooltipHint.coord.x }
-            xRange / 2.0 + generalTooltips.maxOf { it.tooltipHint.objectRadius }
-        } else {
-            primaryHint.objectRadius
-        }
-
-        return TooltipHint(
-            placement = primaryHint.placement,
-            coord = coord,
-            objectRadius = objectRadius,
-            stemLength = TooltipHint.StemLength.NONE,
-            fillColor = primaryHint.fillColor,
-            marker = TooltipMarker.NONE
-        )
     }
 
     private fun mergeCrosshairMode(modes: List<CrosshairMode>): CrosshairMode? {

@@ -60,9 +60,10 @@ open class TooltipModelTestHelper {
         expectedObjectRadius: Double
     ) {
         val tooltipModel = myTooltipModels[index]
-        assertEquals(expectedHintPlacement, tooltipModel.tooltipHint.placement)
-        assertEquals(expectedHintCoord, tooltipModel.tooltipHint.coord)
-        assertEquals(expectedObjectRadius, tooltipModel.tooltipHint.objectRadius, 0.001)
+        val target = tooltipModel.blocks.single()
+        assertEquals(expectedHintPlacement, tooltipModel.placement)
+        assertEquals(expectedHintCoord, target.targetCoord)
+        assertEquals(expectedObjectRadius, target.targetRadius, 0.001)
     }
 
     internal fun assertLines(index: Int, vararg expectedLines: String) {

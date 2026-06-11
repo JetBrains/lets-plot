@@ -45,6 +45,12 @@ class TooltipBox(
         DOWN
     }
 
+    private enum class PointerMode {
+        POINTER,      // stem pointer from the box to the target
+        POINT_MARKER, // no stem; a point marker drawn at the target (rotated tooltips)
+        NONE          // no stem, no marker (merged tooltips - markers are drawn by the renderer)
+    }
+
     val contentRect
         get() = DoubleRectangle.span(
             DoubleVector.ZERO,
@@ -142,7 +148,8 @@ class TooltipBox(
         tooltipCoord: DoubleVector,
         pointerCoord: DoubleVector,
         orientation: Orientation,
-        rotate: Boolean = false
+        rotate: Boolean = false,
+        showPointer: Boolean = true
     ) {
         // Rotate component
         val rotationAngle = if (rotate) TooltipDefaults.ROTATION_ANGLE else 0.0
@@ -152,7 +159,12 @@ class TooltipBox(
             .subtract(tooltipCoord)
             .rotate(toRadians(-rotationAngle))   // cancel rotation for pointer point coordinates
 
-        myPointerBox.update(p, orientation, usePointMarker = rotate)
+        val pointerMode = when {
+            rotate -> PointerMode.POINT_MARKER
+            showPointer -> PointerMode.POINTER
+            else -> PointerMode.NONE
+        }
+        myPointerBox.update(p, orientation, pointerMode)
         moveTo(tooltipCoord)
 
         if (DEBUG_DRAWING) {
@@ -211,8 +223,8 @@ class TooltipBox(
             }
         }
 
-        fun update(pointerCoord: DoubleVector, orientation: Orientation, usePointMarker: Boolean) {
-            pointerDirection = if (usePointMarker) null else when (orientation) {
+        fun update(pointerCoord: DoubleVector, orientation: Orientation, pointerMode: PointerMode) {
+            pointerDirection = if (pointerMode != PointerMode.POINTER) null else when (orientation) {
                 HORIZONTAL -> when {
                     pointerCoord.x < contentRect.left -> LEFT
                     pointerCoord.x > contentRect.right -> RIGHT
@@ -298,7 +310,7 @@ class TooltipBox(
                 }.build()
             )
 
-            if (usePointMarker) {
+            if (pointerMode == PointerMode.POINT_MARKER) {
                 myHighlightPoint.d().set(trianglePointer(pointerCoord).build())
                 SvgUtils.transformRotate(
                     myHighlightPoint,

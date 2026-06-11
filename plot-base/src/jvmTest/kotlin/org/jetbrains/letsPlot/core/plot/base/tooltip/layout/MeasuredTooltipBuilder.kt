@@ -57,7 +57,7 @@ internal class MeasuredTooltipBuilder private constructor(
     fun buildTooltip(): MeasuredTooltip {
         val hint = createHint()
         return MeasuredTooltip(
-            TooltipModel(
+            TooltipModel.forTarget(
                 tooltipHint = hint,
                 title = null,
                 lines = makeText(myText!!).map(TooltipModel.Line.Companion::withValue),

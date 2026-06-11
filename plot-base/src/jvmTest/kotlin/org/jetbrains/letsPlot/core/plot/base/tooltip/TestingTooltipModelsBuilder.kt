@@ -8,7 +8,6 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.mockito.ReturnsNotNullValuesAnswer
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
@@ -32,11 +31,7 @@ internal class TestingTooltipModelsBuilder private constructor(
             mappedDataAccess,
             DataFrame.Builder().build()
         )
-        val tooltipHint = mock(TooltipHint::class.java, mockSettings)
-        `when`(tooltipHint.placement).thenReturn(VERTICAL)
-        `when`(tooltipHint.coord).thenReturn(DoubleVector.ZERO)
-        `when`(tooltipHint.objectRadius).thenReturn(0.0)
-        `when`(tooltipHint.marker).thenReturn(TooltipMarker.NONE)
+        val tooltipHint = TooltipHint.verticalTooltip(coord = DoubleVector.ZERO, objectRadius = 0.0)
 
         val geomTarget = mock(GeomTarget::class.java, mockSettings)
         `when`(geomTarget.tooltipHint).thenReturn(tooltipHint)

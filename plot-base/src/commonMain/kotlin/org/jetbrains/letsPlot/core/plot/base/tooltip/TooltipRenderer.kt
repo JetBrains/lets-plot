@@ -20,6 +20,7 @@ import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Colors.mimicTransparency
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
@@ -32,11 +33,8 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.Horizo
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.MeasuredTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TransformedTargetLocator
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
-import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 
@@ -59,12 +57,13 @@ class TooltipRenderer(
     private val myTileInfos = ArrayList<TileInfo>()
     private val tooltipStorage: SvgComponentPool<TooltipBox>
     private val crosshairStorage: SvgComponentPool<CrosshairComponent>
+    private val pointMarkerStorage: SvgComponentPool<TooltipPointMarker>
     private val fadeEffectRect: SvgRectElement
     private var pinned = false
 
     init {
         val viewport = DoubleRectangle(DoubleVector.ZERO, plotSize)
-        myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, TooltipDefaults.MARGIN_BETWEEN_TOOLTIPS)
+        myLayoutManager = LayoutManager(viewport, HorizontalAlignment.LEFT, TooltipDefaults.MARGIN_BETWEEN_TOOLTIPS, flippedAxis)
         measuringTooltipBox = TooltipBox(styleSheet).apply {
             rootGroup.visibility().set(Visibility.HIDDEN)
         }
@@ -74,6 +73,10 @@ class TooltipRenderer(
 
         crosshairStorage = SvgComponentPool(
             itemFactory = ::CrosshairComponent,
+            parent = SvgGElement().also { myTooltipLayer.children().add(it) }
+        )
+        pointMarkerStorage = SvgComponentPool(
+            itemFactory = ::TooltipPointMarker,
             parent = SvgGElement().also { myTooltipLayer.children().add(it) }
         )
         tooltipStorage = SvgComponentPool(
@@ -130,6 +133,7 @@ class TooltipRenderer(
         )
 
         showCrosshair(positionedTooltips, tileInfo.geomBounds)
+        showPointMarkers(positionedTooltips)
 
         tooltipStorage.provide(positionedTooltips.size)
             .zip(positionedTooltips)
@@ -139,7 +143,9 @@ class TooltipRenderer(
                     info.tooltipCoord,
                     info.stemCoord,
                     info.orientation,
-                    info.tooltipModel.tooltipHint.placement == ROTATED
+                    rotate = info.tooltipModel.placement == ROTATED,
+                    // merged tooltips point at their targets with point markers, not with a stem
+                    showPointer = !info.tooltipModel.isMerged
                 )
             }
     }
@@ -147,6 +153,34 @@ class TooltipRenderer(
     private fun hideTooltips() {
         tooltipStorage.provide(0)
         crosshairStorage.provide(0)
+        pointMarkerStorage.provide(0)
+    }
+
+    private fun showPointMarkers(tooltips: List<LayoutManager.PositionedTooltip>) {
+        val markerSpecs = tooltips
+            .flatMap { tooltip ->
+                if (!tooltip.tooltipModel.isMerged) {
+                    emptyList()
+                } else {
+                    tooltip.tooltipModel.blocks.mapNotNull { block ->
+                        val targetCoord = block.targetCoord ?: return@mapNotNull null
+                        PointMarkerSpec(
+                            coord = targetCoord,
+                            fillColor = block.marker.pointMarkerFillColor(),
+                        )
+                    }
+                }
+            }
+
+        pointMarkerStorage.provide(markerSpecs.size)
+            .zip(markerSpecs)
+            .forEach { (pointMarker, spec) ->
+                pointMarker.update(
+                    coord = spec.coord,
+                    fillColor = spec.fillColor,
+                    strokeColor = spec.fillColor.contrastColor()
+                )
+            }
     }
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
@@ -158,8 +192,8 @@ class TooltipRenderer(
         }
         val coords = tooltips
             .filter { tooltip -> tooltip.tooltipModel.isCrosshairEnabled }
-            .map { tooltip -> tooltip.tooltipModel.tooltipHint.coord }
-            .toList()
+            .flatMap { tooltip -> tooltip.tooltipModel.blocks.mapNotNull(TooltipModel.Block::targetCoord) }
+            .distinct()
 
         val crosshairComponents = crosshairStorage.provide(coords.size)
 
@@ -335,7 +369,7 @@ class TooltipRenderer(
 
     private val TooltipModel.style
         get() =
-            when (tooltipHint.placement) {
+            when (placement) {
                 X_AXIS -> "${TooltipStyle.AXIS_TOOLTIP_TEXT}-${xAxisTheme.axis}"
                 Y_AXIS -> "${TooltipStyle.AXIS_TOOLTIP_TEXT}-${yAxisTheme.axis}"
                 VERTICAL -> TooltipStyle.TOOLTIP_TEXT
@@ -357,15 +391,15 @@ class TooltipRenderer(
 
     private fun applySpec(tooltipBox: TooltipBox, spec: TooltipModel) {
         val fillColor = when {
-            spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipFill()
-            spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipFill()
+            spec.placement == X_AXIS -> xAxisTheme.tooltipFill()
+            spec.placement == Y_AXIS -> yAxisTheme.tooltipFill()
             spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, SvgUtils.opacity(it), WHITE) }
             else -> tooltipsTheme.tooltipFill()
         }
 
         val borderColor = when {
-            spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipColor()
-            spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipColor()
+            spec.placement == X_AXIS -> xAxisTheme.tooltipColor()
+            spec.placement == Y_AXIS -> yAxisTheme.tooltipColor()
             spec.isSide -> if (fillColor.isDark()) TooltipDefaults.LIGHT_TEXT_COLOR else TooltipDefaults.DARK_TEXT_COLOR
             else -> tooltipsTheme.tooltipColor()
         }
@@ -373,20 +407,20 @@ class TooltipRenderer(
         // Text color is set by element class name,
         // but for side tooltips the color is not constant - it depends on the fill color
         val textColor = when {
-            spec.tooltipHint.placement !in listOf(X_AXIS, Y_AXIS) && spec.isSide -> borderColor
+            spec.placement !in listOf(X_AXIS, Y_AXIS) && spec.isSide -> borderColor
             else -> null
         }
 
         val strokeWidth = getStrokeWidth(spec)
 
         val lineType = when {
-            spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipLineType()
-            spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipLineType()
+            spec.placement == X_AXIS -> xAxisTheme.tooltipLineType()
+            spec.placement == Y_AXIS -> yAxisTheme.tooltipLineType()
             spec.isSide -> NamedLineType.SOLID
             else -> tooltipsTheme.tooltipLineType()
         }
 
-        val borderRadius = when (spec.tooltipHint.placement) {
+        val borderRadius = when (spec.placement) {
             X_AXIS, Y_AXIS -> 0.0
             else -> TooltipDefaults.BORDER_RADIUS
         }
@@ -399,7 +433,13 @@ class TooltipRenderer(
             } else {
                 marker
             }
-            TooltipModel.Block(block.title, normalizedMarker, block.lines)
+            TooltipModel.Block(
+                title = block.title,
+                marker = normalizedMarker,
+                lines = block.lines,
+                targetCoord = block.targetCoord,
+                targetRadius = block.targetRadius
+            )
         }
 
         tooltipBox
@@ -419,9 +459,47 @@ class TooltipRenderer(
     }
 
     private fun getStrokeWidth(spec: TooltipModel): Double = when {
-        spec.tooltipHint.placement == X_AXIS -> xAxisTheme.tooltipStrokeWidth()
-        spec.tooltipHint.placement == Y_AXIS -> yAxisTheme.tooltipStrokeWidth()
+        spec.placement == X_AXIS -> xAxisTheme.tooltipStrokeWidth()
+        spec.placement == Y_AXIS -> yAxisTheme.tooltipStrokeWidth()
         spec.isSide -> 1.0
         else -> tooltipsTheme.tooltipStrokeWidth()
+    }
+
+    private class PointMarkerSpec(
+        val coord: DoubleVector,
+        val fillColor: Color
+    )
+
+    private class TooltipPointMarker : SvgComponent() {
+        private val circle = SvgCircleElement()
+
+        override fun buildComponent() {
+            add(circle)
+        }
+
+        fun update(coord: DoubleVector, fillColor: Color, strokeColor: Color) {
+            circle.apply {
+                cx().set(coord.x)
+                cy().set(coord.y)
+                r().set(TooltipDefaults.DATA_POINT_MARKER_RADIUS)
+                fillColor().set(fillColor)
+                strokeColor().set(strokeColor)
+                strokeWidth().set(TooltipDefaults.DATA_POINT_MARKER_STROKE_WIDTH)
+            }
+        }
+    }
+
+    private fun TooltipMarker.pointMarkerFillColor(): Color {
+        return majorColor.takeIf { it.isVisible() }
+            ?: minorColor.takeIf { it.isVisible() }
+            ?: Color.BLACK
+    }
+
+    private fun Color?.isVisible(): Boolean {
+        return this != null && alpha != 0
+    }
+
+    private fun Color.contrastColor(): Color {
+        return if (isDark()) Color.WHITE else Color.BLACK
     }
 }
