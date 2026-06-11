@@ -3,18 +3,20 @@
 Extract a small glyph set from DejaVu Sans Regular for the LaTeX vector renderer.
 Outputs Kotlin source declaring a Map<Char, VectorGlyph>.
 
+Regenerate with:
+  python3 tools/extract_glyphs.py [--font /path/to/font.ttf] > out.kt
+The default font is DejaVuSans; it can also be overridden with $LATEX_GLYPH_FONT.
+
 License: DejaVu fonts are based on Bitstream Vera (Bitstream Vera Fonts Copyright);
 DejaVu modifications are released to the public domain.
 The generated Kotlin file is a derivative work containing only outline data;
 no font binary is bundled. Attribution is emitted at the file header.
 """
 
-from fontTools.misc.transform import Transform
-from fontTools.pens.svgPathPen import SVGPathPen
-from fontTools.pens.transformPen import TransformPen
-from fontTools.ttLib import TTFont
+import argparse
+import os
 
-FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+DEFAULT_FONT_PATH = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 TARGET_UPM = 1000
 
 # Characters we need (matches the plan).
@@ -30,6 +32,18 @@ CHARS_GREEK_UP = "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ"
 CHARS_GREEK_LO = "αβγδεζηθικλμνξοπρστυφχψω"
 
 ALL_CHARS = CHARS_BASIC + CHARS_MINUS + CHARS_OPS + CHARS_GREEK_UP + CHARS_GREEK_LO
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Extract LaTeX vector glyphs from a TTF font (emits Kotlin to stdout)."
+    )
+    parser.add_argument(
+        "--font",
+        default=os.environ.get("LATEX_GLYPH_FONT", DEFAULT_FONT_PATH),
+        help="Path to the TTF font (default: %(default)s; or set $LATEX_GLYPH_FONT).",
+    )
+    return parser.parse_args()
 
 
 def round_path(path: str) -> str:
@@ -176,6 +190,10 @@ def quad_to_cubic(path: str) -> str:
 
 def extract_glyph(font, glyph_set, char, scale):
     """Return (advance_em_units_at_1000UPM, path_str_at_1000UPM)."""
+    from fontTools.misc.transform import Transform
+    from fontTools.pens.svgPathPen import SVGPathPen
+    from fontTools.pens.transformPen import TransformPen
+
     cmap = font.getBestCmap()
     cp = ord(char)
     if cp not in cmap:
@@ -199,8 +217,10 @@ def extract_glyph(font, glyph_set, char, scale):
     return advance, path
 
 
-def main():
-    font = TTFont(FONT_PATH)
+def main(font_path=DEFAULT_FONT_PATH):
+    from fontTools.ttLib import TTFont
+
+    font = TTFont(font_path)
     upm = font["head"].unitsPerEm
     scale = TARGET_UPM / upm
     glyph_set = font.getGlyphSet()
@@ -248,4 +268,4 @@ def char_literal(ch: str) -> str:
 
 
 if __name__ == "__main__":
-    main()
+    main(parse_args().font)

@@ -302,7 +302,7 @@ internal class Latex(
             return runs
         }
 
-        // The level font used by the legacy text estimator for an unsupported run.
+        // The level font used by the legacy text estimator and fallback <text> paint.
         private fun nodeFontAtLevel(font: Font): Font {
             // Minor approximation: level font size is rounded to Int here, matching the legacy estimator; could be unified later.
             val sizePx = max(1, (font.size * INDEX_SIZE_FACTOR.pow(level)).roundToInt())
@@ -360,6 +360,9 @@ internal class Latex(
                     }
                 } else {
                     // One <text> run per unsupported segment; not merged across sibling nodes. Could be optimized later.
+                    // Draw at the same rounded level font the estimator used to reserve this run's width
+                    // (runAdvancePx -> widthCalculator(nodeFontAtLevel)), so drawn size == reserved width.
+                    val fallbackFont = nodeFontAtLevel(font)
                     val textEl = SvgTextElement().apply {
                         addClass(VECTOR_TEXT_CLASS)
                         addTSpan(SvgTSpanElement(run.text))
@@ -371,10 +374,10 @@ internal class Latex(
                         // Bake the full font explicitly so this element is self-contained and not
                         // re-sized by inherited/outer styling (see Label.applyStyle, Step 5). The
                         // size is the level font size; family / weight / italic come from the formula.
-                        setAttribute(SvgTextContent.FONT_SIZE, "${sizePx}px")
-                        setAttribute(SvgTextContent.FONT_FAMILY, font.family.name)
-                        if (font.isBold) setAttribute(SvgTextContent.FONT_WEIGHT, "bold")
-                        if (font.isItalic) setAttribute(SvgTextContent.FONT_STYLE, "italic")
+                        setAttribute(SvgTextContent.FONT_SIZE, "${fallbackFont.size}px")
+                        setAttribute(SvgTextContent.FONT_FAMILY, fallbackFont.family.name)
+                        if (fallbackFont.isBold) setAttribute(SvgTextContent.FONT_WEIGHT, "bold")
+                        if (fallbackFont.isItalic) setAttribute(SvgTextContent.FONT_STYLE, "italic")
                         // Like the glyph paths: bake a fill only when explicitly provided, else inherit.
                         if (color != null) fillColor().set(color)
                     }

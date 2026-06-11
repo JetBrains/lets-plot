@@ -343,12 +343,11 @@ class RichTextLatexVectorTest {
     @Test
     fun fallbackTextInSuperscriptCarriesReducedFontSize() {
         // `\(b^{Č}\)`: the unsupported `Č` is at superscript level 1, so its baked font-size is the
-        // reduced level size (font.size * INDEX_SIZE_FACTOR^1), confirming per-level sizing.
+        // rounded reduced level size (16 * 0.7 = 11.2 -> roundToInt = 11), matching measurement.
         val svg = toSvg("""\(b^{Č}\)""").single() as SvgGElement
         val fallback = svg.vectorTextElements().single()
         assertThat(fallback.tspans().single().wholeText()).isEqualTo("Č")
-        val sizePx = fallback.getAttribute(SvgTextContent.FONT_SIZE).get()!!.removeSuffix("px").toDouble()
-        assertThat(sizePx).isCloseTo(font.size * 0.7, offset(1e-9)) // INDEX_SIZE_FACTOR = 0.7
+        assertThat(fallback.getAttribute(SvgTextContent.FONT_SIZE).get()).isEqualTo("11px")
     }
 
     @Test
