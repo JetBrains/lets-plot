@@ -17,7 +17,7 @@ object RichText {
     const val HYPERLINK_ELEMENT_CLASS = "hyperlink-element"
 
     internal data class RenderedLine(
-        val element: SvgElement,
+        val line: LineElement,
         val anchor: Text.HorizontalAnchor
     )
 
@@ -30,7 +30,7 @@ object RichText {
         anchor: Text.HorizontalAnchor = DEF_HORIZONTAL_ANCHOR,
         initialX: Double? = null
     ): List<SvgElement> {
-        return renderLines(text, font, wrapLength, maxLinesCount, markdown, anchor, initialX).map(RenderedLine::element)
+        return renderLines(text, font, wrapLength, maxLinesCount, markdown, anchor, initialX).map { it.line.element }
     }
 
     internal fun renderLines(
@@ -340,7 +340,7 @@ object RichText {
                 }
             }
             RenderedLine(
-                element = assembleLineElement(svg),
+                line = assembleLineElement(svg),
                 anchor = renderPlan.lineAnchor
             )
         }
@@ -350,10 +350,10 @@ object RichText {
     // Otherwise wrap in an SvgGElement with runs of tspan-like children grouped into SvgTextElement
     // siblings and any SvgGElement children kept as siblings — this is required for vector formulas,
     // since SVG <text> may not contain <g> or <path>.
-    private fun assembleLineElement(svg: List<SvgElement>): SvgElement {
+    private fun assembleLineElement(svg: List<SvgElement>): LineElement {
         val anyGroup = svg.any { it is SvgGElement }
         if (!anyGroup) {
-            return SvgTextElement().apply { children().addAll(svg) }
+            return TextLine(SvgTextElement().apply { children().addAll(svg) })
         }
         val outer = SvgGElement()
         var currentText: SvgTextElement? = null
@@ -369,7 +369,7 @@ object RichText {
                 tx.children().add(el)
             }
         }
-        return outer
+        return GroupLine(outer)
     }
 
     internal sealed interface RichTextNode {

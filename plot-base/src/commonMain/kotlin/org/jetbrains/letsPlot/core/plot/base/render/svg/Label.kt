@@ -11,13 +11,10 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toDY
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.toTextAnchor
-import org.jetbrains.letsPlot.core.plot.base.render.text.Latex
+import org.jetbrains.letsPlot.core.plot.base.render.text.LineElement
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.DefaultFontFamilyRegistry
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import kotlin.math.roundToInt
 
 
@@ -26,7 +23,7 @@ class Label(
     private val wrapWidth: Int = -1,
     private val markdown: Boolean = false
 ) : SvgComponent() {
-    private val myLines: List<SvgElement>
+    private val myLines = mutableListOf<LineElement>()
     private val myLineAnchors = mutableListOf<HorizontalAnchor>()
     private var myTextColor: Color? = null
     private var myFontSize = 0.0
@@ -39,16 +36,8 @@ class Label(
     private var xStart: Double? = null
     private var yStart = 0.0
 
-    // Track per-line x and y separately so setLineX / setLineY can compose a single transform on
-    // group lines without losing the previously-set axis.
-    private val myLineX = mutableMapOf<SvgElement, Double>()
-    private val myLineY = mutableMapOf<SvgElement, Double>()
-
     init {
-        val renderedLines = renderLines()
-        myLines = renderedLines.map(RichText.RenderedLine::element)
-        myLineAnchors += renderedLines.map(RichText.RenderedLine::anchor)
-        myLines.forEach(rootGroup.children()::add)
+        installLines(renderLines())
         updateStyleAttribute()
         verticalRepositionLines()
         horizontalRepositionLines()
@@ -58,11 +47,7 @@ class Label(
     }
 
     override fun addClassName(className: String) {
-        myLines.forEach { line ->
-            if (line is org.jetbrains.letsPlot.datamodel.svg.dom.SvgStylableElement) {
-                line.addClass(className)
-            }
-        }
+        myLines.forEach { it.addClass(className) }
     }
 
     fun textColor(): WritableProperty<Color?> {
@@ -70,7 +55,7 @@ class Label(
             override fun set(value: Color?) {
                 // set attribute for svg->canvas mapping to work — recurses into vector groups so
                 // every text element and every path glyph picks up the new color.
-                myLines.forEach { applyFillColor(it, value) }
+                myLines.forEach { it.applyColor(value) }
 
                 // duplicate in 'style' to override styles of container
                 myTextColor = value
@@ -86,13 +71,7 @@ class Label(
 
     fun setVerticalAnchor(anchor: VerticalAnchor) {
         myVerticalAnchor = anchor
-        myLines.forEach {
-            // text-dy is only meaningful on <text>; mixed-line group wrappers ignore it (their
-            // vertical positioning comes from the line's transform set by verticalRepositionLines).
-            if (it is SvgTextElement) {
-                it.setAttribute(SvgConstants.SVG_TEXT_DY_ATTRIBUTE, toDY(anchor))
-            }
-        }
+        myLines.forEach { it.setVerticalAnchor(anchor, myFontSize) }
         verticalRepositionLines()
     }
 
@@ -137,7 +116,7 @@ class Label(
             myFontFamily,
             myFontStyle
         )
-        myLines.forEach { applyStyle(it, styleAttr) }
+        myLines.forEach { it.applyStyle(styleAttr) }
     }
 
     fun setX(x: Double) {
@@ -160,7 +139,7 @@ class Label(
     private fun verticalRepositionLines() {
         val textLayout = myTextLayout
         if (textLayout == null) {
-            myLines.forEach { setLineY(it, yStart) }
+            myLines.forEach { it.setY(yStart) }
             return
         }
 
@@ -174,9 +153,18 @@ class Label(
             else -> 0.0
         }
 
-        myLines.forEachIndexed { index, elem ->
-            setLineY(elem, firstLineY + baselineOffsets[index])
+        myLines.forEachIndexed { index, line ->
+            line.setY(firstLineY + baselineOffsets[index])
         }
+    }
+
+    private fun installLines(rendered: List<RichText.RenderedLine>) {
+        myLines.forEach { it.element.removeFromParent() }
+        myLines.clear()
+        myLines += rendered.map { it.line }
+        myLineAnchors.clear()
+        myLineAnchors += rendered.map { it.anchor }
+        myLines.forEach { rootGroup.children().add(it.element) }
     }
 
     // After changing font properties or anchor policy, RichText may regenerate the line subtree.
@@ -185,10 +173,13 @@ class Label(
     private fun horizontalRepositionLines() {
         val renderedLines = renderLines()
         require(myLines.size == renderedLines.size) { "Line counts must be the same." }
-        myLineAnchors.clear()
-        myLineAnchors += renderedLines.map(RichText.RenderedLine::anchor)
-        (myLines zip renderedLines).forEach { (originalLine, renderedLine) ->
-            replaceLineChildrenFrom(originalLine, renderedLine.element)
+        val kindStable = (myLines zip renderedLines).all { (old, rendered) -> old.canAbsorb(rendered.line) }
+        if (kindStable) {
+            (myLines zip renderedLines).forEach { (old, rendered) -> old.replaceChildrenFrom(rendered.line) }
+            myLineAnchors.clear()
+            myLineAnchors += renderedLines.map { it.anchor }
+        } else {
+            installLines(renderedLines)
         }
         // Regenerated children of a mixed line (plain text + vector LaTeX formula) are born without
         // the font 'style' attribute: it lived on the previous inner <text>, which was just replaced.
@@ -201,18 +192,18 @@ class Label(
         // Re-apply an explicitly-set text color so the fresh paths pick it up. Guard on non-null:
         // labels colored via a stylesheet class never set myTextColor, and clobbering their fill
         // with null here would hide them (titles, axis labels, legend, caption).
-        myTextColor?.let { color -> myLines.forEach { applyFillColor(it, color) } }
-        xStart?.let { newX -> myLines.forEach { line -> setLineX(line, newX) } }
+        myLines.forEach { it.setVerticalAnchor(myVerticalAnchor, myFontSize) }
+        myTextColor?.let { color -> myLines.forEach { it.applyColor(color) } }
+        xStart?.let { newX -> myLines.forEach { it.setX(newX) } }
+        if (!kindStable) {
+            verticalRepositionLines()
+        }
         updateHorizontalAnchor()
     }
 
     private fun updateHorizontalAnchor() {
         (myLines zip myLineAnchors).forEach { (line, anchor) ->
-            // text-anchor is only meaningful on <text>. Mixed-line groups use a line origin shift
-            // (computed in RichText.renderPlans) instead, so they need no text-anchor attribute.
-            if (line is SvgTextElement) {
-                line.setAttribute(SvgConstants.SVG_TEXT_ANCHOR_ATTRIBUTE, toTextAnchor(anchor))
-            }
+            line.setHorizontalAnchor(anchor)
         }
     }
 
@@ -232,105 +223,6 @@ class Label(
             markdown = markdown,
             anchor = myHorizontalAnchor
         )
-    }
-
-    private fun setLineY(el: SvgElement, y: Double) {
-        myLineY[el] = y
-        when (el) {
-            is SvgTextElement -> el.y().set(y)
-            is SvgGElement -> el.transform().set(buildLineTransform(el))
-            else -> error("Unexpected line element type: ${el::class.simpleName}")
-        }
-    }
-
-    private fun setLineX(el: SvgElement, x: Double) {
-        myLineX[el] = x
-        when (el) {
-            is SvgTextElement -> el.x().set(x)
-            is SvgGElement -> el.transform().set(buildLineTransform(el))
-            else -> error("Unexpected line element type: ${el::class.simpleName}")
-        }
-    }
-
-    // Vertical-anchor offset (in em) that text lines receive via the SVG `dy` attribute
-    // (Text.toDY -> SvgConstants.SVG_TEXT_DY_TOP / SVG_TEXT_DY_CENTER). Group lines (vector
-    // LaTeX formulas) have no `dy`, so we add the same offset to their transform instead.
-    // Keep these numbers in sync with SVG_TEXT_DY_TOP ("0.7em") and SVG_TEXT_DY_CENTER ("0.35em").
-    private fun verticalAnchorDyEm(anchor: VerticalAnchor?): Double {
-        return when (anchor) {
-            VerticalAnchor.TOP -> 0.7
-            VerticalAnchor.CENTER -> 0.35
-            else -> 0.0   // BOTTOM and null: text gets no dy, so group gets no offset.
-        }
-    }
-
-    private fun buildLineTransform(el: SvgElement): SvgTransform {
-        val tx = myLineX[el] ?: 0.0
-        // Group lines (vector LaTeX formulas) do not get the SVG `dy` ascent push that text
-        // lines get from setVerticalAnchor, so add the equivalent offset here to keep group
-        // and text lines vertically aligned under every anchor and rotation.
-        val ty = (myLineY[el] ?: 0.0) + verticalAnchorDyEm(myVerticalAnchor) * myFontSize
-        return SvgTransformBuilder().translate(tx, ty).build()
-    }
-
-    private fun applyFillColor(el: SvgElement, color: Color?) {
-        when (el) {
-            is SvgTextElement -> el.fillColor().set(color)
-            is SvgPathElement -> {
-                val isVectorBBoxGuide = el.classAttribute().get()
-                    ?.split(' ')
-                    ?.contains(Latex.VECTOR_BBOX_CLASS) == true
-                if (!isVectorBBoxGuide) {
-                    el.fillColor().set(color)
-                }
-            }
-            is SvgGElement -> el.children().forEach { child ->
-                if (child is SvgElement) applyFillColor(child, color)
-            }
-        }
-    }
-
-    private fun applyStyle(el: SvgElement, styleAttr: String) {
-        when (el) {
-            is SvgTextElement -> {
-                // A LaTeX vector fallback <text> bakes its own font (size/family/face) so it renders
-                // at the correct per-level size. The outer style carries the full px font-size, which
-                // — as CSS — would override the baked presentation attribute and over-size a nested
-                // glyph (e.g. inside a superscript). Skip it, mirroring applyFillColor's bbox-guide skip.
-                val isVectorFallbackText = el.classAttribute().get()
-                    ?.split(' ')
-                    ?.contains(Latex.VECTOR_TEXT_CLASS) == true
-                if (!isVectorFallbackText) {
-                    el.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, styleAttr)
-                }
-            }
-            // Style on the outer group is inherited by descendant <text> elements (font-family,
-            // fill, etc.). We still recurse so any direct <text> child gets the attribute set
-            // explicitly — some downstream consumers don't propagate inherited CSS.
-            is SvgGElement -> el.children().forEach { child ->
-                if (child is SvgElement) applyStyle(child, styleAttr)
-            }
-        }
-    }
-
-    // Replace children of an existing line element with the children of a freshly rendered line.
-    // Both arguments must be the same kind of element (text or group); the freshly rendered shape
-    // is determined by the same input that produced the original line element.
-    private fun replaceLineChildrenFrom(original: SvgElement, fresh: SvgElement) {
-        when {
-            original is SvgTextElement && fresh is SvgTextElement -> moveChildren(original, fresh)
-            original is SvgGElement && fresh is SvgGElement -> moveChildren(original, fresh)
-            else -> error("Line element type changed across re-renders: ${original::class.simpleName} vs ${fresh::class.simpleName}")
-        }
-    }
-
-    private fun moveChildren(target: SvgElement, source: SvgElement) {
-        val newChildren = source.children().toList()
-        target.children().clear()
-        newChildren.forEach { child ->
-            child.removeFromParent()
-            target.children().add(child)
-        }
     }
 
     companion object {

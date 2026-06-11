@@ -10,7 +10,10 @@ import org.jetbrains.letsPlot.commons.intern.util.TextMetricsEstimator.widthCalc
 import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.stringParts
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.vectorFormulaGroups
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgTextElement
 import kotlin.math.max
 import kotlin.test.Test
@@ -46,6 +49,21 @@ class LabelTest {
         checkHorizontalAnchors(text, Text.HorizontalAnchor.LEFT, listOf(null, null))
         checkHorizontalAnchors(text, Text.HorizontalAnchor.MIDDLE, listOf(null, "middle"))
         checkHorizontalAnchors(text, Text.HorizontalAnchor.RIGHT, listOf(null, "end"))
+    }
+
+    @Test
+    fun mixedLineReRenderKeepsFormulaAndPrefix() {
+        val label = Label("""a+\(\frac{b}{c}\)""")
+        val initialLineCount = label.linesCount()
+
+        label.setFontSize(18.0)
+        label.setFontSize(24.0)
+        label.setHorizontalAnchor(Text.HorizontalAnchor.RIGHT)
+
+        assertThat(label.linesCount()).isEqualTo(initialLineCount)
+        val line = label.rootGroup.children().single() as SvgGElement
+        assertThat(line.vectorFormulaGroups()).isNotEmpty()
+        assertThat(line.stringParts()).contains("a+")
     }
 
     // Asserts deep legacy tspan structure for `a+\frac{b}{c}`. The formula is now vector-rendered;
