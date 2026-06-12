@@ -11,7 +11,6 @@ import org.jetbrains.letsPlot.commons.values.Color
 class TooltipModel(
     val placement: TooltipHint.Placement,
     val stemLength: TooltipHint.StemLength,
-    val title: String?,
     val blocks: List<Block>,
     val fill: Color?,
     val isSide: Boolean,
@@ -66,10 +65,9 @@ class TooltipModel(
             return TooltipModel(
                 placement = tooltipHint.placement,
                 stemLength = tooltipHint.stemLength,
-                title = title,
                 blocks = listOf(
                     Block(
-                        title = null,
+                        title = title,
                         marker = marker,
                         lines = lines,
                         targetCoord = tooltipHint.coord,

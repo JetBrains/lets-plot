@@ -425,6 +425,10 @@ class TooltipRenderer(
             else -> TooltipDefaults.BORDER_RADIUS
         }
 
+        // The box header: shown only when every block carries the same title;
+        // otherwise each block renders its own title
+        val commonTitle = spec.blocks.map(TooltipModel.Block::title).distinct().singleOrNull()
+
         val blocks = spec.blocks.map { block ->
             val marker = block.marker
             // Reduce noise by not showing the same minor color
@@ -434,7 +438,7 @@ class TooltipRenderer(
                 marker
             }
             TooltipModel.Block(
-                title = block.title,
+                title = block.title.takeIf { it != commonTitle },
                 marker = normalizedMarker,
                 lines = block.lines,
                 targetCoord = block.targetCoord,
@@ -450,7 +454,7 @@ class TooltipRenderer(
                 strokeWidth = strokeWidth,
                 lineType = lineType,
                 blocks = blocks,
-                title = spec.title,
+                title = commonTitle,
                 textClassName = spec.style,
                 tooltipMinWidth = spec.minWidth,
                 borderRadius = borderRadius,
