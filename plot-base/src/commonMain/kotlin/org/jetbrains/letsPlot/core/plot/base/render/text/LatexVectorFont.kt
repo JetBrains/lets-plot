@@ -21,15 +21,9 @@ internal object LatexVectorFont {
     // Per-glyph design coordinates are in this UPM. The renderer scales by fontSize/UPM.
     const val UPM: Int = 1000
 
-    // Legend labels are wrapped by commons WordWrapper.wrap(), which splits on spaces and rejoins
-    // with '\n' at a fixed character limit — operating on the raw LaTeX source. A '\n' that lands
-    // inside a "\( ... \)" formula is absorbed into a TextNode's content (unlike a literal ' ',
-    // which the tokenizer turns into a skipped Token.Space). If that '\n' were unsupported the
-    // whole formula would fall back to the legacy tspan renderer ("legend looks as before glyphs").
-    // We register newline/tab/CR as zero-advance blank glyphs so they are ignored exactly like the
-    // math-mode space they replaced — keeping the wrapped formula identical to its unwrapped form.
-    // TODO: remove this once wrap() is LaTeX-aware and never injects '\n' inside a formula; at that
-    //       point no whitespace other than ' ' can reach a formula TextNode and this becomes dead.
+    // Word-wrapping can inject '\n'/'\t'/'\r' inside a formula; register them as zero-advance blanks
+    // so they're ignored and the formula doesn't fall back to the legacy tspan renderer.
+    // TODO: remove once wrap() is LaTeX-aware and never injects whitespace other than ' ' into a formula.
     private val WHITESPACE_GLYPH = VectorGlyph(advanceEm = 0.0, pathData = null)
 
     private val GLYPHS: Map<Char, VectorGlyph> = buildLatexGlyphTable() +

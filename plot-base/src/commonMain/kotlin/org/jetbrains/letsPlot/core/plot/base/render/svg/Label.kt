@@ -53,8 +53,7 @@ class Label(
     fun textColor(): WritableProperty<Color?> {
         return object : WritableProperty<Color?> {
             override fun set(value: Color?) {
-                // set attribute for svg->canvas mapping to work — recurses into vector groups so
-                // every text element and every path glyph picks up the new color.
+                // set attribute for svg->canvas mapping to work
                 myLines.forEach { it.applyColor(value) }
 
                 // duplicate in 'style' to override styles of container
@@ -161,9 +160,9 @@ class Label(
     private fun installLines(rendered: List<RichText.RenderedLine>) {
         myLines.forEach { it.element.removeFromParent() }
         myLines.clear()
-        myLines += rendered.map { it.line }
+        myLines += rendered.map(RichText.RenderedLine::line)
         myLineAnchors.clear()
-        myLineAnchors += rendered.map { it.anchor }
+        myLineAnchors += rendered.map(RichText.RenderedLine::anchor)
         myLines.forEach { rootGroup.children().add(it.element) }
     }
 
@@ -173,29 +172,22 @@ class Label(
     private fun horizontalRepositionLines() {
         val renderedLines = renderLines()
         require(myLines.size == renderedLines.size) { "Line counts must be the same." }
-        val kindStable = (myLines zip renderedLines).all { (old, rendered) -> old.canAbsorb(rendered.line) }
-        if (kindStable) {
+        // Check that each old/rendered pair has the same line type.
+        val lineKindsStable = (myLines zip renderedLines).all { (old, rendered) -> old.canAbsorb(rendered.line) }
+        if (lineKindsStable) {
             (myLines zip renderedLines).forEach { (old, rendered) -> old.replaceChildrenFrom(rendered.line) }
             myLineAnchors.clear()
-            myLineAnchors += renderedLines.map { it.anchor }
+            myLineAnchors += renderedLines.map(RichText.RenderedLine::anchor)
         } else {
             installLines(renderedLines)
         }
-        // Regenerated children of a mixed line (plain text + vector LaTeX formula) are born without
-        // the font 'style' attribute: it lived on the previous inner <text>, which was just replaced.
-        // Unlike a pure-text line — whose <text> wrapper is preserved across child replacement — the
-        // fresh inner <text> would otherwise fall back to the renderer's default font size/family/face.
-        // Re-apply the style so the prefix matches the formula's font size (and family/weight/style).
+        // Re-apply text style after replacing mixed-line children: fresh inner <text> nodes lose font settings.
         updateStyleAttribute()
-        // Regenerated children (e.g. vector LaTeX glyph paths) are born with the default color and
-        // carry no inheritable parent style, unlike legacy <tspan>s under a persistent <text>.
-        // Re-apply an explicitly-set text color so the fresh paths pick it up. Guard on non-null:
-        // labels colored via a stylesheet class never set myTextColor, and clobbering their fill
-        // with null here would hide them (titles, axis labels, legend, caption).
         myLines.forEach { it.setVerticalAnchor(myVerticalAnchor, myFontSize) }
+        // Re-apply explicit text color to regenerated vector glyphs; leave stylesheet-colored labels untouched.
         myTextColor?.let { color -> myLines.forEach { it.applyColor(color) } }
         xStart?.let { newX -> myLines.forEach { it.setX(newX) } }
-        if (!kindStable) {
+        if (!lineKindsStable) {
             verticalRepositionLines()
         }
         updateHorizontalAnchor()

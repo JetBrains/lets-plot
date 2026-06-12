@@ -246,9 +246,8 @@ object RichText {
                 Text.HorizontalAnchor.MIDDLE -> 0.5
                 Text.HorizontalAnchor.RIGHT -> 1.0
             }
-            // Fraction lines and vector-formula lines are rendered in a line-local coordinate frame
-            // so all nested elements share a single origin. The block still honors the requested
-            // anchor, but that anchor is resolved here to an explicit line origin shift.
+            // Vector-formula lines render in a line-local frame so nested elements share one origin;
+            // the requested anchor is resolved here to an explicit origin shift, not SVG text-anchor.
             LineRenderPlan(
                 lineAnchor = Text.HorizontalAnchor.LEFT,
                 lineOriginShiftCoefficient = originShiftCoefficient
@@ -271,10 +270,8 @@ object RichText {
             // After a non-tspan element (e.g. a vector formula group), the next text run starts in
             // a fresh SvgTextElement and its first tspan must have x set explicitly.
             var spanContinuityBroken = false
-            // Detect a contiguous text-like prefix (Text runs and/or hyperlinks) before the first
-            // vector formula. If found, the whole prefix is end-anchored as a single SVG chunk so
-            // its right edge meets the formula's left edge — eliminating the estimator-vs-host-font
-            // gap for links and multi-run markdown prefixes, not just single plain-Text prefixes.
+            // A contiguous text-like prefix (Text/hyperlinks) before the first vector formula is
+            // end-anchored to the formula's left edge, closing the estimator-vs-host-font gap.
             val richSpans = line.filterIsInstance<RichTextNode.RichSpan>()
             val firstFormulaIdx = richSpans.indexOfFirst { it is Latex.VectorLatexElement }
             val prefixSpans = if (firstFormulaIdx > 0) richSpans.subList(0, firstFormulaIdx) else emptyList()
@@ -301,11 +298,8 @@ object RichText {
                     is RichTextNode.ColorEnd -> stack.removeLast()
 
                     is RichTextNode.RichSpan -> {
-                        // For complex lines (for example with fractions), the line may be anchored by
-                        // shifting its explicit origin instead of by SVG `text-anchor`.
-                        val x = lineX
                         val effectiveIsFirst = isFirstRichSpanInLine || spanContinuityBroken
-                        val effectiveX = if (spanContinuityBroken) (x ?: 0.0) + prefixWidth else x
+                        val effectiveX = if (spanContinuityBroken) (lineX ?: 0.0) + prefixWidth else lineX
                         val termWidth = term.estimateWidth(font)
                         val rendered = term.render(stack.last(), prefixWidth, effectiveX, effectiveIsFirst)
                         if (pinnablePrefix && prefixSpansProcessed < prefixSpans.size) {
@@ -321,9 +315,8 @@ object RichText {
                     is RichTextNode.LineBreak -> throw IllegalStateException("Line breaks should be parsed before rendering")
                 }
             }
-            // Post-loop pin: end-anchor the whole prefix chunk so its right edge meets the
-            // formula's left edge. text-anchor=end goes on every prefix tspan; x=formulaLeftEdge
-            // only on the first (which starts the SVG text chunk).
+            // Pin the prefix flush to the formula: text-anchor=end on every prefix tspan,
+            // x=formulaLeftEdge on the first one (which starts the SVG text chunk).
             if (pinnablePrefix && prefixRenderedElements != null) {
                 val prefixTSpans = prefixRenderedElements.flatMap { el ->
                     when (el) {
@@ -346,10 +339,8 @@ object RichText {
         }
     }
 
-    // If the line has only tspan-like children, wrap in a single SvgTextElement (unchanged shape).
-    // Otherwise wrap in an SvgGElement with runs of tspan-like children grouped into SvgTextElement
-    // siblings and any SvgGElement children kept as siblings — this is required for vector formulas,
-    // since SVG <text> may not contain <g> or <path>.
+    // Pure-tspan lines become one SvgTextElement. Lines containing an SvgGElement (vector formula)
+    // become an SvgGElement of <text> runs + <g> siblings, since SVG <text> can't hold <g>/<path>.
     private fun assembleLineElement(svg: List<SvgElement>): LineElement {
         val anyGroup = svg.any { it is SvgGElement }
         if (!anyGroup) {
@@ -391,15 +382,14 @@ object RichText {
             abstract fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics
             abstract fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>>
 
-            // During the rendering process, the RichSpan is converted to collection of the RichSpanElement,
-            // and then each of them is rendered to SVG element, taking into account the additional x parameter;
-            // each resulting SVG element is a span-like element (SvgTSpanElement or SvgAElement with SvgTSpanElement as a child)
+            // Renders each wrapped element to SVG, applying the x offset. Results are span-like
+            // (SvgTSpanElement / SvgAElement) or a vector-formula SvgGElement.
             fun render(context: RenderState, prefixWidth: Double, x: Double?, isFirstRichSpanInLine: Boolean): List<SvgElement> {
                 return render(context, prefixWidth).mapIndexed { i, wrappedElement ->
                     wrappedElement.x = when {
-                        // If wrappedElement.x == null than x should be defined only for the first span in the line
+                        // x == null: only the line's first span gets an x.
                         wrappedElement.x == null -> if (isFirstRichSpanInLine && i == 0) x else null
-                        // If wrappedElement.x != null, it means that it should be shifted
+                        // x != null: shift the existing x by the line origin.
                         else -> wrappedElement.x!! + (x ?: 0.0)
                     }
                     wrappedElement.updateSvgXAttribute().svg
@@ -425,8 +415,6 @@ object RichText {
                 }
             }
 
-            // Wraps an SvgGElement (used for vector LaTeX formulas). Positioning is via a
-            // translate transform on the group itself, since <g> has no x/y attributes.
             class WrappedGElement(svg: SvgGElement, x: Double? = null) : WrappedSvgElement<SvgGElement>(svg, x) {
                 override fun updateSvgXAttribute(): WrappedSvgElement<SvgGElement> {
                     x?.let { svg.transform().set(SvgTransformBuilder().translate(it, 0.0).build()) }

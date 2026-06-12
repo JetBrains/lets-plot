@@ -99,7 +99,7 @@ internal class Latex(
                 val (numerator, denominator) = parseNArgs(2)
                 FractionNode(numerator, denominator, level)
             }
-            // For other commands, we just replace the command with its name if it's not a special symbol
+            // Other commands: a special symbol if known, else the literal command name.
             else -> TextNode(SYMBOLS.getOrElse(token.name) { "\\${token.name}" }, level)
         }
     }
@@ -216,19 +216,16 @@ internal class Latex(
     internal abstract inner class LatexNode(val children: List<LatexNode>, protected val level: Int) {
         abstract val visualCharCount: Int
 
-        // Vector advance in pixels, using only LatexVectorFont em-advances. Drift-free against
-        // the corresponding renderVectorGroup() output.
+        // Advance in px from LatexVectorFont em-advances; must match renderVectorGroup().
         open fun vectorWidth(font: Font): Double = children.sumOf { it.vectorWidth(font) }
 
-        // Vertical line-box metrics in pixels for the vector rendering.
         open fun vectorMetrics(font: Font): LineBoxMetrics =
             LineBoxMetrics.mergeOnBaseline(
                 metrics = children.map { it.vectorMetrics(font) },
                 defaultIfEmpty = LineBoxMetrics.plainText(font)
             )
 
-        // Render this node into an SvgGElement. All coordinates inside are pixels in the formula's
-        // local frame: x=0 is the left edge, y=0 is the line baseline; ascenders are y<0.
+        // Renders into a group in the formula-local frame: x=0 left edge, y=0 baseline, ascenders y<0.
         // The caller composes by translating the returned group.
         abstract fun renderVectorGroup(color: Color?): SvgGElement
 
@@ -237,9 +234,8 @@ internal class Latex(
             font.size.toDouble() * INDEX_SIZE_FACTOR.pow(level)
     }
 
-    // The formula wrapper placed into a rich-text line. Width comes from the same em advances used
-    // to render the glyph paths, so there is no drift between measurement and rendering; unsupported
-    // glyphs fall back per-box to a <text> run inside renderVectorGroup.
+    // Wraps a parsed formula as a rich-text span. Measurement and rendering share the same em
+    // advances (no drift); unsupported glyphs fall back to a <text> run in renderVectorGroup.
     internal inner class VectorLatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = node.visualCharCount
 
@@ -252,10 +248,9 @@ internal class Latex(
                 addClass(VECTOR_FORMULA_CLASS)
                 children().add(node.renderVectorGroup(context.color))
 
-                // Invisible bbox guide. Downstream layout measures the rendered SVG bbox, not
-                // estimateWidth. Glyph paths provide tight ink bounds and omit space glyphs, while
-                // formula positioning uses the logical advance width. This guide makes the group
-                // bbox match that advance box without painting anything.
+                // Invisible guide making the group's measured bbox equal the logical advance box:
+                // downstream layout measures bbox, but glyph paths give tight ink bounds and omit spaces.
+                // TODO: Remove once bbox consumers (TooltipBox) size formulas from analytic metrics instead of measured bbox.
                 val formulaFont = this@Latex.font
                 val width = node.vectorWidth(formulaFont)
                 if (width > 0.0) {
@@ -265,11 +260,8 @@ internal class Latex(
                     val guide = SvgPathElement().apply {
                         addClass(VECTOR_BBOX_CLASS)
                         setAttribute("d", "M0 $top L$width $top L$width $bottom L0 $bottom Z")
-                        // Measured but not painted. Set fill="none" explicitly rather than leaving
-                        // it unset: the raster renderer skips fill-less paths, but a browser paints
-                        // a <path> with no fill using the SVG default (black / inherited text color),
-                        // which would cover the formula. "none" is non-painting in every renderer
-                        // while still contributing to the bbox that downstream layout measures.
+                        // fill="none", not unset: a browser paints an unset <path> with the default
+                        // black, covering the formula. "none" never paints yet still adds to the bbox.
                         fill().set(SvgColors.NONE)
                     }
                     children().add(guide)
@@ -281,44 +273,6 @@ internal class Latex(
 
     private inner class TextNode(val content: String, level: Int) : LatexNode(emptyList(), level) {
         override val visualCharCount: Int = content.length
-
-        // A maximal run of characters that are all vector-supported or all unsupported. The
-        // "supported vs not" decision lives only here (per the mental model), so both measurement
-        // and rendering walk the same runs and can never drift apart.
-        private inner class Run(val text: String, val supported: Boolean)
-
-        private fun segments(): List<Run> {
-            val runs = mutableListOf<Run>()
-            var start = 0
-            while (start < content.length) {
-                val supported = LatexVectorFont.isSupported(content[start])
-                var end = start + 1
-                while (end < content.length && LatexVectorFont.isSupported(content[end]) == supported) {
-                    end++
-                }
-                runs.add(Run(content.substring(start, end), supported))
-                start = end
-            }
-            return runs
-        }
-
-        // The level font used by the legacy text estimator and fallback <text> paint.
-        private fun nodeFontAtLevel(font: Font): Font {
-            // Minor approximation: level font size is rounded to Int here, matching the legacy estimator; could be unified later.
-            val sizePx = max(1, (font.size * INDEX_SIZE_FACTOR.pow(level)).roundToInt())
-            return Font(font.family, sizePx, font.isBold, font.isItalic)
-        }
-
-        // The single shared per-run advance (px) used by BOTH vectorWidth and renderVectorGroup, so
-        // box positions never depend on how a box is drawn. Supported runs sum vector em-advances
-        // (identical to before); unsupported runs use the legacy text estimator at the level font.
-        private fun runAdvancePx(run: Run, font: Font): Double {
-            return if (run.supported) {
-                run.text.sumOf { LatexVectorFont.advanceEm(it) } * levelFontSize(font)
-            } else {
-                widthCalculator(run.text, nodeFontAtLevel(font))
-            }
-        }
 
         override fun vectorWidth(font: Font): Double =
             segments().sumOf { runAdvancePx(it, font) }
@@ -341,11 +295,9 @@ internal class Latex(
                         if (glyph.pathData != null) {
                             val path = SvgPathElement().apply {
                                 setAttribute("d", glyph.pathData)
-                                // Bake an explicit fill only when the surrounding RenderState provides one
-                                // (markdown / \color spans, geom_text/label, tooltips). Otherwise leave the
-                                // fill unset so the glyph inherits the effective text color: in browser SVG
-                                // from the stylesheet class on the line element, in raster from the class
-                                // resolved on the line's ancestor group (see SvgPathAttrMapping).
+                                // Bake a fill only when RenderState provides one; else leave it unset so the
+                                // glyph inherits the effective text color (browser: line's CSS class;
+                                // raster: ancestor group, see SvgPathAttrMapping).
                                 if (color != null) fillColor().set(color)
                                 transform().set(
                                     SvgTransformBuilder()
@@ -359,21 +311,17 @@ internal class Latex(
                         cursorPx += glyph.advanceEm * sizePx
                     }
                 } else {
-                    // One <text> run per unsupported segment; not merged across sibling nodes. Could be optimized later.
-                    // Draw at the same rounded level font the estimator used to reserve this run's width
-                    // (runAdvancePx -> widthCalculator(nodeFontAtLevel)), so drawn size == reserved width.
+                    // Draw at the same rounded level font runAdvancePx used to reserve this run's
+                    // width, so drawn size == reserved width.
                     val fallbackFont = nodeFontAtLevel(font)
                     val textEl = SvgTextElement().apply {
                         addClass(VECTOR_TEXT_CLASS)
                         addTSpan(SvgTSpanElement(run.text))
-                        // Formula-local baseline: x = cursor, y = 0. Parent groups carry any
-                        // sup/sub/fraction vertical offset by transforming this whole group.
+                        // Formula-local baseline: x = cursor, y = 0; parents apply any sup/sub/fraction offset.
                         x().set(cursorPx)
                         y().set(0.0)
                         setAttribute(SvgTextContent.TEXT_ANCHOR, SVG_TEXT_ANCHOR_START)
-                        // Bake the full font explicitly so this element is self-contained and not
-                        // re-sized by inherited/outer styling (see Label.applyStyle, Step 5). The
-                        // size is the level font size; family / weight / italic come from the formula.
+                        // Bake the full font so inherited/outer styling can't re-size it.
                         setAttribute(SvgTextContent.FONT_SIZE, "${fallbackFont.size}px")
                         setAttribute(SvgTextContent.FONT_FAMILY, fallbackFont.family.name)
                         if (fallbackFont.isBold) setAttribute(SvgTextContent.FONT_WEIGHT, "bold")
@@ -387,6 +335,41 @@ internal class Latex(
             }
             return g
         }
+
+        private fun segments(): List<Run> {
+            val runs = mutableListOf<Run>()
+            var start = 0
+            while (start < content.length) {
+                val supported = LatexVectorFont.isSupported(content[start])
+                var end = start + 1
+                while (end < content.length && LatexVectorFont.isSupported(content[end]) == supported) {
+                    end++
+                }
+                runs.add(Run(content.substring(start, end), supported))
+                start = end
+            }
+            return runs
+        }
+
+        // Shared per-run advance (px) used by both vectorWidth and renderVectorGroup, so a box's
+        // position never depends on how it's drawn. Supported: vector em-advances; unsupported: legacy estimator.
+        private fun runAdvancePx(run: Run, font: Font): Double {
+            return if (run.supported) {
+                run.text.sumOf { LatexVectorFont.advanceEm(it) } * levelFontSize(font)
+            } else {
+                widthCalculator(run.text, nodeFontAtLevel(font))
+            }
+        }
+
+        // The level font used by the legacy text estimator and fallback <text> paint.
+        private fun nodeFontAtLevel(font: Font): Font {
+            val sizePx = max(1, (font.size * INDEX_SIZE_FACTOR.pow(level)).roundToInt())
+            return Font(font.family, sizePx, font.isBold, font.isItalic)
+        }
+
+        // A maximal run of all-supported or all-unsupported chars. The supported-or-not decision
+        // lives only here, so measurement and rendering walk identical runs and can't drift.
+        private inner class Run(val text: String, val supported: Boolean)
     }
 
     private inner class GroupNode(children: List<LatexNode>, level: Int) : LatexNode(children, level) {
@@ -408,22 +391,6 @@ internal class Latex(
         }
     }
 
-    // Shift a line box up by `shift` (for a superscript): the top grows and the bottom shrinks
-    // (clamped at 0), mirroring the renderer's negative dy. Preserves LineBoxMetrics invariants.
-    private fun LineBoxMetrics.raisedBy(shift: Double): LineBoxMetrics {
-        val newTop = topToBaseline + shift
-        val newBottom = maxOf(0.0, bottomToBaseline - shift)
-        return LineBoxMetrics(boxHeight = newTop + newBottom, topToBaseline = newTop)
-    }
-
-    // Shift a line box down by `shift` (for a subscript): the bottom grows and the top shrinks
-    // (clamped at 0), mirroring the renderer's positive dy. Preserves LineBoxMetrics invariants.
-    private fun LineBoxMetrics.loweredBy(shift: Double): LineBoxMetrics {
-        val newBottom = bottomToBaseline + shift
-        val newTop = maxOf(0.0, topToBaseline - shift)
-        return LineBoxMetrics(boxHeight = newTop + newBottom, topToBaseline = newTop)
-    }
-
     private inner class SuperscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
         override val visualCharCount: Int = content.visualCharCount
         override fun vectorWidth(font: Font): Double = content.vectorWidth(font)
@@ -438,6 +405,12 @@ internal class Latex(
             g.children().add(contentGroup)
             return g
         }
+    }
+
+    private fun LineBoxMetrics.raisedBy(shift: Double): LineBoxMetrics {
+        val newTop = topToBaseline + shift
+        val newBottom = maxOf(0.0, bottomToBaseline - shift)
+        return LineBoxMetrics(boxHeight = newTop + newBottom, topToBaseline = newTop)
     }
 
     private inner class SubscriptNode(val content: LatexNode, level: Int) : LatexNode(listOf(content), level) {
@@ -456,7 +429,13 @@ internal class Latex(
         }
     }
 
-    // Nested fractions are not supported: numerator and denominator are assumed to contain non-fraction content.
+    private fun LineBoxMetrics.loweredBy(shift: Double): LineBoxMetrics {
+        val newBottom = bottomToBaseline + shift
+        val newTop = maxOf(0.0, topToBaseline - shift)
+        return LineBoxMetrics(boxHeight = newTop + newBottom, topToBaseline = newTop)
+    }
+
+    // Nested fractions are not supported: numerator/denominator must be non-fraction content.
     internal inner class FractionNode(
         private val numerator: LatexNode,
         private val denominator: LatexNode,
@@ -467,11 +446,10 @@ internal class Latex(
         private val fractionGap = 0.01
         // Bar rectangle thickness, em.
         private val barThickness = 0.06
-        // Extra allowance below the numerator, in em, equal to the nominal
-        // plain-text space below the baseline in the current layout model.
+        // Extra allowance below the numerator (em): the plain-text space below the baseline.
         private val numeratorBottomAllowance = 1.0 - TextMetricsEstimator.baselineRatio()
-        // Shift the bar baseline below the original line baseline by this amount (em). Redistributes
-        // gap from the numerator side to the denominator side without changing total fraction height.
+        // Shift the bar baseline below the line baseline by this (em), moving gap from the
+        // numerator side to the denominator side without changing total fraction height.
         private val barBaselineShift = 0.1
 
         override val visualCharCount: Int = max(numerator.visualCharCount, denominator.visualCharCount)
@@ -506,7 +484,6 @@ internal class Latex(
 
             val numShiftX = (fractionWidthPx - numWidth) / 2.0
             val denomShiftX = (fractionWidthPx - denomWidth) / 2.0
-            // Vertical positioning mirrors legacy FractionNode metrics.
             val numShiftY = -(barGlyphOffset + fractionGap + numeratorBottomAllowance) * em
             val denomTopToBaseline = denominator.vectorMetrics(font).topToBaseline
             val denomShiftY = denomTopToBaseline + (fractionGap - barGlyphOffset) * em
@@ -514,8 +491,6 @@ internal class Latex(
             numGroup.transform().set(SvgTransformBuilder().translate(numShiftX, numShiftY).build())
             denomGroup.transform().set(SvgTransformBuilder().translate(denomShiftX, denomShiftY).build())
 
-            // Bar: rectangle centered at y = (-barGlyphOffset + barBaselineShift) em, matching
-            // the visual position of the legacy en-dash glyph at its baseline shift.
             val barCenterY = (-barGlyphOffset + barBaselineShift) * em
             val barHalfThick = barThickness / 2.0 * em
             val barTop = barCenterY - barHalfThick
@@ -568,8 +543,7 @@ internal class Latex(
         private const val INDEX_RELATIVE_SHIFT = 0.4
         internal const val VECTOR_FORMULA_CLASS = "lp-latex-vector-formula"
         internal const val VECTOR_BBOX_CLASS = "lp-latex-vector-bbox"
-        // Marks a fallback <text> run emitted for an unsupported glyph; its font is baked
-        // explicitly so Label.applyStyle must not overwrite it (see Step 5).
+        // Fallback <text> run for an unsupported glyph; its font is baked, so Label.applyStyle must not overwrite it.
         internal const val VECTOR_TEXT_CLASS = "lp-latex-vector-text"
 
         private val GREEK_LETTERS = mapOf(
