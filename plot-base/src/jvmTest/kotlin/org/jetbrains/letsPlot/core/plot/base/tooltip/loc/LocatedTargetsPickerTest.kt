@@ -287,7 +287,8 @@ class LocatedTargetsPickerTest {
 
         assertThat(tooltipModels).hasSize(1)
         val mergedTooltip = tooltipModels.single()
-        assertThat(mergedTooltip.title).isEqualTo("x = 12")
+        // every block carries its own title; the renderer hoists a unanimous title into the box header
+        assertThat(mergedTooltip.blocks.map { it.title }).containsExactly("x = 12", "x = 12")
         assertThat(mergedTooltip.blocks).hasSize(2)
         assertThat(mergedTooltip.blocks.map { it.marker.majorColor }).containsExactly(Color.DARK_GREEN, Color.LIGHT_PINK)
         assertThat(mergedTooltip.blocks.flatMap { it.lines }.map(TooltipModel.Line::toString))

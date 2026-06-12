@@ -269,11 +269,6 @@ internal class LocatedTargetsPicker(
             return tooltipModels
         }
 
-        val commonTitle = generalTooltips
-            .mapNotNull(TooltipModel::title)
-            .distinct()
-            .singleOrNull()
-
         val primaryTooltip = generalTooltips.first()
 
         val mergedGeneralTooltip = TooltipModel(
@@ -281,20 +276,10 @@ internal class LocatedTargetsPicker(
             // merged tooltips draw no stem pointer; the stem length acts as a gap
             // between the box and the targets area, keeping point markers visible
             stemLength = TooltipHint.StemLength.NORMAL,
-            title = commonTitle,
-            blocks = generalTooltips.flatMap { tooltipModel ->
-                tooltipModel.blocks.map { block ->
-                    TooltipModel.Block(
-                        title = tooltipModel.title.takeIf { it != commonTitle } ?: block.title,
-                        marker = block.marker,
-                        lines = block.lines,
-                        targetCoord = block.targetCoord,
-                        targetRadius = block.targetRadius
-                    )
-                }
-            }.sortedWith( // read top-to-bottom, left-to-right - same order as target markers on the plot
-                compareBy(nullsLast(compareBy<DoubleVector>({ it.y }, { it.x }))) { it.targetCoord }
-            ),
+            blocks = generalTooltips.flatMap(TooltipModel::blocks)
+                .sortedWith( // read top-to-bottom, left-to-right - same order as target markers on the plot
+                    compareBy(nullsLast(compareBy<DoubleVector>({ it.y }, { it.x }))) { it.targetCoord }
+                ),
             fill = primaryTooltip.fill,
             isSide = false,
             anchor = primaryTooltip.anchor,

@@ -9,7 +9,7 @@ import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveResampler.Companion.resample
 import org.jetbrains.letsPlot.core.commons.geometry.PolylineSimplifier
 import org.jetbrains.letsPlot.core.plot.base.*
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.markerFactory
 import org.jetbrains.letsPlot.core.plot.base.render.svg.LinePath
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.CURSOR
@@ -69,7 +69,7 @@ class HexagonsHelper(
             hex,
             p.index(),
             GeomTargetCollector.TooltipParams(
-                marker = createColorMarkerMapper(ctx)(p)
+                marker = markerFactory(ctx)(p)
             ),
             tooltipPlacement = CURSOR
         )

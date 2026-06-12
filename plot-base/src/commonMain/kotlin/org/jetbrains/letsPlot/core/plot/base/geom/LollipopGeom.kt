@@ -50,7 +50,7 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
+        val colorsByDataPoint = HintColorUtil.markerFactory(ctx)
 
         val lollipops = mutableListOf<Lollipop>()
         for (p in aesthetics.dataPoints()) {
@@ -74,14 +74,14 @@ class LollipopGeom : GeomBase(), WithWidth, WithHeight {
         lollipop: Lollipop,
         helper: GeomHelper,
         targetCollector: GeomTargetCollector,
-        colorsByDataPoint: (DataPointAesthetics) -> TooltipMarker
+        markerFactory: (DataPointAesthetics) -> TooltipMarker
     ) {
         targetCollector.addPoint(
             lollipop.point.index(),
             helper.toClient(lollipop.head, lollipop.point)!!,
             lollipop.candyRadius,
             GeomTargetCollector.TooltipParams(
-                marker = colorsByDataPoint(lollipop.point)
+                marker = markerFactory(lollipop.point)
             )
         )
     }

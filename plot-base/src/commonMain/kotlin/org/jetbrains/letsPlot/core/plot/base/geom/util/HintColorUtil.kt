@@ -21,10 +21,8 @@ object HintColorUtil {
         return AestheticsUtil.resolveColor(p, applyAlpha = true)
     }
 
-    fun createColorMarkerMapper(
-        ctx: GeomContext,
-    ): (DataPointAesthetics) -> TooltipMarker {
-        return createColorMarkerMapper(
+    fun markerFactory(ctx: GeomContext): (DataPointAesthetics) -> TooltipMarker {
+        return markerFactory(
             ctx.geomKind(),
             isMappedFill = { p: DataPointAesthetics -> ctx.isMappedAes(p.fillAes) },
             isMappedColor = { p: DataPointAesthetics -> ctx.isMappedAes(p.colorAes) }
@@ -56,7 +54,7 @@ object HintColorUtil {
         }
     }
 
-    fun createColorMarkerMapper(
+    fun markerFactory(
         geomKind: GeomKind,
         isMappedFill: (DataPointAesthetics) -> Boolean,
         isMappedColor: (DataPointAesthetics) -> Boolean

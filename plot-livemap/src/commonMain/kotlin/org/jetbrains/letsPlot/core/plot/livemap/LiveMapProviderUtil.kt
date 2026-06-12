@@ -244,7 +244,7 @@ object LiveMapProviderUtil {
                     return search(layerIndex, coord)
                 }
 
-                private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(
+                private val colorMarkerMapper = HintColorUtil.markerFactory(
                     layer.geomKind,
                     isMappedFill = { p: DataPointAesthetics -> p.fillAes in layer.mappedAes },
                     isMappedColor = { p: DataPointAesthetics -> p.colorAes in layer.mappedAes }

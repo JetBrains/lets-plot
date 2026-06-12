@@ -23,7 +23,7 @@ object BarTooltipHelper {
         ctx: GeomContext,
         clientRectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         fillColorMapper: (DataPointAesthetics) -> Color? = { null },
-        colorMarkerMapper: (DataPointAesthetics) -> TooltipMarker = HintColorUtil.createColorMarkerMapper(ctx),
+        markerFactory: (DataPointAesthetics) -> TooltipMarker = HintColorUtil.markerFactory(ctx),
         defaultTooltipPlacement: TooltipHint.Placement = VERTICAL.takeIf { ctx.flipped } ?: HORIZONTAL
     ) {
         val helper = GeomHelper(pos, coord, ctx)
@@ -60,7 +60,7 @@ object BarTooltipHelper {
                 GeomTargetCollector.TooltipParams(
                     tooltipHints = hintConfigs.hints,
                     fillColor = fillColorMapper(p),
-                    marker = colorMarkerMapper(p)
+                    marker = markerFactory(p)
                 ),
                 tooltipPlacement = defaultTooltipPlacement
             )
