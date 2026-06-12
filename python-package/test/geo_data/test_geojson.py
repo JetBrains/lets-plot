@@ -1,7 +1,11 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from typing import List
+
+import pytest
+
+pytest.importorskip('geopandas')
 
 from lets_plot.geo_data.gis.geometry import Ring, Polygon, Multipolygon
 from lets_plot.geo_data.gis.json_response import GeoJson

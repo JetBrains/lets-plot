@@ -34,7 +34,7 @@ class TooltipModelFactoryTest : TooltipModelTestHelper() {
                     AES_WIDTH, TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        markerColors = emptyList()
+                        marker = emptyList()
                     )
                 )
                 .build()
@@ -63,7 +63,7 @@ class TooltipModelFactoryTest : TooltipModelTestHelper() {
                     AES_WIDTH, TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        markerColors = emptyList()
+                        marker = emptyList()
                     )
                 )
                 .build()
@@ -85,7 +85,7 @@ class TooltipModelFactoryTest : TooltipModelTestHelper() {
                     AES_WIDTH, TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        markerColors = emptyList()
+                        marker = emptyList()
                     )
                 )
                 .build(),

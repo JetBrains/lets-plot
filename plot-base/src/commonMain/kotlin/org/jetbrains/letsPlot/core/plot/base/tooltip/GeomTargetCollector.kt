@@ -51,15 +51,15 @@ interface GeomTargetCollector {
         val tooltipHints: Map<Aes<*>, TooltipHint> = emptyMap(),
         val stemLength: TooltipHint.StemLength = TooltipHint.StemLength.NORMAL,
         val fillColorFactory: (Int) -> Color? = { null },
-        val markerColorsFactory: ((Int) -> List<Color>) = { emptyList() },
+        val markerFactory: ((Int) -> List<Color>) = { emptyList() },
     ) {
         constructor(
             tooltipHints: Map<Aes<*>, TooltipHint> = emptyMap(),
             stemLength: TooltipHint.StemLength = TooltipHint.StemLength.NORMAL,
             fillColor: Color? = null,
-            markerColors: List<Color> = emptyList(),
+            marker: List<Color> = emptyList(),
         ) : this(
-            tooltipHints, stemLength, { fillColor }, { markerColors }
+            tooltipHints, stemLength, { fillColor }, { marker }
         )
     }
 }

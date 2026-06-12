@@ -4,7 +4,16 @@
 import io
 import tempfile
 
-from PIL import Image
+import pytest
+
+from lets_plot._type_utils import LazyModule
+
+pillow_image = LazyModule("PIL.Image")
+
+if pillow_image:
+    from PIL import Image
+else:
+    Image = None
 
 import lets_plot as gg
 
@@ -74,115 +83,108 @@ def temp_file(filename):
 def test_ggsave_svg():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave.svg'))
-
-    print("Output path:", out_path)
-
     assert_svg(out_path)
 
 def test_ggsave_svg_wh_default_unit_is_inch():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3)
-    print("Output path:", out_path)
     assert_svg(out_path, w="5.0in", h="3.0in", view_box="0 0 480.0 288.0")
 
 
 def test_ggsave_svg_wh_unit_cm():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_svg_wh.svg'), w=5, h=3, unit='cm')
-    print("Output path:", out_path)
     assert_svg(out_path, w="5.0cm", h="3.0cm", view_box="0 0 188.97637795275588 113.38582677165354")
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png.png'))
-    print("Output path:", out_path)
     assert_png(out_path, 800, 600)  # 2x scale by default
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_scale3():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_scale3.png'), scale=3)
-    print("Output path:", out_path)
     assert_png(out_path, 1200, 900)
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_dpi150():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_dpi150.png'), dpi=150)
-    print("Output path:", out_path)
     assert_png(out_path, 625, 468)  # 400*150/96, 300*150/96
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_wh():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh.png'), w=5, h=3)
-    print("Output path:", out_path)
     assert_png(out_path, 1500, 900)  #  5*300, 3*300
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_600x400():
-    # Should ask for explicit size unit
     p = gg.ggplot() + gg.geom_blank()
-
-    try:
+    with pytest.raises(
+        ValueError,
+        match="The image size was interpreted as inches, but it seems unusually large. Please specify the size unit explicitly \\(px, cm, mm, in\\)\\."
+    ):
         gg.ggsave(p, filename=temp_file('test_ggsave_png_600x400.png'), w=600, h=400)
-    except ValueError as e:
-        assert str(e) == "The image size was interpreted as inches, but it seems unusually large. Please specify the size unit explicitly (px, cm, mm, in)."
-        return
-
-    assert False, "Expected ValueError for missing unit"
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_wh_inch():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_inch.png'), w=5, h=3, unit='in')
-    print("Output path:", out_path)
     assert_png(out_path, 1500, 900)  #  5*300, 3*300
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_wh_cm():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_cm.png'), w=5, h=3, unit='cm')
-    print("Output path:", out_path)
     assert_png(out_path, 590, 356)  #  1.98inch * 300, 1.18inch * 300
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_wh_150dpi():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_150dpi.png'), w=5, h=3, unit='in', dpi=150)
-    print("Output path:", out_path)
     assert_png(out_path, 750, 450)  # 5*150, 3*150
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_wh_150dpi_scale2():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_150dpi_scale2.png'), w=5, h=3, unit='in', dpi=150, scale=2)
-    print("Output path:", out_path)
     assert_png(out_path, 1500, 900)  # 5*150*2, 3*150*2
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_wh_px():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px.png'), w=300, h=200, unit='px')
-    print("Output path:", out_path)
     assert_png(out_path, 300, 200)  # 300px, 200px, default dpi is None and the scale is 1.0 if user set w and h in px
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_wh_px_scale2():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_scale2.png'), w=300, h=200, unit='px', scale=2)
-    print("Output path:", out_path)
     assert_png(out_path, 600, 400)  # 300px, 200px, default dpi is None and the scale is 1.0 if user set w and h in px
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_png_wh_px_150dpi():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_png_wh_px_150dpi.png'), w=300, h=200, unit='px', dpi=150)
-    print("Output path:", out_path)
     assert_png(out_path, 300, 200)  #
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_filelike_ggsave_png():
     p = gg.ggplot() + gg.geom_blank() + gg.ggsize(400, 300)
     out_buffer = io.BytesIO()
@@ -191,76 +193,62 @@ def test_filelike_ggsave_png():
     assert_png(out_buffer, 400, 300)
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_pdf():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave.pdf'))
-
-    print("Output path:", out_path)
-
     with open(out_path, 'rb') as f:
         content = f.read()
         assert content.startswith(b'%PDF-1.')
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_pdf_5x3_inch():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_inch.pdf'), w=5, h=3, unit='in', scale=1)
-
-    print("Output path:", out_path)
-
     assert_pdf(out_path, w=5, h=3, unit='in')
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_pdf_5x3_inch_150dpi():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_inch_150dpi.pdf'), w=5, h=3, unit='in', dpi=150, scale=1)
-
-    print("Output path:", out_path)
-
     assert_pdf(out_path, w=5, h=3, unit='in')
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_pdf_5x3_inch_300dpi():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_inch_300dpi.pdf'), w=5, h=3, dpi=300, unit='in', scale=1)
-
-    print("Output path:", out_path)
-
     assert_pdf(out_path, w=5, h=3, unit='in')
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_pdf_5x3_inch_150dpi_2Xscale():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_inch_150dpi_2Xscale.pdf'), w=5, h=3, unit='in', dpi=150, scale=2)
-
-    print("Output path:", out_path)
-
     # Scale affects size, 5 * 2 = 10 inches, 3 * 2 = 6 inches
     assert_pdf(out_path, w=10, h=6, unit='in')
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_pdf_5x3_cm():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_cm.pdf'), w=5, h=3, unit='cm', scale=1)
-
-    print("Output path:", out_path)
-
     assert_pdf(out_path, w=5, h=3, unit='cm')
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_ggsave_pdf_5x3_cm_150dpi():
     p = gg.ggplot() + gg.geom_blank()
     out_path = gg.ggsave(p, filename=temp_file('test_ggsave_5x3_cm_150dpi.pdf'), w=5, h=3, unit='cm', dpi=150, scale=1)
-
-    print("Output path:", out_path)
-
     assert_pdf(out_path, w=5, h=3, unit='cm')
 
 
+@pytest.mark.skipif(not pillow_image, reason="Requires Pillow")
 def test_filelike_ggsave_pdf():
     p = gg.ggplot() + gg.geom_blank()
     out_buffer = io.BytesIO()
     p.to_pdf(path=out_buffer)
 
-    assert out_buffer.getvalue().startswith(b'%PDF-1.')  # Check if it starts with PDF header
-
+    assert out_buffer.getvalue().startswith(b'%PDF-1.')

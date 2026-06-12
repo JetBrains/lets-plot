@@ -44,7 +44,7 @@ abstract class TransformedTargetLocator(
             convertToPlotDistance(hint.objectRadius),
             hint.stemLength,
             hint.fillColor,
-            hint.markerColors
+            hint.marker
         )
     }
 

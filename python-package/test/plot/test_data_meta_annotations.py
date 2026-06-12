@@ -6,28 +6,35 @@ from datetime import timedelta
 # Python 3.9+ is required for ZoneInfo.
 from zoneinfo import ZoneInfo
 
-import numpy as np
-from pandas import DataFrame, Categorical
+import pytest
+
+from lets_plot._type_utils import LazyModule
+
+np = LazyModule('numpy')
+pd = LazyModule('pandas')
+pl = LazyModule('polars')
 
 from lets_plot import aes, ggplot, geom_point
 from lets_plot.mapping import as_discrete
 
-data_dict = {
-    'python_datetime': [(datetime(2020, 1, 1))],
-    'python_datetime_tz_utc': [(datetime(2020, 1, 1, tzinfo=timezone.utc))],
-    'python_datetime_tz_utc-6': [(datetime(2020, 1, 1, tzinfo=timezone(-timedelta(hours=6))))],  # CST = UTC-6
-    'python_datetime_tz_chicago': [(datetime(2020, 1, 1, tzinfo=timezone.utc).astimezone(ZoneInfo('America/Chicago')))],
-    'python_date': [(date(2020, 1, 1))],
-    'python_time': [(time(12, 30, 45))],
-    'np_datetime64': [np.datetime64('2020-01-01')],
-    'python_float': [0.0],
-    'python_int': [0],
-    'python_str': ['foo'],
-    'python_bool': [True],
-    'np_int': np.array([1], dtype=np.int64),
-    'np_float': np.array([1.0], dtype=np.float64),
-    'unknown': [type({})]
-}
+def _data_dict():
+    return {
+        'python_datetime': [(datetime(2020, 1, 1))],
+        'python_datetime_tz_utc': [(datetime(2020, 1, 1, tzinfo=timezone.utc))],
+        'python_datetime_tz_utc-6': [(datetime(2020, 1, 1, tzinfo=timezone(-timedelta(hours=6))))],  # CST = UTC-6
+        'python_datetime_tz_chicago': [(datetime(2020, 1, 1, tzinfo=timezone.utc).astimezone(ZoneInfo('America/Chicago')))],
+        'python_date': [(date(2020, 1, 1))],
+        'python_time': [(time(12, 30, 45))],
+        'np_datetime64': [np.datetime64('2020-01-01')],
+        'python_float': [0.0],
+        'python_int': [0],
+        'python_str': ['foo'],
+        'python_bool': [True],
+        'np_int': np.array([1], dtype=np.int64),
+        'np_float': np.array([1.0], dtype=np.float64),
+        'unknown': [type({})]
+    }
+
 expected_series_annotations = [
     {'column': 'python_datetime', 'type': 'datetime'},
     {'column': 'python_datetime_tz_utc', 'type': 'datetime', 'time_zone': 'UTC'},
@@ -186,24 +193,25 @@ def test_values_list_in_aes_doest_not_produce_series_annotations():
     assert p.as_dict()['data_meta'] == {}
 
 
+@pytest.mark.skipif(not np, reason='requires numpy')
 def test_as_annotated_data_dict():
-    p = ggplot(data_dict) + geom_point()
+    p = ggplot(_data_dict()) + geom_point()
     assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [
         {'column': 'unknown', 'type': "unknown(python:<class 'type'>)"}]
 
 
+@pytest.mark.skipif(not np or not pd, reason='requires numpy and pandas')
 def test_as_annotated_data_dataframe():
-    df = DataFrame(data_dict)
+    df = pd.DataFrame(_data_dict())
     p = ggplot(df) + geom_point()
     assert p.as_dict()['data_meta']['series_annotations'] == expected_series_annotations + [
         {'column': 'unknown', 'type': 'unknown(pandas:mixed)'}]
 
 
+@pytest.mark.skipif(not np or not pl, reason='requires numpy and polars')
 def test_as_annotated_data_polars_dataframe():
-    from polars import DataFrame as plDataFrame
-
     # Polars does not support Numpy datetime64 objects.
-    modified_data_dict = {key: value for key, value in data_dict.items() if key != 'np_datetime64'}
+    modified_data_dict = {key: value for key, value in _data_dict().items() if key != 'np_datetime64'}
 
     # Uodate expectations accordingly. 
     modified_expected_series_annotations = []
@@ -220,7 +228,7 @@ def test_as_annotated_data_polars_dataframe():
 
     # Test
 
-    df = plDataFrame(modified_data_dict)
+    df = pl.DataFrame(modified_data_dict)
     p = ggplot(df) + geom_point()
 
     assert p.as_dict()['data_meta']['series_annotations'] == modified_expected_series_annotations + [
@@ -263,20 +271,23 @@ def test_dict_with_mixed_int_float_series():
     ]
 
 
+@pytest.mark.skipif(not pd, reason='requires pandas')
 def test_pd_with_empty_series():
-    data = DataFrame({'x': [], 'y': []})
+    data = pd.DataFrame({'x': [], 'y': []})
     p = ggplot(data) + geom_point()
     assert p.as_dict()['data_meta'] == {}
 
 
+@pytest.mark.skipif(not pd, reason='requires pandas')
 def test_pd_with_none_series():
-    data = DataFrame({'x': [None], 'y': [None]})
+    data = pd.DataFrame({'x': [None], 'y': [None]})
     p = ggplot(data) + geom_point()
     assert p.as_dict()['data_meta'] == {}
 
 
+@pytest.mark.skipif(not pd, reason='requires pandas')
 def test_pd_with_mixed_int_float_series():
-    data = DataFrame({'x': [1, 1.0, 2, 2.0]})
+    data = pd.DataFrame({'x': [1, 1.0, 2, 2.0]})
     p = ggplot(data) + geom_point()
     assert p.as_dict()['data_meta']['series_annotations'] == [
         {'column': 'x', 'type': 'float'}
@@ -348,9 +359,10 @@ def test_with_mapping_annotations():
 # Pandas Categorical variables
 #
 
+@pytest.mark.skipif(not pd, reason='requires pandas')
 def test_pd_str_categorical_variable():
-    df = DataFrame({
-        'v': Categorical(['ch4', 'ch5', 'ch1', 'ch2'], categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
+    df = pd.DataFrame({
+        'v': pd.Categorical(['ch4', 'ch5', 'ch1', 'ch2'], categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
     })
 
     p = ggplot(df) + geom_point()
@@ -364,9 +376,10 @@ def test_pd_str_categorical_variable():
     ]
 
 
+@pytest.mark.skipif(not pd, reason='requires pandas')
 def test_pd_int_categorical_variable():
-    df = DataFrame({
-        'v': Categorical([4, 5, 2, 1], categories=[5, 4, 2, 1], ordered=True)
+    df = pd.DataFrame({
+        'v': pd.Categorical([4, 5, 2, 1], categories=[5, 4, 2, 1], ordered=True)
     })
 
     p = ggplot(df) + geom_point()
@@ -376,9 +389,10 @@ def test_pd_int_categorical_variable():
     ]
 
 
+@pytest.mark.skipif(not pd, reason='requires pandas')
 def test_pd_float_categorical_variable():
-    df = DataFrame({
-        'v': Categorical([4, 5, 2, 1], categories=[5.0, 4.0, 2.0, 1.0], ordered=True)
+    df = pd.DataFrame({
+        'v': pd.Categorical([4, 5, 2, 1], categories=[5.0, 4.0, 2.0, 1.0], ordered=True)
     })
 
     p = ggplot(df) + geom_point()
@@ -388,9 +402,10 @@ def test_pd_float_categorical_variable():
     ]
 
 
+@pytest.mark.skipif(not pd, reason='requires pandas')
 def test_pd_categorical_variable_with_order_from_mapping():
-    df = DataFrame({
-        'v': Categorical(values=['ch4', 'ch5', 'ch1', 'ch2'], categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
+    df = pd.DataFrame({
+        'v': pd.Categorical(values=['ch4', 'ch5', 'ch1', 'ch2'], categories=['ch5', 'ch4', 'ch2', 'ch1'], ordered=True)
     })
 
     p = ggplot(df, aes(x=as_discrete('v', order=-1))) + geom_point()
@@ -404,9 +419,8 @@ def test_pd_categorical_variable_with_order_from_mapping():
 # Polars Enum and Categorical variables
 #
 
+@pytest.mark.skipif(not pl, reason='requires polars')
 def test_polars_enum_variable():
-    import polars as pl
-
     df = pl.DataFrame({
         'v': pl.Series('v', ['ch4', 'ch5', 'ch1', 'ch2'], dtype=pl.Enum(['ch5', 'ch4', 'ch2', 'ch1']))
     })
@@ -422,9 +436,8 @@ def test_polars_enum_variable():
     ]
 
 
+@pytest.mark.skipif(not pl, reason='requires polars')
 def test_polars_categorical_variable():
-    import polars as pl
-
     # Note: In Polars v1.32.0 it does not seem possible to get categories in correct order from the Categorical dtype.
     # Fix me in future versions of Polars, maybe.
     df = pl.DataFrame({

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -28,6 +28,14 @@ object SvgUtils {
 
     fun fillAndOpacityStyle(color: Color, separator: String = ""): String {
         val (fill, fillOpacity) = splitColorAndOpacity(color)
+        return fillAndOpacityStyle(fill, fillOpacity, separator)
+    }
+
+    fun fillAndOpacityStyle(color: Color, fillOpacity: Double?, separator: String = ""): String {
+        return fillAndOpacityStyle(color.toHexColorNoAlpha(), fillOpacity?.toString(), separator)
+    }
+
+    private fun fillAndOpacityStyle(fill: String, fillOpacity: String?, separator: String = ""): String {
         return buildString {
             append("fill:$fill;$separator")
             if (fillOpacity != null) {

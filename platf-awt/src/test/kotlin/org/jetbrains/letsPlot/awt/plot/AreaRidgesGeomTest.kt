@@ -6,12 +6,27 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
-class AreaRidgesGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
+class AreaRidgesGeomTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "geoms"))
+
+    override fun currentTestName(): String? = currentTest.methodName
 
     @Test
-    fun `example from #674 Area ridges fill overlaps geometry borders when colors are repeated`() {
+    fun plot_geomAreaRidges_issue674Overlap() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -68,11 +83,13 @@ class AreaRidgesGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("area_ridges_geom_1.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#1 example from documentation geom_area_ridges`() {
+    fun plot_geomAreaRidges_docExample1() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -108,11 +125,13 @@ class AreaRidgesGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("area_ridges_geom_2.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#2 example from documentation geom_area_ridges`() {
+    fun plot_geomAreaRidges_docExample2() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -158,11 +177,13 @@ class AreaRidgesGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("area_ridges_geom_3.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `#3 example from documentation geom_area_ridges`() {
+    fun plot_geomAreaRidges_docExample3() {
         val spec = parsePlotSpec("""
             |{
             |  "data": {
@@ -211,11 +232,13 @@ class AreaRidgesGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
             |}
         """.trimMargin())
 
-        assertPlot("area_ridges_geom_4.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `area ridges with none`() {
+    fun plot_geomAreaRidges_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -261,6 +284,8 @@ class AreaRidgesGeomTest: VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("area_ridges_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 }

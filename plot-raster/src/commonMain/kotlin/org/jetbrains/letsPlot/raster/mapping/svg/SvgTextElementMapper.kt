@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -67,9 +67,10 @@ internal class SvgTextElementMapper(
             val color = style.safeColor ?: resolveInheritedTextColor(source, styleSheet)
             if (color != null) {
                 target.fill = color
+                style.fillOpacity?.let { target.fillOpacity = it.toFloat() }
                 myTextAttrSupport.setAttribute(
                     SvgConstants.SVG_STYLE_ATTRIBUTE,
-                    SvgUtils.fillAndOpacityStyle(color)
+                    SvgUtils.fillAndOpacityStyle(color, style.fillOpacity)
                 )
             }
             target.fontFamily = style.family.split(",").map { it.trim(' ', '"') }
@@ -152,6 +153,9 @@ internal class SvgTextElementMapper(
                     style?.safeColor?.let {
                         fill = it
                     }
+                    style?.fillOpacity?.let {
+                        fillOpacity = it.toFloat()
+                    }
 
                     SvgTSpanElementAttrMapping.setAttributes(this, node)
                 }
@@ -164,6 +168,10 @@ internal class SvgTextElementMapper(
                     val classStyle = styleSheet.getTextStyle(className)
                     classStyle.safeColor?.let {
                         tspan.fill = it
+                    }
+
+                    classStyle.fillOpacity?.let {
+                        tspan.fillOpacity = it.toFloat()
                     }
 
                     classStyle.safeSize?.let {

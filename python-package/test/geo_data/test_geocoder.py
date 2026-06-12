@@ -1,8 +1,12 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from typing import Optional, Union, List, Callable
 from unittest import mock
+
+import pytest
+
+pytest.importorskip('geopandas')
 
 import shapely
 

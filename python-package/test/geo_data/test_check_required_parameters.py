@@ -1,9 +1,11 @@
-#  Copyright (c) 2020. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 from typing import Optional, List
 
 import pytest
+
+pytest.importorskip('geopandas')
 
 from lets_plot.geo_data.gis.request import MapRegion, RegionQuery, MISSING_LEVEL_AND_SCOPE_OR_REQUEST_EXCEPTION_TEXT, \
     MISSING_LEVEL_OR_REQUEST_EXCEPTION_TEXT, GeocodingRequest, \
@@ -40,4 +42,3 @@ def test_args_that_fail(region_queries: List[RegionQuery],
 def test_args_that_pass(region_queries: List[RegionQuery],
                         level: Optional[LevelKind]):
     GeocodingRequest._check_required_parameters(region_queries, level)
-

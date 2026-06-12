@@ -18,7 +18,7 @@ import org.junit.Rule
 import org.junit.rules.TestName
 import kotlin.test.Test
 
-class PlotLatexTest : PlotVisualTestBase() {
+class LatexTest : PlotVisualTestBase() {
     @get:Rule
     var currentTest = TestName()
 
@@ -463,7 +463,7 @@ class PlotLatexTest : PlotVisualTestBase() {
     }
 
     @Test
-    fun plot_latex_geomLabelRegressionHjustMatrix() {
+    fun plot_latex_geomLabelHjustMatrix() {
         val spec = """
             {
               "ggsize": {

@@ -42,10 +42,11 @@ fun ExtraPropertiesExtension.getOrNull(name: String): Any? = if (has(name)) {
 
 val os: OperatingSystem = OperatingSystem.current()
 val letsPlotTaskGroup by extra { "lets-plot" }
+val letsPlotJvmToolchainVersion = project.property("jvm.toolchain.version")?.toString()?.toIntOrNull() ?: error("Invalid JVM toolchain version. Check 'jvm.toolchain.version' project property.")
 
 allprojects {
     group = "org.jetbrains.lets-plot"
-    version = "4.10.1-SNAPSHOT" // see also: python-package/lets_plot/_version.py
+    version = "4.10.4-SNAPSHOT" // see also: python-package/lets_plot/_version.py
 //    version = "0.0.0-SNAPSHOT"  // for local publishing only
 
     // Generate JVM 1.8 bytecode
@@ -297,18 +298,18 @@ subprojects {
 
 // Configure Lets-Plot Core multiplatform modules.
 val multiPlatformCoreModulesForPublish = listOf(
+    "canvas",
     "commons",
     "datamodel",
-    "canvas",
     "gis",
     "livemap",
+    "platf-w3c",
     "plot-base",
     "plot-builder",
+    "plot-livemap",
     "plot-raster",
     "plot-stem",
-    "plot-livemap",
     "visual-testing",
-    "platf-w3c",
     "wasmjs-package"
 )
 
@@ -507,8 +508,21 @@ val cleanAndPublishSnapshotToMavenLocal by tasks.registering {
     }
 }
 
-// Fix warnings in all projects.
 subprojects {
+    // Set toolchain version (required for visual-testing)
+    plugins.withId("org.jetbrains.kotlin.multiplatform") {
+        extensions.configure<KotlinMultiplatformExtension> {
+            jvmToolchain(letsPlotJvmToolchainVersion)
+        }
+    }
+
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        extensions.configure<KotlinJvmProjectExtension> {
+            jvmToolchain(letsPlotJvmToolchainVersion)
+        }
+    }
+
+    // Fix warnings in all projects.
     fun KotlinCommonCompilerOptions.configCompilerWarnings() {
         freeCompilerArgs.addAll(
             // Suppress expect/actual classes are in Beta warning.

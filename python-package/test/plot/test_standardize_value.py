@@ -5,11 +5,16 @@ import decimal
 import math
 from datetime import datetime, date, time, timezone, timedelta
 
-import jax.numpy as jnp
-import numpy as np
-import pandas as pd
-import polars as pl
 import pytest
+
+from lets_plot._type_utils import LazyModule
+
+np = LazyModule('numpy')
+pd = LazyModule('pandas')
+jax = LazyModule('jax')
+pl = LazyModule('polars')
+shapely = LazyModule('shapely')
+gpd = LazyModule('geopandas')
 
 from lets_plot._type_utils import _standardize_value, is_ndarray, LazyModule
 
@@ -40,7 +45,8 @@ def test_standardize_containers():
     assert _standardize_value({'a': 8, 'b': 9}) == {'a': 8.0, 'b': 9.0}
 
 
-def test_standardize_external_numeric_types():
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_standardize_external_numeric_types_numpy():
     # NumPy numeric types
     assert _standardize_value([np.int8(8)]) == [8.0]
     assert _standardize_value([np.int16(16)]) == [16.0]
@@ -54,15 +60,19 @@ def test_standardize_external_numeric_types():
     assert _standardize_value([np.float32(3.2)]) == [3.200000047683716]
     assert _standardize_value([np.float64(6.4)]) == [6.4]
 
+
+@pytest.mark.skipif(not jax, reason='requires jax')
+def test_standardize_external_numeric_types_jax():
     # JAX numeric types
-    assert _standardize_value([jnp.int8(8)]) == [8.0]
-    assert _standardize_value([jnp.int16(16)]) == [16.0]
-    assert _standardize_value([jnp.int32(32)]) == [32.0]
-    assert _standardize_value([jnp.float16(1.6)]) == [1.599609375]
-    assert _standardize_value([jnp.float32(3.2)]) == [3.200000047683716]
+    assert _standardize_value([jax.numpy.int8(8)]) == [8.0]
+    assert _standardize_value([jax.numpy.int16(16)]) == [16.0]
+    assert _standardize_value([jax.numpy.int32(32)]) == [32.0]
+    assert _standardize_value([jax.numpy.float16(1.6)]) == [1.599609375]
+    assert _standardize_value([jax.numpy.float32(3.2)]) == [3.200000047683716]
 
 
-def test_standardize_external_temporal_types():
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_standardize_external_temporal_types_numpy():
     # NumPy datetime64
     assert _standardize_value([np.datetime64('2023-01-01')]) == [1672531200000.0]
     assert _standardize_value([np.datetime64('2023-01-01T12:30:45')]) == [1672576245000.0]
@@ -76,6 +86,9 @@ def test_standardize_external_temporal_types():
     assert _standardize_value([np.timedelta64(500, 'ms')]) == [500.0]
     assert _standardize_value([np.timedelta64('NaT')]) == [None]
 
+
+@pytest.mark.skipif(not pd, reason='requires pandas')
+def test_standardize_external_temporal_types_pandas():
     # Pandas Timestamp and Timedelta
     assert _standardize_value([pd.Timestamp('2023-01-01')]) == [1672531200000.0]
     assert _standardize_value([pd.Timestamp('2023-01-01T12:30:45')]) == [1672576245000.0]
@@ -87,16 +100,22 @@ def test_standardize_external_temporal_types():
     assert _standardize_value([pd.NaT]) == [None]
 
 
-def test_standardize_value_returns_na_for_missing_values():
+def test_standardize_value_returns_na_for_missing_values_python():
     # Standard Python missing values
     assert _standardize_value([None]) == [None]
     assert _standardize_value([float('nan')]) == [None]
     assert _standardize_value([math.nan]) == [None]
 
+
+@pytest.mark.skipif(not pd, reason='requires pandas')
+def test_standardize_value_returns_na_for_missing_values_pandas():
     # Pandas missing values
     assert _standardize_value([pd.NaT]) == [None]
     assert _standardize_value([pd.NA]) == [None]
 
+
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_standardize_value_returns_na_for_missing_values_numpy():
     # NumPy floating NaNs
     assert _standardize_value([np.nan]) == [None]
     assert _standardize_value([np.float16('nan')]) == [None]
@@ -107,6 +126,8 @@ def test_standardize_value_returns_na_for_missing_values():
     assert _standardize_value([np.datetime64('NaT')]) == [None]
     assert _standardize_value([np.timedelta64('NaT')]) == [None]
 
+
+def test_standardize_value_returns_na_for_missing_values_decimal():
     # Python standard library NaNs
     assert _standardize_value([decimal.Decimal('NaN')]) == [None]
     assert _standardize_value([decimal.Decimal('sNaN')]) == [None]
@@ -114,82 +135,116 @@ def test_standardize_value_returns_na_for_missing_values():
     assert _standardize_value([decimal.Decimal('-Infinity')]) == [None]
 
 
-def test_collection_of_strings():
+def test_collection_of_strings_python():
     assert _standardize_value(['foo']) == ['foo']
 
+
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_collection_of_strings_numpy():
     # NumPy array of strings
     assert _standardize_value(np.array(['foo'])) == ['foo']
     assert _standardize_value(np.array(['foo'])) == ['foo']
 
+
+@pytest.mark.skipif(not pd, reason='requires pandas')
+def test_collection_of_strings_pandas():
     # Pandas Series and array of strings
     assert _standardize_value(pd.Series(['foo'])) == ['foo']
     assert _standardize_value(pd.array(['foo'])) == ['foo']
 
     # JAX array of strings does not support string data types
     # TypeError: Value 'foo' with dtype <U3 is not a valid JAX array type. Only arrays of numeric types are supported by JAX.
-    #assert _standardize_value(jnp.array(['foo'])) == ['foo']
+    # assert _standardize_value(jnp.array(['foo'])) == ['foo']
 
 
-def test_collection_of_integers():
+def test_collection_of_integers_python():
     # Standard Python integers
     assert _standardize_value([1, 2, 3]) == [1.0, 2.0, 3.0]
 
+
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_collection_of_integers_numpy():
     # NumPy array of integers
     assert _standardize_value(np.array([1, 2, 3], dtype=np.int32)) == [1.0, 2.0, 3.0]
 
+
+@pytest.mark.skipif(not pd, reason='requires pandas')
+def test_collection_of_integers_pandas():
     # Pandas Series and array of integers
     assert _standardize_value(pd.Series([1, 2, 3], dtype=pd.Int64Dtype())) == [1.0, 2.0, 3.0]
     assert _standardize_value(pd.array([1, 2, 3], dtype=pd.Int64Dtype())) == [1.0, 2.0, 3.0]
 
+
+@pytest.mark.skipif(not jax, reason='requires jax')
+def test_collection_of_integers_jax():
     # JAX array of integers
-    assert _standardize_value(jnp.array([1, 2, 3], dtype=jnp.int32)) == [1.0, 2.0, 3.0]
+    assert _standardize_value(jax.numpy.array([1, 2, 3], dtype=jax.numpy.int32)) == [1.0, 2.0, 3.0]
 
 
-def test_collection_of_floats():
+def test_collection_of_floats_python():
     # Standard Python floats
     assert _standardize_value([1.5, 2.5, 3.5]) == [1.5, 2.5, 3.5]
 
+
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_collection_of_floats_numpy():
     # NumPy array of floats
     assert _standardize_value(np.array([1.5, 2.5, 3.5], dtype=np.float32)) == [1.5, 2.5, 3.5]
 
+
+@pytest.mark.skipif(not pd, reason='requires pandas')
+def test_collection_of_floats_pandas():
     # Pandas Series and array of floats
     assert _standardize_value(pd.Series([1.5, 2.5, 3.5], dtype=pd.Float64Dtype())) == [1.5, 2.5, 3.5]
     assert _standardize_value(pd.array([1.5, 2.5, 3.5], dtype=pd.Float64Dtype())) == [1.5, 2.5, 3.5]
 
+
+@pytest.mark.skipif(not jax, reason='requires jax')
+def test_collection_of_floats_jax():
     # JAX array of floats
-    assert _standardize_value(jnp.array([1.5, 2.5, 3.5])) == [1.5, 2.5, 3.5]
+    assert _standardize_value(jax.numpy.array([1.5, 2.5, 3.5])) == [1.5, 2.5, 3.5]
 
 
-def test_collection_of_nans():
+def test_collection_of_nans_python():
     # Test that collections containing NaN values are standardized to None
     assert _standardize_value([float('nan'), math.nan, None]) == [None, None, None]
 
-    # NumPy array and Pandas Series of NaN values
+
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_collection_of_nans_numpy():
     assert _standardize_value(np.array([np.nan], dtype=np.float32)) == [None]
     assert _standardize_value(np.array([np.nan, np.nan], dtype=np.float32)) == [None, None]
-    assert _standardize_value(np.array(np.nan, dtype=np.float32)) == None  # 0D array to list to match pandas behavior
-    assert _standardize_value(np.array(np.datetime64('NaT'))) == None  # 0D array to list to match pandas behavior
+    assert _standardize_value(np.array(np.nan, dtype=np.float32)) is None  # 0D array to list to match pandas behavior
+    assert _standardize_value(np.array(np.datetime64('NaT'))) is None  # 0D array to list to match pandas behavior
 
-    # Pandas Series of NaN values
+
+@pytest.mark.skipif(not pd, reason='requires pandas')
+def test_collection_of_nans_pandas():
     assert _standardize_value(pd.Series(pd.NA)) == [None]
     assert _standardize_value(pd.array([pd.NA])) == [None]
 
-    # JAX array of NaN values
-    assert _standardize_value(jnp.array(float('nan'))) == None
-    assert _standardize_value(jnp.array([float('nan')])) == [None]
+
+@pytest.mark.skipif(not jax, reason='requires jax')
+def test_collection_of_nans_jax():
+    assert _standardize_value(jax.numpy.array(float('nan'))) is None
+    assert _standardize_value(jax.numpy.array([float('nan')])) == [None]
 
 
-def test_collection_of_none():
+def test_collection_of_none_python():
     # Test that collections containing None values are standardized correctly
     assert _standardize_value([None]) == [None]
     assert _standardize_value((None,)) == [None]
     assert _standardize_value({None}) == [None]
     assert _standardize_value({None: None}) == {None: None}
 
-    # NumPy array and Pandas Series of None values
+
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_collection_of_none_numpy():
     assert _standardize_value(np.array([None])) == [None]
 
-    # Pandas Series of None values
+
+@pytest.mark.skipif(not pd, reason='requires pandas')
+def test_collection_of_none_pandas():
     assert _standardize_value(pd.Series([None])) == [None]
     assert _standardize_value(pd.array([None])) == [None]
 
@@ -197,25 +252,32 @@ def test_collection_of_none():
     # ValueError: None is not a valid value for jnp.array
 
 
-def test_empty_collections():
+def test_empty_collections_python():
     # Test that empty collections are standardized correctly
     assert _standardize_value([]) == []
     assert _standardize_value(()) == []
     assert _standardize_value(set()) == []
     assert _standardize_value({}) == {}
 
-    # NumPy array and Pandas Series of empty collections
+
+@pytest.mark.skipif(not np, reason='requires numpy')
+def test_empty_collections_numpy():
     assert _standardize_value(np.array([])) == []
 
-    # Pandas Series of empty collections
+
+@pytest.mark.skipif(not pd, reason='requires pandas')
+def test_empty_collections_pandas():
     assert _standardize_value(pd.Series([])) == []
     assert _standardize_value(pd.array([])) == []
 
-    # JAX array of empty collections
-    assert _standardize_value(jnp.array([])) == []
+
+@pytest.mark.skipif(not jax, reason='requires jax')
+def test_empty_collections_jax():
+    assert _standardize_value(jax.numpy.array([])) == []
 
 
 @pytest.mark.timeout(10)
+@pytest.mark.skipif(not np or not pd, reason='requires numpy and pandas')
 def test_perf_float_numpy_array():
     huge_arr = np.full((3_000 * 3_000), 42.0, dtype=np.float32)
 
@@ -227,14 +289,15 @@ def test_perf_float_numpy_array():
 
     assert len(result) == 9_000_000
 
-    assert result[0] is None      # NaN converted to None
-    assert result[1] is None      # +Inf converted to None
-    assert result[2] is None      # -Inf converted to None
-    assert result[3] == 42.0      # Normal constant untouched
-    assert result[-1] == 42.0    # Normal constant untouched
+    assert result[0] is None  # NaN converted to None
+    assert result[1] is None  # +Inf converted to None
+    assert result[2] is None  # -Inf converted to None
+    assert result[3] == 42.0  # Normal constant untouched
+    assert result[-1] == 42.0  # Normal constant untouched
 
 
 @pytest.mark.timeout(10)
+@pytest.mark.skipif(not np or not pd, reason='requires numpy and pandas')
 def test_perf_float_pandas_array():
     large_array = pd.array([42.0] * (3_000 * 3_000))
     large_array[0] = np.nan
@@ -244,14 +307,15 @@ def test_perf_float_pandas_array():
     standardized_large_array = _standardize_value(pd.DataFrame({'data': large_array}))['data']
 
     assert len(standardized_large_array) == 9000000
-    assert standardized_large_array[0] is None      # NaN converted to None
-    assert standardized_large_array[1] is None      # +Inf converted to None
-    assert standardized_large_array[2] is None      # -Inf converted to None
-    assert standardized_large_array[3] == 42.0      # Normal constant untouched
-    assert standardized_large_array[-1] == 42.0     # Normal constant untouched
+    assert standardized_large_array[0] is None  # NaN converted to None
+    assert standardized_large_array[1] is None  # +Inf converted to None
+    assert standardized_large_array[2] is None  # -Inf converted to None
+    assert standardized_large_array[3] == 42.0  # Normal constant untouched
+    assert standardized_large_array[-1] == 42.0  # Normal constant untouched
 
 
 @pytest.mark.timeout(10)
+@pytest.mark.skipif(not np or not pd, reason='requires numpy and pandas')
 def test_perf_float_pandas_series():
     large_series = pd.Series([42.0] * (3_000 * 3_000))
     large_series[0] = np.nan
@@ -261,33 +325,37 @@ def test_perf_float_pandas_series():
     standardized_large_series = _standardize_value(pd.DataFrame({'data': large_series}))['data']
 
     assert len(standardized_large_series) == 9000000
-    assert standardized_large_series[0] is None      # NaN converted to None
-    assert standardized_large_series[1] is None      # +Inf converted to None
-    assert standardized_large_series[2] is None      # -Inf converted to None
-    assert standardized_large_series[3] == 42.0      # Normal constant untouched
-    assert standardized_large_series[-1] == 42.0     # Normal constant untouched
+    assert standardized_large_series[0] is None  # NaN converted to None
+    assert standardized_large_series[1] is None  # +Inf converted to None
+    assert standardized_large_series[2] is None  # -Inf converted to None
+    assert standardized_large_series[3] == 42.0  # Normal constant untouched
+    assert standardized_large_series[-1] == 42.0  # Normal constant untouched
 
 
 @pytest.mark.timeout(10)
+@pytest.mark.skipif(not jax, reason='requires jax')
+@pytest.mark.skipif(not pd, reason='requires pandas')
 def test_perf_float_jax_array():
-    huge_arr = jnp.full((3_000 * 3_000), 42.0, dtype=jnp.float32)
+    huge_arr = jax.numpy.full((3_000 * 3_000), 42.0, dtype=jax.numpy.float32)
 
-    huge_arr = huge_arr.at[0].set(jnp.nan)
-    huge_arr = huge_arr.at[1].set(jnp.inf)
-    huge_arr = huge_arr.at[2].set(-jnp.inf)
+    huge_arr = huge_arr.at[0].set(jax.numpy.nan)
+    huge_arr = huge_arr.at[1].set(jax.numpy.inf)
+    huge_arr = huge_arr.at[2].set(-jax.numpy.inf)
 
     result = _standardize_value(pd.DataFrame({'data': huge_arr}))['data']
 
     assert len(result) == 9_000_000
 
-    assert result[0] is None      # NaN converted to None
-    assert result[1] is None      # +Inf converted to None
-    assert result[2] is None      # -Inf converted to None
-    assert result[3] == 42.0      # Normal constant untouched
-    assert result[-1] == 42.0    # Normal constant untouched
+    assert result[0] is None  # NaN converted to None
+    assert result[1] is None  # +Inf converted to None
+    assert result[2] is None  # -Inf converted to None
+    assert result[3] == 42.0  # Normal constant untouched
+    assert result[-1] == 42.0  # Normal constant untouched
 
 
 @pytest.mark.timeout(10)
+@pytest.mark.skipif(not pl, reason='requires polars')
+@pytest.mark.skipif(not np, reason='requires numpy')
 def test_perf_float_polars_series():
     large_series = pl.Series([42.0] * (3_000 * 3_000))
     large_series[0] = np.nan
@@ -297,14 +365,15 @@ def test_perf_float_polars_series():
     standardized_large_series = _standardize_value(pl.DataFrame({'data': large_series}))['data']
 
     assert len(standardized_large_series) == 9000000
-    assert standardized_large_series[0] is None      # NaN converted to None
-    assert standardized_large_series[1] is None      # +Inf converted to None
-    assert standardized_large_series[2] is None      # -Inf converted to None
-    assert standardized_large_series[3] == 42.0      # Normal constant untouched
-    assert standardized_large_series[-1] == 42.0     # Normal constant untouched
+    assert standardized_large_series[0] is None  # NaN converted to None
+    assert standardized_large_series[1] is None  # +Inf converted to None
+    assert standardized_large_series[2] is None  # -Inf converted to None
+    assert standardized_large_series[3] == 42.0  # Normal constant untouched
+    assert standardized_large_series[-1] == 42.0  # Normal constant untouched
 
 
 @pytest.mark.timeout(10)
+@pytest.mark.skipif(not np or not pd, reason='requires numpy and pandas')
 def test_perf_datetime_numpy_array():
     huge_arr = np.array([np.datetime64('2023-01-01T12:30:45')] * (3_000 * 3_000))
 
@@ -316,13 +385,14 @@ def test_perf_datetime_numpy_array():
 
     assert len(result) == 9_000_000
 
-    assert result[0] is None      # NaT converted to None
-    assert result[1] is None      # NaT converted to None
-    assert result[2] is None      # NaT converted to None
-    assert result[3] == 1672576245000.0      # Normal datetime converted to epoch millis
-    assert result[-1] == 1672576245000.0    # Normal datetime converted to epoch millis
+    assert result[0] is None  # NaT converted to None
+    assert result[1] is None  # NaT converted to None
+    assert result[2] is None  # NaT converted to None
+    assert result[3] == 1672576245000.0  # Normal datetime converted to epoch millis
+    assert result[-1] == 1672576245000.0  # Normal datetime converted to epoch millis
 
 
+@pytest.mark.skipif(not np, reason='requires numpy')
 def _make_pandas_datetime_array(n):
     # Build via numpy to avoid per-element Python boxing of pd.Timestamp objects.
     buf = np.full(n, np.datetime64('2023-01-01T12:30:45', 'ns'))
@@ -331,75 +401,75 @@ def _make_pandas_datetime_array(n):
 
 
 @pytest.mark.timeout(10)
+@pytest.mark.skipif(not np or not pd, reason='requires numpy and pandas')
 def test_perf_datetime_pandas_array():
     large_array = pd.array(_make_pandas_datetime_array(3_000 * 3_000), dtype='datetime64[ns]')
 
     standardized_large_array = _standardize_value(pd.DataFrame({'data': large_array}))['data']
 
     assert len(standardized_large_array) == 9000000
-    assert standardized_large_array[0] is None      # NaT converted to None
-    assert standardized_large_array[1] is None      # NaT converted to None
-    assert standardized_large_array[2] is None      # NaT converted to None
-    assert standardized_large_array[3] == 1672576245000.0      # Normal datetime converted to epoch millis
-    assert standardized_large_array[-1] == 1672576245000.0     # Normal datetime converted to epoch millis
+    assert standardized_large_array[0] is None  # NaT converted to None
+    assert standardized_large_array[1] is None  # NaT converted to None
+    assert standardized_large_array[2] is None  # NaT converted to None
+    assert standardized_large_array[3] == 1672576245000.0  # Normal datetime converted to epoch millis
+    assert standardized_large_array[-1] == 1672576245000.0  # Normal datetime converted to epoch millis
 
 
 @pytest.mark.timeout(10)
+@pytest.mark.skipif(not np or not pd, reason='requires numpy and pandas')
 def test_perf_datetime_pandas_series():
     large_series = pd.Series(_make_pandas_datetime_array(3_000 * 3_000), dtype='datetime64[ns]')
 
     standardized_large_series = _standardize_value(pd.DataFrame({'data': large_series}))['data']
 
     assert len(standardized_large_series) == 9000000
-    assert standardized_large_series[0] is None      # NaT converted to None
-    assert standardized_large_series[1] is None      # NaT converted to None
-    assert standardized_large_series[2] is None      # NaT converted to None
-    assert standardized_large_series[3] == 1672576245000.0      # Normal datetime converted to epoch millis
-    assert standardized_large_series[-1] == 1672576245000.0     # Normal datetime converted to epoch millis
+    assert standardized_large_series[0] is None  # NaT converted to None
+    assert standardized_large_series[1] is None  # NaT converted to None
+    assert standardized_large_series[2] is None  # NaT converted to None
+    assert standardized_large_series[3] == 1672576245000.0  # Normal datetime converted to epoch millis
+    assert standardized_large_series[-1] == 1672576245000.0  # Normal datetime converted to epoch millis
 
 
+@pytest.mark.skipif(not np, reason='requires numpy')
+@pytest.mark.skipif(not jax, reason='requires jax')
 def test_is_ndarray():
-    assert is_ndarray(np.array([1, 2, 3])) == True
-    assert is_ndarray(jnp.array([4, 5, 6])) == True
+    assert is_ndarray(np.array([1, 2, 3]))
+    assert is_ndarray(jax.numpy.array([4, 5, 6]))
 
 
+@pytest.mark.skipif(not np, reason='requires numpy')
+@pytest.mark.skipif(not jax, reason='requires jax')
 def test_lazy_is_instance():
     lazy_numpy = LazyModule('numpy')
-    assert lazy_numpy.lazy_is_instance(np.array([1, 2, 3]), 'ndarray') == True
+    assert lazy_numpy.lazy_is_instance(np.array([1, 2, 3]), 'ndarray')
 
     lazy_jax = LazyModule('jax')
-    assert lazy_jax.lazy_is_instance(jnp.array([1, 2, 3]), 'numpy.ndarray') == True
+    assert lazy_jax.lazy_is_instance(jax.numpy.array([1, 2, 3]), 'numpy.ndarray')
 
 
+@pytest.mark.skipif(not shapely, reason='requires shapely')
 def test_shapely_geometry():
-    from shapely.geometry import Point, Polygon
-
-    # Test with a Point geometry
-    point = Point(1, 2)
+    point = shapely.geometry.Point(1, 2)
     standardized_point = _standardize_value(point)
     assert standardized_point == '{"type": "Point", "coordinates": [1.0, 2.0]}'
 
-    # Test with a Polygon geometry
-    polygon = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
+    polygon = shapely.geometry.Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
     standardized_polygon = _standardize_value(polygon)
     assert standardized_polygon == '{"type": "Polygon", "coordinates": [[[0.0, 0.0], [1.0, 0.0], [1.0, 1.0], [0.0, 1.0], [0.0, 0.0]]]}'
 
 
+@pytest.mark.skipif(not gpd, reason='requires geopandas')
 def test_geodataframe_with_shapely_geometry():
-    import geopandas as gpd
-    from shapely.geometry import Point
-
     # Create a GeoDataFrame with a Point geometry
-    gdf = gpd.GeoDataFrame({'geometry': [Point(1, 2)]})
+    gdf = gpd.GeoDataFrame({'geometry': [shapely.geometry.Point(1, 2)]})
 
     standardized_gdf = _standardize_value(gdf)
 
     assert standardized_gdf['geometry'][0] == '{"type": "Point", "coordinates": [1.0, 2.0]}'
 
 
+@pytest.mark.skipif(not pl, reason='requires polars')
 def test_standardize_value_polars_enum_and_categorical():
-    import polars as pl
-
     # Create a Polars DataFrame with Enum and Categorical columns
     df = pl.DataFrame({
         'enum_col': pl.Series('enum_col', ['a', 'b', 'c', 'a', 'b'],
@@ -423,6 +493,7 @@ def test_standardize_value_polars_enum_and_categorical():
     assert all(isinstance(v, str) for v in standardized_df['categorical_col'])
 
 
+@pytest.mark.skipif(not np, reason='requires numpy')
 def test_datetime_and_datetime64_consistent_epoch_millis():
     # Test specific date/times
     test_cases = [
@@ -504,6 +575,7 @@ def test_time_to_millis_since_midnight():
         assert time_ms == float(manual_ms)
 
 
+@pytest.mark.skipif(not np, reason='requires numpy')
 def test_standardize_value_datetime_consistency():
     # Test that a collection of 'datetime' values is standardized consistently regardless of the collection type.
 
@@ -525,6 +597,7 @@ def test_standardize_value_datetime_consistency():
     assert standardized_list == standardized_array
 
 
+@pytest.mark.skipif(not np, reason='requires numpy')
 def test_standardize_value_numpy_datetime64_consistency():
     # Test that a collection of numpy 'datetime64' values is standardized consistently regardless of the collection type.
 
@@ -544,5 +617,3 @@ def test_standardize_value_numpy_datetime64_consistency():
     assert standardized_start_time == standardized_array[0]
 
     assert standardized_list == standardized_array
-
-

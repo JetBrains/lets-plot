@@ -6,6 +6,14 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -13,9 +21,17 @@ import kotlin.test.Test
 import kotlin.test.assertTrue
 import kotlin.time.measureTime
 
-class PlotRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering") {
+class RenderingTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "rendering"))
+
+    override fun currentTestName(): String? = currentTest.methodName
+
     @Test
-    fun `with a long rendering time the race condition should not occur`() {
+    fun plot_rendering_raceCondition() {
         val dim = sqrt(40_000.0).roundToInt()
         val rand = Random(12)
         val xs = mutableListOf<String>()
@@ -50,11 +66,13 @@ class PlotRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
             |}
         """.trimMargin()
 
-        assertPlot("plot_race_condition_test.png", parsePlotSpec(spec))
+        val plotCanvasDrawable = createPlotFromSpec(parsePlotSpec(spec))
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `issue1423 - drawing primitives and clip-path at the same level`() {
+    fun plot_rendering_issue1423ClipPath() {
         val rnd = Random(42)
         val n = 100
         val xs = List(n) { rnd.nextDouble() * 1000 }
@@ -91,7 +109,9 @@ class PlotRenderingTest : VisualPlotTestBase(expectedImagesSubdir = "rendering")
 
         val plotSpec = parsePlotSpec(spec)
         val time = measureTime {
-            assertPlot("issue1423_test.png", plotSpec)
+            val plotCanvasDrawable = createPlotFromSpec(plotSpec)
+
+        assertBitmap(plotCanvasDrawable)
         }
 
         assertTrue(time.inWholeMilliseconds < 1000, "Plotting took too long: ${time.inWholeMilliseconds} ms")

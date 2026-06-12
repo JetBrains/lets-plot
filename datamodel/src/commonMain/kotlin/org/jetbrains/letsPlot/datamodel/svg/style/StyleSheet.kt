@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -52,7 +52,7 @@ class StyleSheet constructor(
 
         private fun TextStyle.toCSS(): String {
             val css = StringBuilder()
-            css.append(SvgUtils.fillAndOpacityStyle(color, separator = "\n"))
+            css.append(SvgUtils.fillAndOpacityStyle(color, fillOpacity, separator = "\n"))
             css.appendLine("font-weight: ${face.weight};")
             css.appendLine("font-style: ${face.style};")
             if (!isNoneFamily) css.appendLine("font-family: $family;")
@@ -93,7 +93,8 @@ class StyleSheet constructor(
                         family = fontFamily,
                         face = FontFace(bold = fontWeight == "bold", italic = fontStyle == "italic"),
                         size = fontSize,
-                        color = fillOpacity?.let(parsedColor::multiplyOpacity) ?: parsedColor
+                        color = parsedColor,
+                        fillOpacity = fillOpacity
                     )
                 }
 

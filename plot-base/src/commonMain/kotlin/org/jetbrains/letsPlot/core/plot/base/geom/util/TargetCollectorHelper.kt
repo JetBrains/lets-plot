@@ -18,13 +18,13 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTI
 class TargetCollectorHelper(
     private val ctx: GeomContext
 ) {
-    private val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(ctx)
+    private val markerMapper = HintColorUtil.createColorMarkerMapper(ctx)
     private val targetCollector: GeomTargetCollector = ctx.targetCollector
 
     fun addPaths(paths: Collection<PathData>) {
         for (path in paths) {
             val simplifiedPath = reduce(path) ?: continue
-            addPath(simplifiedPath, TooltipParams(markerColors = colorMarkerMapper(simplifiedPath.aes)))
+            addPath(simplifiedPath, TooltipParams(marker = markerMapper(simplifiedPath.aes)))
         }
     }
 
@@ -46,7 +46,7 @@ class TargetCollectorHelper(
 
             // dump to a single path to show proper tooltips in a HOVER mode
             val flattenPath = PathData.create(simplifiedSubPaths.flatMap(PathData::points)) ?: continue
-            addPath(flattenPath, TooltipParams(markerColorsFactory = { i -> colorMarkerMapper(subPathAesIndex[i]!!) }))
+            addPath(flattenPath, TooltipParams(markerFactory = { i -> markerMapper(subPathAesIndex[i]!!) }))
         }
     }
 
@@ -54,7 +54,7 @@ class TargetCollectorHelper(
         targetCollector.addPolygon(
             polygonData.flattenCoordinates,
             polygonData.aes.index(),
-            TooltipParams(markerColors = colorMarkerMapper(polygonData.aes)),
+            TooltipParams(marker = markerMapper(polygonData.aes)),
             TooltipHint.Placement.CURSOR
         )
     }
@@ -76,7 +76,7 @@ class TargetCollectorHelper(
         targetCollector.addPath(
             points = lineString,
             localToGlobalIndex = { p.index() },
-            tooltipParams = TooltipParams(markerColors = colorMarkerMapper(p)),
+            tooltipParams = TooltipParams(marker = markerMapper(p)),
             tooltipPlacement = HORIZONTAL
         )
     }

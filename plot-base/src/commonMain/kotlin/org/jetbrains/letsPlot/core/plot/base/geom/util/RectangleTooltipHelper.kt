@@ -36,7 +36,7 @@ class RectangleTooltipHelper(
             p.index(),
             GeomTargetCollector.TooltipParams(
                 fillColor = fillColorMapper(p),
-                markerColors = colorMarkerMapper(p)
+                marker = colorMarkerMapper(p)
             ),
             tooltipPlacement = CURSOR
         )
@@ -83,7 +83,7 @@ class RectangleTooltipHelper(
             GeomTargetCollector.TooltipParams(
                 tooltipHints = hintConfigs.hints,
                 fillColor = fillColorMapper(p),
-                markerColors = colorMarkerMapper(p)
+                marker = colorMarkerMapper(p)
             ),
             tooltipPlacement = tooltipPlacement,
             tooltipAnchor = tooltipAnchor

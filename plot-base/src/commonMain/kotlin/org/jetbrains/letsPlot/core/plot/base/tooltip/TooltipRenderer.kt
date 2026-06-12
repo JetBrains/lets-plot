@@ -403,7 +403,7 @@ class TooltipRenderer(
                 textClassName = spec.style,
                 tooltipMinWidth = spec.minWidth,
                 borderRadius = borderRadius,
-                markerColors = spec.markerColors.distinct(),
+                marker = spec.marker.distinct(),
                 pointMarkerStrokeColor = plotBackground
             )
     }

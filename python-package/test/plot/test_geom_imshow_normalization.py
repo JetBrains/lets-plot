@@ -4,23 +4,29 @@
 #
 from typing import NamedTuple
 
-import numpy as np
 import pytest
+
+from lets_plot._type_utils import LazyModule
+
+np = LazyModule("numpy")
+png = LazyModule("png")
 
 from lets_plot.plot.geom_imshow_ import geom_imshow
 
 
 class TestParams(NamedTuple):
-    image_data_0: np.ndarray
-    image_data_1: np.ndarray
+    image_data_0: object
+    image_data_1: object
     normalize: bool
     expected_equal: bool
     descr: str
     show_legend: bool = True
 
 
-class Test:
-    test_params_list = [
+def _test_params_list():
+    if not np:
+        return []
+    return [
         # -- gray --
         # 2 x 3 array of ints -> normalized (default)
         TestParams(
@@ -99,15 +105,17 @@ class Test:
         )
     ]
 
-    @pytest.mark.parametrize('params', test_params_list, ids=lambda d: d.descr)
-    def test_image_spec(self, params: TestParams):
-        params.image_data_0.flags.writeable = False
-        params.image_data_1.flags.writeable = False
 
-        spec_0 = geom_imshow(image_data=params.image_data_0, norm=params.normalize, show_legend=params.show_legend)
-        spec_1 = geom_imshow(image_data=params.image_data_1, norm=params.normalize, show_legend=params.show_legend)
+@pytest.mark.skipif(not np or not png, reason="Requires numpy and pypng")
+@pytest.mark.parametrize('params', _test_params_list(), ids=lambda d: d.descr)
+def test_image_spec(params: TestParams):
+    params.image_data_0.flags.writeable = False
+    params.image_data_1.flags.writeable = False
 
-        if params.expected_equal:
-            assert spec_0.as_dict() == spec_1.as_dict()
-        else:
-            assert spec_0.as_dict() != spec_1.as_dict()
+    spec_0 = geom_imshow(image_data=params.image_data_0, norm=params.normalize, show_legend=params.show_legend)
+    spec_1 = geom_imshow(image_data=params.image_data_1, norm=params.normalize, show_legend=params.show_legend)
+
+    if params.expected_equal:
+        assert spec_0.as_dict() == spec_1.as_dict()
+    else:
+        assert spec_0.as_dict() != spec_1.as_dict()

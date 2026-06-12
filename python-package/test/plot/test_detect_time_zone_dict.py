@@ -4,7 +4,11 @@
 from datetime import datetime, date, time, timezone, timedelta
 from zoneinfo import ZoneInfo
 
-import numpy as np
+import pytest
+
+from lets_plot._type_utils import LazyModule
+
+np = LazyModule("numpy")
 
 from lets_plot.plot.series_meta import _detect_time_zone
 
@@ -101,6 +105,7 @@ def test_detect_time_zone_dict_time():
     assert _detect_time_zone('mixed_time_with_tz', data_dict) is None
 
 
+@pytest.mark.skipif(not np, reason="Requires numpy")
 def test_detect_time_zone_dict_numpy():
     data_dict = {
         'np_datetime': [

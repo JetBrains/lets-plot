@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -225,7 +225,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             points = resampleArc(outerArc = true) + resampleArc(outerArc = false).reversed(),
             index = sector.p.index(),
             GeomTargetCollector.TooltipParams(
-                markerColors = listOf(
+                marker = listOf(
                     AestheticsUtil.resolveFill(sector.p)
                 )
             )
@@ -322,7 +322,7 @@ class PieGeom : GeomBase(), WithWidth, WithHeight {
             }
     }
 
-    private inner class PieLegendKeyElementFactory : LegendKeyElementFactory {
+    private class PieLegendKeyElementFactory : LegendKeyElementFactory {
         override fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement {
             return SvgGElement().apply {
                 children().add(

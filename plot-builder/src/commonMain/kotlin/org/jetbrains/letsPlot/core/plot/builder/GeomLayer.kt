@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.geom.annotation.Annotation
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
 import org.jetbrains.letsPlot.core.plot.builder.assemble.CustomLegendOptions
 import org.jetbrains.letsPlot.core.plot.builder.assemble.PosProvider
 
@@ -42,8 +41,6 @@ interface GeomLayer {
     val isLegendDisabled: Boolean
 
     val customLegendOptions: CustomLegendOptions?
-
-    val locatorLookupSpec: LookupSpec
 
     val isYOrientation: Boolean
 

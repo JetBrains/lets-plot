@@ -6,11 +6,27 @@
 package org.jetbrains.letsPlot.awt.plot
 
 import demoAndTestShared.parsePlotSpec
+import org.jetbrains.letsPlot.awt.NotoFontManager
+import org.jetbrains.letsPlot.awt.canvas.AwtCanvasPeer
+import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.visualtesting.AwtBitmapIO
+import org.jetbrains.letsPlot.visualtesting.ImageComparer
+import org.jetbrains.letsPlot.visualtesting.plot.PlotVisualTestBase
+import org.junit.Rule
+import org.junit.rules.TestName
 import kotlin.test.Test
 
-class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
+class GeomEdgeCasesTest : PlotVisualTestBase() {
+    @get:Rule
+    var currentTest = TestName()
+
+    override val canvasPeer: CanvasPeer = AwtCanvasPeer(fontManager = NotoFontManager.INSTANCE)
+    override val imageComparer: ImageComparer = ImageComparer(canvasPeer, AwtBitmapIO(subdir = "geoms"))
+
+    override fun currentTestName(): String? = currentTest.methodName
+
     @Test
-    fun `path with none`() {
+    fun plot_geomPath_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -104,11 +120,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("path_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `coord_polar and clip path`() {
+    fun plot_coordPolar_clipPath() {
         val spec = parsePlotSpec(
             """
             |{
@@ -137,11 +155,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("plot_polar_clip_path.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `path with none coord polar`() {
+    fun plot_geomPath_withNoneCoordPolar() {
         val spec = parsePlotSpec(
             """
             |{
@@ -170,11 +190,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("path_with_none_coord_polar.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `variadic path with none`() {
+    fun plot_geomPathVariadic_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -206,11 +228,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("variadic_path_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `line with none`() {
+    fun plot_geomLine_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -288,11 +312,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("line_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `step with none`() {
+    fun plot_geomStep_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -370,11 +396,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("step_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `polygon with none`() {
+    fun plot_geomPolygon_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -405,11 +433,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("polygon_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `density with none`() {
+    fun plot_geomDensity_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -432,11 +462,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("density_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `density identity with none`() {
+    fun plot_geomDensityIdentity_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -459,11 +491,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("density_identity_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `map with none`() {
+    fun plot_geomMap_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -494,11 +528,13 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("map_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 
     @Test
-    fun `contour with none`() {
+    fun plot_geomContour_withNone() {
         val spec = parsePlotSpec(
             """
             |{
@@ -523,6 +559,8 @@ class GeomEdgeCasesTest : VisualPlotTestBase(expectedImagesSubdir = "geoms") {
         """.trimMargin()
         )
 
-        assertPlot("contour_with_none.png", spec)
+        val plotCanvasDrawable = createPlotFromSpec(spec)
+
+        assertBitmap(plotCanvasDrawable)
     }
 }

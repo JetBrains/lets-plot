@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -19,11 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.geom.LiveMapProvider
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
-import org.jetbrains.letsPlot.core.plot.base.render.svg.GroupComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Label
-import org.jetbrains.letsPlot.core.plot.base.render.svg.StrokeDashArraySupport
-import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
-import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
+import org.jetbrains.letsPlot.core.plot.base.render.svg.*
 import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetStripTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.FacetsTheme
@@ -118,7 +114,7 @@ internal class PlotTile constructor(
             for (layer in coreLayers) {
                 // skip layer
                 val collectorWithLocator = layer.createContextualMapping()?.let {
-                    LayerTargetCollectorWithLocator(layer.geomKind, layer.locatorLookupSpec, it)
+                    LayerTargetCollectorWithLocator(layer.geomKind, it)
                 } ?: object :
                     GeomTargetLocator by NullGeomTargetLocator,
                     GeomTargetCollector by NullGeomTargetCollector {

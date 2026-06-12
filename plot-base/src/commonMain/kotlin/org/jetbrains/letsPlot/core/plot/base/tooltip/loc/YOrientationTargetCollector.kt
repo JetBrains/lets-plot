@@ -90,7 +90,7 @@ internal class YOrientationTargetCollector(
                 tooltipHints = flipAesKeys(tooltipParams.tooltipHints),
                 stemLength = tooltipParams.stemLength,
                 fillColorFactory = tooltipParams.fillColorFactory,
-                markerColorsFactory = tooltipParams.markerColorsFactory
+                markerFactory = tooltipParams.markerFactory
             )
         }
     }

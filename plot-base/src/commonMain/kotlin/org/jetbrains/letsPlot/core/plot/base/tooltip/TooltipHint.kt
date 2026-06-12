@@ -15,7 +15,7 @@ open class TooltipHint(
     open val objectRadius: Double,
     open val stemLength: StemLength,
     open val fillColor: Color?,
-    open val markerColors: List<Color>
+    open val marker: List<Color>
 ) {
     enum class StemLength(val value: Double) {
         NORMAL(12.0),
@@ -44,7 +44,7 @@ open class TooltipHint(
             objectRadius: Double,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            markerColors: List<Color> = emptyList()
+            marker: List<Color> = emptyList()
         ): TooltipHint {
             return TooltipHint(
                 Placement.VERTICAL,
@@ -52,7 +52,7 @@ open class TooltipHint(
                 objectRadius,
                 stemLength,
                 fillColor,
-                markerColors
+                marker
             )
         }
 
@@ -61,7 +61,7 @@ open class TooltipHint(
             objectRadius: Double,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            markerColors: List<Color> = emptyList()
+            marker: List<Color> = emptyList()
         ): TooltipHint {
             return TooltipHint(
                 Placement.HORIZONTAL,
@@ -69,7 +69,7 @@ open class TooltipHint(
                 objectRadius,
                 stemLength,
                 fillColor,
-                markerColors
+                marker
             )
         }
 
@@ -77,7 +77,7 @@ open class TooltipHint(
             coord: DoubleVector,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            markerColors: List<Color> = emptyList()
+            marker: List<Color> = emptyList()
         ): TooltipHint {
             return TooltipHint(
                 placement = Placement.CURSOR,
@@ -85,7 +85,7 @@ open class TooltipHint(
                 objectRadius = 0.0,
                 stemLength,
                 fillColor,
-                markerColors
+                marker
             )
         }
 
@@ -101,7 +101,7 @@ open class TooltipHint(
                 objectRadius = axisRadius,
                 stemLength,
                 fillColor,
-                markerColors = emptyList()
+                marker = emptyList()
             )
         }
 
@@ -117,7 +117,7 @@ open class TooltipHint(
                 objectRadius = axisRadius,
                 stemLength,
                 fillColor,
-                markerColors = emptyList()
+                marker = emptyList()
             )
         }
 
@@ -128,7 +128,7 @@ open class TooltipHint(
                 objectRadius,
                 stemLength,
                 color,
-                markerColors = emptyList()
+                marker = emptyList()
             )
         }
     }

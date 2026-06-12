@@ -2,13 +2,18 @@
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 
-import numpy as np
-import pandas as pd
+import pytest
+
+from lets_plot._type_utils import LazyModule
+
+np = LazyModule("numpy")
+pd = LazyModule("pandas")
 
 import lets_plot as gg
 from lets_plot._type_utils import _standardize_value
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_issue_901():
     df = pd.DataFrame(np.random.rand(2, 2))
     assert_column_values(df)
@@ -19,6 +24,7 @@ def test_int_keys_in_dict():
     assert_column_values(df)
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_pd_int():
     assert_column_values(create_df(pd.array([0, 1], dtype=pd.Int8Dtype())))
     assert_column_values(create_df(pd.array([0, 1], dtype=pd.Int16Dtype())))
@@ -26,6 +32,7 @@ def test_pd_int():
     assert_column_values(create_df(pd.array([0, 1], dtype=pd.Int64Dtype())))
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_pd_uint():
     assert_column_values(create_df(pd.array([0, 1], dtype=pd.UInt8Dtype())))
     assert_column_values(create_df(pd.array([0, 1], dtype=pd.UInt16Dtype())))
@@ -33,10 +40,12 @@ def test_pd_uint():
     assert_column_values(create_df(pd.array([0, 1], dtype=pd.UInt64Dtype())))
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_np_object():
     assert_column_values(create_df(np.array([0, 1], dtype='object')))
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_np_str_int():
     assert_column_values(create_df(np.array([0, 1], dtype='int8')))
     assert_column_values(create_df(np.array([0, 1], dtype='int16')))
@@ -44,6 +53,7 @@ def test_np_str_int():
     assert_column_values(create_df(np.array([0, 1], dtype='int64')))
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_np_int():
     assert_column_values(create_df(np.array([0, 1], dtype=np.int8)))
     assert_column_values(create_df(np.array([0, 1], dtype=np.int16)))
@@ -51,6 +61,7 @@ def test_np_int():
     assert_column_values(create_df(np.array([0, 1], dtype=np.int64)))
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_np_uint():
     assert_column_values(create_df(np.array([0, 1], dtype=np.uint8)))
     assert_column_values(create_df(np.array([0, 1], dtype=np.uint16)))
@@ -75,6 +86,7 @@ def assert_column_values(data):
     assert list(st['layers'][0]['data'].keys()) == ['0', '1']
 
 
+@pytest.mark.skipif(not np or not pd, reason="Requires numpy and pandas")
 def test_mixed_int():
     data = [np.array([194, 5, 189, 200, 190, 198]),
             np.array([189, 9, 197, 199, 180, 181]),
@@ -88,4 +100,3 @@ def test_mixed_int():
     d = _standardize_value(p.as_dict())
 
     assert list(d['layers'][0]['data'].keys()) == ['color', 'std', '2', '3', '4', '5']
-

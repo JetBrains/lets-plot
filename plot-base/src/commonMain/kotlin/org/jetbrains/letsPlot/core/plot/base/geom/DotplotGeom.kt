@@ -140,7 +140,7 @@ open class DotplotGeom : GeomBase(), WithWidth {
             p.index(),
             rect,
             GeomTargetCollector.TooltipParams(
-                markerColors = colorMarkerMapper(p)
+                marker = colorMarkerMapper(p)
             ),
             tooltipPlacement = if (ctx.flipped) {
                 TooltipHint.Placement.VERTICAL
