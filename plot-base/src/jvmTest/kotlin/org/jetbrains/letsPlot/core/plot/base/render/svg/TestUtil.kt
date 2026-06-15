@@ -12,9 +12,6 @@ import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
-import kotlin.math.max
-import kotlin.math.pow
-import kotlin.math.roundToInt
 
 object TestUtil {
     private val DEF_FONT = Font(family = FontFamily.SERIF, size = 16, isBold = false, isItalic = false)
@@ -48,16 +45,12 @@ object TestUtil {
         ).width
     }
 
-    internal fun toTestWidth(text: String, baseFont: Font = DEF_FONT, level: FormulaLevel = FormulaLevel()): Double {
-        val font = level.sizeValue()?.let { levelSizeScale ->
-            val levelFontSize = max(1, (baseFont.size * levelSizeScale).roundToInt())
-            Font(baseFont.family, levelFontSize, baseFont.isBold, baseFont.isItalic)
-        } ?: baseFont
-        return TextMetricsEstimator.widthCalculator(text, font)
+    internal fun toTestWidth(text: String, baseFont: Font = DEF_FONT): Double {
+        return TextMetricsEstimator.widthCalculator(text, baseFont)
     }
 
-    internal fun toTestWidth(texts: Iterable<String>, baseFont: Font = DEF_FONT, level: FormulaLevel = FormulaLevel()): Double {
-        return texts.maxOf { toTestWidth(it, baseFont, level) }
+    internal fun toTestWidth(texts: Iterable<String>, baseFont: Font = DEF_FONT): Double {
+        return texts.maxOf { toTestWidth(it, baseFont) }
     }
 
     fun SvgTSpanElement.wholeText(): String {
@@ -190,139 +183,4 @@ object TestUtil {
         }
     }
 
-    fun assertFormulaTSpan(
-        tspan: SvgTSpanElement,
-        text: String?,
-        level: FormulaLevel = FormulaLevel(),
-        expectedX: Double? = null,
-        expectedAnchor: String? = null,
-        bold: Boolean = false,
-        italic: Boolean = false,
-        color: String? = null
-    ) {
-        assertTSpan(tspan, text ?: tspan.wholeText(), expectedX, bold, italic, color)
-
-        val expectedDy = level.dy()
-        when {
-            expectedDy != null -> assertThat(tspan.textDy().get()).isEqualTo(expectedDy)
-            !level.toPass() -> assertThat(tspan.textDy().get()).isNull()
-        }
-
-        val expectedSize = level.size()
-        when {
-            expectedSize != null -> assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isEqualTo(expectedSize)
-            !level.toPass() -> assertThat(tspan.getAttribute(SvgTextContent.FONT_SIZE).get()).isNull()
-        }
-
-        val anchor: String? = tspan.textAnchor().get()
-        if (expectedAnchor != null) {
-            assertThat(anchor).isEqualTo(expectedAnchor)
-        } else {
-            assertThat(anchor).isNull()
-        }
-    }
-
-    // Represents a level of formula rendering (superscript, subscript, fraction, etc.)
-    // Helps to calculate the size and dy (vertical shift) for the text elements in test cases
-    class FormulaLevel {
-        private val shifts: MutableList<Shift> = mutableListOf()
-
-        fun copy(): FormulaLevel = FormulaLevel().apply { shifts.addAll(this@FormulaLevel.shifts) }
-
-        // The level remains unchanged
-        fun current(): FormulaLevel = apply { shifts.add(Shift.CURRENT) }
-
-        // No checks
-        fun pass(): FormulaLevel = apply { shifts.add(Shift.PASS) }
-
-        fun sup(): FormulaLevel = apply { shifts.add(Shift.SUPERSCRIPT) }
-
-        fun sub(): FormulaLevel = apply { shifts.add(Shift.SUBSCRIPT) }
-
-        fun num(): FormulaLevel = apply { shifts.add(Shift.NUMERATOR) }
-
-        fun denom(): FormulaLevel = apply { shifts.add(Shift.DENOMINATOR) }
-
-        fun bar(): FormulaLevel = apply { shifts.add(Shift.FRACTION_BAR) }
-
-        fun revert(): FormulaLevel = apply { shifts.add(Shift.REVERT) }
-
-        fun toPass(): Boolean = shifts.isEmpty() || shifts.last() == Shift.PASS
-
-        fun sizeValue(): Double? = computeState().size
-
-        fun size(): String? = sizeValue()?.let { "${it}em" }
-
-        fun dy(): String? = computeState().dy?.let { "${it}em" }
-
-        private fun computeState(): FormulaRenderState {
-            val shiftsStack = ArrayDeque<Shift>()
-            var level = 0
-            var size: Double? = null
-            var dy: Double? = null
-            shifts.forEach { shift ->
-                when (shift) {
-                    Shift.PASS -> {
-                        size = null
-                        dy = null
-                    }
-                    Shift.CURRENT -> {
-                        size = sizeByLevel(level)
-                        dy = null
-                    }
-                    Shift.SUPERSCRIPT -> {
-                        shiftsStack.addLast(Shift.SUPERSCRIPT)
-                        level += 1
-                        size = sizeByLevel(level)
-                        dy = -0.4
-                    }
-                    Shift.SUBSCRIPT -> {
-                        shiftsStack.addLast(Shift.SUBSCRIPT)
-                        level += 1
-                        size = sizeByLevel(level)
-                        dy = 0.4
-                    }
-                    Shift.NUMERATOR -> {
-                        size = sizeByLevel(level)
-                        dy = -0.46
-                    }
-                    Shift.DENOMINATOR -> {
-                        size = sizeByLevel(level)
-                        dy = 1.22
-                    }
-                    Shift.FRACTION_BAR -> {
-                        shiftsStack.addLast(Shift.FRACTION_BAR)
-                        size = sizeByLevel(level)
-                        dy = -0.66
-                    }
-                    Shift.REVERT -> {
-                        size = sizeByLevel(level)
-                        when (shiftsStack.removeLast()) {
-                            Shift.SUPERSCRIPT -> {
-                                level += -1
-                                dy = 0.4
-                            }
-                            Shift.SUBSCRIPT -> {
-                                level += -1
-                                dy = -0.4
-                            }
-                            Shift.FRACTION_BAR -> {
-                                dy = -0.1
-                            }
-                            else -> IllegalStateException("Unbalanced shift stack")
-                        }
-                    }
-                }
-            }
-            return FormulaRenderState(size, dy)
-        }
-
-        private fun sizeByLevel(level: Int): Double? = 0.7.pow(level).takeIf { (level > 0) }
-
-        private data class FormulaRenderState(val size: Double?, val dy: Double?)
-
-        enum class Shift {
-            CURRENT, PASS, SUPERSCRIPT, SUBSCRIPT, NUMERATOR, DENOMINATOR, FRACTION_BAR, REVERT;
-        }
-    }
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.plot.base.render.svg
 
 import org.assertj.core.api.Assertions.assertThat
-import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertFormulaTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.assertTSpan
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toSvg
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
@@ -108,30 +107,6 @@ class MarkdownTest {
         assertTSpan(baz, "baz", color = "orange")
         assertTSpan(barbaz, " barbaz", color = "red")
         assertTSpan(spam, " spam")
-    }
-
-    // Asserts on legacy tspan output for `bar^2`. After the LaTeX vector-glyph renderer, the
-    // formula renders as <g><path/>...</g>, not tspans. Disabled until the assertion is rewritten
-    // against the vector output (see RichTextLatexVectorTest for similar patterns).
-    @kotlin.test.Ignore
-    @Test
-    fun latex() {
-        val richTextSvg = toSvg("""**foo** ***<span style="color:red">\\( bar^2 \\)</span>*** baz""", markdown = true).single()
-
-        assertThat(richTextSvg.tspans()).hasSize(8)
-
-        val (foo, space, bar, pow, upper) = richTextSvg.tspans()
-        val (square, lower, baz) = richTextSvg.tspans().drop(5)
-        val level = TestUtil.FormulaLevel()
-
-        assertFormulaTSpan(foo, "foo", level = level.current(), bold = true)
-        assertFormulaTSpan(space, " ", level = level.pass())
-        assertFormulaTSpan(bar, "bar", level = level.current(), bold = true, italic = true, color = "red")
-        assertFormulaTSpan(pow, " ", level = level.pass(), bold = true, italic = true, color = "red")
-        assertFormulaTSpan(upper, "\u200B", level = level.sup(), bold = true, italic = true, color = "red")
-        assertFormulaTSpan(square, "2", level = level.current(), bold = true, italic = true, color = "red")
-        assertFormulaTSpan(lower, "\u200B", level = level.revert(), bold = true, italic = true, color = "red")
-        assertFormulaTSpan(baz, " baz", level = level.current())
     }
 
     @Test
