@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.commons.geometry.Vector
 import org.jetbrains.letsPlot.commons.intern.json.JsonSupport.parseJson
 import org.jetbrains.letsPlot.commons.values.Bitmap
 import org.jetbrains.letsPlot.core.canvas.CanvasPeer
+import org.jetbrains.letsPlot.raster.view.PlotCanvasDrawable
 import org.jetbrains.letsPlot.raster.view.RenderingHints
 import org.jetbrains.letsPlot.visualtesting.ImageComparer
 
@@ -149,73 +150,49 @@ class PlotInteractivityTest(
     fun plot_interactivity_mergedTooltip(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP))
 
-        val cursorPos = Vector(160, 120)
-        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
-
-        return paint(plotCanvasDrawable, cursorPos)
+        return paintMergedTooltip(plotCanvasDrawable)
     }
 
     fun plot_interactivity_mergedTooltipWithTitle(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_WITH_TITLE))
 
-        val cursorPos = Vector(160, 120)
-        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
-
-        return paint(plotCanvasDrawable, cursorPos)
+        return paintMergedTooltip(plotCanvasDrawable)
     }
 
     fun plot_interactivity_mergedTooltipFlipped(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_FLIPPED))
 
-        val cursorPos = Vector(160, 120)
-        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
-
-        return paint(plotCanvasDrawable, cursorPos)
+        return paintMergedTooltip(plotCanvasDrawable)
     }
 
     fun plot_interactivity_mergedTooltipFlippedWithTitle(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_FLIPPED_WITH_TITLE))
 
-        val cursorPos = Vector(160, 120)
-        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
-
-        return paint(plotCanvasDrawable, cursorPos)
+        return paintMergedTooltip(plotCanvasDrawable)
     }
 
     fun plot_interactivity_mergedTooltipDisableSplitting(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_DISABLE_SPLITTING))
 
-        val cursorPos = Vector(160, 120)
-        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
-
-        return paint(plotCanvasDrawable, cursorPos)
+        return paintMergedTooltip(plotCanvasDrawable)
     }
 
     fun plot_interactivity_mergedTooltipDisableSplittingWithTitle(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_DISABLE_SPLITTING_WITH_TITLE))
 
-        val cursorPos = Vector(160, 120)
-        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
-
-        return paint(plotCanvasDrawable, cursorPos)
+        return paintMergedTooltip(plotCanvasDrawable)
     }
 
     fun plot_interactivity_mergedTooltipDisableSplittingExplicitLines(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_DISABLE_SPLITTING_EXPLICIT_LINES))
 
-        val cursorPos = Vector(160, 120)
-        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
-
-        return paint(plotCanvasDrawable, cursorPos)
+        return paintMergedTooltip(plotCanvasDrawable)
     }
 
     fun plot_interactivity_mergedTooltipDisableSplittingExplicitLinesWithTitle(): Bitmap {
         val plotCanvasDrawable = createPlot(parseJson(PlotSpecs.MERGED_TOOLTIP_DISABLE_SPLITTING_EXPLICIT_LINES_WITH_TITLE))
 
-        val cursorPos = Vector(160, 120)
-        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
-
-        return paint(plotCanvasDrawable, cursorPos)
+        return paintMergedTooltip(plotCanvasDrawable)
     }
 
     fun plot_interactivity_smoothTooltipDisableSplittingExplicitLines(): Bitmap {
@@ -223,6 +200,14 @@ class PlotInteractivityTest(
 
         val cursorPos = Vector(160, 120)
         plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(cursorPos))
+
+        return paint(plotCanvasDrawable, cursorPos)
+    }
+
+    private fun paintMergedTooltip(plotCanvasDrawable: PlotCanvasDrawable): Bitmap {
+        val hoverPos = Vector(160, 120)
+        val cursorPos = Vector(185, 135)
+        plotCanvasDrawable.mouseEventPeer.dispatch(MOUSE_MOVED, noButton(hoverPos))
 
         return paint(plotCanvasDrawable, cursorPos)
     }
