@@ -61,9 +61,6 @@ object TestUtil {
 
     fun SvgTextElement.tspans(): List<SvgTSpanElement> = children().map { it as SvgTSpanElement }
 
-    // Convenience for tests that operate on a generic line element. For text-only lines this is the
-    // same as SvgTextElement.tspans(). For mixed lines (vector formulas + text) it recursively
-    // collects tspans from all descendant <text> children, in document order.
     fun SvgElement.tspans(): List<SvgTSpanElement> = when (this) {
         is SvgTextElement -> children().map { it as SvgTSpanElement }
         else -> children().flatMap { child ->
@@ -75,7 +72,7 @@ object TestUtil {
         }
     }
 
-    // Find all path elements anywhere under this element (used by vector-formula tests).
+    // Exclude helper bbox paths so glyph-count assertions count rendered glyphs only.
     fun SvgElement.pathElements(): List<SvgPathElement> =
         children().flatMap { child ->
             when (child) {
@@ -89,8 +86,6 @@ object TestUtil {
             }
         }
 
-    // Find all class-marked LaTeX fallback <text> elements (one per unsupported-glyph run) under
-    // this element, in document order.
     fun SvgElement.vectorTextElements(): List<SvgTextElement> {
         val out = mutableListOf<SvgTextElement>()
         fun walk(e: SvgElement) {
@@ -104,7 +99,6 @@ object TestUtil {
         return out
     }
 
-    // Find all vector-formula groups (SvgGElement with the marker class) under this element.
     fun SvgElement.vectorFormulaGroups(): List<SvgGElement> {
         val out = mutableListOf<SvgGElement>()
         fun walk(e: SvgElement) {
@@ -131,9 +125,6 @@ object TestUtil {
         }
     }
 
-    // SvgElement-receiver variant — for tests that may receive either an SvgTextElement (legacy
-    // tspan-only line) or an SvgGElement wrapper (mixed line with vector formulas). For groups,
-    // collects parts from descendant <text> children in document order.
     fun SvgElement.stringParts(): List<String> = when (this) {
         is SvgTextElement -> stringParts()
         else -> children().flatMap { child ->

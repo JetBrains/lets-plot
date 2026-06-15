@@ -16,9 +16,7 @@ internal class SvgPathElementMapper(
 ) : SvgElementMapper<SvgPathElement, Path>(source, target, peer) {
 
     override fun applyStyle() {
-        // Fill-less vector LaTeX glyph paths (see Latex.kt) inherit the effective theme/stylesheet text
-        // color here. Paths with an explicit fill are skipped: their FILL attribute is applied later and
-        // would override anything set here anyway.
+        // Fill-less vector LaTeX glyph paths inherit theme/stylesheet text color here.
         if (source.getAttribute(SvgShape.FILL).get() != null) return
         val color = resolveInheritedTextColor(source, peer.styleSheet) ?: return
         target.fill = color

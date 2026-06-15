@@ -177,7 +177,6 @@ class RichTextLineLayoutMetricsTest {
         }
 
         private fun extractTranslateY(transform: SvgTransform): Double {
-            // The transform string looks like "translate(0.0 123.4) ". Extract the second number.
             val match = Regex("""translate\(([^ ]+) ([^)]+)\)""").find(transform.toString())
                 ?: error("Could not parse translate transform: $transform")
             return match.groupValues[2].trim().toDouble()

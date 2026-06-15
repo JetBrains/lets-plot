@@ -136,9 +136,7 @@ val TextStyle.safeColor: Color? get() = if (isNoneColor) null else color
 val TextStyle.safeSize: Double? get() = if (isNoneSize) null else size
 
 /**
- * Resolves stylesheet text color by walking up to the first ancestor with a color-bearing class.
- * Must climb the tree (not just check the source node) because LaTeX `<path>` glyphs and `<text>`
- * runs are nested inside a classed `<g>` and carry no class themselves.
+ * LaTeX glyph paths carry no class, so inherited text color must be resolved from ancestor groups.
  */
 internal fun resolveInheritedTextColor(source: SvgNode, styleSheet: StyleSheet?): Color? {
     if (styleSheet == null) return null
