@@ -291,7 +291,7 @@ internal class Latex(
             for (run in segments()) {
                 if (run.supported) {
                     for (c in run.text) {
-                        val glyph = LatexVectorFont.glyphOrNull(c) ?: continue
+                        val glyph = LatexVectorFont.glyphOrNull(c, this@Latex.font.isBold, this@Latex.font.isItalic) ?: continue
                         if (glyph.pathData != null) {
                             val path = SvgPathElement().apply {
                                 setAttribute("d", glyph.pathData)
@@ -340,9 +340,9 @@ internal class Latex(
             val runs = mutableListOf<Run>()
             var start = 0
             while (start < content.length) {
-                val supported = LatexVectorFont.isSupported(content[start])
+                val supported = LatexVectorFont.isSupported(content[start], this@Latex.font.isBold, this@Latex.font.isItalic)
                 var end = start + 1
-                while (end < content.length && LatexVectorFont.isSupported(content[end]) == supported) {
+                while (end < content.length && LatexVectorFont.isSupported(content[end], this@Latex.font.isBold, this@Latex.font.isItalic) == supported) {
                     end++
                 }
                 runs.add(Run(content.substring(start, end), supported))
@@ -355,7 +355,7 @@ internal class Latex(
         // position never depends on how it's drawn. Supported: vector em-advances; unsupported: legacy estimator.
         private fun runAdvancePx(run: Run, font: Font): Double {
             return if (run.supported) {
-                run.text.sumOf { LatexVectorFont.advanceEm(it) } * levelFontSize(font)
+                run.text.sumOf { LatexVectorFont.advanceEm(it, this@Latex.font.isBold, this@Latex.font.isItalic) } * levelFontSize(font)
             } else {
                 widthCalculator(run.text, nodeFontAtLevel(font))
             }

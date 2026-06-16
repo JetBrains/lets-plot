@@ -136,7 +136,10 @@ class LabelTest {
             assertThat(svg.stringParts()).contains("a+")
 
             val prefixWidth = widthCalculator("a+", font)
-            val formulaWidth = max(LatexVectorFont.advanceEm('b'), LatexVectorFont.advanceEm('c')) * font.size
+            val formulaWidth = max(
+                LatexVectorFont.advanceEm('b', font.isBold, font.isItalic),
+                LatexVectorFont.advanceEm('c', font.isBold, font.isItalic)
+            ) * font.size
             val expectedWidth = prefixWidth + formulaWidth
             val formulaGroupX = extractTranslateX(svg.vectorFormulaGroups().single().transform().get()!!)
 

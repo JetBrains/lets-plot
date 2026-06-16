@@ -20,11 +20,12 @@ object TestUtil {
         text: String,
         wrapLength: Int = -1,
         markdown: Boolean = false,
-        anchor: Text.HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR
+        anchor: Text.HorizontalAnchor = RichText.DEF_HORIZONTAL_ANCHOR,
+        font: Font = DEF_FONT
     ): List<SvgElement> {
         return RichText.toSvg(
             text = text,
-            font = DEF_FONT,
+            font = font,
             wrapLength = wrapLength,
             markdown = markdown,
             anchor = anchor

@@ -443,6 +443,54 @@ class RichTextLatexVectorTest {
         assertThat(measured.width).isCloseTo(toTestWidth("ČŠ"), offset(1e-9))
     }
 
+    @Test
+    fun boldFormulaUsesDistinctGlyphPaths() {
+        val regularPaths = glyphPathData("""\(x + 1\)""", font)
+        val boldPaths = glyphPathData("""\(x + 1\)""", Font(font.family, font.size, isBold = true))
+        assertThat(boldPaths).hasSameSizeAs(regularPaths)
+        assertThat(boldPaths).isNotEqualTo(regularPaths)
+    }
+
+    @Test
+    fun italicFormulaUsesDistinctGlyphPaths() {
+        val regularPaths = glyphPathData("""\(x + 1\)""", font)
+        val italicPaths = glyphPathData("""\(x + 1\)""", Font(font.family, font.size, isItalic = true))
+        assertThat(italicPaths).hasSameSizeAs(regularPaths)
+        assertThat(italicPaths).isNotEqualTo(regularPaths)
+    }
+
+    @Test
+    fun boldItalicFormulaUsesDistinctGlyphPaths() {
+        val regularPaths = glyphPathData("""\(x + 1\)""", font)
+        val boldPaths = glyphPathData("""\(x + 1\)""", Font(font.family, font.size, isBold = true))
+        val italicPaths = glyphPathData("""\(x + 1\)""", Font(font.family, font.size, isItalic = true))
+        val boldItalicPaths = glyphPathData("""\(x + 1\)""", Font(font.family, font.size, isBold = true, isItalic = true))
+        assertThat(boldItalicPaths).hasSameSizeAs(regularPaths)
+        assertThat(boldItalicPaths).isNotEqualTo(regularPaths)
+        assertThat(boldItalicPaths).isNotEqualTo(boldPaths)
+        assertThat(boldItalicPaths).isNotEqualTo(italicPaths)
+    }
+
+    @Test
+    fun boldFormulaIsWiderThanRegular() {
+        val regularWidth = RichText.measure(text = """\(x + 1\)""", font = font).width
+        val boldWidth = RichText.measure(text = """\(x + 1\)""", font = Font(font.family, font.size, isBold = true)).width
+        assertThat(boldWidth).isGreaterThan(regularWidth)
+    }
+
+    @Test
+    fun greekLetterIsBoldWhenLabelIsBold() {
+        val regularPaths = glyphPathData("""\(\Omega\)""", font)
+        val boldPaths = glyphPathData("""\(\Omega\)""", Font(font.family, font.size, isBold = true))
+        assertThat(boldPaths).hasSize(1)
+        assertThat(boldPaths).isNotEqualTo(regularPaths)
+    }
+
+    private fun glyphPathData(formula: String, font: Font): List<String> {
+        return toSvg(formula, font = font).single().pathElements()
+            .map { it.getAttribute("d").get().toString() }
+    }
+
     private fun prefixTSpanX(line: SvgGElement): Double {
         return ((line.children()[0] as SvgTextElement).children()[0] as SvgTSpanElement).x().get()!!
     }
