@@ -65,7 +65,7 @@ internal class Latex(
                 is Token.Subscript -> nodes.add(SubscriptNode(parseSupOrSub(iterator, level + 1), level))
                 is Token.Text -> nodes.add(TextNode(token.content, level))
                 is Token.Space -> continue
-                is Token.ExplicitSpace -> nodes.add(TextNode(token.space, level))
+                is Token.ExplicitSpace -> nodes.add(SpaceNode(token.em, token.visualCharCount, level))
             }
         }
         return GroupNode(nodes, level)
@@ -115,13 +115,13 @@ internal class Latex(
         object Superscript : Token()
         object Subscript : Token()
         object Space : Token()
-        data class ExplicitSpace(val space: String) : Token() {
+        data class ExplicitSpace(val em: Double, val visualCharCount: Int = 1) : Token() {
             companion object {
-                val QUAD = ExplicitSpace(" ")
-                val QQUAD = ExplicitSpace("  ")
-                val COMMA = ExplicitSpace(" ")
-                val COLON = ExplicitSpace(" ")
-                val SPACE = ExplicitSpace(" ")
+                val QUAD = ExplicitSpace(1.0)
+                val QQUAD = ExplicitSpace(2.0, visualCharCount = 2)
+                val COMMA = ExplicitSpace(3.0 / 18.0)
+                val COLON = ExplicitSpace(4.0 / 18.0)
+                val SPACE = ExplicitSpace(6.0 / 18.0)
             }
         }
 
@@ -169,9 +169,14 @@ internal class Latex(
                         ControlSymbol.BACKSLASH -> {
                             val command = StringBuilder()
                             i++
-                            while (i < input.length && (input[i].isLetter() || (command.isEmpty() && input[i] in ",: "))) {
+                            if (i < input.length && input[i] in ",: ") {
                                 command.append(input[i])
                                 i++
+                            } else {
+                                while (i < input.length && input[i].isLetter()) {
+                                    command.append(input[i])
+                                    i++
+                                }
                             }
                             when (command.toString()) {
                                 "quad" -> yield(ExplicitSpace.QUAD)
@@ -269,6 +274,18 @@ internal class Latex(
             }
             return listOf(group.wrap(x = prefixWidth))
         }
+    }
+
+    private inner class SpaceNode(private val emWidth: Double, override val visualCharCount: Int, level: Int) :
+        LatexNode(emptyList(), level) {
+        override fun vectorWidth(font: Font): Double = emWidth * levelFontSize(font)
+
+        override fun vectorMetrics(font: Font): LineBoxMetrics {
+            val sizePx = levelFontSize(font)
+            return LineBoxMetrics(boxHeight = sizePx, topToBaseline = sizePx)
+        }
+
+        override fun renderVectorGroup(color: Color?): SvgGElement = SvgGElement()
     }
 
     private inner class TextNode(val content: String, level: Int) : LatexNode(emptyList(), level) {

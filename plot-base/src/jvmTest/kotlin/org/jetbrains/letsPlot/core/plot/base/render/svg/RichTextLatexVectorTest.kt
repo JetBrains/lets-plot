@@ -132,6 +132,32 @@ class RichTextLatexVectorTest {
     }
 
     @Test
+    fun explicitSpacesUseTeXWidths() {
+        fun spaceWidth(command: String): Double {
+            val withSpace = RichText.measure(text = """\(X${command}X\)""", font = font).width
+            val withoutSpace = RichText.measure(text = """\(XX\)""", font = font).width
+            return withSpace - withoutSpace
+        }
+
+        val thin = spaceWidth("""\,""")
+        val medium = spaceWidth("""\:""")
+        val interword = spaceWidth("""\ """)
+        val quad = spaceWidth("""\quad """)
+        val qquad = spaceWidth("""\qquad """)
+
+        assertThat(thin).isGreaterThan(0.0)
+        assertThat(thin).isLessThan(medium)
+        assertThat(medium).isLessThan(interword)
+        assertThat(interword).isLessThan(quad)
+        assertThat(quad).isLessThan(qquad)
+        assertThat(thin).isCloseTo(font.size * 3.0 / 18.0, offset(1e-9))
+        assertThat(medium).isCloseTo(font.size * 4.0 / 18.0, offset(1e-9))
+        assertThat(interword).isCloseTo(font.size * 6.0 / 18.0, offset(1e-9))
+        assertThat(quad).isCloseTo(font.size.toDouble(), offset(1e-9))
+        assertThat(qquad).isCloseTo(2.0 * quad, offset(1e-9))
+    }
+
+    @Test
     fun superscriptWidthUsesReducedLevelAdvance() {
         val svg = toSvg("""\(a^b\)""").single()
         assertThat(svg.pathElements()).hasSize(2)
