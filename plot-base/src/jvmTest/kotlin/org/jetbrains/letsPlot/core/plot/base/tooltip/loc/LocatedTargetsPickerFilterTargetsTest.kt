@@ -49,7 +49,9 @@ class LocatedTargetsPickerFilterTargetsTest {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = NullPlotContext
+            ctx = NullPlotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
         ).apply {
                 addLookupResult(lineLookupResult)
                 addLookupResult(pointLookupResult)
@@ -244,7 +246,9 @@ class LocatedTargetsPickerFilterTargetsTest {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = NullPlotContext
+            ctx = NullPlotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
         )
                 .apply { locator.search(cursor)?.let(::addLookupResult) }
             .chooseBestLookupResults()

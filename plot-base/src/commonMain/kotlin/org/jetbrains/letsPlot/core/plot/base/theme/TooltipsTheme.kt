@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -19,4 +19,7 @@ interface TooltipsTheme {
     fun labelStyle(): ThemeTextStyle
 
     fun show(): Boolean
+
+    fun merge(): Boolean
+    fun maxCount(): Int
 }

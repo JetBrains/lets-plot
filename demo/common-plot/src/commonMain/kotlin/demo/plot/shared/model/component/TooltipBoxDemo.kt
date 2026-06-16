@@ -64,7 +64,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 borderColor = borderColor,
                 strokeWidth = strokeWidth,
                 lineType = lineType,
-                blocks = blocks,
+                targets = targets,
                 title = title,
                 textClassName = textClassName,
                 tooltipMinWidth = tooltipMinWidth,
@@ -102,7 +102,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val tooltipMinWidth: Double? = null,
             val borderRadius: Double = 4.0,
             val marker: TooltipMarker = TooltipMarker.NONE,
-            val blocks: List<TooltipModel.Block> = listOf(TooltipModel.Block(title = null, marker = marker, lines = lines)),
+            val targets: List<TooltipModel.Target> = listOf(TooltipModel.Target(title = null, marker = marker, lines = lines, coord = DoubleVector.ZERO)),
             val orientation: TooltipBox.Orientation = TooltipBox.Orientation.VERTICAL,
             val pointerCoord: DoubleVector? = null,
         )
@@ -156,22 +156,24 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 lines = listOf(WITH_LABEL, EMPTY_LINE, STATIC_TEXT),
                 pointerCoord = DoubleVector(100.0, 120.0)
             ),
-            // with multiple blocks
+            // with multiple targets
             MyTooltipModel(
                 fillColor = Color.LIGHT_YELLOW,
                 textColor = Color.BLUE,
                 borderColor = Color.BLACK,
                 lines = emptyList(),
-                blocks = listOf(
-                    TooltipModel.Block(
+                targets = listOf(
+                    TooltipModel.Target(
                         title = "Group 09",
                         marker = TooltipMarker.create(majorColor = Color.DARK_GREEN, minorColor = Color.GRAY),
-                        lines = listOf(TooltipModel.Line.withValue("18.37"))
+                        lines = listOf(TooltipModel.Line.withValue("18.37")),
+                        coord = DoubleVector.ZERO,
                     ),
-                    TooltipModel.Block(
+                    TooltipModel.Target(
                         title = "Group 17",
                         marker = TooltipMarker.create(majorColor = Color.LIGHT_PINK, minorColor = Color.DARK_BLUE),
-                        lines = listOf(TooltipModel.Line.withValue("32.47"))
+                        lines = listOf(TooltipModel.Line.withValue("32.47")),
+                        coord = DoubleVector.ZERO,
                     ),
                 ),
                 pointerCoord = DoubleVector(120.0, 80.0)

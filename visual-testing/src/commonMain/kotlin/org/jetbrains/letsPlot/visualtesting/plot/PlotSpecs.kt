@@ -143,7 +143,8 @@ object PlotSpecs {
         |    "ylim": [ -1.0, 1.0 ]
         |  },
         |  "theme": {
-        |    "panel_grid": "blank"
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
         |  },
         |  "layers": [
         |    {
@@ -181,7 +182,8 @@ object PlotSpecs {
         |    "ylim": [ -1.0, 1.0 ]
         |  },
         |  "theme": {
-        |    "panel_grid": "blank"
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
         |  },
         |  "layers": [
         |    {
@@ -218,7 +220,8 @@ object PlotSpecs {
         |    "ylim": [ -1.0, 1.0 ]
         |  },
         |  "theme": {
-        |    "panel_grid": "blank"
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
         |  },
         |  "layers": [
         |    {
@@ -259,7 +262,8 @@ object PlotSpecs {
         |    "ylim": [ -1.0, 1.0 ]
         |  },
         |  "theme": {
-        |    "panel_grid": "blank"
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
         |  },
         |  "layers": [
         |    {
@@ -292,7 +296,8 @@ object PlotSpecs {
         |  "ggsize": { "width": 320.0, "height": 240.0 },
         |  "mapping": { "x": "x", "y": "y" },
         |  "theme": {
-        |    "panel_grid": "blank"
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
         |  },
         |  "layers": [
         |    {
@@ -333,7 +338,8 @@ object PlotSpecs {
         |  "ggsize": { "width": 320.0, "height": 240.0 },
         |  "mapping": { "x": "x", "y": "y" },
         |  "theme": {
-        |    "panel_grid": "blank"
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
         |  },
         |  "layers": [
         |    {
@@ -372,7 +378,8 @@ object PlotSpecs {
         |  "ggsize": { "width": 320.0, "height": 240.0 },
         |  "mapping": { "x": "x", "y": "y" },
         |  "theme": {
-        |    "panel_grid": "blank"
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
         |  },
         |  "layers": [
         |    {
@@ -415,7 +422,8 @@ object PlotSpecs {
         |  "ggsize": { "width": 320.0, "height": 240.0 },
         |  "mapping": { "x": "x", "y": "y" },
         |  "theme": {
-        |    "panel_grid": "blank"
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
         |  },
         |  "layers": [
         |    {

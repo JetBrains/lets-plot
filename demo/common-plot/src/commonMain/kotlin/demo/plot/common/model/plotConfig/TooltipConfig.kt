@@ -20,7 +20,13 @@ class TooltipConfig {
             sideTooltips(),
             mergedTooltips(),
             mergedTooltipsDisableSplitting(),
-            mergedTooltipsDisableSplittingExplicitLines()
+            mergedTooltipsDisableSplittingExplicitLines(),
+            tooltipLimitManyLines(),
+            tooltipLimitManyLines(
+                title = "Tooltip target limit disabled: merged lines",
+                tooltipMerge = true,
+                tooltipMaxCount = 0
+            )
         )
     }
 
@@ -217,6 +223,7 @@ class TooltipConfig {
         {
           'kind': 'plot',
           'ggtitle': {'text': 'Merged tooltips'},
+          'theme': { 'tooltip_merge': true },
           'mapping': { 'x': 'x', 'y': 'y' },
           'coord': {
             'name': 'cartesian',
@@ -255,6 +262,7 @@ class TooltipConfig {
         {
           'kind': 'plot',
           'ggtitle': {'text': 'Merged tooltips with disable_splitting'},
+          'theme': { 'tooltip_merge': true },
           'mapping': { 'x': 'x', 'y': 'y' },
           'layers': [
             {
@@ -296,6 +304,7 @@ class TooltipConfig {
         {
           'kind': 'plot',
           'ggtitle': {'text': 'Merged tooltips with disable_splitting and explicit lines'},
+          'theme': { 'tooltip_merge': true },
           'mapping': { 'x': 'x', 'y': 'y' },
           'layers': [
             {
@@ -332,5 +341,87 @@ class TooltipConfig {
         }
         """.trimIndent()
         return HashMap(parsePlotSpec(spec))
+    }
+
+    private fun tooltipLimitManyLines(
+        title: String = "Tooltip target limit: closest line only",
+        tooltipMerge: Boolean = false,
+        tooltipMaxCount: Int? = null
+    ): MutableMap<String, Any> {
+        val colors = listOf(
+            "#004586", "#ff420e", "#ffd320", "#579d1c", "#7e0021", "#83caff",
+            "#314004", "#aecf00", "#4b1f6f", "#ff950e", "#c5000b", "#0084d1",
+            "#008c48", "#8a004f", "#993f00", "#2bce48", "#ffcc99", "#808080",
+            "#94ffb5", "#8f7c00", "#9dcc00", "#c20088", "#003380", "#ffa405",
+            "#ffa8bb", "#426600", "#ff0010", "#5ef1f2", "#00998f", "#e0ff66"
+        )
+        val xs = ArrayList<Double>()
+        val ys = ArrayList<Double>()
+        val values = ArrayList<Double>()
+        val samples = ArrayList<String>()
+        colors.forEachIndexed { index, _ ->
+            val sample = index + 1
+            val y0 = 10.0 + (index % 12) * 0.22 - index * 0.035
+            val slope = 0.00182 + (index % 9) * 0.000035
+            val bend = if (index == 0) 0.000000025 else 0.0
+            listOf(0.0, 3000.0, 6000.0, 9000.0, 12000.0).forEach { x ->
+                val y = y0 + slope * x + bend * x * x
+                xs.add(x)
+                ys.add(y)
+                values.add(y)
+                samples.add("Sample ${sample.toString().padStart(2, '0')}")
+            }
+        }
+
+        val theme = mutableMapOf<String, Any>(
+            "panel_grid" to mapOf("color" to "#d8d2bf", "size" to 0.5),
+            "plot_background" to mapOf("fill" to "#fbf3df"),
+            "panel_background" to mapOf("fill" to "#fbf3df"),
+            "legend_position" to "none"
+        ).apply {
+            if (tooltipMerge) {
+                this["tooltip_merge"] = true
+            }
+            if (tooltipMaxCount != null) {
+                this["tooltip_max_count"] = tooltipMaxCount
+            }
+        }
+
+        return mutableMapOf(
+            "kind" to "plot",
+            "ggtitle" to mapOf("text" to title),
+            "ggsize" to mapOf("width" to 760.0, "height" to 480.0),
+            "mapping" to mapOf("x" to "x", "y" to "y"),
+            "data" to mapOf(
+                "x" to xs,
+                "y" to ys,
+                "value" to values,
+                "sample" to samples
+            ),
+            "coord" to mapOf(
+                "name" to "cartesian",
+                "xlim" to listOf(-500.0, 12300.0),
+                "ylim" to listOf(8.0, 58.0)
+            ),
+            "theme" to theme,
+            "scales" to listOf(
+                mapOf(
+                    "aesthetic" to "color",
+                    "values" to colors
+                )
+            ),
+            "layers" to listOf(
+                mapOf(
+                    "geom" to "line",
+                    "mapping" to mapOf("group" to "sample", "color" to "sample"),
+                    "size" to 2.0,
+                    "tooltips" to mapOf(
+                        "title" to "@sample",
+                        "formats" to listOf(mapOf("field" to "value", "format" to ".2f")),
+                        "lines" to listOf("@value")
+                    )
+                )
+            )
+        )
     }
 }

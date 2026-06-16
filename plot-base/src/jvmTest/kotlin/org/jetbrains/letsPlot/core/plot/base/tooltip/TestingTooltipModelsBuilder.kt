@@ -42,7 +42,9 @@ internal class TestingTooltipModelsBuilder private constructor(
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = plotContext
+            ctx = plotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
         ).chooseTooltipModels(listOf(geomTarget), contextualMapping)
     }
 

@@ -392,9 +392,9 @@ internal open class TooltipLayoutTestBase {
     }
 }
 
-// Single-target conveniences for layout tests (test tooltips always have one block)
+// Single-target conveniences for layout tests (test tooltips always have one target)
 internal val MeasuredTooltip.hintCoord: DoubleVector
-    get() = tooltipModel.blocks.single().targetCoord!!
+    get() = tooltipModel.targets.single().coord!!
 
 internal val MeasuredTooltip.hintRadius: Double
-    get() = tooltipModel.blocks.single().targetRadius + strokeWidth / 2
+    get() = tooltipModel.targets.single().radius + strokeWidth / 2

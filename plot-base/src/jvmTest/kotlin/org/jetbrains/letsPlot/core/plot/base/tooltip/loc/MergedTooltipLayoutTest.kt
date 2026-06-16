@@ -21,7 +21,7 @@ import kotlin.test.Test
 class MergedTooltipLayoutTest {
 
     @Test
-    fun `merged bar tooltip is anchored to the targets span, blocks sorted top to bottom`() {
+    fun `merged bar tooltip is anchored to the targets span, targets sorted top to bottom`() {
         val cursor = DoubleVector(120.0, 300.0)
 
         // three dodged bars: tops at different heights, HORIZONTAL placement like BarGeom
@@ -37,11 +37,11 @@ class MergedTooltipLayoutTest {
         )
 
         val mergedTooltip = tooltipModels.single()
-        assertThat(mergedTooltip.isMerged).isTrue()
+        assertThat(mergedTooltip.targets).hasSizeGreaterThan(1)
         assertThat(mergedTooltip.placement).isEqualTo(TooltipHint.Placement.HORIZONTAL)
 
-        // blocks read top-to-bottom - same order as target markers on the plot
-        assertThat(mergedTooltip.blocks.map(TooltipModel.Block::targetCoord)).containsExactly(
+        // targets read top-to-bottom - same order as target markers on the plot
+        assertThat(mergedTooltip.targets.map(TooltipModel.Target::coord)).containsExactly(
             DoubleVector(140.0, 40.0),
             DoubleVector(100.0, 50.0),
             DoubleVector(120.0, 60.0)
@@ -72,7 +72,7 @@ class MergedTooltipLayoutTest {
         )
 
         val mergedTooltip = tooltipModels.single()
-        assertThat(mergedTooltip.isMerged).isTrue()
+        assertThat(mergedTooltip.targets).hasSizeGreaterThan(1)
         assertThat(mergedTooltip.placement).isEqualTo(TooltipHint.Placement.VERTICAL)
 
         val positioned = arrange(tooltipModels, cursor, flippedAxis = true).single()
@@ -84,7 +84,7 @@ class MergedTooltipLayoutTest {
     }
 
     @Test
-    fun `merged tooltip keeps per-block target coords for point markers and crosshairs`() {
+    fun `merged tooltip keeps per-target coords for point markers and crosshairs`() {
         val cursor = DoubleVector(120.0, 300.0)
         val targetCoords = listOf(
             DoubleVector(100.0, 50.0),
@@ -97,11 +97,11 @@ class MergedTooltipLayoutTest {
         )
 
         val mergedTooltip = tooltipModels.single()
-        assertThat(mergedTooltip.isMerged).isTrue()
+        assertThat(mergedTooltip.targets).hasSizeGreaterThan(1)
         // the renderer draws point markers and crosshairs through these coords
-        assertThat(mergedTooltip.blocks.map(TooltipModel.Block::targetCoord))
+        assertThat(mergedTooltip.targets.map(TooltipModel.Target::coord))
             .containsExactlyElementsOf(targetCoords)
-        assertThat(mergedTooltip.blocks.map(TooltipModel.Block::targetRadius)).containsExactly(5.0, 5.0)
+        assertThat(mergedTooltip.targets.map(TooltipModel.Target::radius)).containsExactly(5.0, 5.0)
     }
 
     private fun chooseTooltipModels(
@@ -115,7 +115,9 @@ class MergedTooltipLayoutTest {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = NullPlotContext
+            ctx = NullPlotContext,
+            mergeTooltips = true,
+            tooltipMaxCount = 10
         )
         val contextualMapping = ContextualMapping(
             tooltipBehavior = TooltipBehavior.DEFAULT,
@@ -129,7 +131,7 @@ class MergedTooltipLayoutTest {
                 GeomTarget(
                     hitIndex = 0,
                     tooltipHint = hint,
-                    aesTooltipHint = emptyMap()
+                    sideTooltipHints = emptyMap()
                 )
             },
             contextualMapping

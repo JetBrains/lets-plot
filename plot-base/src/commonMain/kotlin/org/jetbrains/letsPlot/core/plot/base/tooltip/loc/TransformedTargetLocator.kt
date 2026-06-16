@@ -32,7 +32,7 @@ abstract class TransformedTargetLocator(
             GeomTarget(
                 geomTarget.hitIndex,
                 convertTooltipHint(geomTarget.tooltipHint),
-                convertTooltipHints(geomTarget.aesTooltipHint)
+                convertTooltipHints(geomTarget.sideTooltipHints)
             )
         }
     }

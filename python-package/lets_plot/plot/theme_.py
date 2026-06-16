@@ -1,6 +1,7 @@
+#  Copyright (c) 2026. JetBrains s.r.o.
+#  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
+
 #
-# Copyright (c) 2019. JetBrains s.r.o.
-# Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 from .core import FeatureSpec
 
@@ -98,6 +99,8 @@ def theme(*,
 
           tooltip=None,
           tooltip_text=None, tooltip_title_text=None,
+          tooltip_merge=None,
+          tooltip_max_count=None,
 
           label_text=None,
 
@@ -404,6 +407,11 @@ def theme(*,
     tooltip_title_text : dict
         Style settings for tooltip title text.
         Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify tooltip title parameters, inherited from ``tooltip_text``. Bold by default.
+    tooltip_merge : bool, default=False
+        If True, general tooltips from multiple targets are shown as one merged tooltip.
+    tooltip_max_count : int, default=10
+        Maximum number of tooltip targets shown at once.
+        If exceeded, only the closest target is shown. Set to 0 to disable the limit.
     label_text : dict
         Style settings for annotation text.
         Applies to text labels used in annotations, including labels configured with

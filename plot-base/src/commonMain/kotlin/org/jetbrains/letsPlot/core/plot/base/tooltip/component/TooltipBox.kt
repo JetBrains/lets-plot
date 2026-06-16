@@ -88,7 +88,8 @@ class TooltipBox(
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
         marker: TooltipMarker,
-        pointMarkerStrokeColor: Color = borderColor
+        pointMarkerStrokeColor: Color = borderColor,
+        coord: DoubleVector = DoubleVector.ZERO,
     ) {
         update(
             fillColor = fillColor,
@@ -96,7 +97,7 @@ class TooltipBox(
             borderColor = borderColor,
             strokeWidth = strokeWidth,
             lineType = lineType,
-            blocks = listOf(TooltipModel.Block(title = null, marker = marker, lines = lines)),
+            targets = listOf(TooltipModel.Target(title = null, marker = marker, lines = lines, coord = coord)),
             title = title,
             textClassName = textClassName,
             tooltipMinWidth = tooltipMinWidth,
@@ -111,15 +112,15 @@ class TooltipBox(
         borderColor: Color,
         strokeWidth: Double,
         lineType: LineType,
-        blocks: List<TooltipModel.Block>,
+        targets: List<TooltipModel.Target>,
         title: String?,
         textClassName: String,
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
         pointMarkerStrokeColor: Color = borderColor
     ) {
-        val lines = blocks.flatMap { block ->
-            listOfNotNull(block.title?.let(TooltipModel.Line::withValue)) + block.lines
+        val lines = targets.flatMap { target ->
+            listOfNotNull(target.title?.let(TooltipModel.Line::withValue)) + target.lines
         }
         val totalLines = lines.size + if (title != null) 1 else 0
         myHorizontalContentPadding = if (totalLines > 1) {
@@ -135,7 +136,7 @@ class TooltipBox(
         myYPositionsBetweenLines.clear()
 
         myContentBox.update(
-            blocks,
+            targets,
             title,
             textColor,
             tooltipMinWidth,
@@ -377,7 +378,7 @@ class TooltipBox(
         }
 
         fun update(
-            blocks: List<TooltipModel.Block>,
+            targets: List<TooltipModel.Target>,
             title: String?,
             valueTextColor: Color?,
             tooltipMinWidth: Double?,
@@ -386,8 +387,8 @@ class TooltipBox(
             myLinesContainer.children().clear()
             myTitleContainer.children().clear()
 
-            val blockLayout = layoutBlocks(blocks)
-            calculateColorBarIndent(blocks)
+            val targetLayout = layoutTargets(targets)
+            calculateColorBarIndent(targets)
 
             // title component
             val titleComponent = title?.let(::initTitleComponent)
@@ -398,7 +399,7 @@ class TooltipBox(
 
             // lines (label: value)
             val textSize = layoutLines(
-                blockLayout.lines,
+                targetLayout.lines,
                 valueTextColor,
                 minWidthWithTitle,
                 textClassName
@@ -437,7 +438,7 @@ class TooltipBox(
             }
 
             // draw color bars
-            layoutColorBars(blocks, blockLayout.lineRanges)
+            layoutColorBars(targets, targetLayout.lineRanges)
 
             // draw lines
             drawLineSeparators(
@@ -466,22 +467,22 @@ class TooltipBox(
             }
         }
 
-        private fun layoutBlocks(blocks: List<TooltipModel.Block>): BlocksLayout {
+        private fun layoutTargets(targets: List<TooltipModel.Target>): TargetsLayout {
             val lines = ArrayList<TooltipModel.Line>()
             val lineRanges = ArrayList<IntRange>()
-            blocks.forEach { block ->
+            targets.forEach { target ->
                 val firstLineIndex = lines.size
-                block.title?.let { lines += TooltipModel.Line.withValue(it) }
-                lines += block.lines
+                target.title?.let { lines += TooltipModel.Line.withValue(it) }
+                lines += target.lines
                 val lastLineIndex = lines.lastIndex
                 lineRanges += firstLineIndex..lastLineIndex
             }
-            return BlocksLayout(lines, lineRanges)
+            return TargetsLayout(lines, lineRanges)
         }
 
-        private fun calculateColorBarIndent(blocks: List<TooltipModel.Block>) {
-            val markerWidth = blocks.maxOfOrNull { block ->
-                colorBars(block.marker).sumOf { (_, width) -> width }
+        private fun calculateColorBarIndent(targets: List<TooltipModel.Target>) {
+            val markerWidth = targets.maxOfOrNull { target ->
+                colorBars(target.marker).sumOf { (_, width) -> width }
             }
             colorBarIndent = if (markerWidth != null && markerWidth != 0.0) {
                 markerWidth + myHorizontalContentPadding
@@ -490,8 +491,8 @@ class TooltipBox(
             }
         }
 
-        private fun layoutColorBars(blocks: List<TooltipModel.Block>, lineRanges: List<IntRange>) {
-            val blockColorBars = blocks.zip(lineRanges).flatMap { (block, lineRange) ->
+        private fun layoutColorBars(targets: List<TooltipModel.Target>, lineRanges: List<IntRange>) {
+            val targetColorBars = targets.zip(lineRanges).flatMap { (target, lineRange) ->
                 val yBounds = lineRange
                     .filter { it in myLineYBounds.indices }
                     .map(myLineYBounds::get)
@@ -501,17 +502,17 @@ class TooltipBox(
                     emptyList()
                 } else {
                     var xOffset = 0.0
-                    colorBars(block.marker).map { colorBar ->
+                    colorBars(target.marker).map { colorBar ->
                         BlockColorBar(colorBar.first, colorBar.second, top, bottom, xOffset).also {
                             xOffset += colorBar.second
                         }
                     }
                 }
             }
-            updateColorBarCount(blockColorBars.size)
+            updateColorBarCount(targetColorBars.size)
 
             myColorBars
-                .zip(blockColorBars)
+                .zip(targetColorBars)
                 .forEach { (bar, colorBar) ->
                     val x = contentRect.left + myHorizontalContentPadding + colorBar.xOffset
                     bar.fillOpacity().set(1.0)
@@ -544,7 +545,7 @@ class TooltipBox(
             }
         }
 
-        private inner class BlocksLayout(
+        private inner class TargetsLayout(
             val lines: List<TooltipModel.Line>,
             val lineRanges: List<IntRange>
         )

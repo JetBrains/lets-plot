@@ -11,7 +11,7 @@ import org.jetbrains.letsPlot.commons.values.Color
 class TooltipModel(
     val placement: TooltipHint.Placement,
     val stemLength: TooltipHint.StemLength,
-    val blocks: List<Block>,
+    val targets: List<Target>,
     val fill: Color?,
     val isSide: Boolean,
     val anchor: TooltipAnchor? = null,
@@ -19,23 +19,19 @@ class TooltipModel(
     val isCrosshairEnabled: Boolean = false,
     val crosshairMode: CrosshairMode? = null,
 ) {
-    val lines: List<Line> = blocks.flatMap(Block::lines)
-
-    // A multi-block model is a merged tooltip by contract: it is laid out against
-    // an aggregate of its block targets and rendered with per-block point markers
-    // instead of a stem pointer.
-    val isMerged: Boolean get() = blocks.size > 1
+    val lines: List<Line> = targets.flatMap(Target::lines)
+    val isMultiTarget: Boolean get() = targets.size > 1
 
     override fun toString(): String {
         return "TooltipModel($placement, lines=${lines.map(Line::toString)})"
     }
 
-    class Block(
+    class Target(
         val title: String?,
         val marker: TooltipMarker,
         val lines: List<Line>,
-        val targetCoord: DoubleVector? = null,
-        val targetRadius: Double = 0.0
+        val coord: DoubleVector,
+        val radius: Double = 0.0
     )
 
     class Line private constructor(val label: String?, val value: String) {
@@ -65,13 +61,13 @@ class TooltipModel(
             return TooltipModel(
                 placement = tooltipHint.placement,
                 stemLength = tooltipHint.stemLength,
-                blocks = listOf(
-                    Block(
+                targets = listOf(
+                    Target(
                         title = title,
                         marker = marker,
                         lines = lines,
-                        targetCoord = tooltipHint.coord,
-                        targetRadius = tooltipHint.objectRadius
+                        coord = tooltipHint.coord,
+                        radius = tooltipHint.objectRadius
                     )
                 ),
                 fill = fill,

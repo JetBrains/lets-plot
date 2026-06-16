@@ -60,10 +60,10 @@ open class TooltipModelTestHelper {
         expectedObjectRadius: Double
     ) {
         val tooltipModel = myTooltipModels[index]
-        val target = tooltipModel.blocks.single()
+        val target = tooltipModel.targets.single()
         assertEquals(expectedHintPlacement, tooltipModel.placement)
-        assertEquals(expectedHintCoord, target.targetCoord)
-        assertEquals(expectedObjectRadius, target.targetRadius, 0.001)
+        assertEquals(expectedHintCoord, target.coord)
+        assertEquals(expectedObjectRadius, target.radius, 0.001)
     }
 
     internal fun assertLines(index: Int, vararg expectedLines: String) {
@@ -101,13 +101,15 @@ open class TooltipModelTestHelper {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = plotContext
+            ctx = plotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
         ).chooseTooltipModels(
             listOf(geomTarget),
             GeomInteraction.createTestContextualMapping(
                 tipAes,
                 if (axisTooltipEnabled) axisAes else emptyList(),
-                sideTooltipAes = geomTarget.aesTooltipHint.map { it.key },
+                sideTooltipAes = geomTarget.sideTooltipHints.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build()
             )
@@ -124,13 +126,15 @@ open class TooltipModelTestHelper {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = plotContext
+            ctx = plotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
         ).chooseTooltipModels(
             listOf(geomTarget),
             GeomInteraction.createTestContextualMapping(
                 emptyList(),
                 if (axisTooltipEnabled) axisAes else emptyList(),
-                geomTarget.aesTooltipHint.map { it.key },
+                geomTarget.sideTooltipHints.map { it.key },
                 mappedDataAccessMock.mappedDataAccess,
                 DataFrame.Builder().build(),
                 valueSources

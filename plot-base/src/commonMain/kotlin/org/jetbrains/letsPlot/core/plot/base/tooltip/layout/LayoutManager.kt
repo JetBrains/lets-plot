@@ -521,7 +521,7 @@ class LayoutManager(
             val targetCoordY = myCursorCoord.y
             val tooltipHeight = measuredTooltip.size.y
             val stemLength = measuredTooltip.stemLength
-            val targetRadius = resolveTarget(measuredTooltip).radius
+            val (_, targetRadius) = resolveTarget(measuredTooltip)
 
             val targetTopPoint = targetCoordY - targetRadius
             val targetBottomPoint = targetCoordY + targetRadius
@@ -668,21 +668,18 @@ class LayoutManager(
     }
 
     // The target the tooltip box is laid out against: the only target of a regular
-    // tooltip, or an aggregate of all block targets of a merged one.
-    private fun resolveTarget(measuredTooltip: MeasuredTooltip): Target {
-        val targets = measuredTooltip.tooltipModel.blocks.mapNotNull { block ->
-            val coord = block.targetCoord ?: return@mapNotNull null
-            Target(coord, block.targetRadius)
-        }
+    // tooltip, or an aggregate of all targets of a merged one.
+    private fun resolveTarget(measuredTooltip: MeasuredTooltip): Pair<DoubleVector, Double> {
+        val targets = measuredTooltip.tooltipModel.targets
         val strokeOffset = measuredTooltip.strokeWidth / 2
 
         if (targets.isEmpty()) {
-            return Target(myCursorCoord, strokeOffset)
+            return Pair(myCursorCoord, strokeOffset)
         }
 
-        if (!measuredTooltip.tooltipModel.isMerged) {
-            val (coord, radius) = targets.single()
-            return Target(coord, radius + strokeOffset)
+        if (targets.size == 1) {
+            val target = targets.single()
+            return Pair(target.coord, target.radius + strokeOffset)
         }
 
         val categoryAxis = if (flippedAxis) Axis.Y else Axis.X
@@ -695,18 +692,16 @@ class LayoutManager(
         // (a bar stack, a dodged group) and must clear all of its targets -
         // anchor it at the center of the targets span.
         if (boxOffsetAlongCategoryAxis) {
-            val bounds = DoubleRectangles.boundingBox(targets.map(Target::coord))!! // targets are not empty
+            val bounds = DoubleRectangles.boundingBox(targets.map(TooltipModel.Target::coord))!! // targets are not empty
             val span = bounds.dimension.flipIf(categoryAxis == Axis.Y).x
-            return Target(bounds.center, span / 2 + targets.maxOf(Target::radius) + strokeOffset)
+            return Pair(bounds.center, span / 2 + targets.maxOf(TooltipModel.Target::radius) + strokeOffset)
         }
 
         // A box offset along the value axis: a span anchor would land past the
         // farthest target, away from the pointer - follow the cursor instead,
         // keeping clear of the biggest of the targets gathered around it.
-        return Target(myCursorCoord, targets.maxOf(Target::radius) + strokeOffset)
+        return Pair(myCursorCoord, targets.maxOf(TooltipModel.Target::radius) + strokeOffset)
     }
-
-    private data class Target(val coord: DoubleVector, val radius: Double)
 
     private enum class Axis { X, Y }
 

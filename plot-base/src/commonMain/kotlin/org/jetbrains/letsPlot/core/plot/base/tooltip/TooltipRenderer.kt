@@ -145,7 +145,7 @@ class TooltipRenderer(
                     info.orientation,
                     rotate = info.tooltipModel.placement == ROTATED,
                     // merged tooltips point at their targets with point markers, not with a stem
-                    showPointer = !info.tooltipModel.isMerged
+                    showPointer = !info.tooltipModel.isMultiTarget
                 )
             }
     }
@@ -158,19 +158,9 @@ class TooltipRenderer(
 
     private fun showPointMarkers(tooltips: List<LayoutManager.PositionedTooltip>) {
         val markerSpecs = tooltips
-            .flatMap { tooltip ->
-                if (!tooltip.tooltipModel.isMerged) {
-                    emptyList()
-                } else {
-                    tooltip.tooltipModel.blocks.mapNotNull { block ->
-                        val targetCoord = block.targetCoord ?: return@mapNotNull null
-                        PointMarkerSpec(
-                            coord = targetCoord,
-                            fillColor = block.marker.pointMarkerFillColor(),
-                        )
-                    }
-                }
-            }
+            .filter { tooltip -> tooltip.tooltipModel.isMultiTarget }
+            .flatMap { tooltip -> tooltip.tooltipModel.targets }
+            .map { target -> PointMarkerSpec(target.coord, target.marker.pointMarkerFillColor()) }
 
         pointMarkerStorage.provide(markerSpecs.size)
             .zip(markerSpecs)
@@ -192,7 +182,7 @@ class TooltipRenderer(
         }
         val coords = tooltips
             .filter { tooltip -> tooltip.tooltipModel.isCrosshairEnabled }
-            .flatMap { tooltip -> tooltip.tooltipModel.blocks.mapNotNull(TooltipModel.Block::targetCoord) }
+            .flatMap { tooltip -> tooltip.tooltipModel.targets.mapNotNull(TooltipModel.Target::coord) }
             .distinct()
 
         val crosshairComponents = crosshairStorage.provide(coords.size)
@@ -289,6 +279,8 @@ class TooltipRenderer(
             axisOrigin,
             xAxisTheme,
             yAxisTheme,
+            tooltipsTheme.merge(),
+            tooltipsTheme.maxCount(),
             plotContext,
             hAxisTooltipPosition,
             vAxisTooltipPosition
@@ -313,6 +305,8 @@ class TooltipRenderer(
         val axisOrigin: DoubleVector,
         private val xAxisTheme: AxisTheme,
         private val yAxisTheme: AxisTheme,
+        private val mergeTooltips: Boolean,
+        private val tooltipMaxCount: Int,
         private val plotContext: PlotContext,
         val hAxisTooltipPosition: HorizontalAxisTooltipPosition,
         val vAxisTooltipPosition: VerticalAxisTooltipPosition
@@ -334,7 +328,9 @@ class TooltipRenderer(
                 axisOrigin = axisOrigin,
                 xAxisTheme = xAxisTheme,
                 yAxisTheme = yAxisTheme,
-                ctx = plotContext
+                ctx = plotContext,
+                mergeTooltips = mergeTooltips,
+                tooltipMaxCount = tooltipMaxCount
             ).apply {
                 for (locator in transformedLocators) {
                     val result = locator.search(plotCoord)
@@ -425,24 +421,24 @@ class TooltipRenderer(
             else -> TooltipDefaults.BORDER_RADIUS
         }
 
-        // The box header: shown only when every block carries the same title;
-        // otherwise each block renders its own title
-        val commonTitle = spec.blocks.map(TooltipModel.Block::title).distinct().singleOrNull()
+        // The box header: shown only when every target carries the same title;
+        // otherwise each target renders its own title
+        val commonTitle = spec.targets.map(TooltipModel.Target::title).distinct().singleOrNull()
 
-        val blocks = spec.blocks.map { block ->
-            val marker = block.marker
+        val targets = spec.targets.map { target ->
+            val marker = target.marker
             // Reduce noise by not showing the same minor color
             val normalizedMarker = if (marker.majorColor == marker.minorColor && marker.majorColor != null) {
                 TooltipMarker(majorColor = marker.majorColor)
             } else {
                 marker
             }
-            TooltipModel.Block(
-                title = block.title.takeIf { it != commonTitle },
+            TooltipModel.Target(
+                title = target.title.takeIf { it != commonTitle },
                 marker = normalizedMarker,
-                lines = block.lines,
-                targetCoord = block.targetCoord,
-                targetRadius = block.targetRadius
+                lines = target.lines,
+                coord = target.coord,
+                radius = target.radius
             )
         }
 
@@ -453,7 +449,7 @@ class TooltipRenderer(
                 borderColor = borderColor,
                 strokeWidth = strokeWidth,
                 lineType = lineType,
-                blocks = blocks,
+                targets = targets,
                 title = commonTitle,
                 textClassName = spec.style,
                 tooltipMinWidth = spec.minWidth,
