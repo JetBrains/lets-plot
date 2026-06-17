@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (c) 2025. JetBrains s.r.o.
+# Copyright (c) 2026. JetBrains s.r.o.
 # Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 #
 
@@ -277,6 +277,21 @@ build_library () {
 
   make install
   check_exec_status "$?" "make install"
+
+  # MagickCore exports a global symbol 'ThrowException' that collides with a
+  # symbol of the same name in the Kotlin/Native runtime (stdlib-cache), causing
+  # 'ld.lld: error: duplicate symbol: ThrowException' when linking the native
+  # binary. lets-plot never calls MagickCore's ThrowException from Kotlin, and
+  # the only references to it live inside libMagickCore itself, so we rename it
+  # in-place to keep ImageMagick self-consistent while removing the clash.
+  if [[ "$lib_name" = imagemagick* ]]; then
+    local magick_core_lib="${INSTALL_PREFIX}/lib/libMagickCore-7.Q16HDRI.a"
+    if [[ -f "$magick_core_lib" ]]; then
+      print_message "Renaming MagickCore 'ThrowException' to avoid Kotlin/Native symbol clash..."
+      objcopy --redefine-sym ThrowException=MagickThrowException_LP "$magick_core_lib"
+      check_exec_status "$?" "objcopy --redefine-sym on libMagickCore"
+    fi
+  fi
 
   print_message "${lib_name} build finished..."
   cd "$sources_dir" || exit_with_error "Could not return to ${sources_dir} directory."
