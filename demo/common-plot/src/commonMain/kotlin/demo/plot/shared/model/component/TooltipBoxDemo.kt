@@ -70,11 +70,18 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 tooltipMinWidth = tooltipMinWidth,
                 borderRadius = borderRadius
             )
+            // Mirror TooltipRenderer's choice unless the spec pins the shape explicitly.
+            val shape = targetIndicatorShape ?: when {
+                rotate -> TooltipBox.TargetIndicatorShape.POINTER
+                targets.size > 1 -> TooltipBox.TargetIndicatorShape.CIRCLE
+                pointerCoord != null -> TooltipBox.TargetIndicatorShape.TAIL
+                else -> TooltipBox.TargetIndicatorShape.NONE
+            }
             tooltipBox.setPosition(
                 tooltipCoord = DoubleVector(0.0, 0.0),
                 pointerCoord = pointerCoord ?: DoubleVector(0.0, 0.0),
                 orientation = orientation,
-                rotate = rotate
+                targetIndicatorShape = shape
             )
         }
     }
@@ -105,6 +112,8 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
             val targets: List<TooltipModel.Target> = listOf(TooltipModel.Target(title = null, marker = marker, lines = lines, coord = DoubleVector.ZERO)),
             val orientation: TooltipBox.Orientation = TooltipBox.Orientation.VERTICAL,
             val pointerCoord: DoubleVector? = null,
+            // When null, the shape is derived from `rotate`/`targets`/`pointerCoord` (as in TooltipRenderer).
+            val targetIndicatorShape: TooltipBox.TargetIndicatorShape? = null,
         )
 
         private val myTooltipList = listOf(
@@ -156,7 +165,7 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                 lines = listOf(WITH_LABEL, EMPTY_LINE, STATIC_TEXT),
                 pointerCoord = DoubleVector(100.0, 120.0)
             ),
-            // with multiple targets
+            // with multiple targets - circle markers at each target
             MyTooltipModel(
                 fillColor = Color.LIGHT_YELLOW,
                 textColor = Color.BLUE,
@@ -167,16 +176,15 @@ class TooltipBoxDemo : SimpleDemoBase(DEMO_BOX_SIZE) {
                         title = "Group 09",
                         marker = TooltipMarker.create(majorColor = Color.DARK_GREEN, minorColor = Color.GRAY),
                         lines = listOf(TooltipModel.Line.withValue("18.37")),
-                        coord = DoubleVector.ZERO,
+                        coord = DoubleVector(200.0, 25.0),
                     ),
                     TooltipModel.Target(
                         title = "Group 17",
                         marker = TooltipMarker.create(majorColor = Color.LIGHT_PINK, minorColor = Color.DARK_BLUE),
                         lines = listOf(TooltipModel.Line.withValue("32.47")),
-                        coord = DoubleVector.ZERO,
+                        coord = DoubleVector(180.0, 130.0),
                     ),
                 ),
-                pointerCoord = DoubleVector(120.0, 80.0)
             ),
             /*
             // with splitted text

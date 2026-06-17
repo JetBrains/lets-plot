@@ -20,7 +20,6 @@ import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.commons.values.Colors.mimicTransparency
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
-import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
@@ -28,13 +27,17 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.component.CrosshairComponen
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.SvgComponentPool
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox.Orientation
+import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox.TargetIndicatorShape
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.HorizontalAlignment
 import org.jetbrains.letsPlot.core.plot.base.tooltip.layout.LayoutManager.MeasuredTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.TransformedTargetLocator
-import org.jetbrains.letsPlot.datamodel.svg.dom.*
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGraphicsElement.Visibility
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgNode
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
+import org.jetbrains.letsPlot.datamodel.svg.dom.SvgUtils
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
 
 
@@ -57,7 +60,6 @@ class TooltipRenderer(
     private val myTileInfos = ArrayList<TileInfo>()
     private val tooltipStorage: SvgComponentPool<TooltipBox>
     private val crosshairStorage: SvgComponentPool<CrosshairComponent>
-    private val pointMarkerStorage: SvgComponentPool<TooltipPointMarker>
     private val fadeEffectRect: SvgRectElement
     private var pinned = false
 
@@ -73,10 +75,6 @@ class TooltipRenderer(
 
         crosshairStorage = SvgComponentPool(
             itemFactory = ::CrosshairComponent,
-            parent = SvgGElement().also { myTooltipLayer.children().add(it) }
-        )
-        pointMarkerStorage = SvgComponentPool(
-            itemFactory = ::TooltipPointMarker,
             parent = SvgGElement().also { myTooltipLayer.children().add(it) }
         )
         tooltipStorage = SvgComponentPool(
@@ -133,7 +131,6 @@ class TooltipRenderer(
         )
 
         showCrosshair(positionedTooltips, tileInfo.geomBounds)
-        showPointMarkers(positionedTooltips)
 
         tooltipStorage.provide(positionedTooltips.size)
             .zip(positionedTooltips)
@@ -143,9 +140,7 @@ class TooltipRenderer(
                     info.tooltipCoord,
                     info.stemCoord,
                     info.orientation,
-                    rotate = info.tooltipModel.placement == ROTATED,
-                    // merged tooltips point at their targets with point markers, not with a stem
-                    showPointer = !info.tooltipModel.isMultiTarget
+                    info.tooltipModel.targetIndicatorShape
                 )
             }
     }
@@ -153,24 +148,6 @@ class TooltipRenderer(
     private fun hideTooltips() {
         tooltipStorage.provide(0)
         crosshairStorage.provide(0)
-        pointMarkerStorage.provide(0)
-    }
-
-    private fun showPointMarkers(tooltips: List<LayoutManager.PositionedTooltip>) {
-        val markerSpecs = tooltips
-            .filter { tooltip -> tooltip.tooltipModel.isMultiTarget }
-            .flatMap { tooltip -> tooltip.tooltipModel.targets }
-            .map { target -> PointMarkerSpec(target.coord, target.marker.pointMarkerFillColor()) }
-
-        pointMarkerStorage.provide(markerSpecs.size)
-            .zip(markerSpecs)
-            .forEach { (pointMarker, spec) ->
-                pointMarker.update(
-                    coord = spec.coord,
-                    fillColor = spec.fillColor,
-                    strokeColor = spec.fillColor.contrastColor()
-                )
-            }
     }
 
     private fun showCrosshair(tooltips: List<LayoutManager.PositionedTooltip>, geomBounds: DoubleRectangle) {
@@ -374,6 +351,15 @@ class TooltipRenderer(
                 ROTATED -> TooltipStyle.TOOLTIP_TEXT
             }
 
+    // The single target indicator this tooltip draws. The shapes are mutually exclusive.
+    private val TooltipModel.targetIndicatorShape: TargetIndicatorShape
+        get() = when {
+            placement == ROTATED -> TargetIndicatorShape.POINTER
+            // merged tooltips point at their targets with point markers, not with a stem
+            isMultiTarget -> TargetIndicatorShape.CIRCLE
+            else -> TargetIndicatorShape.TAIL
+        }
+
     private val LayoutManager.PositionedTooltip.orientation
         get() =
             when (hintKind) {
@@ -465,41 +451,4 @@ class TooltipRenderer(
         else -> tooltipsTheme.tooltipStrokeWidth()
     }
 
-    private class PointMarkerSpec(
-        val coord: DoubleVector,
-        val fillColor: Color
-    )
-
-    private class TooltipPointMarker : SvgComponent() {
-        private val circle = SvgCircleElement()
-
-        override fun buildComponent() {
-            add(circle)
-        }
-
-        fun update(coord: DoubleVector, fillColor: Color, strokeColor: Color) {
-            circle.apply {
-                cx().set(coord.x)
-                cy().set(coord.y)
-                r().set(TooltipDefaults.DATA_POINT_MARKER_RADIUS)
-                fillColor().set(fillColor)
-                strokeColor().set(strokeColor)
-                strokeWidth().set(TooltipDefaults.DATA_POINT_MARKER_STROKE_WIDTH)
-            }
-        }
-    }
-
-    private fun TooltipMarker.pointMarkerFillColor(): Color {
-        return majorColor.takeIf { it.isVisible() }
-            ?: minorColor.takeIf { it.isVisible() }
-            ?: Color.BLACK
-    }
-
-    private fun Color?.isVisible(): Boolean {
-        return this != null && alpha != 0
-    }
-
-    private fun Color.contrastColor(): Color {
-        return if (isDark()) Color.WHITE else Color.BLACK
-    }
 }
