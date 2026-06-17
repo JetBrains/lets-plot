@@ -202,6 +202,14 @@ build_library () {
       local git_hash="$IMAGEMAGICK_GIT_HASH"
       export ac_cv_func_getentropy=no
       export LIBS=$(pkg-config --libs --static freetype2 fontconfig)
+      # MagickCore exports a global symbol 'ThrowException' that collides with a
+      # symbol of the same name in the Kotlin/Native runtime (stdlib-cache),
+      # causing 'ld.lld: error: duplicate symbol: ThrowException' when linking
+      # the native binary. lets-plot never calls this function from Kotlin, so we
+      # rename it at compile time via a preprocessor define. This rewrites the
+      # declaration, definition, and all internal call sites consistently and is
+      # toolchain-agnostic (clang/gcc/mingw), unlike post-build objcopy.
+      export CFLAGS="${CFLAGS} -DThrowException=MagickThrowException_LP"
       extra_configure_args=(
         "--enable-zero-configuration"
         "--with-quantum-depth=16"
@@ -277,21 +285,6 @@ build_library () {
 
   make install
   check_exec_status "$?" "make install"
-
-  # MagickCore exports a global symbol 'ThrowException' that collides with a
-  # symbol of the same name in the Kotlin/Native runtime (stdlib-cache), causing
-  # 'ld.lld: error: duplicate symbol: ThrowException' when linking the native
-  # binary. lets-plot never calls MagickCore's ThrowException from Kotlin, and
-  # the only references to it live inside libMagickCore itself, so we rename it
-  # in-place to keep ImageMagick self-consistent while removing the clash.
-  if [[ "$lib_name" = imagemagick* ]]; then
-    local magick_core_lib="${INSTALL_PREFIX}/lib/libMagickCore-7.Q16HDRI.a"
-    if [[ -f "$magick_core_lib" ]]; then
-      print_message "Renaming MagickCore 'ThrowException' to avoid Kotlin/Native symbol clash..."
-      objcopy --redefine-sym ThrowException=MagickThrowException_LP "$magick_core_lib"
-      check_exec_status "$?" "objcopy --redefine-sym on libMagickCore"
-    fi
-  fi
 
   print_message "${lib_name} build finished..."
   cd "$sources_dir" || exit_with_error "Could not return to ${sources_dir} directory."
