@@ -13,6 +13,8 @@ plugins {
     signing
 }
 
+val kotlinLoggingVersion = extra["kotlinLogging.version"] as String
+
 kotlin {
     jvm()
     js().browser()
@@ -28,6 +30,8 @@ kotlin {
                 api(project(":plot-builder"))
                 api(project(":plot-stem"))
                 api(project(":plot-raster"))
+
+                api("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
             }
         }
     }
