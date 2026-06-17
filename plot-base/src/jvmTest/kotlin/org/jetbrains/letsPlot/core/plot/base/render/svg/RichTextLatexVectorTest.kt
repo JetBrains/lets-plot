@@ -188,7 +188,46 @@ class RichTextLatexVectorTest {
         val measured = RichText.measure(text = formula, font = font)
         val expected = max(LatexVectorFont.advanceEm('a'), LatexVectorFont.advanceEm('b')) * font.size +
                 LatexVectorFont.advanceEm('+') * font.size +
-                max(LatexVectorFont.advanceEm('c'), LatexVectorFont.advanceEm('d')) * font.size
+                max(LatexVectorFont.advanceEm('c'), LatexVectorFont.advanceEm('d')) * font.size +
+                2.0 * font.size * FRACTION_SIDE_SPACING_EM
+        assertThat(measured.width).isCloseTo(expected, offset(1e-9))
+    }
+
+    @Test
+    fun fractionHasThinGapFromInteriorSiblings() {
+        val formula = """\(a\frac{b}{c}d\)"""
+        val svg = toSvg(formula).single()
+        assertThat(svg.pathElements()).hasSize(5)
+
+        val measured = RichText.measure(text = formula, font = font)
+        val expected = LatexVectorFont.advanceEm('a') * font.size +
+                max(LatexVectorFont.advanceEm('b'), LatexVectorFont.advanceEm('c')) * font.size +
+                LatexVectorFont.advanceEm('d') * font.size +
+                2.0 * font.size * FRACTION_SIDE_SPACING_EM
+        assertThat(measured.width).isCloseTo(expected, offset(1e-9))
+    }
+
+    @Test
+    fun loneFractionHasNoThinGap() {
+        val formula = """\(\frac{a}{b}\)"""
+        val svg = toSvg(formula).single()
+        assertThat(svg.pathElements()).hasSize(3)
+
+        val measured = RichText.measure(text = formula, font = font)
+        val expected = max(LatexVectorFont.advanceEm('a'), LatexVectorFont.advanceEm('b')) * font.size
+        assertThat(measured.width).isCloseTo(expected, offset(1e-9))
+    }
+
+    @Test
+    fun fractionAfterExplicitSpaceHasNoExtraThinGap() {
+        val formula = """\(a\,\frac{b}{c}\)"""
+        val svg = toSvg(formula).single()
+        assertThat(svg.pathElements()).hasSize(4)
+
+        val measured = RichText.measure(text = formula, font = font)
+        val expected = LatexVectorFont.advanceEm('a') * font.size +
+                font.size * FRACTION_SIDE_SPACING_EM +
+                max(LatexVectorFont.advanceEm('b'), LatexVectorFont.advanceEm('c')) * font.size
         assertThat(measured.width).isCloseTo(expected, offset(1e-9))
     }
 
@@ -529,5 +568,6 @@ class RichTextLatexVectorTest {
 
     companion object {
         private const val INDEX_SIZE_FACTOR = 0.7
+        private const val FRACTION_SIDE_SPACING_EM = 3.0 / 18.0
     }
 }

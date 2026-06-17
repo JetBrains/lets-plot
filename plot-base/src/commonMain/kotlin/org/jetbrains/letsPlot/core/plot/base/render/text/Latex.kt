@@ -392,19 +392,38 @@ internal class Latex(
     private inner class GroupNode(children: List<LatexNode>, level: Int) : LatexNode(children, level) {
         override val visualCharCount: Int = children.sumOf { it.visualCharCount }
 
+        override fun vectorWidth(font: Font): Double =
+            children.sumOf { it.vectorWidth(font) } +
+                    children.zipWithNext().sumOf { (left, right) -> interAtomGap(left, right, font) }
+
         override fun renderVectorGroup(color: Color?): SvgGElement {
             val g = SvgGElement()
             val font = this@Latex.font
             var cursorPx = 0.0
+            var previousChild: LatexNode? = null
             for (child in children) {
+                previousChild?.let { cursorPx += interAtomGap(it, child, font) }
                 val childGroup = child.renderVectorGroup(color)
                 if (cursorPx != 0.0) {
                     childGroup.transform().set(SvgTransformBuilder().translate(cursorPx, 0.0).build())
                 }
                 g.children().add(childGroup)
                 cursorPx += child.vectorWidth(font)
+                previousChild = child
             }
             return g
+        }
+
+        // Fractions are custom vector boxes, not font glyphs, so they have no side bearings.
+        // Add explicit glue only between real neighboring nodes.
+        private fun interAtomGap(left: LatexNode, right: LatexNode, font: Font): Double {
+            val hasFraction = left is FractionNode || right is FractionNode
+            val hasExplicitSpace = left is SpaceNode || right is SpaceNode
+            return if (hasFraction && !hasExplicitSpace) {
+                FRACTION_SIDE_SPACING_EM * levelFontSize(font)
+            } else {
+                0.0
+            }
         }
     }
 
@@ -556,6 +575,7 @@ internal class Latex(
 
 
     companion object {
+        private const val FRACTION_SIDE_SPACING_EM = 3.0 / 18.0 // TeX thin space, 3 mu.
         private const val INDEX_SIZE_FACTOR = 0.7
         private const val INDEX_RELATIVE_SHIFT = 0.4
         internal const val VECTOR_FORMULA_CLASS = "lp-latex-vector-formula"
