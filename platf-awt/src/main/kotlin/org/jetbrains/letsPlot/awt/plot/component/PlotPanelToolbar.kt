@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
 package org.jetbrains.letsPlot.awt.plot.component
 
 import com.github.weisj.jsvg.SVGDocument
+import com.github.weisj.jsvg.parser.LoaderContext
 import com.github.weisj.jsvg.parser.SVGLoader
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.*
 import org.jetbrains.letsPlot.core.plot.builder.interact.tools.res.ToolbarIcons
@@ -214,7 +215,7 @@ internal class PlotPanelToolbar : JPanel() {
                         """stroke="none" fill="${colorToHex(color)}""""
                     )
                     val inputStream = coloredSvg.byteInputStream()
-                    val document: SVGDocument? = loader.load(inputStream)
+                    val document: SVGDocument? = loader.load(inputStream, null, LoaderContext.createDefault())
 
                     document?.let {
                         // Center the SVG icon
