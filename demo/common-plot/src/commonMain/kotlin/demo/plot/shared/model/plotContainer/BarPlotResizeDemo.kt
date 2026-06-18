@@ -89,7 +89,6 @@ class BarPlotResizeDemo private constructor(
         ).build()
 
         val layer = layerBuilder
-            .locatorLookupSpec(geomInteraction.createLookupSpec())
             .contextualMappingProvider(geomInteraction)
             .build(data, scaleByAes, scaleMappersNP)
 

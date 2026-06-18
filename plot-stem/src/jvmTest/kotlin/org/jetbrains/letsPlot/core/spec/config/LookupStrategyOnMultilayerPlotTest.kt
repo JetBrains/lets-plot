@@ -120,13 +120,8 @@ class LookupStrategyOnMultilayerPlotTest {
 
     companion object {
         fun assertLookup_HoverX(layer: GeomLayer) {
-            assertEquals(LookupSpace.X, layer.locatorLookupSpec.lookupSpace)
-            assertEquals(LookupStrategy.HOVER, layer.locatorLookupSpec.lookupStrategy)
-        }
-
-        fun assertLookup_NearestXY(layer: GeomLayer) {
-            assertEquals(LookupSpace.XY, layer.locatorLookupSpec.lookupSpace)
-            assertEquals(LookupStrategy.NEAREST, layer.locatorLookupSpec.lookupStrategy)
+            assertEquals(LookupSpace.X, layer.createContextualMapping()!!.tooltipBehavior.lookupSpec.lookupSpace)
+            assertEquals(LookupStrategy.HOVER, layer.createContextualMapping()!!.tooltipBehavior.lookupSpec.lookupStrategy)
         }
     }
 }

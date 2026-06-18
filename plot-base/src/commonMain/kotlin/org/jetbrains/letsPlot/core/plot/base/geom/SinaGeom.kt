@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -81,7 +81,7 @@ class SinaGeom : GeomBase() {
                 targetCollector.addPoint(
                     p.index(), location, (shape.size(p) + shape.strokeWidth(p)) / 2,
                     GeomTargetCollector.TooltipParams(
-                        markerColors = colorsByDataPoint(p)
+                        marker = colorsByDataPoint(p)
                     )
                 )
                 val o = PointShapeSvg.create(shape, location, p)

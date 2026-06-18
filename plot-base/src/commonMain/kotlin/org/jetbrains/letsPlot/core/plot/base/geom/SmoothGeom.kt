@@ -89,7 +89,7 @@ class SmoothGeom : GeomBase() {
                     localToGlobalIndex = { aes1.index() },
                     GeomTargetCollector.TooltipParams(
                         tooltipHints = hintsCollection.hints,
-                        markerColors = colorsByDataPoint(aes1)
+                        marker = colorsByDataPoint(aes1)
                     )
                 )
             }

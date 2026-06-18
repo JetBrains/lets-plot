@@ -12,7 +12,6 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.*
 
 class LayerTargetCollectorWithLocator(
     private val geomKind: GeomKind,
-    private val lookupSpec: GeomTargetLocator.LookupSpec,
     private val contextualMapping: ContextualMapping
 ) : GeomTargetCollector, GeomTargetLocator {
 
@@ -27,7 +26,7 @@ class LayerTargetCollectorWithLocator(
         tooltipPlacement: TooltipHint.Placement
     ) {
         if (contextualMapping.tooltipBehavior.ignoreInvisibleTargets) {
-            if (radius == 0.0 || tooltipParams.markerColorsFactory(index).all { it.alpha == 0 }) {
+            if (radius == 0.0 || tooltipParams.markerFactory(index).all { it.alpha == 0 }) {
                 return
             }
         }
@@ -49,7 +48,7 @@ class LayerTargetCollectorWithLocator(
         tooltipAnchor: DoubleVector?
     ) {
         if (contextualMapping.tooltipBehavior.ignoreInvisibleTargets) {
-            if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerColorsFactory(index)
+            if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerFactory(index)
                     .all { it.alpha == 0 }
             ) {
                 return

@@ -145,7 +145,7 @@ open class TextRepelGeom: TextGeom() {
                 result.position,
                  AesScaling.textSize(dp) / 2,
                 GeomTargetCollector.TooltipParams(
-                    markerColors = colorsByDataPoint(dp)
+                    marker = colorsByDataPoint(dp)
                 ),
                 TooltipHint.Placement.CURSOR
             )

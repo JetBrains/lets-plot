@@ -35,7 +35,8 @@ kotlin {
                 compileOnly(project(":plot-base"))
                 compileOnly(project(":plot-stem"))
                 compileOnly(project(":plot-builder"))
-                implementation("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
+
+                compileOnly("io.github.oshai:kotlin-logging:$kotlinLoggingVersion")
             }
         }
 

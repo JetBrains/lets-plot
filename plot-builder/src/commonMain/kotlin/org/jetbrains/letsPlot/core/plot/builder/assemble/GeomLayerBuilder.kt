@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -26,7 +26,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.FontFamilyRegistry
 import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMapping
 import org.jetbrains.letsPlot.core.plot.base.tooltip.ContextualMappingProvider
-import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetLocator.LookupSpec
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappedDataAccess
 import org.jetbrains.letsPlot.core.plot.base.util.YOrientationBaseUtil
 import org.jetbrains.letsPlot.core.plot.base.util.afterOrientation
@@ -57,7 +56,6 @@ class GeomLayerBuilder(
     private val myScaleProviderByAes = HashMap<Aes<*>, ScaleProvider>()
 
     private var myDataPreprocessor: ((DataFrame, Map<Aes<*>, Transform>) -> DataFrame)? = null
-    private var myLocatorLookupSpec: LookupSpec = LookupSpec.NONE
     private var myContextualMappingProvider: ContextualMappingProvider? = null
 
     private var myIsLegendDisabled: Boolean = false
@@ -97,11 +95,6 @@ class GeomLayerBuilder(
 
     fun <T> addScaleProvider(aes: Aes<T>, scaleProvider: ScaleProvider): GeomLayerBuilder {
         myScaleProviderByAes[aes] = scaleProvider
-        return this
-    }
-
-    fun locatorLookupSpec(v: LookupSpec): GeomLayerBuilder {
-        myLocatorLookupSpec = v
         return this
     }
 
@@ -240,7 +233,6 @@ class GeomLayerBuilder(
             myConstantByAes,
             scaleMap,
             scaleMapppersNP,
-            myLocatorLookupSpec,
             myContextualMappingProvider,
             myIsLegendDisabled,
             myCustomLegendOptions,
@@ -272,7 +264,6 @@ class GeomLayerBuilder(
         private val constantByAes: TypedKeyHashMap,
         override val scaleMap: Map<Aes<*>, Scale>,
         override val scaleMappersNP: Map<Aes<*>, ScaleMapper<*>>,
-        override val locatorLookupSpec: LookupSpec,
         private val contextualMappingProvider: ContextualMappingProvider?,
         override val isLegendDisabled: Boolean,
         override val customLegendOptions: CustomLegendOptions?,

@@ -35,7 +35,7 @@ class TargetPrototype(
                 tooltipPlacement = tooltipPlacement,
                 stemLength = tooltipParams.stemLength,
                 fillColor = tooltipParams.fillColorFactory(hitIndex),
-                markerColors = tooltipParams.markerColorsFactory(hitIndex),
+                marker = tooltipParams.markerFactory(hitIndex),
                 objectRadius = objectRadius
             ),
             tooltipParams.tooltipHints
@@ -49,7 +49,7 @@ class TargetPrototype(
             tooltipPlacement: TooltipHint.Placement,
             stemLength: TooltipHint.StemLength,
             fillColor: Color?,
-            markerColors: List<Color>,
+            marker: List<Color>,
             objectRadius: Double
         ): TooltipHint {
 
@@ -61,10 +61,10 @@ class TargetPrototype(
                             objectRadius,
                             stemLength,
                             fillColor,
-                            markerColors
+                            marker
                         )
 
-                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
+                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, marker)
                     else -> error("Wrong TooltipHint.placement = $tooltipPlacement for POINT")
                 }
 
@@ -74,7 +74,7 @@ class TargetPrototype(
                         objectRadius,
                         stemLength,
                         fillColor,
-                        markerColors
+                        marker
                     )
 
                     HORIZONTAL -> horizontalTooltip(
@@ -82,10 +82,10 @@ class TargetPrototype(
                         objectRadius,
                         stemLength,
                         fillColor,
-                        markerColors
+                        marker
                     )
 
-                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
+                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, marker)
                     ROTATED -> rotatedTooltip(hitCoord, objectRadius = 0.0, color = null, stemLength)
                     else -> error("Wrong TooltipHint.placement = $tooltipPlacement for RECT")
                 }
@@ -96,7 +96,7 @@ class TargetPrototype(
                         objectRadius = 0.0,
                         stemLength,
                         fillColor,
-                        markerColors
+                        marker
                     )
 
                     VERTICAL -> verticalTooltip(
@@ -104,14 +104,14 @@ class TargetPrototype(
                         objectRadius = 0.0,
                         stemLength,
                         fillColor,
-                        markerColors
+                        marker
                     )
 
                     else -> error("Wrong TooltipHint.placement = $tooltipPlacement for PATH")
                 }
 
                 POLYGON -> when (tooltipPlacement) {
-                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, markerColors)
+                    CURSOR -> cursorTooltip(hitCoord, stemLength, fillColor, marker)
                     else -> error("Wrong TooltipHint.placement = $tooltipPlacement for POLYGON")
                 }
             }

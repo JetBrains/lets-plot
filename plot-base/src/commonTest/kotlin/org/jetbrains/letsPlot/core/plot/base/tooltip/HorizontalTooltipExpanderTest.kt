@@ -214,7 +214,7 @@ class HorizontalTooltipExpanderTest {
             title = null,
             lines = listOf(TooltipModel.Line.withValue(text)),
             fill = Color.BLACK,
-            markerColors = emptyList(),
+            marker = emptyList(),
             isSide = true
         )
         return LayoutManager.PositionedTooltip(

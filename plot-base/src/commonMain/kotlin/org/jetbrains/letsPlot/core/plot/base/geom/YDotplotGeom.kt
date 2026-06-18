@@ -131,7 +131,7 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
             p.index(),
             rect,
             GeomTargetCollector.TooltipParams(
-                markerColors = colorMarkerMapper(p)
+                marker = colorMarkerMapper(p)
             ),
             TooltipHint.Placement.CURSOR
         )

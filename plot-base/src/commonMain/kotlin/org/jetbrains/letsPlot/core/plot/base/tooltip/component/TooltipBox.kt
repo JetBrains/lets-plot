@@ -80,7 +80,7 @@ class TooltipBox(
         textClassName: String,
         tooltipMinWidth: Double? = null,
         borderRadius: Double,
-        markerColors: List<Color>,
+        marker: List<Color>,
         pointMarkerStrokeColor: Color = borderColor
     ) {
         val totalLines = lines.size + if (title != null) 1 else 0
@@ -101,7 +101,7 @@ class TooltipBox(
             title,
             textColor,
             tooltipMinWidth,
-            markerColors,
+            marker,
             textClassName
         )
         myPointerBox.updateStyle(fillColor, borderColor, strokeWidth, lineType, borderRadius, pointMarkerStrokeColor)
@@ -338,13 +338,13 @@ class TooltipBox(
             title: String?,
             valueTextColor: Color?,
             tooltipMinWidth: Double?,
-            markerColors: List<Color>,
+            marker: List<Color>,
             textClassName: String
         ) {
             myLinesContainer.children().clear()
             myTitleContainer.children().clear()
 
-            calculateColorBarIndent(markerColors)
+            calculateColorBarIndent(marker)
 
             // title component
             val titleComponent = title?.let(::initTitleComponent)
@@ -394,7 +394,7 @@ class TooltipBox(
             }
 
             // draw color bars
-            layoutColorBars(markerColors)
+            layoutColorBars(marker)
 
             // draw lines
             drawLineSeparators(
@@ -414,18 +414,18 @@ class TooltipBox(
             )
         }
 
-        private fun calculateColorBarIndent(markerColors: List<Color>) {
-            colorBarIndent = min(myColorBars.size, markerColors.size).let { colorBarNums ->
+        private fun calculateColorBarIndent(marker: List<Color>) {
+            colorBarIndent = min(myColorBars.size, marker.size).let { colorBarNums ->
                 colorBarsWidth(colorBarNums).sum().let { width ->
                     if (width != 0.0) width + myHorizontalContentPadding else 0.0
                 }
             }
         }
 
-        private fun layoutColorBars(markerColors: List<Color>) {
+        private fun layoutColorBars(marker: List<Color>) {
             // stroke | fill | stroke
-            val fillColor = markerColors.firstOrNull()
-            val strokeColor = if (markerColors.size > 1) markerColors[1] else null
+            val fillColor = marker.firstOrNull()
+            val strokeColor = if (marker.size > 1) marker[1] else null
             myColorBars
                 .zip(listOf(strokeColor, fillColor, strokeColor))
                 .forEach { (bar, color) ->
@@ -439,7 +439,7 @@ class TooltipBox(
 
             var x = contentRect.left + myHorizontalContentPadding
             myColorBars
-                .zip(colorBarsWidth(markerColors.size))
+                .zip(colorBarsWidth(marker.size))
                 .filter { (bar, _) -> bar.fillOpacity().get()!! > 0 }
                 .forEach { (bar, width) ->
                     // adjacent vertical bars

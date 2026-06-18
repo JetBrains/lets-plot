@@ -258,7 +258,7 @@ object LiveMapProviderUtil {
                             tooltipHint = TooltipHint.horizontalTooltip(
                                 hoverObject.targetPosition ?: coord,
                                 objectRadius = hoverObject.targetRadius ?: 0.0,
-                                markerColors = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
+                                marker = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
                             ),
                             aesTooltipHint = emptyMap()
                         )
