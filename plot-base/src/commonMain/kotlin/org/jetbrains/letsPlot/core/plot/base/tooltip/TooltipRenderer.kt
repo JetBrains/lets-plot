@@ -159,7 +159,7 @@ class TooltipRenderer(
         }
         val coords = tooltips
             .filter { tooltip -> tooltip.tooltipModel.isCrosshairEnabled }
-            .flatMap { tooltip -> tooltip.tooltipModel.targets.mapNotNull(TooltipModel.Target::coord) }
+            .flatMap { tooltip -> tooltip.tooltipModel.targets.map(TooltipModel.Target::coord) }
             .distinct()
 
         val crosshairComponents = crosshairStorage.provide(coords.size)

@@ -63,16 +63,12 @@ internal class LocatedTargetsPicker(
         if (mergeTooltips) {
             return false
         }
+        // perf: when LP is used by vis tools with raw data. 0 disables the limit.
         if (tooltipMaxCount <= 0) {
             return false
         }
 
-        val maxCount = when (result.geomKind) {
-            BAR, HISTOGRAM -> minOf(BAR_TARGETS_MAX_COUNT, tooltipMaxCount)
-            else -> tooltipMaxCount // perf: when LP is used by vis tools with raw data
-        }
-
-        return result.targets.size > maxCount
+        return result.targets.size > tooltipMaxCount
     }
 
     fun chooseBestResult(): List<TooltipModel> {
@@ -372,8 +368,6 @@ internal class LocatedTargetsPicker(
     companion object {
         internal const val CUTOFF_DISTANCE = 30.0
         internal const val FAKE_DISTANCE = 15.0
-
-        private const val BAR_TARGETS_MAX_COUNT = 5 // allowed number of visible tooltips
 
         private fun distance(cursor: DoubleVector, lookupResult: LookupResult): Double {
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance

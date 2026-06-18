@@ -160,7 +160,7 @@ class LocatedTargetsPickerFilterTargetsTest {
                 .mapIndexed { index, rect -> TestUtil.rectTarget(index, rect) }
         }
 
-        //  restriction for bar tooltips = 5:
+        //  bars honor the default tooltip_max_count (10), with no bar-specific limit:
         //   - if more - choose the closest one
         //   - else - get all targets
 
@@ -191,7 +191,8 @@ class LocatedTargetsPickerFilterTargetsTest {
 
     @Test
     fun `histogram plot - cap visible tooltips before x filtering`() {
-        val targetPrototypes = (0..5)
+        // more targets than the default tooltip_max_count (10) => collapse to the closest one
+        val targetPrototypes = (0..11)
             .map { y -> DoubleRectangle(DoubleVector(0.0, y.toDouble()), DoubleVector(1.0, 1.0)) }
             .mapIndexed { index, rect -> TestUtil.rectTarget(index, rect) }
 

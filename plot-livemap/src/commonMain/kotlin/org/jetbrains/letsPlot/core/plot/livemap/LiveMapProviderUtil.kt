@@ -244,7 +244,7 @@ object LiveMapProviderUtil {
                     return search(layerIndex, coord)
                 }
 
-                private val colorMarkerMapper = HintColorUtil.markerFactory(
+                private val markerFactory = HintColorUtil.markerFactory(
                     layer.geomKind,
                     isMappedFill = { p: DataPointAesthetics -> p.fillAes in layer.mappedAes },
                     isMappedColor = { p: DataPointAesthetics -> p.colorAes in layer.mappedAes }
@@ -258,7 +258,7 @@ object LiveMapProviderUtil {
                             tooltipHint = TooltipHint.horizontalTooltip(
                                 hoverObject.targetPosition ?: coord,
                                 objectRadius = hoverObject.targetRadius ?: 0.0,
-                                marker = colorMarkerMapper(layer.aesthetics.dataPointAt(hoverObject.index))
+                                marker = markerFactory(layer.aesthetics.dataPointAt(hoverObject.index))
                             ),
                             sideTooltipHints = emptyMap()
                         )

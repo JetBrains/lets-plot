@@ -34,13 +34,13 @@ class ErrorBarGeom : GeomBase(), WithWidth {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val colorsByDataPoint = HintColorUtil.markerFactory(ctx)
+        val markerFactory = HintColorUtil.markerFactory(ctx)
         val tooltipHelper = RectangleTooltipHelper(
             pos = pos,
             coord = coord,
             ctx = ctx,
             hintAesList = listOf(Aes.YMIN, Aes.YMAX),
-            colorMarkerMapper = colorsByDataPoint
+            markerFactory = markerFactory
         )
 
         for (p in aesthetics.dataPoints()) {

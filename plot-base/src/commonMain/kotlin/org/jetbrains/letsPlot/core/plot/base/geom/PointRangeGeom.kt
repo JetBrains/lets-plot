@@ -47,7 +47,7 @@ class PointRangeGeom : GeomBase() {
             ctx = ctx,
             hintAesList = listOf(Aes.YMIN, Aes.YMAX),
             fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
-            colorMarkerMapper = colorsByDataPoint
+            markerFactory = colorsByDataPoint
         )
 
         for (p in aesthetics.dataPoints()) {

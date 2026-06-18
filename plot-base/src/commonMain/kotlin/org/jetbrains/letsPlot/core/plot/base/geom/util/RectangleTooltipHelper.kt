@@ -22,7 +22,7 @@ class RectangleTooltipHelper(
     private val hintAesList: List<Aes<Double>> = emptyList(),
     private val tooltipPlacement: TooltipHint.Placement = VERTICAL.takeIf { ctx.flipped } ?: HORIZONTAL,
     private val fillColorMapper: (DataPointAesthetics) -> Color? = { null },
-    private val colorMarkerMapper: (DataPointAesthetics) -> TooltipMarker = markerFactory(ctx),
+    private val markerFactory: (DataPointAesthetics) -> TooltipMarker = markerFactory(ctx),
     // Anchor the tooltip at the bar's tip (far end from zero): top for positive,
     // bottom for negative (or right/left when flipped). Off by default — other
     // rect-based geoms (tile, rect) aren't anchored relative to a zero baseline.
@@ -37,7 +37,7 @@ class RectangleTooltipHelper(
             p.index(),
             GeomTargetCollector.TooltipParams(
                 fillColor = fillColorMapper(p),
-                marker = colorMarkerMapper(p)
+                marker = markerFactory(p)
             ),
             tooltipPlacement = CURSOR
         )
@@ -84,7 +84,7 @@ class RectangleTooltipHelper(
             GeomTargetCollector.TooltipParams(
                 tooltipHints = hintConfigs.hints,
                 fillColor = fillColorMapper(p),
-                marker = colorMarkerMapper(p)
+                marker = markerFactory(p)
             ),
             tooltipPlacement = tooltipPlacement,
             tooltipAnchor = tooltipAnchor

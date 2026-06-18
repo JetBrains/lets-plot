@@ -42,7 +42,7 @@ class LineRangeGeom : GeomBase() {
             ctx = ctx,
             hintAesList = listOf(Aes.YMIN, Aes.YMAX),
             fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
-            colorMarkerMapper = colorsByDataPoint
+            markerFactory = colorsByDataPoint
         )
         for (p in aesthetics.dataPoints()) {
             val start = p.toLocation(Aes.X, Aes.YMIN) ?: continue
