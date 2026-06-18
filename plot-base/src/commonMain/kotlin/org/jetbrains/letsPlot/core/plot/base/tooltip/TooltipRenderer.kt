@@ -21,7 +21,7 @@ import org.jetbrains.letsPlot.commons.values.Colors.mimicTransparency
 import org.jetbrains.letsPlot.core.plot.base.PlotContext
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
+import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.*
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.CrosshairComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.SvgComponentPool
@@ -45,14 +45,14 @@ class TooltipRenderer(
     decorationLayer: SvgNode,
     private val flippedAxis: Boolean,
     plotSize: DoubleVector,
-    private val xAxisTheme: AxisTheme,
-    private val yAxisTheme: AxisTheme,
-    private val tooltipsTheme: TooltipsTheme,
-    private val plotBackground: Color,
+    private val theme: Theme,
     private val styleSheet: StyleSheet,
     private val plotContext: PlotContext,
     mouseEventPeer: MouseEventPeer
 ) : Disposable {
+    private val xAxisTheme: AxisTheme = theme.horizontalAxis(flippedAxis)
+    private val yAxisTheme: AxisTheme = theme.verticalAxis(flippedAxis)
+
     private val regs = CompositeRegistration()
     private val myLayoutManager: LayoutManager
     private val myTooltipLayer: SvgGElement
@@ -85,7 +85,7 @@ class TooltipRenderer(
         fadeEffectRect = SvgRectElement().apply {
             width().set(0.0)
             height().set(0.0)
-            fillColor().set(plotBackground.withOpacity(0.7))
+            fillColor().set(theme.plot().backgroundFill().withOpacity(0.7))
             visibility().set(Visibility.HIDDEN)
             decorationLayer.children().add(0, this)
         }
@@ -256,8 +256,8 @@ class TooltipRenderer(
             axisOrigin,
             xAxisTheme,
             yAxisTheme,
-            tooltipsTheme.merge(),
-            tooltipsTheme.maxCount(),
+            theme.tooltips().merge(),
+            theme.tooltips().maxCount(),
             plotContext,
             hAxisTooltipPosition,
             vAxisTooltipPosition
@@ -376,14 +376,14 @@ class TooltipRenderer(
             spec.placement == X_AXIS -> xAxisTheme.tooltipFill()
             spec.placement == Y_AXIS -> yAxisTheme.tooltipFill()
             spec.isSide -> (spec.fill ?: WHITE).let { mimicTransparency(it, SvgUtils.opacity(it), WHITE) }
-            else -> tooltipsTheme.tooltipFill()
+            else -> theme.tooltips().tooltipFill()
         }
 
         val borderColor = when {
             spec.placement == X_AXIS -> xAxisTheme.tooltipColor()
             spec.placement == Y_AXIS -> yAxisTheme.tooltipColor()
             spec.isSide -> if (fillColor.isDark()) TooltipDefaults.LIGHT_TEXT_COLOR else TooltipDefaults.DARK_TEXT_COLOR
-            else -> tooltipsTheme.tooltipColor()
+            else -> theme.tooltips().tooltipColor()
         }
 
         // Text color is set by element class name,
@@ -399,7 +399,7 @@ class TooltipRenderer(
             spec.placement == X_AXIS -> xAxisTheme.tooltipLineType()
             spec.placement == Y_AXIS -> yAxisTheme.tooltipLineType()
             spec.isSide -> NamedLineType.SOLID
-            else -> tooltipsTheme.tooltipLineType()
+            else -> theme.tooltips().tooltipLineType()
         }
 
         val borderRadius = when (spec.placement) {
@@ -440,7 +440,8 @@ class TooltipRenderer(
                 textClassName = spec.style,
                 tooltipMinWidth = spec.minWidth,
                 borderRadius = borderRadius,
-                pointMarkerStrokeColor = plotBackground
+                // Outline the point marker with the geom paper color so adjacent markers stay separated across flavors (e.g. Darcula).
+                pointMarkerStrokeColor = theme.colors().paper()
             )
     }
 
@@ -448,7 +449,7 @@ class TooltipRenderer(
         spec.placement == X_AXIS -> xAxisTheme.tooltipStrokeWidth()
         spec.placement == Y_AXIS -> yAxisTheme.tooltipStrokeWidth()
         spec.isSide -> 1.0
-        else -> tooltipsTheme.tooltipStrokeWidth()
+        else -> theme.tooltips().tooltipStrokeWidth()
     }
 
 }

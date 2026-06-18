@@ -235,10 +235,29 @@ class LocatedTargetsPickerFilterTargetsTest {
         )
     }
 
+    @Test
+    fun `merge ignores the count limit and keeps all targets`() {
+        val targetPrototypes = (0..100)
+            .map { index -> TestUtil.pointTarget(index, DoubleVector(0.0, index.toDouble()), radius = 1.0) }
+
+        val locator = createLocator(GeomKind.POINT, targetPrototypes)
+        val cursor = DoubleVector(0.0, 62.2)
+
+        // Merging takes priority over the default limit: every target is kept (as if the limit were disabled),
+        // instead of collapsing to the single closest one.
+        val merged = findTargets(locator, cursor, mergeTooltips = true)
+        val unlimited = findTargets(locator, cursor, tooltipMaxCount = 0)
+
+        assertThat(merged).hasSameSizeAs(unlimited)
+        assertThat(merged.size).isGreaterThan(1)
+    }
+
     private fun findTargets(
         locator: GeomTargetLocator,
         cursor: DoubleVector,
-        flippedAxis: Boolean = false
+        flippedAxis: Boolean = false,
+        mergeTooltips: Boolean = false,
+        tooltipMaxCount: Int = 10
     ): List<GeomTarget> {
         return LocatedTargetsPicker(
             flippedAxis = flippedAxis,
@@ -247,8 +266,8 @@ class LocatedTargetsPickerFilterTargetsTest {
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
             ctx = NullPlotContext,
-            mergeTooltips = false,
-            tooltipMaxCount = 10
+            mergeTooltips = mergeTooltips,
+            tooltipMaxCount = tooltipMaxCount
         )
                 .apply { locator.search(cursor)?.let(::addLookupResult) }
             .chooseBestLookupResults()

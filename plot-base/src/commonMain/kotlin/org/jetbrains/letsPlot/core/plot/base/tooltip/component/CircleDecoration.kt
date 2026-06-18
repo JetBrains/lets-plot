@@ -7,7 +7,6 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.component
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.values.Color
-import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.render.svg.SvgComponent
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipDefaults
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgCircleElement
@@ -35,7 +34,7 @@ internal class CircleDecoration : SvgComponent() {
                         cy().set(coord.y)
                         r().set(TooltipDefaults.DATA_POINT_MARKER_RADIUS)
                         fillColor().set(spec.fillColor)
-                        strokeColor().set(spec.fillColor.contrastColor())
+                        strokeColor().set(spec.strokeColor)
                         strokeWidth().set(TooltipDefaults.DATA_POINT_MARKER_STROKE_WIDTH)
                     }
                 }
@@ -57,10 +56,7 @@ internal class CircleDecoration : SvgComponent() {
     }
     internal data class CircleIndicator(
         val coord: DoubleVector,
-        val fillColor: Color
+        val fillColor: Color,
+        val strokeColor: Color
     )
-
-    private fun Color.contrastColor(): Color {
-        return if (Colors.luminance(this) < 0.5) Color.WHITE else Color.BLACK
-    }
 }

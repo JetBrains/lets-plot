@@ -409,9 +409,12 @@ def theme(*,
         Set `element_text() <https://lets-plot.org/python/pages/api/lets_plot.element_text.html>`__ to specify tooltip title parameters, inherited from ``tooltip_text``. Bold by default.
     tooltip_merge : bool, default=False
         If True, general tooltips from multiple targets are shown as one merged tooltip.
+        Takes priority over `tooltip_max_count`: when enabled, the limit is ignored and all targets are combined.
     tooltip_max_count : int, default=10
         Maximum number of tooltip targets shown at once.
         If exceeded, only the closest target is shown. Set to 0 to disable the limit.
+        Ignored when `tooltip_merge=True`: merging takes priority, so all targets are combined
+        into the merged tooltip regardless of this value.
     label_text : dict
         Style settings for annotation text.
         Applies to text labels used in annotations, including labels configured with

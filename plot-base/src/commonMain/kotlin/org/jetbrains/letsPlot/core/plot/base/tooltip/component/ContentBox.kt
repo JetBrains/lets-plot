@@ -151,18 +151,18 @@ internal class ContentBox(
     }
 
     private fun colorBars(marker: TooltipMarker): List<Pair<Color, Double>> {
-        return when {
-            marker.majorColor != null && marker.minorColor != null -> listOf(
-                marker.minorColor to TooltipDefaults.COLOR_BAR_STROKE_WIDTH,
-                marker.majorColor to TooltipDefaults.COLOR_BAR_WIDTH,
-                marker.minorColor to TooltipDefaults.COLOR_BAR_STROKE_WIDTH
+        // Invariant: a visible marker is never drawn as a lone thin bar.
+        // The primary color always gets the full width; the minor color only adds thin flanks around it.
+        val major = marker.majorColor ?: marker.minorColor ?: return emptyList()
+        val minor = marker.minorColor.takeIf { marker.majorColor != null }
+        return if (minor != null) {
+            listOf(
+                minor to TooltipDefaults.COLOR_BAR_STROKE_WIDTH,
+                major to TooltipDefaults.COLOR_BAR_WIDTH,
+                minor to TooltipDefaults.COLOR_BAR_STROKE_WIDTH
             )
-
-            marker.majorColor != null -> listOf(marker.majorColor to TooltipDefaults.COLOR_BAR_WIDTH)
-
-            marker.minorColor != null -> listOf(marker.minorColor to TooltipDefaults.COLOR_BAR_STROKE_WIDTH)
-
-            else -> emptyList()
+        } else {
+            listOf(major to TooltipDefaults.COLOR_BAR_WIDTH)
         }
     }
 

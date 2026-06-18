@@ -59,6 +59,10 @@ internal class LocatedTargetsPicker(
     }
 
     private fun exceedsTargetLimit(result: LookupResult): Boolean {
+        // Merging takes priority over the count limit: collect every target and combine them into one tooltip.
+        if (mergeTooltips) {
+            return false
+        }
         if (tooltipMaxCount <= 0) {
             return false
         }
@@ -370,11 +374,6 @@ internal class LocatedTargetsPicker(
         internal const val FAKE_DISTANCE = 15.0
 
         private const val BAR_TARGETS_MAX_COUNT = 5 // allowed number of visible tooltips
-
-        // more than 10 targets per layer is too much.
-        // Seems like Lets-Plot was used by vis tools, not by humans. Limit tooltips count to 1.
-        // User won't get much info from it anyway.
-        private const val EXPECTED_TARGETS_MAX_COUNT = 10
 
         private fun distance(cursor: DoubleVector, lookupResult: LookupResult): Double {
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance

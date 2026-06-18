@@ -28,7 +28,7 @@ object TooltipDefaults {
     const val COLOR_BAR_WIDTH = 4.0
     const val COLOR_BAR_STROKE_WIDTH = 1.5
     const val DATA_POINT_MARKER_RADIUS = 4.0
-    const val DATA_POINT_MARKER_STROKE_WIDTH = 2.0
+    const val DATA_POINT_MARKER_STROKE_WIDTH = 1.0
 
     val DARK_TEXT_COLOR = Color.BLACK
     val LIGHT_TEXT_COLOR = Color.WHITE

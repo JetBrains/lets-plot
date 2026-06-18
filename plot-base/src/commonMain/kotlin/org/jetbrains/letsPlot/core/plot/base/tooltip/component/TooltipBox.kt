@@ -91,7 +91,11 @@ class TooltipBox(
             borderRadius = borderRadius
         )
         circleIndicators = targets.map { target ->
-            CircleDecoration.CircleIndicator(target.coord, target.marker.pointMarkerFillColor())
+            CircleDecoration.CircleIndicator(
+                coord = target.coord,
+                fillColor = target.marker.pointMarkerFillColor(),
+                strokeColor = pointMarkerStrokeColor
+            )
         }
         pointerStyle = PointerDecoration.Style(
             fillColor = fillColor,
