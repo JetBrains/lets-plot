@@ -1,4 +1,4 @@
-#  Copyright (c) 2021. JetBrains s.r.o.
+#  Copyright (c) 2026. JetBrains s.r.o.
 #  Use of this source code is governed by the MIT license that can be found in the LICENSE file.
 
 import lets_plot as gg
@@ -16,6 +16,16 @@ def test_theme_options_should_be_merged():
         'legend_position': 'bottom'
     }
     assert expected_theme == spec.as_dict()['theme']
+
+
+def test_tooltip_merge_theme_option():
+    spec = gg.ggplot() + _geom('foo') + theme(tooltip_merge=True)
+    assert spec.as_dict()['theme']['tooltip_merge']
+
+
+def test_tooltip_max_count_theme_option():
+    spec = gg.ggplot() + _geom('foo') + theme(tooltip_max_count=0)
+    assert spec.as_dict()['theme']['tooltip_max_count'] == 0
 
 
 def test_override_theme_option():

@@ -12,6 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.HORIZONTAL
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTICAL
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 
 object BarTooltipHelper {
     fun collectRectangleTargets(
@@ -22,7 +23,7 @@ object BarTooltipHelper {
         ctx: GeomContext,
         clientRectFactory: (DataPointAesthetics) -> DoubleRectangle?,
         fillColorMapper: (DataPointAesthetics) -> Color? = { null },
-        colorMarkerMapper: (DataPointAesthetics) -> List<Color> = HintColorUtil.createColorMarkerMapper(ctx),
+        markerFactory: (DataPointAesthetics) -> TooltipMarker = HintColorUtil.markerFactory(ctx),
         defaultTooltipPlacement: TooltipHint.Placement = VERTICAL.takeIf { ctx.flipped } ?: HORIZONTAL
     ) {
         val helper = GeomHelper(pos, coord, ctx)
@@ -59,7 +60,7 @@ object BarTooltipHelper {
                 GeomTargetCollector.TooltipParams(
                     tooltipHints = hintConfigs.hints,
                     fillColor = fillColorMapper(p),
-                    marker = colorMarkerMapper(p)
+                    marker = markerFactory(p)
                 ),
                 tooltipPlacement = defaultTooltipPlacement
             )

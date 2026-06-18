@@ -209,12 +209,12 @@ class HorizontalTooltipExpanderTest {
         position: DoubleVector,
         pointer: DoubleVector
     ): LayoutManager.PositionedTooltip {
-        val spec = TooltipModel(
+        val spec = TooltipModel.forTarget(
             tooltipHint = TooltipHint.cursorTooltip(DoubleVector.ZERO),
             title = null,
             lines = listOf(TooltipModel.Line.withValue(text)),
             fill = Color.BLACK,
-            marker = emptyList(),
+            marker = TooltipMarker.NONE,
             isSide = true
         )
         return LayoutManager.PositionedTooltip(

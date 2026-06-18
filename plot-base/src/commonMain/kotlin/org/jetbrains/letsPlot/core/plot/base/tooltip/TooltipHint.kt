@@ -15,7 +15,7 @@ open class TooltipHint(
     open val objectRadius: Double,
     open val stemLength: StemLength,
     open val fillColor: Color?,
-    open val marker: List<Color>
+    open val marker: TooltipMarker
 ) {
     enum class StemLength(val value: Double) {
         NORMAL(12.0),
@@ -44,7 +44,7 @@ open class TooltipHint(
             objectRadius: Double,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            marker: List<Color> = emptyList()
+            marker: TooltipMarker = TooltipMarker.NONE
         ): TooltipHint {
             return TooltipHint(
                 Placement.VERTICAL,
@@ -61,7 +61,7 @@ open class TooltipHint(
             objectRadius: Double,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            marker: List<Color> = emptyList()
+            marker: TooltipMarker = TooltipMarker.NONE
         ): TooltipHint {
             return TooltipHint(
                 Placement.HORIZONTAL,
@@ -77,7 +77,7 @@ open class TooltipHint(
             coord: DoubleVector,
             stemLength: StemLength = StemLength.NORMAL,
             fillColor: Color? = null,
-            marker: List<Color> = emptyList()
+            marker: TooltipMarker = TooltipMarker.NONE
         ): TooltipHint {
             return TooltipHint(
                 placement = Placement.CURSOR,
@@ -101,7 +101,7 @@ open class TooltipHint(
                 objectRadius = axisRadius,
                 stemLength,
                 fillColor,
-                marker = emptyList()
+                marker = TooltipMarker.NONE
             )
         }
 
@@ -117,7 +117,7 @@ open class TooltipHint(
                 objectRadius = axisRadius,
                 stemLength,
                 fillColor,
-                marker = emptyList()
+                marker = TooltipMarker.NONE
             )
         }
 
@@ -128,7 +128,7 @@ open class TooltipHint(
                 objectRadius,
                 stemLength,
                 color,
-                marker = emptyList()
+                marker = TooltipMarker.NONE
             )
         }
     }

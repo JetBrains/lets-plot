@@ -26,7 +26,7 @@ class LayerTargetCollectorWithLocator(
         tooltipPlacement: TooltipHint.Placement
     ) {
         if (contextualMapping.tooltipBehavior.ignoreInvisibleTargets) {
-            if (radius == 0.0 || tooltipParams.markerFactory(index).all { it.alpha == 0 }) {
+            if (radius == 0.0 || tooltipParams.markerFactory(index).allTransparent()) {
                 return
             }
         }
@@ -49,7 +49,7 @@ class LayerTargetCollectorWithLocator(
     ) {
         if (contextualMapping.tooltipBehavior.ignoreInvisibleTargets) {
             if (rectangle.width == 0.0 || rectangle.height == 0.0 || tooltipParams.markerFactory(index)
-                    .all { it.alpha == 0 }
+                    .allTransparent()
             ) {
                 return
             }

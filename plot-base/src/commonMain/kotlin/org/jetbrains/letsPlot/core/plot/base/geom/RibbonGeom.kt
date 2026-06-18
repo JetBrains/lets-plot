@@ -53,7 +53,7 @@ class RibbonGeom : GeomBase() {
 
     private fun buildHints(aesthetics: Aesthetics, pos: PositionAdjustment, coord: CoordinateSystem, ctx: GeomContext) {
         val helper = GeomHelper(pos, coord, ctx)
-        val colorMapper = HintColorUtil.createColorMarkerMapper(ctx)
+        val colorMapper = HintColorUtil.markerFactory(ctx)
         val hint = HintsCollection.HintConfigFactory()
             .defaultObjectRadius(0.0)
             .defaultKind(HORIZONTAL.takeUnless { ctx.flipped } ?: VERTICAL)

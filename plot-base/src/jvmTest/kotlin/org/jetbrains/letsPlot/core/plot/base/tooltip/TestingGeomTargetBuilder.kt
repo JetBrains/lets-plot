@@ -65,7 +65,7 @@ class TestingGeomTargetBuilder(private var myTargetHitCoord: DoubleVector) {
                 detectTooltipHint(myHintShape.kind),
                 TooltipHint.StemLength.NORMAL,
                 fillColor = myFill,
-                marker = emptyList(),
+                marker = TooltipMarker.NONE,
                 objectRadius = if (myHintShape.kind == HitShape.Kind.RECT) {
                     myHintShape.rect.width / 2
                 } else {

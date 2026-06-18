@@ -49,7 +49,9 @@ class LocatedTargetsPickerFilterTargetsTest {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = NullPlotContext
+            ctx = NullPlotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
         ).apply {
                 addLookupResult(lineLookupResult)
                 addLookupResult(pointLookupResult)
@@ -158,7 +160,7 @@ class LocatedTargetsPickerFilterTargetsTest {
                 .mapIndexed { index, rect -> TestUtil.rectTarget(index, rect) }
         }
 
-        //  restriction for bar tooltips = 5:
+        //  bars honor the default tooltip_max_count (10), with no bar-specific limit:
         //   - if more - choose the closest one
         //   - else - get all targets
 
@@ -189,7 +191,8 @@ class LocatedTargetsPickerFilterTargetsTest {
 
     @Test
     fun `histogram plot - cap visible tooltips before x filtering`() {
-        val targetPrototypes = (0..5)
+        // more targets than the default tooltip_max_count (10) => collapse to the closest one
+        val targetPrototypes = (0..11)
             .map { y -> DoubleRectangle(DoubleVector(0.0, y.toDouble()), DoubleVector(1.0, 1.0)) }
             .mapIndexed { index, rect -> TestUtil.rectTarget(index, rect) }
 
@@ -203,14 +206,14 @@ class LocatedTargetsPickerFilterTargetsTest {
 
     @Test
     fun `large non bar layer - cap visible tooltips to closest target`() {
-        val targetPrototypes = (0..10)
+        val targetPrototypes = (0..100)
             .map { index -> TestUtil.pointTarget(index, DoubleVector(0.0, index.toDouble()), radius = 1.0) }
 
         val locator = createLocator(GeomKind.POINT, targetPrototypes)
 
         assertTargets(
-            findTargets(locator, cursor = DoubleVector(0.0, 6.2)),
-            6
+            findTargets(locator, cursor = DoubleVector(0.0, 62.2)),
+            62
         )
     }
 
@@ -233,10 +236,29 @@ class LocatedTargetsPickerFilterTargetsTest {
         )
     }
 
+    @Test
+    fun `merge ignores the count limit and keeps all targets`() {
+        val targetPrototypes = (0..100)
+            .map { index -> TestUtil.pointTarget(index, DoubleVector(0.0, index.toDouble()), radius = 1.0) }
+
+        val locator = createLocator(GeomKind.POINT, targetPrototypes)
+        val cursor = DoubleVector(0.0, 62.2)
+
+        // Merging takes priority over the default limit: every target is kept (as if the limit were disabled),
+        // instead of collapsing to the single closest one.
+        val merged = findTargets(locator, cursor, mergeTooltips = true)
+        val unlimited = findTargets(locator, cursor, tooltipMaxCount = 0)
+
+        assertThat(merged).hasSameSizeAs(unlimited)
+        assertThat(merged.size).isGreaterThan(1)
+    }
+
     private fun findTargets(
         locator: GeomTargetLocator,
         cursor: DoubleVector,
-        flippedAxis: Boolean = false
+        flippedAxis: Boolean = false,
+        mergeTooltips: Boolean = false,
+        tooltipMaxCount: Int = 10
     ): List<GeomTarget> {
         return LocatedTargetsPicker(
             flippedAxis = flippedAxis,
@@ -244,7 +266,9 @@ class LocatedTargetsPickerFilterTargetsTest {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = NullPlotContext
+            ctx = NullPlotContext,
+            mergeTooltips = mergeTooltips,
+            tooltipMaxCount = tooltipMaxCount
         )
                 .apply { locator.search(cursor)?.let(::addLookupResult) }
             .chooseBestLookupResults()

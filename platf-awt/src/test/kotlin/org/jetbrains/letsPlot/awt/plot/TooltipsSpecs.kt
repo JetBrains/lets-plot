@@ -1266,7 +1266,7 @@ object TooltipsSpecs {
         |  "coord": {
         |    "name": "cartesian",
         |    "xlim": [ 0.0, 4.0 ],
-        |    "ylim": [ 0.0, 7.0 ]
+        |    "ylim": [ 0.0, 70.0 ]
         |  },
         |  "layers": [
         |    {
@@ -1275,9 +1275,9 @@ object TooltipsSpecs {
         |      "width": 1.5,
         |      "alpha": 0.5,
         |      "data": {
-        |        "x": [ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0 ],
-        |        "y": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 ],
-        |        "id": [ "bar 1", "bar 2", "bar 3", "bar 4", "bar 5", "bar 6" ]
+        |        "x": [ 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0 ],
+        |        "y": [ 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0 ],
+        |        "id": [ "bar 1", "bar 2", "bar 3", "bar 4", "bar 5", "bar 6", "bar 7", "bar 8", "bar 9", "bar 10", "bar 11" ]
         |      },
         |      "mapping": { "x": "x", "y": "y", "fill": "id" },
         |      "tooltips": { "lines": [ "@id" ] }

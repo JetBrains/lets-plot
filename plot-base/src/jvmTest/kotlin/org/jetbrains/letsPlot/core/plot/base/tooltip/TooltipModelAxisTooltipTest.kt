@@ -37,7 +37,7 @@ class TooltipModelAxisTooltipTest : TooltipModelTestHelper() {
                     TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        marker = emptyList()
+                        marker = TooltipMarker.NONE
                     )
                 )
                 .build()

@@ -18,7 +18,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement.VERTI
 class TargetCollectorHelper(
     private val ctx: GeomContext
 ) {
-    private val markerMapper = HintColorUtil.createColorMarkerMapper(ctx)
+    private val markerMapper = HintColorUtil.markerFactory(ctx)
     private val targetCollector: GeomTargetCollector = ctx.targetCollector
 
     fun addPaths(paths: Collection<PathData>) {

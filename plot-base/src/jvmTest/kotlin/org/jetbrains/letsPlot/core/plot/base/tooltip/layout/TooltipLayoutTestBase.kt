@@ -262,7 +262,7 @@ internal open class TooltipLayoutTestBase {
         fun build(): TipLayoutManagerController {
             return object : TipLayoutManagerController {
                 override fun arrange(): List<PositionedTooltip> =
-                    LayoutManager(myViewport, myHorizontalAlignment, margin = 5.0)
+                    LayoutManager(myViewport, myHorizontalAlignment, margin = 5.0, flippedAxis = false)
                         .arrange(
                             myTooltipData,
                             myCursor,
@@ -391,3 +391,10 @@ internal open class TooltipLayoutTestBase {
         }
     }
 }
+
+// Single-target conveniences for layout tests (test tooltips always have one target)
+internal val MeasuredTooltip.hintCoord: DoubleVector
+    get() = tooltipModel.targets.single().coord!!
+
+internal val MeasuredTooltip.hintRadius: Double
+    get() = tooltipModel.targets.single().radius + strokeWidth / 2

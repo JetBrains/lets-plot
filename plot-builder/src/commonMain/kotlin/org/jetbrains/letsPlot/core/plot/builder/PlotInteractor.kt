@@ -55,10 +55,7 @@ internal class PlotInteractor(
             decorationLayer,
             flippedAxis,
             plotSize,
-            theme.horizontalAxis(flippedAxis),
-            theme.verticalAxis(flippedAxis),
-            theme.tooltips(),
-            theme.plot().backgroundFill(),
+            theme,
             styleSheet,
             plotContext,
             mouseEventPeer
