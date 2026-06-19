@@ -382,6 +382,17 @@ internal object GeomProviderFactory {
                 )
             }
 
+            GeomKind.ANNOTATION_RASTER -> GeomProvider.annotationRaster {
+                AnnotationRasterGeom(
+                    imageUrl = layerConfig.getString(Option.Geom.Image.HREF),
+                    xMin = annotationRasterBound(layerConfig, Option.Geom.Image.XMIN),
+                    xMax = annotationRasterBound(layerConfig, Option.Geom.Image.XMAX),
+                    yMin = annotationRasterBound(layerConfig, Option.Geom.Image.YMIN),
+                    yMax = annotationRasterBound(layerConfig, Option.Geom.Image.YMAX),
+                    interpolate = layerConfig.getBoolean(Option.Geom.AnnotationRaster.INTERPOLATE),
+                )
+            }
+
             GeomKind.PIE -> GeomProvider.pie {
                 val geom = PieGeom()
                 layerConfig.getDouble(Pie.HOLE)?.let { geom.holeSize = it }
@@ -581,6 +592,16 @@ internal object GeomProviderFactory {
             else -> throw IllegalArgumentException(
                 "Unsupported value for ${Option.Geom.Repel.DIRECTION} parameter: '$value'. " +
                         "Use one of: x, y, both."
+            )
+        }
+    }
+
+    private fun annotationRasterBound(layerConfig: LayerConfig, option: String): Double? {
+        return when (val value = layerConfig[option]) {
+            null -> null
+            is Number -> value.toDouble()
+            else -> throw IllegalArgumentException(
+                "Parameter '$option' expected to be a Number, but was ${value::class.simpleName}"
             )
         }
     }

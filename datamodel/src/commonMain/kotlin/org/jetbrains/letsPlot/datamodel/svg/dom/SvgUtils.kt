@@ -114,6 +114,16 @@ object SvgUtils {
         }
     }
 
+    fun ensureDefaultImageRendering(imageElement: SvgImageElement, defaultStyle: String) {
+        if (imageElement.getAttribute(SvgImageElement.IMAGE_RENDERING).get() != null) {
+            return
+        }
+        if (imageElement.getAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE).get() != null) {
+            return
+        }
+        imageElement.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, defaultStyle)
+    }
+
     fun pngDataURI(base64EncodedPngImage: String): String {
         return StringBuilder("data:image/png;base64,")
                 .append(base64EncodedPngImage)

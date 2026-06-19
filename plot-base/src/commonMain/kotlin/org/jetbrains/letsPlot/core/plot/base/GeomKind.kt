@@ -57,10 +57,10 @@ enum class GeomKind {
     LABEL_REPEL,
     RASTER,
     IMAGE,
+    ANNOTATION_RASTER,
     PIE,
     LOLLIPOP,
     BRACKET,
     BRACKET_DODGE,
     BLANK,
 }
-

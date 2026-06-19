@@ -82,4 +82,38 @@ class SvgToStringTest {
         // There should be no spaces between <tspan> elements
         assertTrue(svgString.contains("<tspan>1</tspan><tspan>2</tspan><tspan>3</tspan>"))
     }
+
+    @Test
+    fun imageRenderingAttributeShouldNotBeOverridden() {
+        val svg = SvgSvgElement().apply {
+            children().add(
+                SvgImageElement(0.0, 0.0, 10.0, 10.0).apply {
+                    href().set("data:image/png;base64,abc")
+                    setAttribute(SvgImageElement.IMAGE_RENDERING, "optimizeQuality")
+                }
+            )
+        }
+
+        val svgString = SvgToString.render(svg)
+
+        assertTrue(svgString.contains("image-rendering=\"optimizeQuality\""))
+        assertTrue(!svgString.contains("image-rendering: pixelated"))
+    }
+
+    @Test
+    fun imageRenderingStyleShouldNotBeOverridden() {
+        val svg = SvgSvgElement().apply {
+            children().add(
+                SvgImageElement(0.0, 0.0, 10.0, 10.0).apply {
+                    href().set("data:image/png;base64,abc")
+                    setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, "image-rendering: auto")
+                }
+            )
+        }
+
+        val svgString = SvgToString.render(svg)
+
+        assertTrue(svgString.contains("style=\"image-rendering: auto\""))
+        assertTrue(!svgString.contains("image-rendering: pixelated"))
+    }
 }

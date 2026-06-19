@@ -409,6 +409,14 @@ class GeomProvider internal constructor(
             )
         }
 
+        fun annotationRaster(supplier: (Context) -> Geom): GeomProvider {
+            return GeomProvider(
+                GeomKind.ANNOTATION_RASTER,
+                AnnotationRasterGeom.HANDLES_GROUPS,
+                supplier
+            )
+        }
+
         fun pie(supplier: (Context) -> Geom): GeomProvider {
             return GeomProvider(
                 GeomKind.PIE,

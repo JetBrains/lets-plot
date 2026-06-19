@@ -77,7 +77,10 @@ object SvgToString {
                         }
 
                         if (childNode is SvgImageElement) {
-                            childNode.setAttribute(SvgConstants.SVG_STYLE_ATTRIBUTE, "image-rendering: optimizeSpeed; image-rendering: pixelated")
+                            SvgUtils.ensureDefaultImageRendering(
+                                childNode,
+                                "image-rendering: optimizeSpeed; image-rendering: pixelated"
+                            )
                         }
 
                         @Suppress("USELESS_CAST") // Kotlin 1.9 fails to infer correctly here

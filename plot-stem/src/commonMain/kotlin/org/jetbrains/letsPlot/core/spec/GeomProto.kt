@@ -56,6 +56,7 @@ class GeomProto(val geomKind: GeomKind) {
 //            DENSITY2D,
 //            DENSITY2DF,
             RASTER,
+            ANNOTATION_RASTER,
             IMAGE -> CoordProviders.fixed(1.0)
 
             MAP -> CoordProviders.map(projection = identity().takeIf { layerConfig.has(Layer.USE_CRS) } ?: mercator())
@@ -118,6 +119,7 @@ class GeomProto(val geomKind: GeomKind) {
             LIVE_MAP,
             RASTER,
             IMAGE,
+            ANNOTATION_RASTER,
             BLANK -> Samplings.NONE
         }
     }
