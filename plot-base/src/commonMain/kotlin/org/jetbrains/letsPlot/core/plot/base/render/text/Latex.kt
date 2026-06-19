@@ -307,6 +307,8 @@ internal class Latex(
             var cursorPx = 0.0
             for (run in segments()) {
                 if (run.supported) {
+                    // Supported glyphs are painted as filled outlines, not text. In raster backends (ImageMagick)
+                    // a filled outline looks a bit heavier than the same glyph as text at small sizes — known limitation, not a bug.
                     for (c in run.text) {
                         val glyph = LatexVectorFont.glyphOrNull(c, this@Latex.font.isBold, this@Latex.font.isItalic) ?: continue
                         if (glyph.pathData != null) {
