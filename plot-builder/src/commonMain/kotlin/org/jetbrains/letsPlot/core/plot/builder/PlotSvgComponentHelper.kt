@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.builder
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.FontFace
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.TextRotation
 import org.jetbrains.letsPlot.core.plot.base.layout.TextJustification.Companion.applyJustification
@@ -213,7 +214,8 @@ internal object PlotSvgComponentHelper {
         justification: TextJustification,
         boundRect: DoubleRectangle,
         rotation: TextRotation? = null,
-        className: String
+        className: String,
+        face: FontFace
     ) {
         if (text == null) return
 
@@ -229,6 +231,8 @@ internal object PlotSvgComponentHelper {
             rotation
         )
         textLabel.setFontSize(fontSize)
+        if (face.bold) textLabel.setFontWeight(face.weight)
+        if (face.italic) textLabel.setFontStyle(face.style)
         textLabel.setTextLayout(textLayout)
         textLabel.setHorizontalAnchor(hAnchor)
         textLabel.moveTo(position)
@@ -439,7 +443,8 @@ internal object PlotSvgComponentHelper {
                 labelSpec = PlotLabelSpecFactory.plotTag(plotTheme),
                 justification = plotTheme.tagJustification(),
                 boundRect = it,
-                className = Style.PLOT_TAG
+                className = Style.PLOT_TAG,
+                face = plotTheme.tagStyle().face
             )
         }
         textLayout.titleTextRect?.let {
@@ -449,7 +454,8 @@ internal object PlotSvgComponentHelper {
                 labelSpec = PlotLabelSpecFactory.plotTitle(plotTheme),
                 justification = plotTheme.titleJustification(),
                 boundRect = it,
-                className = Style.PLOT_TITLE
+                className = Style.PLOT_TITLE,
+                face = plotTheme.titleStyle().face
             )
         }
         textLayout.subtitleTextRect?.let {
@@ -459,7 +465,8 @@ internal object PlotSvgComponentHelper {
                 labelSpec = PlotLabelSpecFactory.plotSubtitle(plotTheme),
                 justification = plotTheme.subtitleJustification(),
                 boundRect = it,
-                className = Style.PLOT_SUBTITLE
+                className = Style.PLOT_SUBTITLE,
+                face = plotTheme.subtitleStyle().face
             )
         }
         textLayout.captionTextRect?.let {
@@ -469,7 +476,8 @@ internal object PlotSvgComponentHelper {
                 labelSpec = PlotLabelSpecFactory.plotCaption(plotTheme),
                 justification = plotTheme.captionJustification(),
                 boundRect = it,
-                className = Style.PLOT_CAPTION
+                className = Style.PLOT_CAPTION,
+                face = plotTheme.captionStyle().face
             )
         }
     }

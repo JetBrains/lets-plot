@@ -140,6 +140,9 @@ abstract class LegendBox : SvgComponent() {
         label.addClassName(Style.LEGEND_TITLE)
         label.setHorizontalAnchor(hAnchor)
         label.setFontSize(fontSize)
+        val face = theme.titleStyle().face
+        if (face.bold) label.setFontWeight(face.weight)
+        if (face.italic) label.setFontStyle(face.style)
         label.setTextLayout(textLayout)
         label.moveTo(pos)
         return label

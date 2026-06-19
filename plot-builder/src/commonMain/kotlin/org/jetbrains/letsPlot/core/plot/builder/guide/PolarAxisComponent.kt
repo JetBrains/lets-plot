@@ -164,6 +164,9 @@ class PolarAxisComponent(
 
             val labelSpec = PlotLabelSpecFactory.axisTick(axisTheme)
             tickLabel.setFontSize(labelSpec.font.size.toDouble())
+            val face = axisTheme.labelStyle().face
+            if (face.bold) tickLabel.setFontWeight(face.weight)
+            if (face.italic) tickLabel.setFontStyle(face.style)
             tickLabel.setTextLayout(labelSpec.layout(label).layout)
             tickLabel.rotate(labelAdjustments.rotationDegree)
             tickLabel

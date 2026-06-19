@@ -13019,6 +13019,129 @@ class LatexTest : PlotVisualTestBase() {
     }
 
     @Test
+    fun plot_latex_cssClassFontFace() {
+        val spec = """
+            |{
+            |  "kind": "subplots",
+            |  "ggsize": { "width": 840.0, "height": 640.0 },
+            |  "layout": { "ncol": 2.0, "nrow": 2.0, "name": "grid" },
+            |  "figures": [
+            |    {
+            |      "kind": "plot",
+            |      "data": { "x": [1.0, 2.0, 3.0], "y": [1.0, 4.0, 2.0] },
+            |      "layers": [
+            |        {
+            |          "geom": "point",
+            |          "mapping": { "x": "x", "y": "y" },
+            |          "tooltips": "none"
+            |        }
+            |      ],
+            |      "ggtitle": {
+            |        "text": "Title \\(\\frac{a}{b}\\)",
+            |        "subtitle": "Subtitle \\(\\frac{c}{d}\\)"
+            |      },
+            |      "caption": { "text": "Caption \\(\\frac{e}{f}\\)" },
+            |      "theme": {
+            |        "plot_title": { "face": "bold", "blank": false },
+            |        "plot_subtitle": { "face": "italic", "blank": false },
+            |        "plot_caption": { "face": "bold_italic", "blank": false }
+            |      }
+            |    },
+            |    {
+            |      "kind": "plot",
+            |      "data": { "x": [1.0, 2.0, 3.0], "y": [1.0, 4.0, 2.0] },
+            |      "mapping": { "x": "x", "y": "y" },
+            |      "layers": [
+            |        {
+            |          "geom": "point",
+            |          "tooltips": "none"
+            |        }
+            |      ],
+            |      "scales": [
+            |        {
+            |          "aesthetic": "x",
+            |          "name": "\\(\\frac{x}{axis}\\)",
+            |          "breaks": [1.0, 2.0, 3.0],
+            |          "labels": ["\\(\\frac{1}{x}\\)", "\\(\\frac{2}{x}\\)", "\\(\\frac{3}{x}\\)"]
+            |        },
+            |        {
+            |          "aesthetic": "y",
+            |          "name": "\\(\\frac{y}{axis}\\)",
+            |          "breaks": [1.0, 2.0, 4.0],
+            |          "labels": ["\\(\\frac{1}{y}\\)", "\\(\\frac{2}{y}\\)", "\\(\\frac{4}{y}\\)"]
+            |        }
+            |      ],
+            |      "theme": {
+            |        "axis_title": { "face": "italic", "blank": false },
+            |        "axis_text": { "face": "bold", "blank": false }
+            |      }
+            |    },
+            |    {
+            |      "kind": "plot",
+            |      "data": {
+            |        "x": [1.0, 2.0, 3.0],
+            |        "y": [1.0, 4.0, 2.0],
+            |        "g": ["a", "b", "c"]
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "str", "column": "g" }
+            |        ]
+            |      },
+            |      "mapping": { "x": "x", "y": "y", "color": "g" },
+            |      "layers": [
+            |        {
+            |          "geom": "point",
+            |          "tooltips": "none"
+            |        }
+            |      ],
+            |      "scales": [
+            |        {
+            |          "aesthetic": "color",
+            |          "name": "\\(\\frac{legend}{title}\\)",
+            |          "breaks": ["a", "b", "c"],
+            |          "labels": ["\\(\\frac{a}{1}\\)", "\\(\\frac{b}{2}\\)", "\\(\\frac{c}{3}\\)"]
+            |        }
+            |      ],
+            |      "theme": {
+            |        "legend_title": { "face": "bold", "blank": false },
+            |        "legend_text": { "face": "italic", "blank": false }
+            |      }
+            |    },
+            |    {
+            |      "kind": "plot",
+            |      "data": {
+            |        "x": [1.0, 2.0, 3.0, 1.0, 2.0, 3.0],
+            |        "y": [1.0, 4.0, 2.0, 2.0, 3.0, 5.0],
+            |        "g": ["\\(\\frac{a}{1}\\)", "\\(\\frac{a}{1}\\)", "\\(\\frac{a}{1}\\)", "\\(\\frac{b}{2}\\)", "\\(\\frac{b}{2}\\)", "\\(\\frac{b}{2}\\)"]
+            |      },
+            |      "data_meta": {
+            |        "series_annotations": [
+            |          { "type": "str", "column": "g" }
+            |        ]
+            |      },
+            |      "mapping": { "x": "x", "y": "y" },
+            |      "facet": { "name": "grid", "x": "g", "x_order": 1.0, "y_order": 1.0 },
+            |      "layers": [
+            |        {
+            |          "geom": "point",
+            |          "tooltips": "none"
+            |        }
+            |      ],
+            |      "theme": {
+            |        "strip_text": { "face": "bold_italic", "blank": false }
+            |      }
+            |    }
+            |  ]
+            |}
+        """.trimMargin()
+
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        assertBitmap(plotCanvasDrawable)
+    }
+
+    @Test
     fun plot_latex_geomLabelInlineAlignment() {
         val spec = """
             {

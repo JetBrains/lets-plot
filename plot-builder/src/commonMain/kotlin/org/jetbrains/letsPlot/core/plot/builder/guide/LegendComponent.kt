@@ -67,6 +67,9 @@ class LegendComponent(
         val labelSpec = PlotLabelSpecFactory.legendItem(theme)
         label.addClassName(Style.LEGEND_ITEM)
         label.setFontSize(labelSpec.font.size.toDouble())
+        val face = theme.textStyle().face
+        if (face.bold) label.setFontWeight(face.weight)
+        if (face.italic) label.setFontStyle(face.style)
         label.setTextLayout(labelSpec.layout(br.label).layout)
         label.setHorizontalAnchor(Text.HorizontalAnchor.LEFT)
         label.setVerticalAnchor(Text.VerticalAnchor.CENTER)

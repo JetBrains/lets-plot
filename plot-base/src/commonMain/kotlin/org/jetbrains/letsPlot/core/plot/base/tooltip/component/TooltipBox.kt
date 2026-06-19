@@ -467,7 +467,8 @@ class TooltipBox(
         }
 
         private fun initTitleComponent(titleLine: String): Label {
-            val fontSize = styleSheet.getTextStyle(TooltipStyle.TOOLTIP_TITLE).size
+            val titleStyle = styleSheet.getTextStyle(TooltipStyle.TOOLTIP_TITLE)
+            val fontSize = titleStyle.size
             val titleComponent = Label(titleLine)
             titleComponent.addClassName(TooltipStyle.TOOLTIP_TITLE)
             titleComponent.setHorizontalAnchor(Text.HorizontalAnchor.MIDDLE)
@@ -475,6 +476,8 @@ class TooltipBox(
             val metricsByLine = estimateLineLayoutMetrics(titleLine, TooltipStyle.TOOLTIP_TITLE).map { it ?: defaultMetrics }
             titleComponent.setTextLayout(TextBlockLayout.fromLineBoxes(metricsByLine))
             titleComponent.setFontSize(fontSize)
+            if (titleStyle.face.bold) titleComponent.setFontWeight(titleStyle.face.weight)
+            if (titleStyle.face.italic) titleComponent.setFontStyle(titleStyle.face.style)
 
             myTitleContainer.children().add(titleComponent.rootGroup)
             return titleComponent
@@ -563,7 +566,8 @@ class TooltipBox(
             tooltipMinWidth: Double?,
             textClassName: String
         ): DoubleVector {
-            val labelFontSize = styleSheet.getTextStyle(TooltipStyle.TOOLTIP_LABEL).size
+            val labelStyle = styleSheet.getTextStyle(TooltipStyle.TOOLTIP_LABEL)
+            val labelFontSize = labelStyle.size
             val valueFontSize = styleSheet.getTextStyle(textClassName).size
             // bBoxes
             val components: List<Pair<Label?, Label>> = lines
@@ -578,6 +582,8 @@ class TooltipBox(
                 if (labelComponent != null) {
                     labelComponent.addClassName(TooltipStyle.TOOLTIP_LABEL)
                     labelComponent.setFontSize(labelFontSize)
+                    if (labelStyle.face.bold) labelComponent.setFontWeight(labelStyle.face.weight)
+                    if (labelStyle.face.italic) labelComponent.setFontStyle(labelStyle.face.style)
                     myLinesContainer.children().add(labelComponent.rootGroup)
                 }
             }

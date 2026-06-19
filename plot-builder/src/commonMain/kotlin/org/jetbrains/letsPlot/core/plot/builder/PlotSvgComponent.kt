@@ -26,6 +26,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.text.LineBoxMetrics
 import org.jetbrains.letsPlot.core.plot.base.render.text.TextBlockLayout
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
+import org.jetbrains.letsPlot.core.plot.base.theme.ThemeTextStyle
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.base.tooltip.VerticalAxisTooltipPosition
 import org.jetbrains.letsPlot.core.plot.builder.PlotSvgComponentHelper.addTitle
@@ -325,7 +326,8 @@ class PlotSvgComponent constructor(
                     justification = theme.verticalAxis(flippedAxis).titleJustification(),
                     margins = theme.verticalAxis(flippedAxis).titleMargins(),
                     plotInset = plotTheme.plotInset(),
-                    className = "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}"
+                    className = "${Style.AXIS_TITLE}-${theme.verticalAxis(flippedAxis).axis}",
+                    textStyle = theme.verticalAxis(flippedAxis).titleStyle()
                 )
             }
             if (hAxisTitle != null) {
@@ -339,7 +341,8 @@ class PlotSvgComponent constructor(
                     justification = theme.horizontalAxis(flippedAxis).titleJustification(),
                     margins = theme.horizontalAxis(flippedAxis).titleMargins(),
                     plotInset = plotTheme.plotInset(),
-                    className = "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}"
+                    className = "${Style.AXIS_TITLE}-${theme.horizontalAxis(flippedAxis).axis}",
+                    textStyle = theme.horizontalAxis(flippedAxis).titleStyle()
                 )
             }
         }
@@ -372,7 +375,8 @@ class PlotSvgComponent constructor(
         justification: TextJustification,
         margins: Thickness,
         plotInset: Thickness,
-        className: String
+        className: String,
+        textStyle: ThemeTextStyle
     ) {
         val referenceRect = when (orientation) {
             Orientation.LEFT,
@@ -457,7 +461,8 @@ class PlotSvgComponent constructor(
             justification,
             axisTitleTextRect,
             rotation,
-            className
+            className,
+            textStyle.face
         )
 
         if (DEBUG_DRAWING) {

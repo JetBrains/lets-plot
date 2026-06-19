@@ -269,6 +269,9 @@ internal class PlotTile constructor(
         }
         lab.setHorizontalAnchor(hAnchor)
         lab.setFontSize(labelSpec.font.size.toDouble())
+        val face = theme.stripTextStyle().face
+        if (face.bold) lab.setFontWeight(face.weight)
+        if (face.italic) lab.setFontStyle(face.style)
         lab.setTextLayout(textLayout)
         lab.moveTo(pos)
         if (!themeAngle.isNaN() && themeAngle != 0.0) {

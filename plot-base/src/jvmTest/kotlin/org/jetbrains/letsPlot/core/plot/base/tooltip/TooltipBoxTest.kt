@@ -5,12 +5,18 @@
 
 package org.jetbrains.letsPlot.core.plot.base.tooltip
 
+import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.unsupported.UNSUPPORTED
 import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.commons.values.Font
 import org.jetbrains.letsPlot.commons.values.FontFace
+import org.jetbrains.letsPlot.commons.values.FontFamily
 import org.jetbrains.letsPlot.core.plot.base.render.linetype.NamedLineType
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.pathElements
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.toSvg
+import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.vectorFormulaGroups
 import org.jetbrains.letsPlot.core.plot.base.tooltip.component.TooltipBox
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
 import org.jetbrains.letsPlot.datamodel.svg.style.StyleSheet
@@ -118,6 +124,42 @@ class TooltipBoxTest {
         }
     }
 
+    @Test
+    fun titleFormulaUsesBoldGlyphsWhenTitleStyleIsBold() {
+        tooltipBox.update(
+            fillColor = Color.BLACK,
+            textColor = Color.WHITE,
+            borderColor = Color.BLACK,
+            strokeWidth = 1.0,
+            lineType = NamedLineType.SOLID,
+            lines = listOf(TooltipModel.Line.withValue(wordText)),
+            title = """\(x\)""",
+            textClassName = "anyStyle",
+            borderRadius = 0.0,
+            marker = emptyList()
+        )
+
+        val actualPathData = tooltipBox.rootGroup
+            .vectorFormulaGroups()
+            .single()
+            .pathElements()
+            .single()
+            .getAttribute("d")
+            .get()
+            .toString()
+        val expectedBoldPathData = toSvg(
+            """\(x\)""",
+            font = Font(FontFamily.HELVETICA, size = 13, isBold = true)
+        ).single()
+            .pathElements()
+            .single()
+            .getAttribute("d")
+            .get()
+            .toString()
+
+        assertThat(actualPathData).isEqualTo(expectedBoldPathData)
+    }
+
 
     private fun p(x: Double, y: Double) = DoubleVector(x, y)
 
@@ -171,9 +213,11 @@ class TooltipBoxTest {
             } catch (_: Throwable) {
             }
 
-            // another type
-            try {
-            } catch (_: Throwable) {
+            if (element is SvgElement) {
+                val svg = SvgNodeBufferUtil.generateSvgNodeBuffer(element)
+                if (LatexVectorFormulaClass in svg) {
+                    return DoubleRectangle.ZERO
+                }
             }
 
             if (element is SvgElement) {
@@ -185,6 +229,10 @@ class TooltipBoxTest {
 
         fun labelsBbox(vararg sizes: Pair<String, DoubleVector>) {
             myLabelBboxes.putAll(sizes)
+        }
+
+        companion object {
+            private const val LatexVectorFormulaClass = "lp-latex-vector-formula"
         }
     }
 }

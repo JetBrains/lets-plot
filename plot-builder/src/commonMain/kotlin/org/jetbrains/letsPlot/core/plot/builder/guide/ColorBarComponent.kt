@@ -86,6 +86,9 @@ class ColorBarComponent(
             label.addClassName(Style.LEGEND_ITEM)
             label.setHorizontalAnchor(brInfo.labelHorizontalAnchor)
             label.setFontSize(fontSize)
+            val face = theme.textStyle().face
+            if (face.bold) label.setFontWeight(face.weight)
+            if (face.italic) label.setFontStyle(face.style)
             label.setTextLayout(textLayout)
             val yOffset = TextAnchoring.offsetCap(brInfo.labelVerticalAnchor, textLayout, fontSize)
             label.moveTo(brInfo.labelLocation.x, brInfo.labelLocation.y + barBounds.top + yOffset)
