@@ -6,7 +6,6 @@
 package org.jetbrains.letsPlot.core.spec
 
 import org.jetbrains.letsPlot.commons.intern.datetime.TimeZone
-import org.jetbrains.letsPlot.commons.values.Colors
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.FormatterUtil
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
@@ -300,7 +299,7 @@ internal object GeomProviderFactory {
                 geom
             }
 
-            GeomKind.CURVE -> return GeomProvider.curve {
+            GeomKind.CURVE -> GeomProvider.curve {
                 val geom = CurveGeom()
                 layerConfig.getDouble(Option.Geom.Curve.CURVATURE)?.let { geom.curvature = it }
                 layerConfig.getDouble(Option.Geom.Curve.ANGLE)?.let { geom.angle = it }
@@ -340,14 +339,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT -> GeomProvider.text {
                 val geom = TextGeom()
-                applyTextOptions(layerConfig, geom, expFormat, tz)
+                applyTextOptions(layerConfig, geom, expFormat, tz, aopConversion)
                 geom
             }
 
             GeomKind.LABEL -> GeomProvider.label {
                 val geom = LabelGeom()
 
-                applyTextOptions(layerConfig, geom, expFormat, tz)
+                applyTextOptions(layerConfig, geom, expFormat, tz, aopConversion)
                 applyLabelOptions(layerConfig, geom.labelOptions)
 
                 geom
@@ -355,14 +354,14 @@ internal object GeomProviderFactory {
 
             GeomKind.TEXT_REPEL -> GeomProvider.textRepel {
                 val geom = TextRepelGeom()
-                applyTextOptions(layerConfig, geom, expFormat, tz)
+                applyTextOptions(layerConfig, geom, expFormat, tz, aopConversion)
                 applyRepelOptions(layerConfig, geom)
                 geom
             }
 
             GeomKind.LABEL_REPEL -> GeomProvider.labelRepel {
                 val geom = LabelRepelGeom()
-                applyTextOptions(layerConfig, geom, expFormat, tz)
+                applyTextOptions(layerConfig, geom, expFormat, tz, aopConversion)
                 applyLabelOptions(layerConfig, geom.labelOptions)
                 applyRepelOptions(layerConfig, geom)
                 geom
@@ -454,7 +453,7 @@ internal object GeomProviderFactory {
 
             GeomKind.BRACKET -> GeomProvider.bracket {
                 val geom = BracketGeom()
-                applyTextOptions(layerConfig, geom, expFormat, tz)
+                applyTextOptions(layerConfig, geom, expFormat, tz, aopConversion)
                 if (layerConfig.hasOwn(Option.Geom.Bracket.BRACKET_SHORTEN)) {
                     geom.bracketShorten = layerConfig.getDouble(Option.Geom.Bracket.BRACKET_SHORTEN)!!
                 }
@@ -466,7 +465,7 @@ internal object GeomProviderFactory {
 
             GeomKind.BRACKET_DODGE -> GeomProvider.bracketDodge {
                 val geom = BracketDodgeGeom()
-                applyTextOptions(layerConfig, geom, expFormat, tz)
+                applyTextOptions(layerConfig, geom, expFormat, tz, aopConversion)
                 if (layerConfig.hasOwn(Option.Geom.BracketDodge.DODGE_WIDTH)) {
                     geom.dodgeWidth = layerConfig.getDouble(Option.Geom.BracketDodge.DODGE_WIDTH)!!
                 }
@@ -489,7 +488,13 @@ internal object GeomProviderFactory {
         }
     }
 
-    private fun applyTextOptions(layerConfig: LayerConfig, geom: TextGeom, expFormat: ExponentFormat, tz: TimeZone?) {
+    private fun applyTextOptions(
+        layerConfig: LayerConfig,
+        geom: TextGeom,
+        expFormat: ExponentFormat,
+        tz: TimeZone?,
+        aopConversion: AesOptionConversion,
+    ) {
         layerConfig.getString(Option.Geom.Text.LABEL_FORMAT)?.let {
             geom.formatter = FormatterUtil.byPattern(
                 it,
@@ -509,8 +514,8 @@ internal object GeomProviderFactory {
         layerConfig.getDouble(Option.Geom.Text.HALO_WIDTH)?.let {
             geom.haloWidth = it
         }
-        layerConfig.getString(Option.Geom.Text.HALO_COLOR)?.let {
-            geom.haloColor = Colors.parseColor(it)
+        layerConfig.getColor(Option.Geom.Text.HALO_COLOR, aopConversion)?.let {
+            geom.haloColor = it
         }
     }
 
