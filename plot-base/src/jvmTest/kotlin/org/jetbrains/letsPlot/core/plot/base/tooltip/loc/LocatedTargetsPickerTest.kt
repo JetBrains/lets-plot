@@ -7,6 +7,7 @@ package org.jetbrains.letsPlot.core.plot.base.tooltip.loc
 
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aes
 import org.jetbrains.letsPlot.core.plot.base.GeomKind
 import org.jetbrains.letsPlot.core.plot.base.NullPlotContext
@@ -16,6 +17,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipAnchor.VerticalAncho
 import org.jetbrains.letsPlot.core.plot.base.tooltip.conf.TooltipBehavior
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.CUTOFF_DISTANCE
 import org.jetbrains.letsPlot.core.plot.base.tooltip.loc.LocatedTargetsPicker.Companion.FAKE_DISTANCE
+import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ConstantField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.LinePattern
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.MappingField
 import org.jetbrains.letsPlot.core.plot.base.tooltip.text.ValueSource
@@ -257,6 +259,126 @@ class LocatedTargetsPickerTest {
         assertTargetFrom(firstLookupResultConfig)
     }
 
+    @Test
+    fun `general tooltips from multiple targets are merged into one model`() {
+        val targetsPicker = LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext,
+            mergeTooltips = true,
+            tooltipMaxCount = 10
+        )
+        val contextualMapping = ContextualMapping(
+            tooltipBehavior = TooltipBehavior.DEFAULT,
+            tooltipLines = listOf(
+                LinePattern("value", "{}", listOf(ConstantField(Aes.Y, "18.37", label = null)))
+            ),
+            tooltipTitle = LinePattern(null, "x = {}", listOf(ConstantField(Aes.X, "12", label = null)))
+        )
+
+        val tooltipModels = targetsPicker.chooseTooltipModels(
+            listOf(
+                geomTarget(marker = TooltipMarker.create(majorColor = Color.DARK_GREEN)),
+                geomTarget(marker = TooltipMarker.create(majorColor = Color.LIGHT_PINK))
+            ),
+            contextualMapping
+        )
+
+        assertThat(tooltipModels).hasSize(1)
+        val mergedTooltip = tooltipModels.single()
+        // every target carries its own title; the renderer hoists a unanimous title into the box header
+        assertThat(mergedTooltip.targets.map { it.title }).containsExactly("x = 12", "x = 12")
+        assertThat(mergedTooltip.targets).hasSize(2)
+        assertThat(mergedTooltip.targets.map { it.marker.majorColor }).containsExactly(Color.DARK_GREEN, Color.LIGHT_PINK)
+        assertThat(mergedTooltip.targets.flatMap { it.lines }.map(TooltipModel.Line::toString))
+            .containsExactly("value: 18.37", "value: 18.37")
+    }
+
+    @Test
+    fun `general tooltips from multiple targets are separate by default`() {
+        val targetsPicker = LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = DoubleVector.ZERO,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
+        )
+        val contextualMapping = ContextualMapping(
+            tooltipBehavior = TooltipBehavior.DEFAULT,
+            tooltipLines = listOf(
+                LinePattern("value", "{}", listOf(ConstantField(Aes.Y, "18.37", label = null)))
+            ),
+            tooltipTitle = null
+        )
+
+        val tooltipModels = targetsPicker.chooseTooltipModels(
+            listOf(
+                geomTarget(marker = TooltipMarker.create(majorColor = Color.DARK_GREEN)),
+                geomTarget(marker = TooltipMarker.create(majorColor = Color.LIGHT_PINK))
+            ),
+            contextualMapping
+        )
+
+        assertThat(tooltipModels).hasSize(2)
+        assertThat(tooltipModels).allMatch { it.targets.size == 1 }
+    }
+
+    @Test
+    fun `default tooltip max count keeps only closest target after limit`() {
+        val targetsPicker = createTargetsPicker(cursorCoord = DoubleVector(3.2, 0.0))
+
+        targetsPicker.addLookupResult(lookupResultWithTargets(11))
+
+        val lookupResult = targetsPicker.chooseBestLookupResults().single()
+        assertThat(lookupResult.targets).hasSize(1)
+        assertThat(lookupResult.targets.single().hitIndex).isEqualTo(3)
+    }
+
+    @Test
+    fun `custom tooltip max count keeps all targets within limit`() {
+        val targetsPicker = createTargetsPicker(
+            cursorCoord = DoubleVector(3.2, 0.0),
+            tooltipMaxCount = 11
+        )
+
+        targetsPicker.addLookupResult(lookupResultWithTargets(11))
+
+        val lookupResult = targetsPicker.chooseBestLookupResults().single()
+        assertThat(lookupResult.targets).hasSize(11)
+    }
+
+    @Test
+    fun `zero tooltip max count disables target limit`() {
+        val targetsPicker = createTargetsPicker(
+            cursorCoord = DoubleVector(3.2, 0.0),
+            tooltipMaxCount = 0
+        )
+
+        targetsPicker.addLookupResult(lookupResultWithTargets(11))
+
+        val lookupResult = targetsPicker.chooseBestLookupResults().single()
+        assertThat(lookupResult.targets).hasSize(11)
+    }
+
+    @Test
+    fun `zero tooltip max count disables bar target limit`() {
+        val targetsPicker = createTargetsPicker(
+            cursorCoord = DoubleVector(1.2, 0.0),
+            tooltipMaxCount = 0
+        )
+
+        targetsPicker.addLookupResult(lookupResultWithTargets(2, GeomKind.BAR))
+
+        val lookupResult = targetsPicker.chooseBestLookupResults().single()
+        assertThat(lookupResult.targets).hasSize(2)
+    }
+
     private fun assertTargetFrom(vararg expected: LookupResultConfig?) {
         assertTargetFrom(*expected) {
             listOfNotNull(lookupResult(firstLookupResultConfig), lookupResult(secondLookupResultConfig))
@@ -271,7 +393,9 @@ class LocatedTargetsPickerTest {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = NullPlotContext
+            ctx = NullPlotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
         )
         targetsPicker.addResults()
 
@@ -287,6 +411,22 @@ class LocatedTargetsPickerTest {
         }
     }
 
+    private fun createTargetsPicker(
+        cursorCoord: DoubleVector = DoubleVector.ZERO,
+        tooltipMaxCount: Int = 10
+    ): LocatedTargetsPicker {
+        return LocatedTargetsPicker(
+            flippedAxis = false,
+            cursorCoord = cursorCoord,
+            axisOrigin = DoubleVector.ZERO,
+            xAxisTheme = TestUtil.axisTheme,
+            yAxisTheme = TestUtil.axisTheme,
+            ctx = NullPlotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = tooltipMaxCount
+        )
+    }
+
     private fun assertLookupResult(actual: LookupResult, expected: LookupResultConfig) {
         val expectedResult = expected.build()!!
         assertThat(actual.geomKind).isEqualTo(expectedResult.geomKind)
@@ -300,6 +440,49 @@ class LocatedTargetsPickerTest {
 
     private fun lookupResult(lookupResultConfig: LookupResultConfig?): LookupResult? {
         return lookupResultConfig?.build()
+    }
+
+    private fun geomTarget(marker: TooltipMarker): GeomTarget {
+        return GeomTarget(
+            hitIndex = 0,
+            tooltipHint = TooltipHint.verticalTooltip(
+                coord = DoubleVector.ZERO,
+                objectRadius = 0.0,
+                marker = marker
+            ),
+            sideTooltipHints = emptyMap()
+        )
+    }
+
+    private fun lookupResultWithTargets(
+        count: Int,
+        geomKind: GeomKind = GeomKind.POINT
+    ): LookupResult {
+        val contextualMapping = ContextualMapping(
+            tooltipBehavior = TooltipBehavior.DEFAULT,
+            tooltipLines = listOf(
+                LinePattern(null, "", listOf(MappingField(Aes.X, isSide = true, isAxis = false)))
+            ),
+            tooltipTitle = null
+        )
+
+        return LookupResult(
+            targets = (0 until count).map { index ->
+                GeomTarget(
+                    hitIndex = index,
+                    tooltipHint = TooltipHint.verticalTooltip(
+                        coord = DoubleVector(index.toDouble(), 0.0),
+                        objectRadius = 0.0
+                    ),
+                    sideTooltipHints = emptyMap()
+                )
+            },
+            lookupDistance = 0.0,
+            ownerDistance = 0.0,
+            geomKind = geomKind,
+            contextualMapping = contextualMapping,
+            hitShapeKind = HitShape.Kind.RECT
+        )
     }
 
     internal class LookupResultConfig {

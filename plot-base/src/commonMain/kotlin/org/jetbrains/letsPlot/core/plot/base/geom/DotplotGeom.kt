@@ -12,7 +12,7 @@ import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomHelper
 import org.jetbrains.letsPlot.core.plot.base.geom.util.GeomUtil
-import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil.createColorMarkerMapper
+import org.jetbrains.letsPlot.core.plot.base.geom.util.HintColorUtil
 import org.jetbrains.letsPlot.core.plot.base.geom.util.LinesHelper
 import org.jetbrains.letsPlot.core.plot.base.render.LegendKeyElementFactory
 import org.jetbrains.letsPlot.core.plot.base.render.SvgRoot
@@ -134,14 +134,12 @@ open class DotplotGeom : GeomBase(), WithWidth {
             DoubleRectangle(center.add(shiftToOrigin.flip()), dimension.flip())
         else
             DoubleRectangle(center.add(shiftToOrigin), dimension)
-        val colorMarkerMapper = createColorMarkerMapper(ctx)
+        val markerFactory = HintColorUtil.markerFactory(ctx)
 
         ctx.targetCollector.addRectangle(
             p.index(),
             rect,
-            GeomTargetCollector.TooltipParams(
-                marker = colorMarkerMapper(p)
-            ),
+            GeomTargetCollector.TooltipParams(marker = markerFactory(p)),
             tooltipPlacement = if (ctx.flipped) {
                 TooltipHint.Placement.VERTICAL
             } else {

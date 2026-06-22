@@ -128,7 +128,7 @@ class TextHelper(
     }
 
     internal fun buildHints(targetCollector: GeomTargetCollector) {
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(this.ctx)
+        val colorsByDataPoint = HintColorUtil.markerFactory(this.ctx)
 
         myAesthetics.dataPoints().forEach { p ->
             val point = toLocation(p) ?: return

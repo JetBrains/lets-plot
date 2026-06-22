@@ -6,6 +6,7 @@
 package org.jetbrains.letsPlot.core.plot.base.tooltip.layout
 
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.geometry.DoubleRectangles
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.interval.DoubleSpan
 import org.jetbrains.letsPlot.core.plot.base.tooltip.HorizontalAxisTooltipPosition
@@ -21,7 +22,8 @@ import kotlin.math.min
 class LayoutManager(
     private val myViewport: DoubleRectangle,
     private val myPreferredHorizontalAlignment: HorizontalAlignment,
-    private val margin: Double
+    private val margin: Double,
+    private val flippedAxis: Boolean
 ) {
     private val myHorizontalSpace: DoubleSpan = DoubleSpan(myViewport.left, myViewport.right)
     private var myVerticalSpace: DoubleSpan = DoubleSpan(0.0, 0.0)
@@ -351,19 +353,20 @@ class LayoutManager(
         ignoreCursor: Boolean,
         centered: Boolean = true
     ): PositionedTooltip {
+        val (targetCoord, targetRadius) = resolveTarget(measuredTooltip)
         val tooltipX = if (centered) {
-            centerInsideRange(measuredTooltip.hintCoord.x, measuredTooltip.size.x, myHorizontalSpace)
+            centerInsideRange(targetCoord.x, measuredTooltip.size.x, myHorizontalSpace)
         } else {
-            measuredTooltip.hintCoord.x
+            targetCoord.x
         }
 
         val stemY: Double
         val tooltipY: Double
         run {
-            val targetCoordY = measuredTooltip.hintCoord.y
+            val targetCoordY = targetCoord.y
             val stemLength = measuredTooltip.stemLength
-            val targetTopPoint = targetCoordY - measuredTooltip.hintRadius
-            val targetBottomPoint = targetCoordY + measuredTooltip.hintRadius
+            val targetTopPoint = targetCoordY - targetRadius
+            val targetBottomPoint = targetCoordY + targetRadius
 
             val tooltipHeight = measuredTooltip.size.y
             val topTooltipRange = leftAligned(targetTopPoint, tooltipHeight, stemLength)
@@ -420,7 +423,7 @@ class LayoutManager(
         return PositionedTooltip(
             measuredTooltip = measuredTooltip,
             tooltipCoord = DoubleVector(tooltipX, tooltipY),
-            stemCoord = DoubleVector(measuredTooltip.hintCoord.x, stemY)
+            stemCoord = DoubleVector(targetCoord.x, stemY)
         )
     }
 
@@ -429,20 +432,19 @@ class LayoutManager(
         preferredAlignment: HorizontalAlignment,
         restrictions: List<DoubleRectangle> = emptyList()
     ): PositionedTooltip {
-        val tooltipY = centerInsideRange(measuredTooltip.hintCoord.y, measuredTooltip.size.y, myVerticalSpace)
+        val (targetCoord, targetRadius) = resolveTarget(measuredTooltip)
+        val tooltipY = centerInsideRange(targetCoord.y, measuredTooltip.size.y, myVerticalSpace)
 
         val tooltipX: Double
         val stemX: Double
         run {
-            val targetCoordX = measuredTooltip.hintCoord.x
             val tooltipWidth = measuredTooltip.size.x
-            val hintSize = measuredTooltip.hintRadius
             val stemLength = measuredTooltip.stemLength
-            val margin = hintSize + stemLength
+            val margin = targetRadius + stemLength
 
-            val targetLeftPoint = targetCoordX - hintSize
-            val leftTooltipPlacement = leftAligned(targetCoordX, tooltipWidth, margin)
-            val rightTooltipPlacement = rightAligned(targetCoordX, tooltipWidth, margin)
+            val targetLeftPoint = targetCoord.x - targetRadius
+            val leftTooltipPlacement = leftAligned(targetCoord.x, tooltipWidth, margin)
+            val rightTooltipPlacement = rightAligned(targetCoord.x, tooltipWidth, margin)
 
             // The tooltip should fit in horizontal space and not intersect restrictions,
             // restrictions are expected to contain only y-axis tooltip.
@@ -479,13 +481,13 @@ class LayoutManager(
                         }
 
                         HorizontalAlignment.RIGHT -> {
-                            stemX = targetCoordX + hintSize
+                            stemX = targetCoord.x + targetRadius
                             tooltipX = stemX - tooltipWidth - stemLength
                         }
 
                         HorizontalAlignment.CENTER -> {
-                            stemX = targetCoordX
-                            tooltipX = targetCoordX - tooltipWidth / 2
+                            stemX = targetCoord.x
+                            tooltipX = targetCoord.x - tooltipWidth / 2
                         }
                     }
                 }
@@ -497,12 +499,12 @@ class LayoutManager(
 
                 else -> {
                     tooltipX = rightTooltipPlacement.lowerEnd
-                    stemX = targetCoordX + hintSize
+                    stemX = targetCoord.x + targetRadius
                 }
             }
         }
 
-        val stemCoord = DoubleVector(stemX, measuredTooltip.hintCoord.y)
+        val stemCoord = DoubleVector(stemX, targetCoord.y)
         val tooltipCoord = DoubleVector(tooltipX, tooltipY)
         return PositionedTooltip(measuredTooltip, tooltipCoord, stemCoord)
     }
@@ -519,9 +521,10 @@ class LayoutManager(
             val targetCoordY = myCursorCoord.y
             val tooltipHeight = measuredTooltip.size.y
             val stemLength = measuredTooltip.stemLength
+            val (_, targetRadius) = resolveTarget(measuredTooltip)
 
-            val targetTopPoint = targetCoordY - measuredTooltip.hintRadius
-            val targetBottomPoint = targetCoordY + measuredTooltip.hintRadius
+            val targetTopPoint = targetCoordY - targetRadius
+            val targetBottomPoint = targetCoordY + targetRadius
 
             val topTooltipPlacement = leftAligned(targetTopPoint, tooltipHeight, stemLength)
             val bottomTooltipPlacement = rightAligned(targetBottomPoint, tooltipHeight, stemLength)
@@ -598,7 +601,7 @@ class LayoutManager(
     private fun isCorner(tooltip: PositionedTooltip) = isCorner(tooltip.tooltipModel)
 
     private fun isAxisTooltip(tooltipModel: TooltipModel) =
-        tooltipModel.tooltipHint.placement in listOf(X_AXIS, Y_AXIS)
+        tooltipModel.placement in listOf(X_AXIS, Y_AXIS)
 
     private fun isAxisTooltip(tooltip: MeasuredTooltip) = isAxisTooltip(tooltip.tooltipModel)
     private fun isAxisTooltip(tooltip: PositionedTooltip) = isAxisTooltip(tooltip.tooltipModel)
@@ -639,7 +642,7 @@ class LayoutManager(
         internal val height get() = tooltipSize.y
         internal val bottom get() = tooltipCoord.y + height
         internal val right get() = tooltipCoord.x + width
-        val hintKind get() = tooltipModel.tooltipHint.placement
+        val hintKind get() = tooltipModel.placement
 
         constructor(measuredTooltip: MeasuredTooltip, tooltipCoord: DoubleVector, stemCoord: DoubleVector) {
             tooltipModel = measuredTooltip.tooltipModel
@@ -664,15 +667,51 @@ class LayoutManager(
         }
     }
 
+    // The target the tooltip box is laid out against: the only target of a regular
+    // tooltip, or an aggregate of all targets of a merged one.
+    private fun resolveTarget(measuredTooltip: MeasuredTooltip): Pair<DoubleVector, Double> {
+        val targets = measuredTooltip.tooltipModel.targets
+        val strokeOffset = measuredTooltip.strokeWidth / 2
+
+        if (targets.isEmpty()) {
+            return Pair(myCursorCoord, strokeOffset)
+        }
+
+        if (targets.size == 1) {
+            val target = targets.single()
+            return Pair(target.coord, target.radius + strokeOffset)
+        }
+
+        val categoryAxis = if (flippedAxis) Axis.Y else Axis.X
+        val boxOffsetAlongCategoryAxis = when (categoryAxis) {
+            Axis.X -> measuredTooltip.hintKind == HORIZONTAL
+            Axis.Y -> measuredTooltip.hintKind == VERTICAL
+        }
+
+        // A box offset along the category axis sits beside a categorical group
+        // (a bar stack, a dodged group) and must clear all of its targets -
+        // anchor it at the center of the targets span.
+        if (boxOffsetAlongCategoryAxis) {
+            val bounds = DoubleRectangles.boundingBox(targets.map(TooltipModel.Target::coord))!! // targets are not empty
+            val span = bounds.dimension.flipIf(categoryAxis == Axis.Y).x
+            return Pair(bounds.center, span / 2 + targets.maxOf(TooltipModel.Target::radius) + strokeOffset)
+        }
+
+        // A box offset along the value axis: a span anchor would land past the
+        // farthest target, away from the pointer - follow the cursor instead,
+        // keeping clear of the biggest of the targets gathered around it.
+        return Pair(myCursorCoord, targets.maxOf(TooltipModel.Target::radius) + strokeOffset)
+    }
+
+    private enum class Axis { X, Y }
+
     class MeasuredTooltip(
         internal val tooltipModel: TooltipModel,
         internal val size: DoubleVector,
-        private val strokeWidth: Double
+        internal val strokeWidth: Double
     ) {
-        internal val hintCoord get() = tooltipModel.tooltipHint.coord
-        internal val hintKind get() = tooltipModel.tooltipHint.placement
-        internal val hintRadius get() = tooltipModel.tooltipHint.objectRadius + strokeWidth / 2
-        internal val stemLength get() = tooltipModel.tooltipHint.stemLength.value
+        internal val hintKind get() = tooltipModel.placement
+        internal val stemLength get() = tooltipModel.stemLength.value
     }
 
     companion object {

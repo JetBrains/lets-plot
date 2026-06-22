@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -40,14 +40,14 @@ class PointRangeGeom : GeomBase() {
         val geomHelper = GeomHelper(pos, coord, ctx)
         val helper = geomHelper.createSvgElementHelper()
         helper.setStrokeAlphaEnabled(true)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
+        val colorsByDataPoint = HintColorUtil.markerFactory(ctx)
         val tooltipHelper = RectangleTooltipHelper(
             pos = pos,
             coord = coord,
             ctx = ctx,
             hintAesList = listOf(Aes.YMIN, Aes.YMAX),
             fillColorMapper = { HintColorUtil.colorWithAlpha(it) },
-            colorMarkerMapper = colorsByDataPoint
+            markerFactory = colorsByDataPoint
         )
 
         for (p in aesthetics.dataPoints()) {

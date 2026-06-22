@@ -1061,6 +1061,8 @@ object Option {
         const val TOOLTIP_RECT = ThemeOption.TOOLTIP_RECT
         const val TOOLTIP_TEXT = ThemeOption.TOOLTIP_TEXT
         const val TOOLTIP_TITLE_TEXT = ThemeOption.TOOLTIP_TITLE_TEXT
+        const val TOOLTIP_MERGE = ThemeOption.TOOLTIP_MERGE
+        const val TOOLTIP_MAX_COUNT = ThemeOption.TOOLTIP_MAX_COUNT
 
         // Annotation
         const val ANNOTATION_TEXT = ThemeOption.ANNOTATION_TEXT

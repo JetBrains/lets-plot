@@ -16,6 +16,7 @@ import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.horiz
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.rotatedTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Companion.verticalTooltip
 import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipHint.Placement
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 
 
 class HintsCollection(private val myPoint: DataPointAesthetics, private val myHelper: GeomHelper) {
@@ -67,15 +68,15 @@ class HintsCollection(private val myPoint: DataPointAesthetics, private val myHe
         }
 
         return when (hintConfig.placement) {
-            Placement.VERTICAL -> verticalTooltip(coord, objectRadius, fillColor = color, marker = emptyList())
+            Placement.VERTICAL -> verticalTooltip(coord, objectRadius, fillColor = color, marker = TooltipMarker.NONE)
             Placement.HORIZONTAL -> horizontalTooltip(
                 coord,
                 objectRadius,
                 fillColor = color,
-                marker = emptyList()
+                marker = TooltipMarker.NONE
             )
 
-            Placement.CURSOR -> cursorTooltip(coord, marker = emptyList())
+            Placement.CURSOR -> cursorTooltip(coord, marker = TooltipMarker.NONE)
             Placement.ROTATED -> rotatedTooltip(coord, objectRadius, color)
             else -> throw IllegalArgumentException("Unknown hint kind: " + hintConfig.placement)
         }

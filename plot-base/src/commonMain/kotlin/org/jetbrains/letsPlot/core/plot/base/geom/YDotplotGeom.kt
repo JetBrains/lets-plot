@@ -125,14 +125,12 @@ class YDotplotGeom : DotplotGeom(), WithHeight {
                 DoubleVector(height, width)
             )
         }
-        val colorMarkerMapper = HintColorUtil.createColorMarkerMapper(ctx)
+        val markerMapper = HintColorUtil.markerFactory(ctx)
 
         ctx.targetCollector.addRectangle(
             p.index(),
             rect,
-            GeomTargetCollector.TooltipParams(
-                marker = colorMarkerMapper(p)
-            ),
+            GeomTargetCollector.TooltipParams(marker = markerMapper(p)),
             TooltipHint.Placement.CURSOR
         )
     }

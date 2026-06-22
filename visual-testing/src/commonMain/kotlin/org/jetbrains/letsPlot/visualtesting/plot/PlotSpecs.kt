@@ -132,4 +132,357 @@ object PlotSpecs {
             |}            
         """.trimMargin()
 
+    val MERGED_TOOLTIP_WITH_TITLE = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ -1.0, 1.0 ],
+        |    "ylim": [ -1.0, 1.0 ]
+        |  },
+        |  "theme": {
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ -0.2, 0.0, 0.2 ], "value": [ 18.37, 18.37, 18.37 ] },
+        |      "color": "#4f8f5b",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "title": "Group 09",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    },
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ 0.2, 0.0, -0.2 ], "value": [ 32.47, 32.47, 32.47 ] },
+        |      "color": "#e78ad5",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "title": "Group 17",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val MERGED_TOOLTIP = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "coord": {
+        |    "name": "cartesian",
+        |    "xlim": [ -1.0, 1.0 ],
+        |    "ylim": [ -1.0, 1.0 ]
+        |  },
+        |  "theme": {
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ -0.2, 0.0, 0.2 ], "value": [ 18.37, 18.37, 18.37 ] },
+        |      "color": "#4f8f5b",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    },
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ 0.2, 0.0, -0.2 ], "value": [ 32.47, 32.47, 32.47 ] },
+        |      "color": "#e78ad5",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val MERGED_TOOLTIP_FLIPPED_WITH_TITLE = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "coord": {
+        |    "name": "flip",
+        |    "flip": true,
+        |    "xlim": [ -1.0, 1.0 ],
+        |    "ylim": [ -1.0, 1.0 ]
+        |  },
+        |  "theme": {
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ -0.2, 0.0, 0.2 ], "value": [ 18.37, 18.37, 18.37 ] },
+        |      "color": "#4f8f5b",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "tooltip_group": "flipped-lines",
+        |        "title": "Group 09",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    },
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ 0.2, 0.0, -0.2 ], "value": [ 32.47, 32.47, 32.47 ] },
+        |      "color": "#e78ad5",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "tooltip_group": "flipped-lines",
+        |        "title": "Group 17",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val MERGED_TOOLTIP_FLIPPED = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "coord": {
+        |    "name": "flip",
+        |    "flip": true,
+        |    "xlim": [ -1.0, 1.0 ],
+        |    "ylim": [ -1.0, 1.0 ]
+        |  },
+        |  "theme": {
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ -0.2, 0.0, 0.2 ], "value": [ 18.37, 18.37, 18.37 ] },
+        |      "color": "#4f8f5b",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "tooltip_group": "flipped-lines",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    },
+        |    {
+        |      "geom": "line",
+        |      "data": { "x": [ -0.7, 0.0, 0.7 ], "y": [ 0.2, 0.0, -0.2 ], "value": [ 32.47, 32.47, 32.47 ] },
+        |      "color": "#e78ad5",
+        |      "size": 2.5,
+        |      "tooltips": {
+        |        "tooltip_group": "flipped-lines",
+        |        "lines": [ "value|@value" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val MERGED_TOOLTIP_DISABLE_SPLITTING_WITH_TITLE = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "theme": {
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ -0.3, -0.1, 0.0, 0.1, 0.0, 0.2, 0.35 ]
+        |      },
+        |      "color": "#4f8f5b",
+        |      "se": true,
+        |      "tooltips": {
+        |        "title": "Group 09",
+        |        "disable_splitting": true
+        |      }
+        |    },
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ 0.35, 0.2, 0.0, -0.1, 0.0, -0.1, -0.3 ]
+        |      },
+        |      "color": "#e78ad5",
+        |      "se": true,
+        |      "tooltips": {
+        |        "title": "Group 17",
+        |        "disable_splitting": true
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val MERGED_TOOLTIP_DISABLE_SPLITTING = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "theme": {
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ -0.3, -0.1, 0.0, 0.1, 0.0, 0.2, 0.35 ]
+        |      },
+        |      "color": "#4f8f5b",
+        |      "se": true,
+        |      "tooltips": {
+        |        "disable_splitting": true
+        |      }
+        |    },
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ 0.35, 0.2, 0.0, -0.1, 0.0, -0.1, -0.3 ]
+        |      },
+        |      "color": "#e78ad5",
+        |      "se": true,
+        |      "tooltips": {
+        |        "disable_splitting": true
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val MERGED_TOOLTIP_DISABLE_SPLITTING_EXPLICIT_LINES_WITH_TITLE = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "theme": {
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ -0.3, -0.1, 0.0, 0.1, 0.0, 0.2, 0.35 ]
+        |      },
+        |      "color": "#4f8f5b",
+        |      "se": true,
+        |      "tooltips": {
+        |        "title": "Group 09",
+        |        "disable_splitting": true,
+        |        "lines": [ "y|@y" ]
+        |      }
+        |    },
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ 0.35, 0.2, 0.0, -0.1, 0.0, -0.1, -0.3 ]
+        |      },
+        |      "color": "#e78ad5",
+        |      "se": true,
+        |      "tooltips": {
+        |        "title": "Group 17",
+        |        "disable_splitting": true,
+        |        "lines": [ "y|@y" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val MERGED_TOOLTIP_DISABLE_SPLITTING_EXPLICIT_LINES = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "theme": {
+        |    "panel_grid": "blank",
+        |    "tooltip_merge": true
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ -0.3, -0.1, 0.0, 0.1, 0.0, 0.2, 0.35 ]
+        |      },
+        |      "color": "#4f8f5b",
+        |      "se": true,
+        |      "tooltips": {
+        |        "disable_splitting": true,
+        |        "lines": [ "y|@y" ]
+        |      }
+        |    },
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ 0.35, 0.2, 0.0, -0.1, 0.0, -0.1, -0.3 ]
+        |      },
+        |      "color": "#e78ad5",
+        |      "se": true,
+        |      "tooltips": {
+        |        "disable_splitting": true,
+        |        "lines": [ "y|@y" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
+    val SMOOTH_TOOLTIP_DISABLE_SPLITTING_EXPLICIT_LINES = """
+        |{
+        |  "kind": "plot",
+        |  "ggsize": { "width": 320.0, "height": 240.0 },
+        |  "mapping": { "x": "x", "y": "y" },
+        |  "theme": {
+        |    "panel_grid": "blank"
+        |  },
+        |  "layers": [
+        |    {
+        |      "geom": "smooth",
+        |      "method": "loess",
+        |      "data": {
+        |        "x": [ -0.8, -0.5, -0.2, 0.0, 0.2, 0.5, 0.8 ],
+        |        "y": [ -0.3, -0.1, 0.0, 0.1, 0.0, 0.2, 0.35 ]
+        |      },
+        |      "color": "#4f8f5b",
+        |      "se": true,
+        |      "tooltips": {
+        |        "disable_splitting": true,
+        |        "lines": [ "y|@y" ]
+        |      }
+        |    }
+        |  ]
+        |}
+    """.trimMargin()
+
 }

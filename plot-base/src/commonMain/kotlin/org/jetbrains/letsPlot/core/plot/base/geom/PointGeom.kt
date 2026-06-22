@@ -37,7 +37,7 @@ open class PointGeom : GeomBase() {
     ) {
         val helper = GeomHelper(pos, coord, ctx)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
+        val colorsByDataPoint = HintColorUtil.markerFactory(ctx)
 
         val (dataPoints, invalidDataPoints) = filterDataPoints(aesthetics.dataPoints())
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -14,20 +14,15 @@ import org.jetbrains.letsPlot.core.plot.base.GeomMeta
 import org.jetbrains.letsPlot.core.plot.base.aes.AestheticsUtil
 import org.jetbrains.letsPlot.core.plot.base.render.point.NamedShape
 import org.jetbrains.letsPlot.core.plot.base.render.point.TinyPointShape
+import org.jetbrains.letsPlot.core.plot.base.tooltip.TooltipMarker
 
 object HintColorUtil {
     fun colorWithAlpha(p: DataPointAesthetics): Color {
         return AestheticsUtil.resolveColor(p, applyAlpha = true)
     }
 
-    fun fillWithAlpha(p: DataPointAesthetics): Color {
-        return AestheticsUtil.resolveFill(p)
-    }
-
-    fun createColorMarkerMapper(
-        ctx: GeomContext,
-    ): (DataPointAesthetics) -> List<Color> {
-        return createColorMarkerMapper(
+    fun markerFactory(ctx: GeomContext): (DataPointAesthetics) -> TooltipMarker {
+        return markerFactory(
             ctx.geomKind(),
             isMappedFill = { p: DataPointAesthetics -> ctx.isMappedAes(p.fillAes) },
             isMappedColor = { p: DataPointAesthetics -> ctx.isMappedAes(p.colorAes) }
@@ -59,14 +54,14 @@ object HintColorUtil {
         }
     }
 
-    fun createColorMarkerMapper(
-        geomKind: GeomKind?,
+    fun markerFactory(
+        geomKind: GeomKind,
         isMappedFill: (DataPointAesthetics) -> Boolean,
         isMappedColor: (DataPointAesthetics) -> Boolean
-    ): (DataPointAesthetics) -> List<Color> {
+    ): (DataPointAesthetics) -> TooltipMarker {
         val fillColorGetter: (DataPointAesthetics) -> Color? = when (geomKind) {
             SINA, POINT -> this::pointFillMapper
-            else -> this::fillWithAlpha
+            else -> { p: DataPointAesthetics -> AestheticsUtil.resolveFill(p) }
         }.let { fillSelector -> { p: DataPointAesthetics ->
             fillSelector(p).takeIf { it.alpha > 0 } }
         }
@@ -81,21 +76,14 @@ object HintColorUtil {
 
         return { p: DataPointAesthetics ->
             when (geomKind) {
-                null -> listOf(
-                    // should be mapped and visible
-                    fillColorGetter(p).takeIf { isMappedFill(p) },
-                    strokeColorGetter(p).takeIf { isMappedColor(p) },
-                )
-
                 PATH, CONTOUR, DENSITY2D, FREQPOLY, LINE, STEP, H_LINE, V_LINE, SEGMENT, CURVE, SPOKE, SMOOTH ->
-                    listOf(strokeColorGetter(p)) // show even without mapping (usecase - layers with const color)
+                    TooltipMarker.create(majorColor = strokeColorGetter(p)) // show even without mapping (usecase - layers with const color)
 
                 DENSITY -> when {
-                    !isMappedFill(p) -> listOf(strokeColorGetter(p))
-                    else -> listOf(
-                        // should be mapped and visible
-                        fillColorGetter(p).takeIf { isMappedFill(p) },
-                        strokeColorGetter(p).takeIf { isMappedColor(p) },
+                    !isMappedFill(p) -> TooltipMarker.create(majorColor = strokeColorGetter(p))
+                    else -> TooltipMarker.create(
+                        majorColor = fillColorGetter(p).takeIf { isMappedFill(p) },
+                        minorColor = strokeColorGetter(p).takeIf { isMappedColor(p) },
                     )
                 }
 
@@ -103,22 +91,20 @@ object HintColorUtil {
                     // For solid points: Color is used as fill
                     val shape = p.shape()!!
                     val isMapped = if (shape is NamedShape && shape.isSolid) isMappedColor else isMappedFill
-                    listOf(
-                        fillColorGetter(p).takeIf { isMapped(p) },
-                        strokeColorGetter(p).takeIf { isMappedColor(p) },
+                    TooltipMarker.create(
+                        majorColor = fillColorGetter(p).takeIf { isMapped(p) },
+                        minorColor = strokeColorGetter(p).takeIf { isMappedColor(p) },
                     )
                 }
 
                 else -> {
                     val renderedAes = GeomMeta.renders(geomKind, p.colorAes, p.fillAes)
-                    listOf(
-                        fillColorGetter(p).takeIf { isMappedFill(p) && p.fillAes in renderedAes },
-                        strokeColorGetter(p).takeIf { isMappedColor(p) && p.colorAes in renderedAes }
+                    TooltipMarker.create(
+                        majorColor = fillColorGetter(p).takeIf { isMappedFill(p) && p.fillAes in renderedAes },
+                        minorColor = strokeColorGetter(p).takeIf { isMappedColor(p) && p.colorAes in renderedAes }
                     )
                 }
             }
-                .filterNotNull()
-
         }
     }
 }
