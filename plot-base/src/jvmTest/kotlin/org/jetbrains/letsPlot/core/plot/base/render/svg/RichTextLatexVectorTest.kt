@@ -19,6 +19,7 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.tspans
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.vectorFormulaGroups
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.vectorTextElements
 import org.jetbrains.letsPlot.core.plot.base.render.svg.TestUtil.wholeText
+import org.jetbrains.letsPlot.core.plot.base.render.text.Latex
 import org.jetbrains.letsPlot.core.plot.base.render.text.LatexVectorFont
 import org.jetbrains.letsPlot.core.plot.base.render.text.RichText
 import org.jetbrains.letsPlot.datamodel.svg.dom.*
@@ -351,14 +352,19 @@ class RichTextLatexVectorTest {
     @Test
     fun vectorGlyphTableCoversEntireSymbolMap() {
         // Keep Latex.SYMBOLS fully vector-backed to avoid mixed vector/legacy symbol grids.
-        val symbolValues = listOf(
-            "Α", "Β", "Γ", "Δ", "Ε", "Ζ", "Η", "Θ", "Ι", "Κ", "Λ", "Μ", "Ν", "Ξ", "Ο",
-            "Π", "Ρ", "Σ", "Τ", "Υ", "Φ", "Χ", "Ψ", "Ω",
-            "α", "β", "γ", "δ", "ε", "ζ", "η", "θ", "ι", "κ", "λ", "μ", "ν", "ξ", "ο",
-            "π", "ρ", "σ", "τ", "υ", "φ", "χ", "ψ", "ω",
-            "±", "∓", "×", "÷", "·", "≤", "≥", "≠", "∞"
+        val faces = listOf(
+            false to false,
+            true to false,
+            false to true,
+            true to true,
         )
-        val missing = symbolValues.filterNot { LatexVectorFont.isSupported(it) }
+        val missing = Latex.SYMBOLS.values
+            .flatMap { it.toList() }
+            .flatMap { symbol ->
+                faces
+                    .filterNot { (bold, italic) -> LatexVectorFont.isSupported(symbol, bold, italic) }
+                    .map { (bold, italic) -> "$symbol (bold=$bold, italic=$italic)" }
+            }
         assertThat(missing).isEmpty()
     }
 
