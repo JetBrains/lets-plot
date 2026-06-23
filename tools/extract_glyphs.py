@@ -59,7 +59,7 @@ internal object LatexVectorFont {
     const val UPM: Int = 1000
 
     // Word-wrapping can inject '\\n'/'\\t'/'\\r' inside a formula; register them as zero-advance blanks
-    // so they're ignored and the formula doesn't fall back to the legacy tspan renderer.
+    // so they render as nothing instead of becoming inline <text> fallback runs.
     // TODO: remove once wrap() is LaTeX-aware and never injects whitespace other than ' ' into a formula.
     private val WHITESPACE_GLYPH = VectorGlyph(advanceEm = 0.0, pathData = null)
     private val WHITESPACE_GLYPHS = mapOf('\\n' to WHITESPACE_GLYPH, '\\t' to WHITESPACE_GLYPH, '\\r' to WHITESPACE_GLYPH)
