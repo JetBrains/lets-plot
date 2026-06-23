@@ -55,6 +55,20 @@ class ImageComparer(
                 maxShift = 1,
                 allowedDiffPixelRatio = 0.02
             )
+
+            // Merged tooltips pack many thin, high-contrast features (box border, per-group
+            // separator rules, colored marker bars) plus dense, text-metric-sized text into a tiny
+            // box. The box is sized/positioned from measured text, so sub-pixel differences in the
+            // platform font rasterizer shift these crisp 1px lines onto different rows, flipping
+            // whole rows of pixels. This needs a wider search radius and more pixel headroom than
+            // ordinary plot geometry or sparse text.
+            // After withBrowserAaTolerance() this becomes tol=24, maxShift=2, allowedDiffPixelRatio=0.02,
+            // which keeps the macOS-vs-Linux baseline drift (~0.65% worst case) comfortably under the cap.
+            val MergedTooltip = ComparisonProfile(
+                tol = 16,
+                maxShift = 2,
+                allowedDiffPixelRatio = 0.01
+            )
         }
     }
 
