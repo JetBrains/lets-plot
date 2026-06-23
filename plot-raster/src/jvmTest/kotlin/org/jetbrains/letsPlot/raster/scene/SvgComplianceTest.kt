@@ -8,10 +8,67 @@ package org.jetbrains.letsPlot.raster.scene
 import org.assertj.core.api.Assertions.assertThat
 import org.jetbrains.letsPlot.commons.geometry.AffineTransform
 import org.jetbrains.letsPlot.commons.geometry.DoubleRectangle
+import org.jetbrains.letsPlot.commons.values.Color
+import org.jetbrains.letsPlot.core.plot.base.render.text.LatexVectorClasses
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgColors
 import kotlin.test.Test
 
 class SvgComplianceTest {
+    @Test
+    fun `fill-less path inside latex formula inherits text color`() {
+        val doc = mapSvg {
+            svgDocument(width = 400, height = 300) {
+                style(
+                    """
+                    .text-color {
+                        fill: #ff0000;
+                    }
+                    """.trimIndent()
+                )
+
+                g(id = "text-color-group") {
+                    addClass("text-color")
+                    g(id = "formula-group") {
+                        addClass(LatexVectorClasses.FORMULA_CLASS)
+                        path(id = "path") {
+                            setAttribute("d", "M0 0 L10 0 L10 10 Z")
+                        }
+                    }
+                }
+            }
+        }
+
+        doc.findElement<Path>("path").let {
+            assertThat(it.fill).isEqualTo(Color.RED)
+        }
+    }
+
+    @Test
+    fun `fill-less path outside latex formula does not inherit text color`() {
+        val doc = mapSvg {
+            svgDocument(width = 400, height = 300) {
+                style(
+                    """
+                    .text-color {
+                        fill: #ff0000;
+                    }
+                    """.trimIndent()
+                )
+
+                g(id = "text-color-group") {
+                    addClass("text-color")
+                    path(id = "path") {
+                        setAttribute("d", "M0 0 L10 0 L10 10 Z")
+                    }
+                }
+            }
+        }
+
+        doc.findElement<Path>("path").let {
+            assertThat(it.fill).isNull()
+        }
+    }
+
     @Test
     fun `nested g - empty`() {
         val doc = mapSvg {
