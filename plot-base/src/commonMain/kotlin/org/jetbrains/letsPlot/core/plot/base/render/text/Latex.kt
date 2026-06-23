@@ -580,7 +580,6 @@ internal class Latex(
         private const val FRACTION_SIDE_SPACING_EM = 3.0 / 18.0 // TeX thin space, 3 mu.
         private const val INDEX_SIZE_FACTOR = 0.7
         private const val INDEX_RELATIVE_SHIFT = 0.4
-        internal const val VECTOR_FORMULA_CLASS = LatexVectorClasses.FORMULA_CLASS
         internal const val VECTOR_BBOX_CLASS = "lp-latex-vector-bbox"
         // Fallback <text> run for an unsupported glyph; its font is baked, so Label.applyStyle must not overwrite it.
         internal const val VECTOR_TEXT_CLASS = "lp-latex-vector-text"

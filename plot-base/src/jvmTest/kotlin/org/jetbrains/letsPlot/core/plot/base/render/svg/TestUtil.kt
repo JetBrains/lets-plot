@@ -104,7 +104,7 @@ object TestUtil {
         val out = mutableListOf<SvgGElement>()
         fun walk(e: SvgElement) {
             if (e is SvgGElement &&
-                e.classAttribute().get()?.split(' ')?.contains(org.jetbrains.letsPlot.core.plot.base.render.text.Latex.VECTOR_FORMULA_CLASS) == true) {
+                e.classAttribute().get()?.split(' ')?.contains(org.jetbrains.letsPlot.core.plot.base.render.text.LatexVectorClasses.FORMULA_CLASS) == true) {
                 out.add(e)
             }
             e.children().forEach { c -> if (c is SvgElement) walk(c) }
