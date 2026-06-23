@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.theme.TooltipsTheme
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.Elem
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TEXT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_MAX_COUNT
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_MERGE
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_RECT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TEXT
 import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption.TOOLTIP_TITLE_TEXT
@@ -22,6 +24,8 @@ internal class DefaultTooltipsTheme(
 ) : ThemeValuesAccess(options, fontFamilyRegistry), TooltipsTheme {
 
     internal val tooltipKey = listOf(TOOLTIP_RECT, RECT)
+    internal val mergeKey = listOf(TOOLTIP_MERGE)
+    internal val maxCountKey = listOf(TOOLTIP_MAX_COUNT)
 
     internal val textKey = listOf(TOOLTIP_TEXT, TEXT)
     internal val titleTextKey = listOf(TOOLTIP_TITLE_TEXT, TOOLTIP_TEXT, TEXT)
@@ -50,5 +54,13 @@ internal class DefaultTooltipsTheme(
 
     override fun show(): Boolean {
         return !isElemBlank(listOf(TOOLTIP_RECT))
+    }
+
+    override fun merge(): Boolean {
+        return getBoolean(mergeKey)
+    }
+
+    override fun maxCount(): Int {
+        return getNumber(maxCountKey).toInt()
     }
 }

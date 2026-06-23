@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -147,6 +147,8 @@ internal class ThemeOptionTest {
             ThemeOption.TOOLTIP_RECT -> (theme.tooltips() as DefaultTooltipsTheme).tooltipKey
             ThemeOption.TOOLTIP_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).textKey
             ThemeOption.TOOLTIP_TITLE_TEXT -> (theme.tooltips() as DefaultTooltipsTheme).titleTextKey
+            ThemeOption.TOOLTIP_MERGE -> (theme.tooltips() as DefaultTooltipsTheme).mergeKey
+            ThemeOption.TOOLTIP_MAX_COUNT -> (theme.tooltips() as DefaultTooltipsTheme).maxCountKey
 
             ThemeOption.ANNOTATION_TEXT -> (theme.annotations() as DefaultAnnotationsTheme).annotationTextKey
 

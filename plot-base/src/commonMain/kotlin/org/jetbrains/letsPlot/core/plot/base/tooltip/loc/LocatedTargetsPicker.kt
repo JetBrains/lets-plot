@@ -26,17 +26,16 @@ internal class LocatedTargetsPicker(
     private val axisOrigin: DoubleVector,
     private val xAxisTheme: AxisTheme,
     private val yAxisTheme: AxisTheme,
-    private val ctx: PlotContext
+    private val ctx: PlotContext,
+    private val mergeTooltips: Boolean,
+    private val tooltipMaxCount: Int
 ) {
     private val allLookupResults = ArrayList<LookupResult>()
 
     fun addLookupResult(result: LookupResult) {
         // for bar - if the number of targets exceeds the restriction value => use the closest one
-        val lookupResult = if (result.geomKind in setOf(BAR, HISTOGRAM) && result.targets.size > BAR_TARGETS_MAX_COUNT
-            || result.targets.size > EXPECTED_TARGETS_MAX_COUNT // perf: when LP is used by vis tools with raw data
-        ) {
-            val closestTarget = result.targets
-                .minBy { target -> cursorCoord.distanceTo(target.tooltipHint.coord) }
+        val lookupResult = if (exceedsTargetLimit(result)) {
+            val closestTarget = result.targets.minBy { it.tooltipHint.coord.distanceTo(cursorCoord) }
 
             result.copy(targets = listOf(closestTarget))
         } else if (result.lookupSpec.lookupSpace.isUnivariate() && result.hitShapeKind == HitShape.Kind.PATH) {
@@ -59,6 +58,19 @@ internal class LocatedTargetsPicker(
         allLookupResults.add(lookupResult)
     }
 
+    private fun exceedsTargetLimit(result: LookupResult): Boolean {
+        // Merging takes priority over the count limit: collect every target and combine them into one tooltip.
+        if (mergeTooltips) {
+            return false
+        }
+        // perf: when LP is used by vis tools with raw data. 0 disables the limit.
+        if (tooltipMaxCount <= 0) {
+            return false
+        }
+
+        return result.targets.size > tooltipMaxCount
+    }
+
     fun chooseBestResult(): List<TooltipModel> {
         val bestLookupResults = chooseBestLookupResults()
 
@@ -66,21 +78,20 @@ internal class LocatedTargetsPicker(
 
         // Filter axis tooltips
         val xAxisTooltips = tooltipModels
-            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == X_AXIS } }
+            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.placement == X_AXIS } }
             .filterNotNullValues()
 
         val yAxisTooltips = tooltipModels
-            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.tooltipHint.placement == Y_AXIS } }
+            .mapValues { (_, tooltips) -> tooltips.singleOrNull { it.placement == Y_AXIS } }
             .filterNotNullValues()
 
-        val closestXAxisTooltip = xAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }
-        val closestYAxisTooltip = yAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }
+        val closestXAxisTooltip = xAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }?.value
+        val closestYAxisTooltip = yAxisTooltips.minByOrNull { (lookupResult, _) -> lookupResult.ownerDistance }?.value
 
         val finalTooltips = tooltipModels.values.flatten() - xAxisTooltips.values - yAxisTooltips.values +
-                closestXAxisTooltip?.value +
-                closestYAxisTooltip?.value
+                closestXAxisTooltip + closestYAxisTooltip
 
-        return finalTooltips.filterNotNull()
+        return mergeGeneralTooltips(finalTooltips.filterNotNull())
     }
 
 
@@ -144,9 +155,9 @@ internal class LocatedTargetsPicker(
             chooseTooltipModels(lookupResult.targets, lookupResult.contextualMapping)
                 .filter { it.lines.isNotEmpty() }
 
-        return tooltipModels
-            .removeDuplicates { it.tooltipHint.placement == X_AXIS }
-            .removeDuplicates { it.tooltipHint.placement == Y_AXIS }
+        return mergeGeneralTooltips(tooltipModels)
+            .removeDuplicates { it.placement == X_AXIS }
+            .removeDuplicates { it.placement == Y_AXIS }
     }
 
     internal fun chooseTooltipModels(
@@ -160,7 +171,7 @@ internal class LocatedTargetsPicker(
             tooltipModels += sideTooltipModels(geomTarget, dataPoints)
             tooltipModels += generalTooltipModels(geomTarget, contextualMapping, dataPoints)
         }
-        return tooltipModels
+        return mergeGeneralTooltips(tooltipModels)
     }
 
     private fun sideTooltipModels(
@@ -170,20 +181,22 @@ internal class LocatedTargetsPicker(
         val tooltipModels = ArrayList<TooltipModel>()
         val sideDataPoints = sideDataPoints(dataPoints)
 
-        geomTarget.aesTooltipHint.forEach { (aes, hint) ->
+        geomTarget.sideTooltipHints.forEach { (aes, hint) ->
             val linesForAes = sideDataPoints
                 .filter { aes == it.aes }
                 .map(DataPoint::value)
                 .map(TooltipModel.Line.Companion::withValue)
             if (linesForAes.isNotEmpty()) {
                 tooltipModels.add(
-                    TooltipModel(
+                    TooltipModel.forTarget(
                         tooltipHint = hint,
                         title = null,
                         lines = linesForAes,
-                        fill = hint.fillColor ?: geomTarget.tooltipHint.fillColor
-                        ?: geomTarget.tooltipHint.marker.firstOrNull() ?: WHITE,
-                        marker = emptyList(),
+                        fill = hint.fillColor
+                            ?: geomTarget.tooltipHint.fillColor
+                            ?: geomTarget.tooltipHint.marker.majorColor
+                            ?: WHITE,
+                        marker = TooltipMarker.NONE,
                         isSide = true
                     )
                 )
@@ -208,12 +221,12 @@ internal class LocatedTargetsPicker(
             if (lines.isNotEmpty()) {
                 val hint = createHintForAxis(aes, geomTarget.tooltipHint)
                 tooltipModels.add(
-                    TooltipModel(
+                    TooltipModel.forTarget(
                         tooltipHint = hint,
                         title = null,
                         lines = lines,
                         fill = hint.fillColor!!,
-                        marker = emptyList(),
+                        marker = TooltipMarker.NONE,
                         isSide = true
                     )
                 )
@@ -236,7 +249,7 @@ internal class LocatedTargetsPicker(
 
         return if (generalLines.isNotEmpty()) {
             listOf(
-                TooltipModel(
+                TooltipModel.forTarget(
                     tooltipHint = geomTarget.tooltipHint,
                     title = contextualMapping.getTitle(geomTarget.hitIndex, ctx),
                     lines = generalLines,
@@ -257,6 +270,49 @@ internal class LocatedTargetsPicker(
             )
         } else {
             emptyList()
+        }
+    }
+
+    private fun mergeGeneralTooltips(tooltipModels: List<TooltipModel>): List<TooltipModel> {
+        if (!mergeTooltips) {
+            return tooltipModels
+        }
+
+        val generalTooltips = tooltipModels.filter { !it.isSide && it.placement !in listOf(X_AXIS, Y_AXIS) }
+        if (generalTooltips.isEmpty()) {
+            return tooltipModels
+        }
+
+        val primaryTooltip = generalTooltips.first()
+
+        val mergedGeneralTooltip = TooltipModel(
+            placement = primaryTooltip.placement,
+            // merged tooltips draw no stem pointer; the stem length acts as a gap
+            // between the box and the targets area, keeping point markers visible
+            stemLength = TooltipHint.StemLength.NORMAL,
+            targets = generalTooltips.flatMap(TooltipModel::targets)
+                .sortedWith( // read top-to-bottom, left-to-right - same order as target markers on the plot
+                    compareBy(nullsLast(compareBy(DoubleVector::y, DoubleVector::x))) { it.coord }
+                ),
+            fill = primaryTooltip.fill,
+            isSide = false,
+            anchor = primaryTooltip.anchor,
+            minWidth = generalTooltips.mapNotNull(TooltipModel::minWidth).maxOrNull(),
+            isCrosshairEnabled = generalTooltips.any(TooltipModel::isCrosshairEnabled),
+            crosshairMode = mergeCrosshairMode(generalTooltips.mapNotNull(TooltipModel::crosshairMode))
+        )
+
+        return tooltipModels.filterNot { it in generalTooltips } + mergedGeneralTooltip
+    }
+
+    private fun mergeCrosshairMode(modes: List<CrosshairMode>): CrosshairMode? {
+        return when {
+            modes.isEmpty() -> null
+            CrosshairMode.XY in modes -> CrosshairMode.XY
+            CrosshairMode.X in modes && CrosshairMode.Y in modes -> CrosshairMode.XY
+            CrosshairMode.X in modes -> CrosshairMode.X
+            CrosshairMode.Y in modes -> CrosshairMode.Y
+            else -> null
         }
     }
 
@@ -312,13 +368,6 @@ internal class LocatedTargetsPicker(
     companion object {
         internal const val CUTOFF_DISTANCE = 30.0
         internal const val FAKE_DISTANCE = 15.0
-
-        private const val BAR_TARGETS_MAX_COUNT = 5 // allowed number of visible tooltips
-
-        // more than 10 targets per layer is too much.
-        // Seems like Lets-Plot was used by vis tools, not by humans. Limit tooltips count to 1.
-        // User won't get much info from it anyway.
-        private const val EXPECTED_TARGETS_MAX_COUNT = 10
 
         private fun distance(cursor: DoubleVector, lookupResult: LookupResult): Double {
             // Special case for geoms like histogram, when mouse inside a rect or only X projection is used (so a distance

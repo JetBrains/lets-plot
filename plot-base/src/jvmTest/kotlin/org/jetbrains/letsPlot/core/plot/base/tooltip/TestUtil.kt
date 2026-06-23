@@ -79,10 +79,10 @@ object TestUtil {
         tooltipTitle = null
     )
     private val defaultTooltipParams = TooltipParams(
-        emptyMap(),
-        TooltipHint.StemLength.NORMAL,
-        null,
-        emptyList()
+        tooltipHints = emptyMap(),
+        stemLength = TooltipHint.StemLength.NORMAL,
+        fillColor = null,
+        marker = TooltipMarker.NONE
     )
 
     private fun defaultContextualMapping(

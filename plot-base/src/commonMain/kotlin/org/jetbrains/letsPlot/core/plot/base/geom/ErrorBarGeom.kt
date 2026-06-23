@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -34,13 +34,13 @@ class ErrorBarGeom : GeomBase(), WithWidth {
         ctx: GeomContext
     ) {
         val geomHelper = GeomHelper(pos, coord, ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
+        val markerFactory = HintColorUtil.markerFactory(ctx)
         val tooltipHelper = RectangleTooltipHelper(
             pos = pos,
             coord = coord,
             ctx = ctx,
             hintAesList = listOf(Aes.YMIN, Aes.YMAX),
-            colorMarkerMapper = colorsByDataPoint
+            markerFactory = markerFactory
         )
 
         for (p in aesthetics.dataPoints()) {

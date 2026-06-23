@@ -61,7 +61,7 @@ class SinaGeom : GeomBase() {
         val helper = GeomHelper(pos, coord, ctx)
         val quantilesHelper = QuantilesHelper(pos, coord, ctx, quantiles, Aes.X)
         val targetCollector = getGeomTargetCollector(ctx)
-        val colorsByDataPoint = HintColorUtil.createColorMarkerMapper(ctx)
+        val colorsByDataPoint = HintColorUtil.markerFactory(ctx)
         val jitterTransform = toJitterTransform(ctx, rand)
 
         quantilesHelper.splitByQuantiles(dataPoints, Aes.Y).forEach { points ->

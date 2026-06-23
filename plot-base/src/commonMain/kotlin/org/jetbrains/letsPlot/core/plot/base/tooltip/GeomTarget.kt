@@ -11,5 +11,5 @@ import org.jetbrains.letsPlot.core.plot.base.Aes
 open class GeomTarget(
     val hitIndex: Int,
     open val tooltipHint: TooltipHint,
-    open val aesTooltipHint: Map<Aes<*>, TooltipHint>
+    open val sideTooltipHints: Map<Aes<*>, TooltipHint>
 )

@@ -352,7 +352,9 @@ class LocatorByGeneralTooltipTest {
             axisOrigin = DoubleVector.ZERO,
             xAxisTheme = TestUtil.axisTheme,
             yAxisTheme = TestUtil.axisTheme,
-            ctx = NullPlotContext
+            ctx = NullPlotContext,
+            mergeTooltips = false,
+            tooltipMaxCount = 10
         )
         targetLocators.forEach { locator ->
             locator.search(COORD)?.let(targetsPicker::addLookupResult)

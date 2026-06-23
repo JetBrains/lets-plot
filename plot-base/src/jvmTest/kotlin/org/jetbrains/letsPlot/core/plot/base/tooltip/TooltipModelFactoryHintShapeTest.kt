@@ -75,7 +75,7 @@ class TooltipModelFactoryHintShapeTest : TooltipModelTestHelper() {
                     AES_WIDTH, TooltipHint.verticalTooltip(
                         TARGET_HIT_COORD,
                         OBJECT_RADIUS,
-                        marker = emptyList()
+                        marker = TooltipMarker.NONE
                     )
                 )
                 .build()

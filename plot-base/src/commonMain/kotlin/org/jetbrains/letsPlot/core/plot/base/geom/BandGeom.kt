@@ -56,7 +56,7 @@ class BandGeom(private val isVertical: Boolean) : GeomBase() {
             // tooltip
             val tooltipParams = GeomTargetCollector.TooltipParams(
                 tooltipHints = HintsCollection(p, geomHelper).hints,
-                marker = HintColorUtil.createColorMarkerMapper(ctx)(p)
+                marker = HintColorUtil.markerFactory(ctx)(p)
             )
 
             geomHelper.toClient(rect.flipIf(!isVertical), p)?.let { r ->

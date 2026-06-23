@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. JetBrains s.r.o.
+ * Copyright (c) 2026. JetBrains s.r.o.
  * Use of this source code is governed by the MIT license that can be found in the LICENSE file.
  */
 
@@ -141,6 +141,8 @@ object ThemeOption {
     const val TOOLTIP_RECT = "tooltip"
     const val TOOLTIP_TEXT = "tooltip_text"
     const val TOOLTIP_TITLE_TEXT = "tooltip_title_text"
+    const val TOOLTIP_MERGE = "tooltip_merge"
+    const val TOOLTIP_MAX_COUNT = "tooltip_max_count"
 
     // Annotation
     const val ANNOTATION_TEXT = "label_text"

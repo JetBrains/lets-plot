@@ -19,6 +19,8 @@ root_dir = os.path.dirname(this_dir)
 this_system = platform.system()
 
 kotlin_bridge_src = os.path.join(this_dir, 'kotlin-bridge', 'lets_plot_kotlin_bridge.c')
+posix_obsolete_stubs_src = os.path.join(this_dir, 'kotlin-bridge', 'posix_obsolete_stubs.c')
+extension_sources = [kotlin_bridge_src]
 
 binaries_build_path = os.path.join(root_dir, 'python-extension', 'build', 'bin',
                                    kn_platform_build_dir[(platform.system(), platform.machine())], 'releaseStatic')
@@ -104,7 +106,20 @@ elif this_system == 'Windows':
 
 elif this_system == 'Linux':
     static_link_libraries_list += ['stdc++']
-    extra_link += ['-lz']
+    # The Kotlin/Native POSIX platform bindings reference a broad slice of glibc
+    # that modern glibc no longer keeps in libc, so the final .so must link the
+    # providing libraries explicitly (K/N's own toolchain links them from its
+    # sysroot, but this final link uses the system compiler):
+    #   -lresolv : __p_type / __b64_ntop / __b64_pton (libresolv-only since 2.34)
+    #   -lcrypt  : crypt (moved to libxcrypt, removed from libc 2.28)
+    #   -lm      : math symbols — usually satisfied by the interpreter's libm at
+    #              import, linked explicitly so resolution doesn't depend on the host.
+    # The obsolete DES routines encrypt/setkey are also referenced but were
+    # dropped from libxcrypt 4.x (libcrypt.so.2), so -lcrypt cannot satisfy them;
+    # they are provided as inert stubs via posix_obsolete_stubs.c (see that file).
+    # Without all of these the extension fails to import with 'undefined symbol: ...'.
+    extra_link += ['-lz', '-lresolv', '-lcrypt', '-lm']
+    extension_sources += [posix_obsolete_stubs_src]
 
     if imagemagick_lib_path is not None:
         extra_link += [
@@ -172,7 +187,7 @@ setup(name='lets-plot',
                     libraries=static_link_libraries_list,
                     library_dirs=[binaries_build_path],
                     depends=['liblets_plot_python_extension_api.h'],
-                    sources=[kotlin_bridge_src],
+                    sources=extension_sources,
                     extra_link_args=extra_link
                     )
       ],
