@@ -88,8 +88,13 @@ internal class VerticalRotatedLabelsLayout(
 
         val verticalAnchor = when {
             isVertical || isUpsideDown -> Text.VerticalAnchor.CENTER
-            vJust == 0.0 && (isHorizontal || isLabelDirectedFromTick) -> Text.VerticalAnchor.BOTTOM
-            vJust == 1.0 && (isHorizontal || !isLabelDirectedFromTick) -> Text.VerticalAnchor.TOP
+            // Horizontal text: vjust moves the label along the axis in the same screen direction as on the
+            // x-axis (vjust=0 -> lower, vjust=1 -> higher). TOP anchor sits the text below the tick, BOTTOM above.
+            isHorizontal && vJust == 0.0 -> Text.VerticalAnchor.TOP
+            isHorizontal && vJust == 1.0 -> Text.VerticalAnchor.BOTTOM
+            // Tilted text: pin the label's near (toward-tick) end; the default vjust is direction-based.
+            vJust == 0.0 && isLabelDirectedFromTick -> Text.VerticalAnchor.BOTTOM
+            vJust == 1.0 && !isLabelDirectedFromTick -> Text.VerticalAnchor.TOP
             else -> Text.VerticalAnchor.CENTER
         }
 
@@ -156,13 +161,15 @@ internal class VerticalRotatedLabelsLayout(
         }
     }
 
+    // For vertical text (±90°), vjust positions the label along the axis via the text anchor.
+    // Chosen so vjust moves the label in the same screen direction as on the other angles (vjust=1 -> higher).
     private fun hAnchorForVerticalLabels(vjust: Double): Text.HorizontalAnchor {
         if (vjust != 0.0 && vjust != 1.0) {
             return Text.HorizontalAnchor.MIDDLE
         }
         return when (myRotationAngle) {
-            90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.RIGHT else Text.HorizontalAnchor.LEFT
-            -90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.LEFT else Text.HorizontalAnchor.RIGHT
+            90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.LEFT else Text.HorizontalAnchor.RIGHT
+            -90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.RIGHT else Text.HorizontalAnchor.LEFT
             else -> Text.HorizontalAnchor.MIDDLE
         }
     }
