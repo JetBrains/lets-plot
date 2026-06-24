@@ -232,7 +232,7 @@ internal class Latex(
 
         // Renders into a group in the formula-local frame: x=0 left edge, y=0 baseline, ascenders y<0.
         // The caller composes by translating the returned group.
-        abstract fun renderVectorGroup(color: Color?): SvgGElement
+        abstract fun renderVectorGroup(color: Color?, font: Font): SvgGElement
 
         // Effective font size in pixels at this node's level.
         internal fun levelFontSize(font: Font): Double =
@@ -244,19 +244,26 @@ internal class Latex(
     internal inner class VectorLatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = node.visualCharCount
 
-        override fun estimateWidth(font: Font): Double = node.vectorWidth(font)
+        var inlineBold: Boolean = false
+        var inlineItalic: Boolean = false
 
-        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics = node.vectorMetrics(font)
+        private fun effective(base: Font): Font =
+            Font(base.family, base.size, base.isBold || inlineBold, base.isItalic || inlineItalic)
+
+        override fun estimateWidth(font: Font): Double = node.vectorWidth(effective(font))
+
+        override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics = node.vectorMetrics(effective(font))
 
         override fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>> {
+            val effectiveFont = effective(this@Latex.font)
             val group = SvgGElement().apply {
                 addClass(LatexVectorClasses.FORMULA_CLASS)
-                children().add(node.renderVectorGroup(context.color))
+                children().add(node.renderVectorGroup(context.color, effectiveFont))
 
                 // Invisible guide making the group's measured bbox equal the logical advance box:
                 // downstream layout measures bbox, but glyph paths give tight ink bounds and omit spaces.
                 // TODO: Remove once bbox consumers (TooltipBox) size formulas from analytic metrics instead of measured bbox.
-                val formulaFont = this@Latex.font
+                val formulaFont = effectiveFont
                 val width = node.vectorWidth(formulaFont)
                 if (width > 0.0) {
                     val metrics = node.vectorMetrics(formulaFont)
@@ -285,32 +292,31 @@ internal class Latex(
             return LineBoxMetrics(boxHeight = sizePx, topToBaseline = sizePx)
         }
 
-        override fun renderVectorGroup(color: Color?): SvgGElement = SvgGElement()
+        override fun renderVectorGroup(color: Color?, font: Font): SvgGElement = SvgGElement()
     }
 
     private inner class TextNode(val content: String, level: Int) : LatexNode(emptyList(), level) {
         override val visualCharCount: Int = content.length
 
         override fun vectorWidth(font: Font): Double =
-            segments().sumOf { runAdvancePx(it, font) }
+            segments(font).sumOf { runAdvancePx(it, font) }
 
         override fun vectorMetrics(font: Font): LineBoxMetrics {
             val sizePx = levelFontSize(font)
             return LineBoxMetrics(boxHeight = sizePx, topToBaseline = sizePx)
         }
 
-        override fun renderVectorGroup(color: Color?): SvgGElement {
+        override fun renderVectorGroup(color: Color?, font: Font): SvgGElement {
             val g = SvgGElement()
-            val font = this@Latex.font
             val sizePx = levelFontSize(font)
             val unitsToPx = sizePx / LatexVectorFont.UPM.toDouble()
             var cursorPx = 0.0
-            for (run in segments()) {
+            for (run in segments(font)) {
                 if (run.supported) {
                     // Supported glyphs are painted as filled outlines, not text. In raster backends (ImageMagick)
                     // a filled outline looks a bit heavier than the same glyph as text at small sizes — known limitation, not a bug.
                     for (c in run.text) {
-                        val glyph = LatexVectorFont.glyphOrNull(c, this@Latex.font.isBold, this@Latex.font.isItalic) ?: continue
+                        val glyph = LatexVectorFont.glyphOrNull(c, font.isBold, font.isItalic) ?: continue
                         if (glyph.pathData != null) {
                             val path = SvgPathElement().apply {
                                 setAttribute("d", glyph.pathData)
@@ -355,13 +361,13 @@ internal class Latex(
             return g
         }
 
-        private fun segments(): List<Run> {
+        private fun segments(font: Font): List<Run> {
             val runs = mutableListOf<Run>()
             var start = 0
             while (start < content.length) {
-                val supported = LatexVectorFont.isSupported(content[start], this@Latex.font.isBold, this@Latex.font.isItalic)
+                val supported = LatexVectorFont.isSupported(content[start], font.isBold, font.isItalic)
                 var end = start + 1
-                while (end < content.length && LatexVectorFont.isSupported(content[end], this@Latex.font.isBold, this@Latex.font.isItalic) == supported) {
+                while (end < content.length && LatexVectorFont.isSupported(content[end], font.isBold, font.isItalic) == supported) {
                     end++
                 }
                 runs.add(Run(content.substring(start, end), supported))
@@ -374,7 +380,7 @@ internal class Latex(
         // position never depends on how it's drawn. Supported: vector em-advances; unsupported: legacy estimator.
         private fun runAdvancePx(run: Run, font: Font): Double {
             return if (run.supported) {
-                run.text.sumOf { LatexVectorFont.advanceEm(it, this@Latex.font.isBold, this@Latex.font.isItalic) } * levelFontSize(font)
+                run.text.sumOf { LatexVectorFont.advanceEm(it, font.isBold, font.isItalic) } * levelFontSize(font)
             } else {
                 widthCalculator(run.text, nodeFontAtLevel(font))
             }
@@ -398,14 +404,13 @@ internal class Latex(
             children.sumOf { it.vectorWidth(font) } +
                     children.zipWithNext().sumOf { (left, right) -> interAtomGap(left, right, font) }
 
-        override fun renderVectorGroup(color: Color?): SvgGElement {
+        override fun renderVectorGroup(color: Color?, font: Font): SvgGElement {
             val g = SvgGElement()
-            val font = this@Latex.font
             var cursorPx = 0.0
             var previousChild: LatexNode? = null
             for (child in children) {
                 previousChild?.let { cursorPx += interAtomGap(it, child, font) }
-                val childGroup = child.renderVectorGroup(color)
+                val childGroup = child.renderVectorGroup(color, font)
                 if (cursorPx != 0.0) {
                     childGroup.transform().set(SvgTransformBuilder().translate(cursorPx, 0.0).build())
                 }
@@ -435,10 +440,10 @@ internal class Latex(
         override fun vectorMetrics(font: Font): LineBoxMetrics =
             content.vectorMetrics(font).raisedBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
 
-        override fun renderVectorGroup(color: Color?): SvgGElement {
+        override fun renderVectorGroup(color: Color?, font: Font): SvgGElement {
             val g = SvgGElement()
-            val contentGroup = content.renderVectorGroup(color)
-            val dyPx = -INDEX_RELATIVE_SHIFT * content.levelFontSize(this@Latex.font)
+            val contentGroup = content.renderVectorGroup(color, font)
+            val dyPx = -INDEX_RELATIVE_SHIFT * content.levelFontSize(font)
             contentGroup.transform().set(SvgTransformBuilder().translate(0.0, dyPx).build())
             g.children().add(contentGroup)
             return g
@@ -457,10 +462,10 @@ internal class Latex(
         override fun vectorMetrics(font: Font): LineBoxMetrics =
             content.vectorMetrics(font).loweredBy(INDEX_RELATIVE_SHIFT * content.levelFontSize(font))
 
-        override fun renderVectorGroup(color: Color?): SvgGElement {
+        override fun renderVectorGroup(color: Color?, font: Font): SvgGElement {
             val g = SvgGElement()
-            val contentGroup = content.renderVectorGroup(color)
-            val dyPx = INDEX_RELATIVE_SHIFT * content.levelFontSize(this@Latex.font)
+            val contentGroup = content.renderVectorGroup(color, font)
+            val dyPx = INDEX_RELATIVE_SHIFT * content.levelFontSize(font)
             contentGroup.transform().set(SvgTransformBuilder().translate(0.0, dyPx).build())
             g.children().add(contentGroup)
             return g
@@ -508,17 +513,16 @@ internal class Latex(
             )
         }
 
-        override fun renderVectorGroup(color: Color?): SvgGElement {
+        override fun renderVectorGroup(color: Color?, font: Font): SvgGElement {
             val g = SvgGElement()
-            val font = this@Latex.font
             val em = levelFontSize(font)
 
             val numWidth = numerator.vectorWidth(font)
             val denomWidth = denominator.vectorWidth(font)
             val fractionWidthPx = max(numWidth, denomWidth)
 
-            val numGroup = numerator.renderVectorGroup(color)
-            val denomGroup = denominator.renderVectorGroup(color)
+            val numGroup = numerator.renderVectorGroup(color, font)
+            val denomGroup = denominator.renderVectorGroup(color, font)
 
             val numShiftX = (fractionWidthPx - numWidth) / 2.0
             val denomShiftX = (fractionWidthPx - denomWidth) / 2.0

@@ -119,7 +119,31 @@ object RichText {
 
         val wrappedLines = wrap(lines, wrapLength, maxLinesCount)
 
+        applyInlineFaceToFormulas(wrappedLines)
+
         return wrappedLines
+    }
+
+    // Inline face state is line-persistent, so formulas after hard breaks inherit open markdown.
+    // Vector formula face affects geometry, so it must be applied before measurement.
+    private fun applyInlineFaceToFormulas(lines: List<List<RichTextNode>>) {
+        var boldDepth = 0
+        var italicDepth = 0
+        lines.forEach { line ->
+            line.forEach { term ->
+                when (term) {
+                    is RichTextNode.StrongStart -> boldDepth++
+                    is RichTextNode.StrongEnd -> boldDepth--
+                    is RichTextNode.EmphasisStart -> italicDepth++
+                    is RichTextNode.EmphasisEnd -> italicDepth--
+                    is Latex.VectorLatexElement -> {
+                        term.inlineBold = boldDepth > 0
+                        term.inlineItalic = italicDepth > 0
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun wrap(lines: List<List<RichTextNode>>, wrapLength: Int, maxLinesCount: Int): List<List<RichTextNode>> {

@@ -623,8 +623,36 @@ class RichTextLatexVectorTest {
         assertThat(boldPaths).isNotEqualTo(regularPaths)
     }
 
-    private fun glyphPathData(formula: String, font: Font): List<String> {
-        return toSvg(formula, font = font).single().pathElements()
+    @Test
+    fun inlineMarkdownBoldFormulaMatchesBaseFontBold() {
+        val markdownPaths = glyphPathData("""**\(x + 1\)**""", font, markdown = true)
+        val boldPaths = glyphPathData("""\(x + 1\)""", Font(font.family, font.size, isBold = true))
+        assertThat(markdownPaths).isEqualTo(boldPaths)
+    }
+
+    @Test
+    fun inlineMarkdownItalicFormulaMatchesBaseFontItalic() {
+        val markdownPaths = glyphPathData("""*\(x + 1\)*""", font, markdown = true)
+        val italicPaths = glyphPathData("""\(x + 1\)""", Font(font.family, font.size, isItalic = true))
+        assertThat(markdownPaths).isEqualTo(italicPaths)
+    }
+
+    @Test
+    fun inlineMarkdownBoldItalicFormulaMatchesBaseFontBoldItalic() {
+        val markdownPaths = glyphPathData("""***\(x + 1\)***""", font, markdown = true)
+        val boldItalicPaths = glyphPathData("""\(x + 1\)""", Font(font.family, font.size, isBold = true, isItalic = true))
+        assertThat(markdownPaths).isEqualTo(boldItalicPaths)
+    }
+
+    @Test
+    fun inlineMarkdownBoldFormulaIsMeasuredAsBold() {
+        val markdownWidth = RichText.measure(text = """**\(x + 1\)**""", font = font, markdown = true).width
+        val boldWidth = RichText.measure(text = """\(x + 1\)""", font = Font(font.family, font.size, isBold = true)).width
+        assertThat(markdownWidth).isCloseTo(boldWidth, offset(1e-9))
+    }
+
+    private fun glyphPathData(formula: String, font: Font, markdown: Boolean = false): List<String> {
+        return toSvg(formula, font = font, markdown = markdown).single().pathElements()
             .map { it.getAttribute("d").get().toString() }
     }
 
