@@ -60,11 +60,26 @@ object Text {
         fontSize: Double? = null,
         fontWeight: String? = null,
         fontFamily: String? = null,
-        fontStyle: String? = null
+        fontStyle: String? = null,
+        fillNone: Boolean = false,
+        strokeColor: Color? = null,
+        strokeWidth: Double? = null,
+        strokeLinejoin: String? = null
     ): String {
         val sb = StringBuilder()
-        if (textColor != null) {
+        if (fillNone) {
+            sb.append("fill:none;")
+        } else if (textColor != null) {
             sb.append(SvgUtils.fillAndOpacityStyle(textColor))
+        }
+        if (strokeColor != null) {
+            sb.append(SvgUtils.strokeAndOpacityStyle(strokeColor))
+        }
+        if (strokeWidth != null && strokeWidth > 0) {
+            sb.append("stroke-width:").append(strokeWidth).append("px;")
+        }
+        if (!strokeLinejoin.isNullOrBlank()) {
+            sb.append("stroke-linejoin:").append(strokeLinejoin).append(';')
         }
 
         // set each property separately
