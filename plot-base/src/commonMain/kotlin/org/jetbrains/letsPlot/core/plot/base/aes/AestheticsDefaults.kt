@@ -110,11 +110,13 @@ class AestheticsDefaults private constructor(
 
         private fun text(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
+                .update(Aes.STROKE, 0.0)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
         }
 
         private fun textRepel(geomTheme: GeomTheme): AestheticsDefaults {
             return base(geomTheme)
+                .update(Aes.STROKE, 0.0)
                 .updateInLegend(Aes.FILL, Color.TRANSPARENT)
                 .updateInLegend(Aes.POINT_SIZE, 5.0)
                 .updateInLegend(Aes.SEGMENT_COLOR, geomTheme.segmentColor())

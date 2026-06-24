@@ -80,21 +80,24 @@ class LegendComponent(
         val g = SvgGElement()
 
         // background rect for the legend icon
+        var keyFill: Color? = null
         if (theme.showKeyRect()) {
+            keyFill = theme.keyRectFill()
             val backgroundRect = LegendKeyElementFactory.createBackgroundRect(
                 size,
                 color = theme.keyRectColor(),
-                fill = theme.keyRectFill(),
+                fill = keyFill,
                 strokeWidth = theme.keyRectStrokeWidth(),
                 lineType = theme.keyLineType()
             )
             g.children().add(backgroundRect)
         } else if (panelTheme.showRect()) {
             // use "plot panel" color
+            keyFill = panelTheme.rectFill()
             val backgroundRect = LegendKeyElementFactory.createBackgroundRect(
                 size,
                 color = panelTheme.rectFill(),
-                fill = panelTheme.rectFill(),
+                fill = keyFill,
                 strokeWidth = 0.0,
                 lineType = NamedLineType.SOLID
             )
@@ -102,7 +105,7 @@ class LegendComponent(
         }
         // key
         val innerSize = DoubleVector(size.x - 2, size.y - 2)
-        val keyElement = legendBreak.createKeyElement(innerSize)
+        val keyElement = legendBreak.createKeyElement(innerSize, keyFill)
         val keyElementTransform = buildTransform(DoubleVector(1.0, 1.0), 0.0)
         keyElement.transform().set(keyElementTransform)
 

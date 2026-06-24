@@ -8,6 +8,7 @@ package org.jetbrains.letsPlot.core.plot.base.geom.util
 import org.jetbrains.letsPlot.commons.geometry.DoubleVector
 import org.jetbrains.letsPlot.commons.geometry.GeometryUtils
 import org.jetbrains.letsPlot.commons.intern.math.toRadians
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.*
 import org.jetbrains.letsPlot.core.plot.base.aes.AesScaling
 import org.jetbrains.letsPlot.core.plot.base.geom.TextGeom.Companion.BASELINE_TEXT_WIDTH
@@ -28,6 +29,8 @@ class TextHelper(
     private var naValue: String = DEF_NA_VALUE
     private var sizeUnit: String? = null
     private var checkOverlap: Boolean = false
+    private var haloWidth: Double = 0.0
+    private var haloColor: Color? = null
     private var toLocation: (DataPointAesthetics) -> DoubleVector? = DEF_COORD_OR_NULL
 
     fun setLabelOptions(labelOptions: LabelOptions): TextHelper {
@@ -52,6 +55,16 @@ class TextHelper(
 
     fun setSizeUnit(sizeUnit: String?): TextHelper {
         this.sizeUnit = sizeUnit
+        return this
+    }
+
+    fun setHaloWidth(haloWidth: Double): TextHelper {
+        this.haloWidth = haloWidth
+        return this
+    }
+
+    fun setHaloColor(haloColor: Color?): TextHelper {
+        this.haloColor = haloColor
         return this
     }
 
@@ -97,7 +110,18 @@ class TextHelper(
         labelNudge: (location: DoubleVector, size: DoubleVector) -> DoubleVector = DEF_LABEL_NUDGE
     ): SvgGElement {
         return if (labelOptions == null) {
-            TextUtil.textComponentFactory(p, location, text, ctx, flipAngle, sizeUnitRatio, boundsCenter, labelNudge)
+            TextUtil.textComponentFactory(
+                p,
+                location,
+                text,
+                ctx,
+                flipAngle,
+                sizeUnitRatio,
+                boundsCenter,
+                labelNudge,
+                haloWidth,
+                haloColor
+            )
         } else {
             TextUtil.labelComponentFactory(p, location, text, ctx, labelOptions!!, flipAngle, sizeUnitRatio, boundsCenter, labelNudge)
         }

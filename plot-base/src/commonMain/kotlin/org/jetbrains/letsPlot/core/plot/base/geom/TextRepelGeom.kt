@@ -39,7 +39,7 @@ open class TextRepelGeom: TextGeom() {
 
     override val legendKeyElementFactory: LegendKeyElementFactory
         get() = CompositeLegendKeyElementFactory(
-            TextLegendKeyElementFactory(),
+            TextLegendKeyElementFactory(haloWidth, haloColor),
             HLineLegendKeyElementFactory(TextUtil::toSegmentAes)
         )
 
