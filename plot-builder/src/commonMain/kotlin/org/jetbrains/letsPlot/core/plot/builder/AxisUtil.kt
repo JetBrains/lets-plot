@@ -63,17 +63,21 @@ object AxisUtil {
             .mapIndexedNotNull { i, clientTick ->
                 if (clientTick == null || clientTick !in gridRect) return@mapIndexedNotNull null
 
-                IndexedValue(i, Triple(breakLabels[i], breakTransformedValues[i], clientTick))
+                MajorBreak(
+                    index = i,
+                    label = breakLabels[i],
+                    domainTick = breakTransformedValues[i],
+                    clientTick = clientTick,
+                    labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+                )
             }
-            .filter { (i, br) ->
-                val (label, _, clientBreak) = br
-                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
-                val bounds = labelAdjustments.bounds?.getOrNull(i)
-                val loc = if (orientation.isHorizontal) clientBreak.x else clientBreak.y
-                labelsMap.haveSpace(loc, label, labelOffset, bounds)
+            .filter { br ->
+                val bounds = labelAdjustments.bounds?.getOrNull(br.index)
+                val loc = if (orientation.isHorizontal) br.clientTick.x else br.clientTick.y
+                labelsMap.haveSpace(loc, br.label, br.labelOffset, bounds)
             }
 
-        val minorBreaks = minorDomainBreaks(majorBreaks.map { it.value.second })
+        val minorBreaks = minorDomainBreaks(majorBreaks.map { it.domainTick })
             .let { minorDomainBreaks ->
                 toClient(minorDomainBreaks, dataDomain, coord, flipAxis, orientation.isHorizontal)
                     .mapIndexedNotNull { i, clientBreak ->
@@ -84,11 +88,12 @@ object AxisUtil {
                     }
             }
 
-        val majorBreaksData = majorBreaks.mapNotNull { (_, br) ->
-            val (label, domainTick, clientTick) = br
-            val clientLine = buildGridLine(domainTick, dataDomain, coord, flipAxis, orientation.isHorizontal)
+        // Keep each rendered major break paired with its grid line so labels, ticks and
+        // label offsets stay aligned after the grid-line filtering below.
+        val majorBreaksData = majorBreaks.mapNotNull { br ->
+            val clientLine = buildGridLine(br.domainTick, dataDomain, coord, flipAxis, orientation.isHorizontal)
                 ?: return@mapNotNull null
-            Triple(label, clientTick, clientLine)
+            Pair(br, clientLine)
         }
 
         val minorBreaksData = minorBreaks.mapNotNull { (domainTick, clientTick) ->
@@ -98,14 +103,27 @@ object AxisUtil {
         }
 
         return AxisComponent.BreaksData(
-            majorBreaks = majorBreaksData.map { (_, tick, _) -> tick },
-            majorIndices = majorBreaks.map { it.index },
-            majorGrid = majorBreaksData.map { (_, _, gridLine) -> gridLine },
-            majorLabels = majorBreaksData.map { (label, _, _) -> label },
+            majorBreaks = majorBreaksData.map { (br, _) -> br.clientTick },
+            majorLabelOffsets = majorBreaksData.map { (br, _) -> br.labelOffset },
+            majorGrid = majorBreaksData.map { (_, gridLine) -> gridLine },
+            majorLabels = majorBreaksData.map { (br, _) -> br.label },
             minorBreaks = minorBreaksData.map { (tick, _) -> tick },
             minorGrid = minorBreaksData.map { (_, gridLine) -> gridLine }
         )
     }
+
+    /**
+     * A single rendered major break carrying everything axis components need, computed once:
+     * the original break index, its label, the domain tick, the client-space tick position and
+     * the fully-computed label offset (base offset plus per-index adjustment).
+     */
+    private class MajorBreak(
+        val index: Int,
+        val label: String,
+        val domainTick: Double,
+        val clientTick: DoubleVector,
+        val labelOffset: DoubleVector,
+    )
 
     private fun toClient(
         breaks: List<Double>,

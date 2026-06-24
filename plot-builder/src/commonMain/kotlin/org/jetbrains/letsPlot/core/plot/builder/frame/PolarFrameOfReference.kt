@@ -14,6 +14,7 @@ import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
+import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil.PolarBreaksData
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
@@ -199,13 +200,15 @@ internal class PolarFrameOfReference(
             additionalOffsets = axisInfo.tickLabelAdditionalOffsets
         )
 
+        val axisTheme = if (axisInfo.orientation.isHorizontal) hAxisTheme else vAxisTheme
         val breaksData = PolarAxisUtil.breaksData(
             scaleBreaks = scaleBreaks,
             coord = coord,
             gridDomain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
-            labelAdjustments = labelAdjustments
+            labelAdjustments = labelAdjustments,
+            tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, axisInfo.orientation)
         )
         return Pair(labelAdjustments, breaksData)
     }
