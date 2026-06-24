@@ -28,6 +28,110 @@ class LatexTest : PlotVisualTestBase() {
     override fun currentTestName(): String? = currentTest.methodName
 
     @Test
+    fun plot_latex_markdown_title_alignment() {
+        val spec = """
+            {
+              "kind": "subplots",
+              "layout": {
+                "ncol": 3.0,
+                "nrow": 1.0,
+                "name": "grid"
+              },
+              "figures": [
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "theme": {
+                    "name": "gray",
+                    "axis": "blank",
+                    "plot_title": {
+                      "markdown": true,
+                      "hjust": 0.0
+                    }
+                  },
+                  "ggtitle": {
+                    "text": "***Markdown title*** **\\( a^2 + b^2 = c^2 \\)**"
+                  },
+                  "kind": "plot",
+                  "scales": [],
+                  "layers": [
+                    {
+                      "geom": "hline",
+                      "mapping": {},
+                      "tooltips": "none",
+                      "data_meta": {},
+                      "yintercept": 0.0,
+                      "color": "salmon"
+                    }
+                  ],
+                  "metainfo_list": []
+                },
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "theme": {
+                    "name": "gray",
+                    "axis": "blank",
+                    "plot_title": {
+                      "markdown": true,
+                      "hjust": 0.5
+                    }
+                  },
+                  "ggtitle": {
+                    "text": "***Markdown title*** **\\( a^2 + b^2 = c^2 \\)**"
+                  },
+                  "kind": "plot",
+                  "scales": [],
+                  "layers": [
+                    {
+                      "geom": "hline",
+                      "mapping": {},
+                      "tooltips": "none",
+                      "data_meta": {},
+                      "yintercept": 0.0,
+                      "color": "salmon"
+                    }
+                  ],
+                  "metainfo_list": []
+                },
+                {
+                  "mapping": {},
+                  "data_meta": {},
+                  "theme": {
+                    "name": "gray",
+                    "axis": "blank",
+                    "plot_title": {
+                      "markdown": true,
+                      "hjust": 1.0
+                    }
+                  },
+                  "ggtitle": {
+                    "text": "***Markdown title*** **\\( a^2 + b^2 = c^2 \\)**"
+                  },
+                  "kind": "plot",
+                  "scales": [],
+                  "layers": [
+                    {
+                      "geom": "hline",
+                      "mapping": {},
+                      "tooltips": "none",
+                      "data_meta": {},
+                      "yintercept": 0.0,
+                      "color": "salmon"
+                    }
+                  ],
+                  "metainfo_list": []
+                }
+              ]
+            }
+        """.trimMargin()
+
+        val plotCanvasDrawable = createPlot(parseJson(spec))
+
+        assertBitmap(plotCanvasDrawable)
+    }
+
+    @Test
     fun plot_latex_symbols() {
         val greekLetters = listOf(
             "Alpha",

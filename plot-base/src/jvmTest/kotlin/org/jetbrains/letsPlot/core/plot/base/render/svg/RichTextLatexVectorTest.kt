@@ -505,6 +505,30 @@ class RichTextLatexVectorTest {
     }
 
     @Test
+    fun leftAnchorMarkdownBoldPrefixPositionsFormulaAtBoldAwareWidth() {
+        val svg = toSvg(
+            """**AB** \(a + b\)""",
+            markdown = true,
+            anchor = Text.HorizontalAnchor.LEFT
+        ).single() as SvgGElement
+        val formulaTransform = svg.vectorFormulaGroups().single().transform().get()!!
+        val boldFont = Font(font.family, font.size, isBold = true)
+        val expectedPrefixWidth = toTestWidth("AB", boldFont) + toTestWidth(" ")
+        val regularPrefixWidth = toTestWidth("AB ")
+
+        assertThat(expectedPrefixWidth).isGreaterThan(regularPrefixWidth)
+        assertThat(extractTranslateX(formulaTransform)).isCloseTo(expectedPrefixWidth, offset(1e-9))
+    }
+
+    @Test
+    fun inlineMarkdownBoldPlainTextMeasuresWiderThanRegularPlainText() {
+        val regularWidth = RichText.measure(text = "AB", font = font, markdown = true).width
+        val boldWidth = RichText.measure(text = "**AB**", font = font, markdown = true).width
+
+        assertThat(boldWidth).isGreaterThan(regularWidth)
+    }
+
+    @Test
     fun rightAnchorPinsSuffix() {
         val svg = toSvg("""AB\(a\)CD""", anchor = Text.HorizontalAnchor.RIGHT).single() as SvgGElement
         val prefixTspan = (svg.children()[0] as SvgTextElement).children()[0] as SvgTSpanElement

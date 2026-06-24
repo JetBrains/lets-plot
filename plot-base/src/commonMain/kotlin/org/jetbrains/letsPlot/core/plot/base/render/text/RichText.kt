@@ -119,14 +119,14 @@ object RichText {
 
         val wrappedLines = wrap(lines, wrapLength, maxLinesCount)
 
-        applyInlineFaceToFormulas(wrappedLines)
+        applyInlineFace(wrappedLines)
 
         return wrappedLines
     }
 
-    // Inline face state is line-persistent, so formulas after hard breaks inherit open markdown.
-    // Vector formula face affects geometry, so it must be applied before measurement.
-    private fun applyInlineFaceToFormulas(lines: List<List<RichTextNode>>) {
+    // Inline face state is line-persistent, so spans after hard breaks inherit open markdown.
+    // Inline face affects geometry, so it must be applied before measurement.
+    private fun applyInlineFace(lines: List<List<RichTextNode>>) {
         var boldDepth = 0
         var italicDepth = 0
         lines.forEach { line ->
@@ -136,7 +136,7 @@ object RichText {
                     is RichTextNode.StrongEnd -> boldDepth--
                     is RichTextNode.EmphasisStart -> italicDepth++
                     is RichTextNode.EmphasisEnd -> italicDepth--
-                    is Latex.VectorLatexElement -> {
+                    is RichTextNode.RichSpan -> {
                         term.inlineBold = boldDepth > 0
                         term.inlineItalic = italicDepth > 0
                     }
@@ -428,6 +428,12 @@ object RichText {
         abstract class RichSpan : RichTextNode {
             abstract val visualCharCount: Int // in chars, used for line wrapping
 
+            var inlineBold: Boolean = false
+            var inlineItalic: Boolean = false
+
+            protected fun effective(base: Font): Font =
+                Font(base.family, base.size, base.isBold || inlineBold, base.isItalic || inlineItalic)
+
             abstract fun estimateWidth(font: Font): Double
             abstract fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics
             abstract fun render(context: RenderState, prefixWidth: Double): List<WrappedSvgElement<SvgElement>>
@@ -479,7 +485,7 @@ object RichText {
             override val visualCharCount: Int = text.length
 
             override fun estimateWidth(font: Font): Double {
-                return widthCalculator(text, font)
+                return widthCalculator(text, effective(font))
             }
 
             override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {

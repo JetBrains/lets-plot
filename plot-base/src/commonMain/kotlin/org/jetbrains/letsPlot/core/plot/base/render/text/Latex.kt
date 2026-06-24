@@ -244,12 +244,6 @@ internal class Latex(
     internal inner class VectorLatexElement(val node: LatexNode) : RichTextNode.RichSpan() {
         override val visualCharCount: Int = node.visualCharCount
 
-        var inlineBold: Boolean = false
-        var inlineItalic: Boolean = false
-
-        private fun effective(base: Font): Font =
-            Font(base.family, base.size, base.isBold || inlineBold, base.isItalic || inlineItalic)
-
         override fun estimateWidth(font: Font): Double = node.vectorWidth(effective(font))
 
         override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics = node.vectorMetrics(effective(font))

@@ -38,7 +38,7 @@ internal object Hyperlink {
 
         override val visualCharCount: Int = text.length
         override fun estimateWidth(font: Font): Double {
-            return widthCalculator(text, font)
+            return widthCalculator(text, effective(font))
         }
 
         override fun estimateLineLayoutMetrics(font: Font): LineBoxMetrics {
