@@ -292,12 +292,10 @@ class RichTextLatexVectorTest {
         val lineWidth = toTestWidth("a+") +
                 max(LatexVectorFont.advanceEm('b'), LatexVectorFont.advanceEm('c')) * font.size
 
-        val leftPrefixX = prefixTSpanX(toSvg(text, anchor = Text.HorizontalAnchor.LEFT).single() as SvgGElement)
         val middlePrefixX = prefixTSpanX(toSvg(text, anchor = Text.HorizontalAnchor.MIDDLE).single() as SvgGElement)
         val rightPrefixX = prefixTSpanX(toSvg(text, anchor = Text.HorizontalAnchor.RIGHT).single() as SvgGElement)
 
-        assertThat(middlePrefixX).isCloseTo(leftPrefixX - lineWidth / 2.0, offset(1e-9))
-        assertThat(rightPrefixX).isCloseTo(leftPrefixX - lineWidth, offset(1e-9))
+        assertThat(rightPrefixX).isCloseTo(middlePrefixX - lineWidth / 2.0, offset(1e-9))
     }
 
     @Test
@@ -395,13 +393,14 @@ class RichTextLatexVectorTest {
     }
 
     @Test
-    fun plainTextPrefixPinBehaviorUnchanged() {
-        val svg = toSvg("""prefix \(a + b\)""").single() as SvgGElement
+    fun plainTextPrefixIsPinnedForRightAnchor() {
+        val svg = toSvg("""prefix \(a + b\)""", anchor = Text.HorizontalAnchor.RIGHT).single() as SvgGElement
         val prefixTextEl = svg.children()[0] as SvgTextElement
         val prefixTspan  = prefixTextEl.children()[0] as SvgTSpanElement
-        val formulaLeftEdge = toTestWidth("prefix ")
+        val formulaWidth = vectorFormulaWidth("a + b")
+        val formulaLeftEdge = -formulaWidth
         assertThat(prefixTspan.textAnchor().get()).isEqualTo("end")
-        assertThat(prefixTspan.x().get()).isEqualTo(formulaLeftEdge)
+        assertThat(prefixTspan.x().get()).isCloseTo(formulaLeftEdge, offset(1e-9))
     }
 
     @Test
@@ -413,7 +412,10 @@ class RichTextLatexVectorTest {
     @Test
     fun linkPrefixBeforeVectorFormulaPinsRightEdge() {
         // Empty parsed text is dropped, so the chunk anchor moves to the first tspan inside <a>.
-        val svg = toSvg("""<a href="https://example.com">GitHub</a> & \(a + b\)""").single()
+        val svg = toSvg(
+            """<a href="https://example.com">GitHub</a> & \(a + b\)""",
+            anchor = Text.HorizontalAnchor.RIGHT
+        ).single()
         assertThat(svg).isInstanceOf(SvgGElement::class.java)
         val outer = svg as SvgGElement
         assertThat(outer.children()).hasSize(2)
@@ -422,9 +424,10 @@ class RichTextLatexVectorTest {
         val aEl         = prefixTextEl.children()[0] as SvgAElement
         val githubTspan = aEl.children().single() as SvgTSpanElement
         val andTspan    = prefixTextEl.children()[1] as SvgTSpanElement
-        val formulaLeftEdge = toTestWidth("GitHub") + toTestWidth(" & ")
+        val formulaWidth = vectorFormulaWidth("a + b")
+        val formulaLeftEdge = -formulaWidth
         assertThat(githubTspan.textAnchor().get()).isEqualTo("end")
-        assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
+        assertThat(githubTspan.x().get()).isCloseTo(formulaLeftEdge, offset(1e-9))
         assertThat(andTspan.textAnchor().get()).isEqualTo("end")
         assertThat(andTspan.x().get()).isNull()
         val formulaTransform = (outer.children()[1] as SvgGElement).transform().get()
@@ -434,41 +437,104 @@ class RichTextLatexVectorTest {
 
     @Test
     fun markdownBoldPrefixBeforeVectorFormulaPinsRightEdge() {
-        val svg = toSvg("""**GitHub** & \(a + b\)""", markdown = true).single() as SvgGElement
+        val svg = toSvg(
+            """**GitHub** & \(a + b\)""",
+            markdown = true,
+            anchor = Text.HorizontalAnchor.RIGHT
+        ).single() as SvgGElement
         val prefixTextEl = svg.children()[0] as SvgTextElement
         val githubTspan  = prefixTextEl.children()[0] as SvgTSpanElement
         val andTspan     = prefixTextEl.children()[1] as SvgTSpanElement
-        val formulaLeftEdge = toTestWidth("GitHub") + toTestWidth(" & ")
+        val formulaWidth = vectorFormulaWidth("a + b")
+        val formulaLeftEdge = -formulaWidth
         assertThat(githubTspan.textAnchor().get()).isEqualTo("end")
-        assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
+        assertThat(githubTspan.x().get()).isCloseTo(formulaLeftEdge, offset(1e-9))
         assertThat(andTspan.textAnchor().get()).isEqualTo("end")
         assertThat(andTspan.x().get()).isNull()
     }
 
     @Test
     fun markdownEmphasisPrefixBeforeVectorFormulaPinsRightEdge() {
-        val svg = toSvg("""*GitHub* & \(a + b\)""", markdown = true).single() as SvgGElement
+        val svg = toSvg(
+            """*GitHub* & \(a + b\)""",
+            markdown = true,
+            anchor = Text.HorizontalAnchor.RIGHT
+        ).single() as SvgGElement
         val prefixTextEl = svg.children()[0] as SvgTextElement
         val githubTspan  = prefixTextEl.children()[0] as SvgTSpanElement
         val andTspan     = prefixTextEl.children()[1] as SvgTSpanElement
-        val formulaLeftEdge = toTestWidth("GitHub") + toTestWidth(" & ")
+        val formulaWidth = vectorFormulaWidth("a + b")
+        val formulaLeftEdge = -formulaWidth
         assertThat(githubTspan.textAnchor().get()).isEqualTo("end")
-        assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
+        assertThat(githubTspan.x().get()).isCloseTo(formulaLeftEdge, offset(1e-9))
         assertThat(andTspan.textAnchor().get()).isEqualTo("end")
         assertThat(andTspan.x().get()).isNull()
     }
 
     @Test
     fun markdownColorPrefixBeforeVectorFormulaPinsRightEdge() {
-        val svg = toSvg("""<span style='color:red'>GitHub</span> & \(a + b\)""", markdown = true).single() as SvgGElement
+        val svg = toSvg(
+            """<span style='color:red'>GitHub</span> & \(a + b\)""",
+            markdown = true,
+            anchor = Text.HorizontalAnchor.RIGHT
+        ).single() as SvgGElement
         val prefixTextEl = svg.children()[0] as SvgTextElement
         val githubTspan  = prefixTextEl.children()[0] as SvgTSpanElement
         val andTspan     = prefixTextEl.children()[1] as SvgTSpanElement
-        val formulaLeftEdge = toTestWidth("GitHub") + toTestWidth(" & ")
+        val formulaWidth = vectorFormulaWidth("a + b")
+        val formulaLeftEdge = -formulaWidth
         assertThat(githubTspan.textAnchor().get()).isEqualTo("end")
-        assertThat(githubTspan.x().get()).isEqualTo(formulaLeftEdge)
+        assertThat(githubTspan.x().get()).isCloseTo(formulaLeftEdge, offset(1e-9))
         assertThat(andTspan.textAnchor().get()).isEqualTo("end")
         assertThat(andTspan.x().get()).isNull()
+    }
+
+    @Test
+    fun leftAnchorDoesNotPinPrefix() {
+        val formulaWidth = vectorFormulaWidth("a")
+        val svg = toSvg("""AB\(a\)CD""", anchor = Text.HorizontalAnchor.LEFT).single() as SvgGElement
+        val prefixTspan = (svg.children()[0] as SvgTextElement).children()[0] as SvgTSpanElement
+        val suffixTspan = (svg.children()[2] as SvgTextElement).children()[0] as SvgTSpanElement
+
+        assertThat(prefixTspan.wholeText()).isEqualTo("AB")
+        assertThat(prefixTspan.textAnchor().get()).isNull()
+        assertThat(prefixTspan.x().get()).isNull()
+        assertThat(suffixTspan.wholeText()).isEqualTo("CD")
+        assertThat(suffixTspan.textAnchor().get()).isNull()
+        assertThat(suffixTspan.x().get()).isCloseTo(toTestWidth("AB") + formulaWidth, offset(1e-9))
+    }
+
+    @Test
+    fun rightAnchorPinsSuffix() {
+        val svg = toSvg("""AB\(a\)CD""", anchor = Text.HorizontalAnchor.RIGHT).single() as SvgGElement
+        val prefixTspan = (svg.children()[0] as SvgTextElement).children()[0] as SvgTSpanElement
+        val suffixTspan = (svg.children()[2] as SvgTextElement).children()[0] as SvgTSpanElement
+
+        assertThat(prefixTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(suffixTspan.wholeText()).isEqualTo("CD")
+        assertThat(suffixTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(suffixTspan.x().get()).isCloseTo(0.0, offset(1e-9))
+    }
+
+    @Test
+    fun rightAnchorPinsSuffixForFormulaFirstLine() {
+        val svg = toSvg("""\(a\)CD""", anchor = Text.HorizontalAnchor.RIGHT).single() as SvgGElement
+        val suffixTspan = (svg.children()[1] as SvgTextElement).children()[0] as SvgTSpanElement
+
+        assertThat(suffixTspan.wholeText()).isEqualTo("CD")
+        assertThat(suffixTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(suffixTspan.x().get()).isCloseTo(0.0, offset(1e-9))
+    }
+
+    @Test
+    fun middleAnchorDoesNotPinSuffix() {
+        val svg = toSvg("""AB\(a\)CD""", anchor = Text.HorizontalAnchor.MIDDLE).single() as SvgGElement
+        val prefixTspan = (svg.children()[0] as SvgTextElement).children()[0] as SvgTSpanElement
+        val suffixTspan = (svg.children()[2] as SvgTextElement).children()[0] as SvgTSpanElement
+
+        assertThat(prefixTspan.textAnchor().get()).isEqualTo("end")
+        assertThat(suffixTspan.wholeText()).isEqualTo("CD")
+        assertThat(suffixTspan.textAnchor().get()).isNull()
     }
 
     @Test
@@ -560,6 +626,10 @@ class RichTextLatexVectorTest {
     private fun glyphPathData(formula: String, font: Font): List<String> {
         return toSvg(formula, font = font).single().pathElements()
             .map { it.getAttribute("d").get().toString() }
+    }
+
+    private fun vectorFormulaWidth(formula: String): Double {
+        return RichText.measure(text = """\($formula\)""", font = font).width
     }
 
     private fun prefixTSpanX(line: SvgGElement): Double {

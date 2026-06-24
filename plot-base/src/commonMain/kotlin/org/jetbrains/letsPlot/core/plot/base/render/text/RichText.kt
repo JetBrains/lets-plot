@@ -226,7 +226,8 @@ object RichText {
 
     private data class LineRenderPlan(
         val lineAnchor: Text.HorizontalAnchor,
-        val lineOriginShiftCoefficient: Double?
+        val lineOriginShiftCoefficient: Double?,
+        val requestedAnchor: Text.HorizontalAnchor
     )
 
     private fun renderPlans(
@@ -238,7 +239,8 @@ object RichText {
             if (!needsLocalFrame) {
                 return@map LineRenderPlan(
                     lineAnchor = anchor,
-                    lineOriginShiftCoefficient = null
+                    lineOriginShiftCoefficient = null,
+                    requestedAnchor = anchor
                 )
             }
             val originShiftCoefficient = when (anchor) {
@@ -250,7 +252,8 @@ object RichText {
             // the requested anchor is resolved here to an explicit origin shift, not SVG text-anchor.
             LineRenderPlan(
                 lineAnchor = Text.HorizontalAnchor.LEFT,
-                lineOriginShiftCoefficient = originShiftCoefficient
+                lineOriginShiftCoefficient = originShiftCoefficient,
+                requestedAnchor = anchor
             )
         }
     }
@@ -277,6 +280,14 @@ object RichText {
             val prefixSpans = if (firstFormulaIdx > 0) richSpans.subList(0, firstFormulaIdx) else emptyList()
             val pinnablePrefix = prefixSpans.isNotEmpty() &&
                     prefixSpans.all { it is RichTextNode.Text || it is Hyperlink.HyperlinkElement }
+            val lastFormulaIdx = richSpans.indexOfLast { it is Latex.VectorLatexElement }
+            val suffixSpans = if (lastFormulaIdx in 0 until richSpans.size - 1) {
+                richSpans.subList(lastFormulaIdx + 1, richSpans.size)
+            } else {
+                emptyList()
+            }
+            val pinnableSuffix = suffixSpans.isNotEmpty() &&
+                    suffixSpans.all { it is RichTextNode.Text || it is Hyperlink.HyperlinkElement }
             // x is constant for the whole line — hoist it so formulaLeftEdge can be pre-computed.
             val lineX = when {
                 renderPlan.lineOriginShiftCoefficient == null -> null
@@ -285,9 +296,11 @@ object RichText {
                 else -> initialX - renderPlan.lineOriginShiftCoefficient * lineWidth
             }
             val formulaLeftEdge = (lineX ?: 0.0) + prefixSpans.sumOf { it.estimateWidth(font) }
+            val lineRightEdge = (lineX ?: 0.0) + lineWidth
             // Prefix SVG elements are gathered here so the pin can be applied after the loop.
             val prefixRenderedElements = if (pinnablePrefix) mutableListOf<SvgElement>() else null
-            var prefixSpansProcessed = 0
+            val suffixRenderedElements = if (pinnableSuffix) mutableListOf<SvgElement>() else null
+            var richSpanIndex = 0
             line.forEach { term ->
                 when (term) {
                     is RichTextNode.StrongStart -> stack.add(stack.last().copy(isBold = true))
@@ -302,35 +315,48 @@ object RichText {
                         val effectiveX = if (spanContinuityBroken) (lineX ?: 0.0) + prefixWidth else lineX
                         val termWidth = term.estimateWidth(font)
                         val rendered = term.render(stack.last(), prefixWidth, effectiveX, effectiveIsFirst)
-                        if (pinnablePrefix && prefixSpansProcessed < prefixSpans.size) {
+                        if (pinnablePrefix && richSpanIndex < firstFormulaIdx) {
                             prefixRenderedElements!! += rendered
-                            prefixSpansProcessed++
+                        }
+                        if (pinnableSuffix && richSpanIndex > lastFormulaIdx) {
+                            suffixRenderedElements!! += rendered
                         }
                         svg += rendered
                         prefixWidth += termWidth
                         isFirstRichSpanInLine = false
                         spanContinuityBroken = term is Latex.VectorLatexElement
+                        richSpanIndex++
                     }
 
                     is RichTextNode.LineBreak -> throw IllegalStateException("Line breaks should be parsed before rendering")
                 }
             }
-            // Pin the prefix flush to the formula: text-anchor=end on every prefix tspan,
-            // x=formulaLeftEdge on the first one (which starts the SVG text chunk).
-            if (pinnablePrefix && prefixRenderedElements != null) {
-                val prefixTSpans = prefixRenderedElements.flatMap { el ->
+            fun pinTSpans(elements: List<SvgElement>, x: Double) {
+                val tSpans = elements.flatMap { el ->
                     when (el) {
                         is SvgTSpanElement -> listOf(el)
                         is SvgAElement -> listOf(el.children().single() as SvgTSpanElement)
                         else -> emptyList()
                     }
                 }
-                prefixTSpans.forEachIndexed { i, tspan ->
+                tSpans.forEachIndexed { i, tspan ->
                     tspan.setAttribute(SvgTextContent.TEXT_ANCHOR, SvgConstants.SVG_TEXT_ANCHOR_END)
                     if (i == 0) {
-                        tspan.setAttribute(SvgTextContent.X, formulaLeftEdge)
+                        tspan.setAttribute(SvgTextContent.X, x)
                     }
                 }
+            }
+            // Pin the prefix flush to the formula: text-anchor=end on every prefix tspan,
+            // x=formulaLeftEdge on the first one (which starts the SVG text chunk).
+            if (pinnablePrefix &&
+                renderPlan.requestedAnchor != Text.HorizontalAnchor.LEFT &&
+                prefixRenderedElements != null) {
+                pinTSpans(prefixRenderedElements, formulaLeftEdge)
+            }
+            if (pinnableSuffix &&
+                renderPlan.requestedAnchor == Text.HorizontalAnchor.RIGHT &&
+                suffixRenderedElements != null) {
+                pinTSpans(suffixRenderedElements, lineRightEdge)
             }
             RenderedLine(
                 line = assembleLineElement(svg),
