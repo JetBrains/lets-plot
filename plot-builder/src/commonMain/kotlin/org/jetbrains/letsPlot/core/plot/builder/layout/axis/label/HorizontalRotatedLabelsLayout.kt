@@ -88,7 +88,7 @@ internal class HorizontalRotatedLabelsLayout(
         }
 
         val horizontalAnchor = when {
-            isVertical -> hAnchorForVerticalLabels(vJust)
+            isVertical -> hAnchorForVerticalLabels(vJust, sinA)
             isUpsideDown -> Text.HorizontalAnchor.MIDDLE
             hJust == 0.0 && (isHorizontal || isLabelDirectedFromTick) -> Text.HorizontalAnchor.LEFT
             hJust == 1.0 && (isHorizontal || !isLabelDirectedFromTick) -> Text.HorizontalAnchor.RIGHT
@@ -106,7 +106,7 @@ internal class HorizontalRotatedLabelsLayout(
         }
 
         val verticalAnchor = when {
-            isVertical -> vAnchorForVerticalLabels(hJust)
+            isVertical -> vAnchorForVerticalLabels(hJust, sinA)
             isHorizontal && vJust == 0.0 -> Text.VerticalAnchor.BOTTOM
             isHorizontal && vJust == 1.0 -> Text.VerticalAnchor.TOP
             isCornerCase && orientation == Orientation.BOTTOM -> Text.VerticalAnchor.TOP
@@ -163,26 +163,26 @@ internal class HorizontalRotatedLabelsLayout(
         }
     }
 
-    private fun vAnchorForVerticalLabels(hjust: Double): Text.VerticalAnchor {
+    private fun vAnchorForVerticalLabels(hjust: Double, sinA: Double): Text.VerticalAnchor {
         if (hjust != 0.0 && hjust != 1.0) {
             return Text.VerticalAnchor.CENTER
         }
 
-        return when (myRotationAngle) {
-            90.0 -> if (hjust == 0.0) Text.VerticalAnchor.TOP else Text.VerticalAnchor.BOTTOM
-            -90.0 -> if (hjust == 0.0) Text.VerticalAnchor.BOTTOM else Text.VerticalAnchor.TOP
+        return when {
+            sinA > 0.0 -> if (hjust == 0.0) Text.VerticalAnchor.TOP else Text.VerticalAnchor.BOTTOM
+            sinA < 0.0 -> if (hjust == 0.0) Text.VerticalAnchor.BOTTOM else Text.VerticalAnchor.TOP
             else -> Text.VerticalAnchor.CENTER
         }
     }
 
-    private fun hAnchorForVerticalLabels(vjust: Double): Text.HorizontalAnchor {
+    private fun hAnchorForVerticalLabels(vjust: Double, sinA: Double): Text.HorizontalAnchor {
         if (vjust != 0.0 && vjust != 1.0) {
             return Text.HorizontalAnchor.MIDDLE
         }
 
-        return when (myRotationAngle) {
-            90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.RIGHT else Text.HorizontalAnchor.LEFT
-            -90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.LEFT else Text.HorizontalAnchor.RIGHT
+        return when {
+            sinA > 0.0 -> if (vjust == 1.0) Text.HorizontalAnchor.RIGHT else Text.HorizontalAnchor.LEFT
+            sinA < 0.0 -> if (vjust == 1.0) Text.HorizontalAnchor.LEFT else Text.HorizontalAnchor.RIGHT
             else -> Text.HorizontalAnchor.MIDDLE
         }
     }

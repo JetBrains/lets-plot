@@ -101,7 +101,7 @@ internal class VerticalRotatedLabelsLayout(
         val isCornerCase = !isHorizontal && verticalAnchor != Text.VerticalAnchor.CENTER
 
         val horizontalAnchor = when {
-            isVertical -> hAnchorForVerticalLabels(vJust)
+            isVertical -> hAnchorForVerticalLabels(vJust, sinA)
             isHorizontal && hJust == 0.0 -> Text.HorizontalAnchor.LEFT
             isHorizontal && hJust == 1.0 -> Text.HorizontalAnchor.RIGHT
             isCornerCase && orientation == Orientation.LEFT -> Text.HorizontalAnchor.RIGHT
@@ -163,13 +163,13 @@ internal class VerticalRotatedLabelsLayout(
 
     // For vertical text (±90°), vjust positions the label along the axis via the text anchor.
     // Chosen so vjust moves the label in the same screen direction as on the other angles (vjust=1 -> higher).
-    private fun hAnchorForVerticalLabels(vjust: Double): Text.HorizontalAnchor {
+    private fun hAnchorForVerticalLabels(vjust: Double, sinA: Double): Text.HorizontalAnchor {
         if (vjust != 0.0 && vjust != 1.0) {
             return Text.HorizontalAnchor.MIDDLE
         }
-        return when (myRotationAngle) {
-            90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.LEFT else Text.HorizontalAnchor.RIGHT
-            -90.0 -> if (vjust == 1.0) Text.HorizontalAnchor.RIGHT else Text.HorizontalAnchor.LEFT
+        return when {
+            sinA > 0.0 -> if (vjust == 1.0) Text.HorizontalAnchor.LEFT else Text.HorizontalAnchor.RIGHT
+            sinA < 0.0 -> if (vjust == 1.0) Text.HorizontalAnchor.RIGHT else Text.HorizontalAnchor.LEFT
             else -> Text.HorizontalAnchor.MIDDLE
         }
     }
