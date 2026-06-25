@@ -262,6 +262,19 @@ class RichTextLatexVectorTest {
     }
 
     @Test
+    fun adjacentFormulasFlowByFirstFormulaWidth() {
+        val firstFormulaWidth = vectorFormulaWidth("a+b")
+        val svg = toSvg("""\(a+b\)\(c+d\)""").single() as SvgGElement
+        val formulaGroups = svg.vectorFormulaGroups()
+
+        assertThat(formulaGroups).hasSize(2)
+        val firstFormulaX = extractTranslateX(formulaGroups[0].transform().get()!!)
+        val secondFormulaX = extractTranslateX(formulaGroups[1].transform().get()!!)
+        assertThat(firstFormulaX).isCloseTo(0.0, offset(1e-9))
+        assertThat(secondFormulaX).isCloseTo(firstFormulaWidth, offset(1e-9))
+    }
+
+    @Test
     fun twoFormulaLinesEachRenderAsGroup() {
         val svg = toSvg("\\(\\frac{a}{b}\\)\n\\(c_i\\)")
 

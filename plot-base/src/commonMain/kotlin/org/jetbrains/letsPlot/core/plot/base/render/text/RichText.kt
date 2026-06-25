@@ -336,7 +336,11 @@ object RichText {
 
                     is RichTextNode.RichSpan -> {
                         val effectiveIsFirst = isFirstRichSpanInLine || spanContinuityBroken
-                        val effectiveX = if (spanContinuityBroken) (lineX ?: 0.0) + prefixWidth else lineX
+                        val effectiveX = if (spanContinuityBroken && term !is Latex.VectorLatexElement) {
+                            (lineX ?: 0.0) + prefixWidth
+                        } else {
+                            lineX
+                        }
                         val termWidth = term.estimateWidth(font)
                         val rendered = term.render(stack.last(), prefixWidth, effectiveX, effectiveIsFirst)
                         if (pinnablePrefix && richSpanIndex < firstFormulaIdx) {
