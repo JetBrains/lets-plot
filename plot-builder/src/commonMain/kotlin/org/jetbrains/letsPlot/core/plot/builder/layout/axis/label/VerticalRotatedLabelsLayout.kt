@@ -141,17 +141,39 @@ internal class VerticalRotatedLabelsLayout(
             DoubleVector(xOffset(it), yOffset(it))
         }
 
-        val adjustedLabelBoundsList = labelBoundsList.map {
-            val origin = DoubleVector(it.origin.x + xBBoxOffset(it), yBBoxOffset(it) + it.origin.y)
-            DoubleRectangle(origin, it.dimension)
+        val renderedLabelBounds: (DoubleRectangle) -> DoubleRectangle = { rect: DoubleRectangle ->
+            val w = rect.width
+            val h = rect.height
+
+            val centerShiftY = when {
+                isVertical -> when (horizontalAnchor) {
+                    Text.HorizontalAnchor.LEFT -> if (sinA > 0) -h / 2 else h / 2
+                    Text.HorizontalAnchor.RIGHT -> if (sinA > 0) h / 2 else -h / 2
+                    else -> 0.0
+                }
+                verticalAnchor == Text.VerticalAnchor.TOP -> h / 2
+                verticalAnchor == Text.VerticalAnchor.BOTTOM -> -h / 2
+                else -> 0.0
+            }
+            val centerShiftX = when {
+                isVertical -> 0.0
+                horizontalAnchor == Text.HorizontalAnchor.LEFT -> w / 2
+                horizontalAnchor == Text.HorizontalAnchor.RIGHT -> -w / 2
+                else -> 0.0
+            }
+            val centerX = rect.origin.x + xOffset(rect) + centerShiftX
+            val centerY = rect.origin.y + yOffset(rect) + centerShiftY
+            DoubleRectangle(centerX - w / 2, centerY - h / 2, w, h)
         }
+
+        val adjustedLabelBoundsList = labelBoundsList.map(renderedLabelBounds)
 
         return createAxisLabelsLayoutInfoBuilder(bounds, overlap)
             .labelHorizontalAnchor(horizontalAnchor)
             .labelVerticalAnchor(verticalAnchor)
             .labelRotationAngle(-myRotationAngle)
             .labelAdditionalOffsets(labelAdditionalOffsets)
-            .labelBoundsList(adjustedLabelBoundsList.map(::alignToLabelMargin)) // for debug drawing
+            .labelBoundsList(adjustedLabelBoundsList.map(::alignToLabelMargin))
             .build()
     }
 
@@ -161,8 +183,6 @@ internal class VerticalRotatedLabelsLayout(
         }
     }
 
-    // For vertical text (±90°), vjust positions the label along the axis via the text anchor.
-    // Chosen so vjust moves the label in the same screen direction as on the other angles (vjust=1 -> higher).
     private fun hAnchorForVerticalLabels(vjust: Double, sinA: Double): Text.HorizontalAnchor {
         if (vjust != 0.0 && vjust != 1.0) {
             return Text.HorizontalAnchor.MIDDLE
