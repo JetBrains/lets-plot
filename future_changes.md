@@ -16,4 +16,6 @@
 ### Fixed
 
 - Misaligned or mismatched axis tick labels when some breaks are dropped after layout
+- Incorrect `hjust`/`vjust`/`angle` justification of vertical-axis tick labels (`theme(axis_text_y=element_text(...))`)
+- Rotated vertical-axis tick labels could be wrongly dropped or kept by overlap-based break filtering
 
