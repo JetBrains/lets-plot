@@ -14,3 +14,6 @@
 
 
 ### Fixed
+
+- Misaligned or mismatched axis tick labels when some breaks are dropped after layout
+
