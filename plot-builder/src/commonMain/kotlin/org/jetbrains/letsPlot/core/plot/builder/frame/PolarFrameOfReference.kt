@@ -14,7 +14,6 @@ import org.jetbrains.letsPlot.core.plot.base.theme.PanelGridTheme
 import org.jetbrains.letsPlot.core.plot.base.theme.Theme
 import org.jetbrains.letsPlot.core.plot.base.tooltip.GeomTargetCollector
 import org.jetbrains.letsPlot.core.plot.builder.GeomLayer
-import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil.PolarBreaksData
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
@@ -207,8 +206,8 @@ internal class PolarFrameOfReference(
             gridDomain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
+            axisTheme = axisTheme,
             labelAdjustments = labelAdjustments,
-            tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, axisInfo.orientation)
         )
         return Pair(labelAdjustments, breaksData)
     }

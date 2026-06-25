@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil.breaksData
 import org.jetbrains.letsPlot.core.plot.builder.PolarBreaksTest.AxisKind.ANGLE
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.junit.Test
@@ -104,11 +106,11 @@ class PolarBreaksTest {
             additionalOffsets = offsets
         )
 
-        // Five rendered breaks remain (index 3 dropped); base offset defaults to zero in this test,
-        // so each rendered offset equals its original-index additional offset.
+        // Five rendered breaks remain (index 3 dropped); each rendered offset is the axis base
+        // offset plus the additional offset of its original index.
         assertEquals(5, angleBreaks.majorLabelOffsets.size)
         assertEquals(
-            listOf(offsets[0], offsets[1], offsets[2], offsets[4], offsets[5]),
+            offsetsWithBase(offsets, 0, 1, 2, 4, 5),
             angleBreaks.majorLabelOffsets
         )
     }
@@ -124,7 +126,7 @@ class PolarBreaksTest {
         )
 
         assertEquals(
-            listOf(offsets[1], offsets[2], offsets[3], offsets[4], offsets[5]),
+            offsetsWithBase(offsets, 1, 2, 3, 4, 5),
             angleBreaks.majorLabelOffsets
         )
     }
@@ -174,11 +176,23 @@ class PolarBreaksTest {
             gridDomain = gridDomain,
             flipAxis = false,
             orientation = orientation,
+            axisTheme = axisTheme(orientation),
             labelAdjustments = AxisComponent.TickLabelAdjustments(
                 orientation,
                 additionalOffsets = additionalOffsets
             ),
         )
+    }
+
+    private fun axisTheme(orientation: Orientation) =
+        ThemeUtil.buildTheme(ThemeOption.Name.LP_MINIMAL).let {
+            if (orientation.isHorizontal) it.horizontalAxis(flipAxis = false) else it.verticalAxis(flipAxis = false)
+        }
+
+    private fun offsetsWithBase(offsets: List<DoubleVector>, vararg indices: Int): List<DoubleVector> {
+        // Both offset-alignment tests use the ANGLE axis (BOTTOM, horizontal).
+        val baseOffset = AxisUtil.tickLabelBaseOffset(axisTheme(Orientation.BOTTOM), Orientation.BOTTOM)
+        return indices.map { baseOffset.add(offsets[it]) }
     }
 
     enum class AxisKind {

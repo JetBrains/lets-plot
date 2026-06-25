@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveRe
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.minorDomainBreaks
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
@@ -23,10 +24,10 @@ object PolarAxisUtil {
         gridDomain: DoubleRectangle,
         flipAxis: Boolean,
         orientation: Orientation,
+        axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
-        tickLabelBaseOffset: DoubleVector = DoubleVector.ZERO,
     ): PolarBreaksData {
-        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, labelAdjustments, tickLabelBaseOffset).breaksData()
+        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, axisTheme, labelAdjustments).breaksData()
     }
 
     private class Helper(
@@ -35,10 +36,11 @@ object PolarAxisUtil {
         val gridDomain: DoubleRectangle,
         val flipAxis: Boolean,
         val orientation: Orientation,
+        val axisTheme: AxisTheme,
         val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
-        val tickLabelBaseOffset: DoubleVector = DoubleVector.ZERO,
     ) {
         val center = coord.toClient(gridDomain.origin.flipIf(flipAxis)) ?: error("Failed to get center of the polar coordinate system")
+        val tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, orientation)
         fun breaksData(): PolarBreaksData {
             check(scaleBreaks.transformedValues.size == scaleBreaks.labels.size) {
                 "Breaks and labels must have the same size"

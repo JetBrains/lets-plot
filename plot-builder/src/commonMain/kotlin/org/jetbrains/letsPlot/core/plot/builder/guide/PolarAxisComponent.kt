@@ -43,7 +43,7 @@ class PolarAxisComponent(
         // Ticks and labels
         if (!hideAxisBreaks && (axisTheme.showLabels() || axisTheme.showTickMarks())) {
             for ((i, v) in breaksData.majorBreaks.withIndex()) {
-                val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
+                val label = breaksData.majorLabels[i]
                 val labelOffset = breaksData.majorLabelOffsets[i]
 
                 val (tickLabel, tickMark) = buildTick(label, labelOffset, axisTheme, v, breaksData.center)
