@@ -47,7 +47,7 @@ class VerticalAxisLabelJustificationTest {
         fun walk(node: XmlNode, parentTranslateX: Double) {
             if (node !is XmlNode.Element) return
             val translateX = parentTranslateX + (node.attributes["transform"]
-                ?.let { Regex("translate\\(([-0-9.]+)").find(it)?.groupValues?.get(1)?.toDoubleOrNull() } ?: 0.0)
+                ?.let { Regex("translate\\(\\s*(-?[\\d.]+(?:[eE][-+]?\\d+)?)").find(it)?.groupValues?.get(1)?.toDoubleOrNull() } ?: 0.0)
             if (node.name == "text" && (node.attributes["class"] ?: "").contains("axis-text-y")) {
                 val x = translateX + (node.attributes["x"]?.toDoubleOrNull() ?: 0.0)
                 val anchor = node.attributes["text-anchor"] ?: "start"
@@ -90,5 +90,56 @@ class VerticalAxisLabelJustificationTest {
     fun `right axis matches horizontal convention - hjust=0 is 'start', hjust=1 is 'end'`() {
         assertThat(axisTexts("right", 0.0).map { it.anchor }.distinct()).containsExactly("start")
         assertThat(axisTexts("right", 1.0).map { it.anchor }.distinct()).containsExactly("end")
+    }
+
+    // Number of y-axis tick labels that survive overlap-based break filtering.
+    private fun keptRotatedYLabels(angle: Int, vjust: Double?, height: Int, labelCount: Int): Int {
+        val vjustSpec = vjust?.let { "'vjust': $it," } ?: ""
+        val spec = """
+            {
+                'kind': 'plot',
+                'theme': {
+                   'name': 'classic',
+                   'axis_title': { 'blank': true },
+                   'axis_text_y': { 'angle': $angle, $vjustSpec 'blank': false }
+                },
+                'ggsize': {'width': 360, 'height': $height},
+                'mapping': { 'x': 'x', 'y': 'y' },
+                'layers': [ { 'geom': 'point' } ]
+            }
+        """.trimIndent()
+        val plotSpec = HashMap(parsePlotSpec(spec)).apply {
+            this["data"] = mapOf(
+                "x" to (1..labelCount).toList(),
+                "y" to (1..labelCount).map { "category number $it" },
+            )
+        }
+        val svg = MonolithicCommon.buildSvgImageFromRawSpecs(plotSpec, null) { _ -> }
+        var count = 0
+        fun walk(node: XmlNode) {
+            if (node !is XmlNode.Element) return
+            if (node.name == "text" && (node.attributes["class"] ?: "").contains("axis-text-y")) count++
+            node.children.forEach(::walk)
+        }
+        walk(Xml.parse(svg).root)
+        return count
+    }
+
+    /**
+     * Regression for overlap-based break filtering of rotated (±90°) vertical-axis labels
+     * (see VerticalRotatedLabelsLayout: the layout reports each label's TRUE rendered box, so a
+     * dense rotated axis drops overlapping labels instead of keeping visually-overlapping ones
+     * or over-dropping). `vjust` slides labels along the axis but must not break filtering.
+     */
+    @Test
+    fun `rotated 90deg y-axis filters overlapping labels for any vjust`() {
+        val total = 20
+        for (vjust in listOf(null, 0.0, 0.5, 1.0)) {
+            val kept = keptRotatedYLabels(angle = 90, vjust = vjust, height = 300, labelCount = total)
+            assertThat(kept)
+                .describedAs("kept labels for vjust=%s", vjust)
+                .isGreaterThan(0)
+                .isLessThan(total)
+        }
     }
 }

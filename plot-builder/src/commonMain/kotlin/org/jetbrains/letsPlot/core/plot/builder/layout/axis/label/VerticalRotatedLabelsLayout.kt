@@ -18,7 +18,6 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
-
 internal class VerticalRotatedLabelsLayout(
     orientation: Orientation,
     breaks: ScaleBreaks,
@@ -69,12 +68,8 @@ internal class VerticalRotatedLabelsLayout(
             Orientation.RIGHT -> sinA < 0
         }
 
-        // hjust drives the screen-x position (across the axis). Default: flush to the axis.
-        val hJust = if (theme.labelHJust().isNaN()) {
-            if (orientation == Orientation.LEFT) 1.0 else 0.0
-        } else {
-            theme.labelHJust()
-        }
+        val flushHjust = if (orientation == Orientation.LEFT) 1.0 else 0.0
+        val hJust = if (theme.labelHJust().isNaN()) flushHjust else theme.labelHJust()
 
         val vJust = if (theme.labelVJust().isNaN()) {
             when {
@@ -88,11 +83,8 @@ internal class VerticalRotatedLabelsLayout(
 
         val verticalAnchor = when {
             isVertical || isUpsideDown -> Text.VerticalAnchor.CENTER
-            // Horizontal text: vjust moves the label along the axis in the same screen direction as on the
-            // x-axis (vjust=0 -> lower, vjust=1 -> higher). TOP anchor sits the text below the tick, BOTTOM above.
             isHorizontal && vJust == 0.0 -> Text.VerticalAnchor.TOP
             isHorizontal && vJust == 1.0 -> Text.VerticalAnchor.BOTTOM
-            // Tilted text: pin the label's near (toward-tick) end; the default vjust is direction-based.
             vJust == 0.0 && isLabelDirectedFromTick -> Text.VerticalAnchor.BOTTOM
             vJust == 1.0 && !isLabelDirectedFromTick -> Text.VerticalAnchor.TOP
             else -> Text.VerticalAnchor.CENTER
@@ -118,13 +110,14 @@ internal class VerticalRotatedLabelsLayout(
             rect.height * (0.5 - vJust)
         }
 
-        val hJustDefault = (1 - orientationSign) / 2
+        val leftAnchorX = slotCenterX - maxLabelWidth / 2
+        val rightAnchorX = slotCenterX + maxLabelWidth / 2
 
         val xOffset: (DoubleRectangle) -> Double = { rect: DoubleRectangle ->
             when {
-                isCornerCase -> (maxLabelWidth - rect.width) * (hJust - hJustDefault)
-                isHorizontal && horizontalAnchor == Text.HorizontalAnchor.LEFT -> slotCenterX - maxLabelWidth / 2
-                isHorizontal && horizontalAnchor == Text.HorizontalAnchor.RIGHT -> slotCenterX + maxLabelWidth / 2
+                isCornerCase -> (maxLabelWidth - rect.width) * (hJust - flushHjust)
+                isHorizontal && horizontalAnchor == Text.HorizontalAnchor.LEFT -> leftAnchorX
+                isHorizontal && horizontalAnchor == Text.HorizontalAnchor.RIGHT -> rightAnchorX
                 else -> xBBoxOffset(rect)
             }
         }
@@ -141,10 +134,9 @@ internal class VerticalRotatedLabelsLayout(
             DoubleVector(xOffset(it), yOffset(it))
         }
 
-        val renderedLabelBounds: (DoubleRectangle) -> DoubleRectangle = { rect: DoubleRectangle ->
+        val renderedLabelBounds: (DoubleRectangle, DoubleVector) -> DoubleRectangle = { rect, offset ->
             val w = rect.width
             val h = rect.height
-
             val centerShiftY = when {
                 isVertical -> when (horizontalAnchor) {
                     Text.HorizontalAnchor.LEFT -> if (sinA > 0) -h / 2 else h / 2
@@ -161,12 +153,14 @@ internal class VerticalRotatedLabelsLayout(
                 horizontalAnchor == Text.HorizontalAnchor.RIGHT -> -w / 2
                 else -> 0.0
             }
-            val centerX = rect.origin.x + xOffset(rect) + centerShiftX
-            val centerY = rect.origin.y + yOffset(rect) + centerShiftY
+            val centerX = rect.origin.x + offset.x + centerShiftX
+            val centerY = rect.origin.y + offset.y + centerShiftY
             DoubleRectangle(centerX - w / 2, centerY - h / 2, w, h)
         }
 
-        val adjustedLabelBoundsList = labelBoundsList.map(renderedLabelBounds)
+        val adjustedLabelBoundsList = labelBoundsList.mapIndexed { i, rect ->
+            renderedLabelBounds(rect, labelAdditionalOffsets[i])
+        }
 
         return createAxisLabelsLayoutInfoBuilder(bounds, overlap)
             .labelHorizontalAnchor(horizontalAnchor)
