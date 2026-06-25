@@ -113,6 +113,22 @@ class PolarBreaksTest {
         )
     }
 
+    @Test
+    fun majorLabelOffsetsStayAlignedAfterClientBreakFiltering() {
+        // The NaN break (index 0) has no client coordinate and is dropped before grid-line filtering.
+        // The first rendered break must still keep the offset of original index 1.
+        val offsets = (0..5).map { DoubleVector(0.0, it.toDouble()) }
+        val angleBreaks = computeBreaks(
+            breaks = listOf(Double.NaN, -4.0, -3.0, -2.0, -1.0, 0.0),
+            additionalOffsets = offsets
+        )
+
+        assertEquals(
+            listOf(offsets[1], offsets[2], offsets[3], offsets[4], offsets[5]),
+            angleBreaks.majorLabelOffsets
+        )
+    }
+
     private fun assertDoubleVectorEquals(expected: DoubleVector, actual: DoubleVector, tolerance: Double = 1.0) {
         assertEquals(expected.x, actual.x, tolerance, "Expected: $expected, actual: $actual\n")
         assertEquals(expected.y, actual.y, tolerance, "Expected: $expected, actual: $actual\n")

@@ -39,18 +39,19 @@ object PolarAxisUtil {
         val tickLabelBaseOffset: DoubleVector = DoubleVector.ZERO,
     ) {
         val center = coord.toClient(gridDomain.origin.flipIf(flipAxis)) ?: error("Failed to get center of the polar coordinate system")
-        val IndexedValue<Triple<String, Double, DoubleVector>>.label get() = value.first
-        val IndexedValue<Triple<String, Double, DoubleVector>>.domValue get() = value.second
-        val IndexedValue<Triple<String, Double, DoubleVector>>.coord get() = value.third
-
         fun breaksData(): PolarBreaksData {
             check(scaleBreaks.transformedValues.size == scaleBreaks.labels.size) {
                 "Breaks and labels must have the same size"
             }
 
             val majorBreaks = breaksToClient(scaleBreaks.transformedValues)
-                .mapIndexed { i, clientTick ->
-                    IndexedValue(i, Triple(scaleBreaks.labels[i], scaleBreaks.transformedValues[i], clientTick))
+                .map { (i, clientTick) ->
+                    MajorBreak(
+                        index = i,
+                        label = scaleBreaks.labels[i],
+                        domValue = scaleBreaks.transformedValues[i],
+                        coord = clientTick
+                    )
                 }
                 .let {
                     if (it.size < 2) return@let it
@@ -60,42 +61,26 @@ object PolarAxisUtil {
 
                     if (firstBr.coord.subtract(lastBr.coord).length() > 3.0) return@let it
 
-                    val newFirstBr = IndexedValue(
-                        index = firstBr.index,
-                        value = Triple(
-                            "${lastBr.label}/${firstBr.label}", // Merge first and last label
-                            firstBr.domValue,
-                            firstBr.coord
-                        )
-                    )
-                    val newLastBr = IndexedValue(
-                        index = lastBr.index,
-                        value = Triple(
-                            "", // Empty label to not duplicate the merged label
-                            lastBr.domValue,
-                            lastBr.coord
-                        )
-                    )
-
                     val cleaned = it.toMutableList()
-                    cleaned[newFirstBr.index] = newFirstBr
-                    cleaned[newLastBr.index] = newLastBr
+                    cleaned[0] = firstBr.copy(
+                        label = "${lastBr.label}/${firstBr.label}" // Merge first and last label
+                    )
+                    cleaned[cleaned.lastIndex] = lastBr.copy(
+                        label = "" // Empty label to not duplicate the merged label
+                    )
                     cleaned
                 }
 
-            // Carry each rendered major break's label offset (computed from its original index)
-            // through grid-line filtering so offsets stay aligned with labels and ticks.
-            val majorBreaksData = majorBreaks.mapNotNull { indexedBreak ->
-                val (label, domainTick, clientTick) = indexedBreak.value
-                val clientLine = buildGridLine(domainTick) ?: return@mapNotNull null
-                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(indexedBreak.index))
-                RenderedMajorBreak(label, clientTick, labelOffset, clientLine)
+            val majorBreaksData = majorBreaks.mapNotNull { br ->
+                val clientLine = buildGridLine(br.domValue) ?: return@mapNotNull null
+                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(br.index))
+                RenderedMajorBreak(br.label, br.coord, labelOffset, clientLine)
             }
 
-            val minorBreaks = minorDomainBreaks(majorBreaks.map { it.value.second })
+            val minorBreaks = minorDomainBreaks(majorBreaks.map { it.domValue })
                 .let { minorDomainBreaks ->
                     breaksToClient(minorDomainBreaks)
-                        .mapIndexed { i, clientBreak -> Pair(minorDomainBreaks[i], clientBreak) }
+                        .map { (i, clientBreak) -> Pair(minorDomainBreaks[i], clientBreak) }
                 }
 
             val minorBreaksData = minorBreaks.mapNotNull { (domainTick, clientTick) ->
@@ -121,6 +106,13 @@ object PolarAxisUtil {
             )
         }
 
+        private data class MajorBreak(
+            val index: Int,
+            val label: String,
+            val domValue: Double,
+            val coord: DoubleVector,
+        )
+
         private class RenderedMajorBreak(
             val label: String,
             val clientTick: DoubleVector,
@@ -130,12 +122,15 @@ object PolarAxisUtil {
 
         private fun breaksToClient(breaks: List<Double>) =
             toClient(breaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
-                .filterNotNull()
-                .map {
-                    when (orientation.isHorizontal) {
-                        true -> it.subtract(center)
-                        false -> it.rotateAround(center, coord.startAngle * coord.direction)
+                .mapIndexedNotNull { i, clientTick ->
+                    clientTick?.let { IndexedValue(i, it) }
+                }
+                .map { (i, clientTick) ->
+                    val adjustedClientTick = when (orientation.isHorizontal) {
+                        true -> clientTick.subtract(center)
+                        false -> clientTick.rotateAround(center, coord.startAngle * coord.direction)
                     }
+                    IndexedValue(i, adjustedClientTick)
                 }
 
 
