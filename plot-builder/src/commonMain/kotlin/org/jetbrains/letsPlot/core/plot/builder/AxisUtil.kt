@@ -68,7 +68,7 @@ object AxisUtil {
                     label = breakLabels[i],
                     domainTick = breakTransformedValues[i],
                     clientTick = clientTick,
-                    labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+                    labelOffset = labelAdjustments.labelOffset(tickLabelBaseOffset, i)
                 )
             }
             .filter { br ->

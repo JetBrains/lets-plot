@@ -27,7 +27,7 @@ object PolarAxisUtil {
         axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     ): PolarBreaksData {
-        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, axisTheme, labelAdjustments).breaksData()
+        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, labelAdjustments, axisTheme).breaksData()
     }
 
     private class Helper(
@@ -36,8 +36,8 @@ object PolarAxisUtil {
         val gridDomain: DoubleRectangle,
         val flipAxis: Boolean,
         val orientation: Orientation,
-        val axisTheme: AxisTheme,
-        val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
+        val labelAdjustments: AxisComponent.TickLabelAdjustments,
+        axisTheme: AxisTheme,
     ) {
         val center = coord.toClient(gridDomain.origin.flipIf(flipAxis)) ?: error("Failed to get center of the polar coordinate system")
         val tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, orientation)
@@ -64,18 +64,24 @@ object PolarAxisUtil {
                     if (firstBr.coord.subtract(lastBr.coord).length() > 3.0) return@let it
 
                     val cleaned = it.toMutableList()
-                    cleaned[0] = firstBr.copy(
-                        label = "${lastBr.label}/${firstBr.label}" // Merge first and last label
+                    cleaned[0] = MajorBreak(
+                        index = firstBr.index,
+                        label = "${lastBr.label}/${firstBr.label}", // Merge first and last label
+                        domValue = firstBr.domValue,
+                        coord = firstBr.coord
                     )
-                    cleaned[cleaned.lastIndex] = lastBr.copy(
-                        label = "" // Empty label to not duplicate the merged label
+                    cleaned[cleaned.lastIndex] = MajorBreak(
+                        index = lastBr.index,
+                        label = "", // Empty label to not duplicate the merged label
+                        domValue = lastBr.domValue,
+                        coord = lastBr.coord
                     )
                     cleaned
                 }
 
             val majorBreaksData = majorBreaks.mapNotNull { br ->
                 val clientLine = buildGridLine(br.domValue) ?: return@mapNotNull null
-                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(br.index))
+                val labelOffset = labelAdjustments.labelOffset(tickLabelBaseOffset, br.index)
                 RenderedMajorBreak(br.label, br.coord, labelOffset, clientLine)
             }
 
@@ -108,7 +114,7 @@ object PolarAxisUtil {
             )
         }
 
-        private data class MajorBreak(
+        private class MajorBreak(
             val index: Int,
             val label: String,
             val domValue: Double,
@@ -125,9 +131,7 @@ object PolarAxisUtil {
         private fun breaksToClient(breaks: List<Double>) =
             toClient(breaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
                 .mapIndexedNotNull { i, clientTick ->
-                    clientTick?.let { IndexedValue(i, it) }
-                }
-                .map { (i, clientTick) ->
+                    if (clientTick == null) return@mapIndexedNotNull null
                     val adjustedClientTick = when (orientation.isHorizontal) {
                         true -> clientTick.subtract(center)
                         false -> clientTick.rotateAround(center, coord.startAngle * coord.direction)
@@ -138,7 +142,7 @@ object PolarAxisUtil {
 
         /**
          * FixMe: polar hack:
-         *   The generic `AxisUtil.toClient()` doesn't work bekause the `dataDomain` here might
+         *   The generic `AxisUtil.toClient()` doesn't work because the `dataDomain` here might
          *   be "flipped" for polar `theta=Y`.
          *
          *  Duplicates AxisUtil.toClient()

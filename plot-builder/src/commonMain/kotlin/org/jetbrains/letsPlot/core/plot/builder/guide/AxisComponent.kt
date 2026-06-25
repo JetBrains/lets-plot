@@ -219,5 +219,9 @@ class AxisComponent(
         fun additionalOffset(tickIndex: Int): DoubleVector {
             return additionalOffsets?.get(tickIndex) ?: DoubleVector.ZERO
         }
+
+        fun labelOffset(baseOffset: DoubleVector, tickIndex: Int): DoubleVector {
+            return baseOffset.add(additionalOffset(tickIndex))
+        }
     }
 }
