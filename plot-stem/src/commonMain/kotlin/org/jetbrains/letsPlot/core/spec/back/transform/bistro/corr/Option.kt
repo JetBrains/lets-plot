@@ -27,6 +27,8 @@ object Option {
             const val TYPE = "type"
             const val DIAG = "diag"
             const val COLOR = "color"
+            const val HALO_WIDTH = "halo_width"
+            const val HALO_COLOR = "halo_color"
             const val MAP_SIZE = "map_size"
 
             object Type {

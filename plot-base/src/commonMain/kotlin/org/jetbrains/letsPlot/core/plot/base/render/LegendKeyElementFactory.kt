@@ -18,6 +18,10 @@ import org.jetbrains.letsPlot.datamodel.svg.dom.SvgRectElement
 interface LegendKeyElementFactory {
     fun createKeyElement(p: DataPointAesthetics, size: DoubleVector): SvgGElement
 
+    fun createKeyElement(p: DataPointAesthetics, size: DoubleVector, keyFill: Color?): SvgGElement {
+        return createKeyElement(p, size)
+    }
+
     val supportsKeySizeMultiplier: Boolean
         get() = false
 

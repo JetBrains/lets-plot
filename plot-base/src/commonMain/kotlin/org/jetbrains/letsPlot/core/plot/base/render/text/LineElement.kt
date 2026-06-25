@@ -17,6 +17,8 @@ internal sealed class LineElement {
     abstract fun setVerticalAnchor(anchor: Text.VerticalAnchor?, fontSize: Double)
     abstract fun setHorizontalAnchor(anchor: Text.HorizontalAnchor)
     abstract fun applyColor(color: Color?)
+    abstract fun applyStrokeColor(color: Color?)
+    abstract fun applyStrokeWidth(px: Double)
     abstract fun applyStyle(styleAttr: String)
     abstract fun addClass(className: String)
 
@@ -56,6 +58,14 @@ internal class TextLine(private val text: SvgTextElement) : LineElement() {
 
     override fun applyColor(color: Color?) {
         text.fillColor().set(color)
+    }
+
+    override fun applyStrokeColor(color: Color?) {
+        text.strokeColor().set(color)
+    }
+
+    override fun applyStrokeWidth(px: Double) {
+        text.strokeWidth().set(px)
     }
 
     override fun applyStyle(styleAttr: String) {
@@ -102,6 +112,14 @@ internal class GroupLine(private val group: SvgGElement) : LineElement() {
         paintColor(group, color)
     }
 
+    override fun applyStrokeColor(color: Color?) {
+        paintStrokeColor(group, color)
+    }
+
+    override fun applyStrokeWidth(px: Double) {
+        paintStrokeWidth(group, px)
+    }
+
     override fun applyStyle(styleAttr: String) {
         paintStyle(group, styleAttr)
     }
@@ -146,6 +164,36 @@ internal class GroupLine(private val group: SvgGElement) : LineElement() {
                 }
             }
             is SvgGElement -> node.children().forEach { if (it is SvgElement) paintColor(it, color) }
+        }
+    }
+
+    private fun paintStrokeColor(node: SvgElement, color: Color?) {
+        when (node) {
+            is SvgTextElement -> node.strokeColor().set(color)
+            is SvgPathElement -> {
+                val isBBoxGuide = node.classAttribute().get()
+                    ?.split(' ')
+                    ?.contains(Latex.VECTOR_BBOX_CLASS) == true
+                if (!isBBoxGuide) {
+                    node.strokeColor().set(color)
+                }
+            }
+            is SvgGElement -> node.children().forEach { if (it is SvgElement) paintStrokeColor(it, color) }
+        }
+    }
+
+    private fun paintStrokeWidth(node: SvgElement, px: Double) {
+        when (node) {
+            is SvgTextElement -> node.strokeWidth().set(px)
+            is SvgPathElement -> {
+                val isBBoxGuide = node.classAttribute().get()
+                    ?.split(' ')
+                    ?.contains(Latex.VECTOR_BBOX_CLASS) == true
+                if (!isBBoxGuide) {
+                    node.strokeWidth().set(px)
+                }
+            }
+            is SvgGElement -> node.children().forEach { if (it is SvgElement) paintStrokeWidth(it, px) }
         }
     }
 

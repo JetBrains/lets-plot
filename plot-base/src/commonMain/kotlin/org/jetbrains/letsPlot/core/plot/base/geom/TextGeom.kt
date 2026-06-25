@@ -5,6 +5,7 @@
 
 package org.jetbrains.letsPlot.core.plot.base.geom
 
+import org.jetbrains.letsPlot.commons.values.Color
 import org.jetbrains.letsPlot.core.plot.base.Aesthetics
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.GeomContext
@@ -18,9 +19,11 @@ open class TextGeom : GeomBase() {
     var naValue = TextHelper.DEF_NA_VALUE
     var sizeUnit: String? = null
     var checkOverlap: Boolean = false
+    var haloWidth: Double = 0.0
+    var haloColor: Color? = null
 
     override val legendKeyElementFactory: LegendKeyElementFactory
-        get() = TextLegendKeyElementFactory()
+        get() = TextLegendKeyElementFactory(haloWidth, haloColor)
 
     override fun buildIntern(
         root: SvgRoot,
@@ -49,6 +52,8 @@ open class TextGeom : GeomBase() {
             .setNaValue(naValue)
             .setSizeUnit(sizeUnit)
             .setCheckOverlap(checkOverlap)
+            .setHaloWidth(haloWidth)
+            .setHaloColor(haloColor)
     }
 
     companion object {

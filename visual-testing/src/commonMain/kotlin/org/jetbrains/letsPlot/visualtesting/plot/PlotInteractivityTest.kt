@@ -28,15 +28,18 @@ class PlotInteractivityTest(
         registerTest(::plot_interactivity_composite_tooltip)
         registerTest(::plot_interactivity_nestedComposite_tooltip)
         registerTest(::plot_interactivity_latexTooltip)
-        registerTest(::plot_interactivity_mergedTooltip)
-        registerTest(::plot_interactivity_mergedTooltipWithTitle)
-        registerTest(::plot_interactivity_mergedTooltipFlipped)
-        registerTest(::plot_interactivity_mergedTooltipFlippedWithTitle)
-        registerTest(::plot_interactivity_mergedTooltipDisableSplitting)
-        registerTest(::plot_interactivity_mergedTooltipDisableSplittingWithTitle)
-        registerTest(::plot_interactivity_mergedTooltipDisableSplittingExplicitLines)
-        registerTest(::plot_interactivity_mergedTooltipDisableSplittingExplicitLinesWithTitle)
-        registerTest(::plot_interactivity_smoothTooltipDisableSplittingExplicitLines)
+        // Merged tooltips are densely packed with thin, high-contrast features whose sub-pixel
+        // rasterization differs across platforms - they need a looser profile than the default.
+        // See ImageComparer.ComparisonProfile.MergedTooltip.
+        registerTest(::plot_interactivity_mergedTooltip, ImageComparer.ComparisonProfile.MergedTooltip)
+        registerTest(::plot_interactivity_mergedTooltipWithTitle, ImageComparer.ComparisonProfile.MergedTooltip)
+        registerTest(::plot_interactivity_mergedTooltipFlipped, ImageComparer.ComparisonProfile.MergedTooltip)
+        registerTest(::plot_interactivity_mergedTooltipFlippedWithTitle, ImageComparer.ComparisonProfile.MergedTooltip)
+        registerTest(::plot_interactivity_mergedTooltipDisableSplitting, ImageComparer.ComparisonProfile.MergedTooltip)
+        registerTest(::plot_interactivity_mergedTooltipDisableSplittingWithTitle, ImageComparer.ComparisonProfile.MergedTooltip)
+        registerTest(::plot_interactivity_mergedTooltipDisableSplittingExplicitLines, ImageComparer.ComparisonProfile.MergedTooltip)
+        registerTest(::plot_interactivity_mergedTooltipDisableSplittingExplicitLinesWithTitle, ImageComparer.ComparisonProfile.MergedTooltip)
+        registerTest(::plot_interactivity_smoothTooltipDisableSplittingExplicitLines, ImageComparer.ComparisonProfile.MergedTooltip)
 
         // TODO: fix it
         //registerTest(::plot_interactivity_panNestedComposite)

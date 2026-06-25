@@ -93,6 +93,16 @@ class CorrPlotOptionsBuilder private constructor(
                 added = true
                 field = v
             }
+        var haloWidth: Double? = null
+            set(v) {
+                added = true
+                field = v
+            }
+        var haloColor: String? = null
+            set(v) {
+                added = true
+                field = v
+            }
         var mapSize: Boolean? = null
             set(v) {
                 added = true
@@ -109,6 +119,8 @@ class CorrPlotOptionsBuilder private constructor(
             if (type != other.type) return false
             if (diag != other.diag) return false
             if (color != other.color) return false
+            if (haloWidth != other.haloWidth) return false
+            if (haloColor != other.haloColor) return false
             if (mapSize != other.mapSize) return false
 
             return true
@@ -119,6 +131,8 @@ class CorrPlotOptionsBuilder private constructor(
             result = 31 * result + (type?.hashCode() ?: 0)
             result = 31 * result + (diag?.hashCode() ?: 0)
             result = 31 * result + (color?.hashCode() ?: 0)
+            result = 31 * result + (haloWidth?.hashCode() ?: 0)
+            result = 31 * result + (haloColor?.hashCode() ?: 0)
             result = 31 * result + (mapSize?.hashCode() ?: 0)
             return result
         }
@@ -142,13 +156,17 @@ class CorrPlotOptionsBuilder private constructor(
         type: String? = null,
         diag: Boolean? = null,
         mapSize: Boolean? = null,
-        color: String? = null
+        color: String? = null,
+        haloWidth: Double? = null,
+        haloColor: String? = null
     ): CorrPlotOptionsBuilder {
         checkTypeArg(type)
         labels.type = type
         labels.diag = diag
         labels.mapSize = mapSize
         labels.color = color
+        labels.haloWidth = haloWidth
+        labels.haloColor = haloColor
 
         return this
     }
@@ -301,6 +319,8 @@ class CorrPlotOptionsBuilder private constructor(
                     )
                     size = if (labels.mapSize == true) null else 1.0
                     color = labels.color
+                    prop[TextLayer.HALO_WIDTH] = labels.haloWidth
+                    prop[TextLayer.HALO_COLOR] = labels.haloColor
                 }
             )
         }

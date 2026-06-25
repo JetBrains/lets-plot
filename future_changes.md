@@ -6,9 +6,11 @@
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26c/tooltip_merge.html).
 
+- Text halos improve readability on varied backgrounds. New `halo_width` and `halo_color` parameters are supported in `geom_text()`/`geom_text_repel()` and by labels in `corr_plot()`.
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26c/text_halo.html).
+
 ### Changed
 
-- Upgrade Kotlin to 2.3.20
-- `macosX64` target is no longer available (in Kotlin 2.3.20). See: https://kotl.in/native-targets-tiers.
 
 ### Fixed

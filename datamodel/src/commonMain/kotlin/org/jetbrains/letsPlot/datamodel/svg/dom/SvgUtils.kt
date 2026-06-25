@@ -44,6 +44,16 @@ object SvgUtils {
         }
     }
 
+    fun strokeAndOpacityStyle(color: Color, separator: String = ""): String {
+        val (stroke, strokeOpacity) = splitColorAndOpacity(color)
+        return buildString {
+            append("stroke:$stroke;$separator")
+            if (strokeOpacity != null) {
+                append("stroke-opacity:$strokeOpacity;$separator")
+            }
+        }
+    }
+
     fun toARGB(c: Color): Int {
         return toARGB(c.red, c.green, c.blue, c.alpha)
     }

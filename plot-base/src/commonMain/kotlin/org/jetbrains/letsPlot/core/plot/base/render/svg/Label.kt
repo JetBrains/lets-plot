@@ -26,6 +26,10 @@ class Label(
     private val myLines = mutableListOf<LineElement>()
     private val myLineAnchors = mutableListOf<HorizontalAnchor>()
     private var myTextColor: Color? = null
+    private var myFillNone: Boolean = false
+    private var myStrokeColor: Color? = null
+    private var myStrokeWidth: Double? = null
+    private var myStrokeLinejoin: String? = null
     private var myFontSize = 0.0
     private var myFontWeight: String? = null
     private var myFontFamily: String? = null
@@ -61,6 +65,35 @@ class Label(
                 updateStyleAttribute()
             }
         }
+    }
+
+    fun setFillNone() {
+        myFillNone = true
+        updateStyleAttribute()
+    }
+
+    fun textStrokeColor(): WritableProperty<Color?> {
+        return object : WritableProperty<Color?> {
+            override fun set(value: Color?) {
+                // set attribute for svg->canvas mapping to work
+                myLines.forEach { it.applyStrokeColor(value) }
+
+                // duplicate in 'style' to override styles of container
+                myStrokeColor = value
+                updateStyleAttribute()
+            }
+        }
+    }
+
+    fun setStrokeWidth(px: Double) {
+        myLines.forEach { it.applyStrokeWidth(px) }
+        myStrokeWidth = px
+        updateStyleAttribute()
+    }
+
+    fun setStrokeLinejoin(linejoin: String?) {
+        myStrokeLinejoin = linejoin
+        updateStyleAttribute()
     }
 
     fun setHorizontalAnchor(anchor: HorizontalAnchor) {
@@ -113,7 +146,11 @@ class Label(
             myFontSize,
             myFontWeight,
             myFontFamily,
-            myFontStyle
+            myFontStyle,
+            myFillNone,
+            myStrokeColor,
+            myStrokeWidth,
+            myStrokeLinejoin
         )
         myLines.forEach { it.applyStyle(styleAttr) }
     }

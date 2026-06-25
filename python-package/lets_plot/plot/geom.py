@@ -7684,6 +7684,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
               map=None, map_join=None, use_crs=None,
               label_format=None,
               na_text=None,
+              halo_width=None,
+              halo_color=None,
               nudge_x=None, nudge_y=None,
               size_unit=None,
               nudge_unit=None,
@@ -7750,6 +7752,12 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     na_text : str, default='n/a'
         Text to show for missing values.
+    halo_width : float, default=None
+        Width of the text halo. A halo is rendered only when ``halo_width > 0``.
+    halo_color : str, default=None
+        Fixed color of the text halo. If omitted, the panel background color is used
+        (falling back to the plot background color when the panel has no fill).
+        Unlike ``color``, this cannot be used as an aesthetic mapping.
     nudge_x : float
         Horizontal adjustment to nudge labels by.
     nudge_y : float
@@ -7921,6 +7929,8 @@ def geom_text(mapping=None, *, data=None, stat=None, position=None, show_legend=
                  map=map, map_join=map_join, use_crs=use_crs,
                  label_format=label_format,
                  na_text=na_text,
+                 halo_width=halo_width,
+                 halo_color=halo_color,
                  nudge_x=nudge_x, nudge_y=nudge_y,
                  size_unit=size_unit,
                  nudge_unit=nudge_unit,
@@ -8206,6 +8216,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
                     map=None, map_join=None, use_crs=None,
                     label_format=None,
                     na_text=None,
+                    halo_width=None,
+                    halo_color=None,
                     nudge_x=None, nudge_y=None,
                     size_unit=None,
                     nudge_unit=None,
@@ -8281,6 +8293,12 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
         For more info see `Formatting <https://lets-plot.org/python/pages/formats.html>`__.
     na_text : str, default='n/a'
         Text to show for missing values.
+    halo_width : float, default=None
+        Width of the text halo. A halo is rendered only when ``halo_width > 0``.
+    halo_color : str, default=None
+        Fixed color of the text halo. If omitted, the panel background color is used
+        (falling back to the plot background color when the panel has no fill).
+        Unlike ``color``, this cannot be used as an aesthetic mapping.
     nudge_x : float
         Horizontal adjustment to nudge labels by.
     nudge_y : float
@@ -8400,6 +8418,8 @@ def geom_text_repel(mapping=None, *, data=None, stat=None, position=None, show_l
                  map=map, map_join=map_join, use_crs=use_crs,
                  label_format=label_format,
                  na_text=na_text,
+                 halo_width=halo_width,
+                 halo_color=halo_color,
                  nudge_x=nudge_x, nudge_y=nudge_y,
                  size_unit=size_unit,
                  nudge_unit=nudge_unit,
