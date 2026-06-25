@@ -10,6 +10,10 @@
 
   See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26c/text_halo.html).
 
+- LaTeX: support for fractions (`\frac{...}{...}`) in plot text elements.
+
+  See: [example notebook](https://raw.githack.com/JetBrains/lets-plot/master/docs/f-26c/math_manual_legend.html).
+
 ### Changed
 
 
