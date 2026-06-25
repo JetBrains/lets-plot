@@ -34,7 +34,7 @@ internal class PolarFrameOfReference(
     private val hScaleBreaks: ScaleBreaks,
     private val vScaleBreaks: ScaleBreaks,
     adjustedDomain: DoubleRectangle,
-    coord: PolarCoordinateSystem,
+    override val coord: PolarCoordinateSystem,
     layoutInfo: TileLayoutInfo,
     marginsLayout: GeomMarginsLayout,
     theme: Theme,
@@ -47,8 +47,6 @@ internal class PolarFrameOfReference(
     theme,
     flipAxis,
 ) {
-
-    protected override val coord: PolarCoordinateSystem = coord
 
     // ToDo: implement polar transient state
     override val transientState = DummyTransientState()
@@ -199,13 +197,15 @@ internal class PolarFrameOfReference(
             additionalOffsets = axisInfo.tickLabelAdditionalOffsets
         )
 
+        val axisTheme = if (axisInfo.orientation.isHorizontal) hAxisTheme else vAxisTheme
         val breaksData = PolarAxisUtil.breaksData(
             scaleBreaks = scaleBreaks,
             coord = coord,
             gridDomain = adjustedDomain,
             flipAxis = flipAxis,
             orientation = axisInfo.orientation,
-            labelAdjustments = labelAdjustments
+            axisTheme = axisTheme,
+            labelAdjustments = labelAdjustments,
         )
         return Pair(labelAdjustments, breaksData)
     }

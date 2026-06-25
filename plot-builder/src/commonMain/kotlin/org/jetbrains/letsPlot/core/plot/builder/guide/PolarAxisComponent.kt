@@ -15,7 +15,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor
 import org.jetbrains.letsPlot.core.plot.base.render.svg.lineString
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.builder.AxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
@@ -43,11 +42,9 @@ class PolarAxisComponent(
 
         // Ticks and labels
         if (!hideAxisBreaks && (axisTheme.showLabels() || axisTheme.showTickMarks())) {
-            val tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, orientation)
-
             for ((i, v) in breaksData.majorBreaks.withIndex()) {
-                val label = breaksData.majorLabels[i % breaksData.majorLabels.size]
-                val labelOffset = tickLabelBaseOffset.add(labelAdjustments.additionalOffset(i))
+                val label = breaksData.majorLabels[i]
+                val labelOffset = breaksData.majorLabelOffsets[i]
 
                 val (tickLabel, tickMark) = buildTick(label, labelOffset, axisTheme, v, breaksData.center)
 
