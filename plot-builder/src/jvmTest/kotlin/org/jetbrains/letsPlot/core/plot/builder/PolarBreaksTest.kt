@@ -12,6 +12,8 @@ import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
 import org.jetbrains.letsPlot.core.plot.builder.PolarAxisUtil.breaksData
 import org.jetbrains.letsPlot.core.plot.builder.PolarBreaksTest.AxisKind.ANGLE
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordProvider
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.ThemeUtil
+import org.jetbrains.letsPlot.core.plot.builder.defaultTheme.values.ThemeOption
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
 import org.jetbrains.letsPlot.core.plot.builder.guide.Orientation
 import org.junit.Test
@@ -94,6 +96,41 @@ class PolarBreaksTest {
         assertDoubleVectorEquals(x = 0, y = -219, angleBreaks.majorBreaks[4])
     }
 
+    @Test
+    fun majorLabelOffsetsStayAlignedAfterGridLineFiltering() {
+        // The break at -12.0 (index 3) is out of the domain and is dropped by grid-line filtering.
+        // Each surviving label must keep the offset of its original index.
+        val offsets = (0..5).map { DoubleVector(0.0, it.toDouble()) }
+        val angleBreaks = computeBreaks(
+            breaks = listOf(-5.0, -4.0, -3.0, -12.0, -1.0, 0.0),
+            additionalOffsets = offsets
+        )
+
+        // Five rendered breaks remain (index 3 dropped); each rendered offset is the axis base
+        // offset plus the additional offset of its original index.
+        assertEquals(5, angleBreaks.majorLabelOffsets.size)
+        assertEquals(
+            offsetsWithBase(offsets, 0, 1, 2, 4, 5),
+            angleBreaks.majorLabelOffsets
+        )
+    }
+
+    @Test
+    fun majorLabelOffsetsStayAlignedAfterClientBreakFiltering() {
+        // The NaN break (index 0) has no client coordinate and is dropped before grid-line filtering.
+        // The first rendered break must still keep the offset of original index 1.
+        val offsets = (0..5).map { DoubleVector(0.0, it.toDouble()) }
+        val angleBreaks = computeBreaks(
+            breaks = listOf(Double.NaN, -4.0, -3.0, -2.0, -1.0, 0.0),
+            additionalOffsets = offsets
+        )
+
+        assertEquals(
+            offsetsWithBase(offsets, 1, 2, 3, 4, 5),
+            angleBreaks.majorLabelOffsets
+        )
+    }
+
     private fun assertDoubleVectorEquals(expected: DoubleVector, actual: DoubleVector, tolerance: Double = 1.0) {
         assertEquals(expected.x, actual.x, tolerance, "Expected: $expected, actual: $actual\n")
         assertEquals(expected.y, actual.y, tolerance, "Expected: $expected, actual: $actual\n")
@@ -107,7 +144,8 @@ class PolarBreaksTest {
         clientSize: DoubleVector = DoubleVector(504.0, 504.0),
         startAngleDeg: Double = 0.0,
         axisKind: AxisKind = ANGLE,
-        breaks: List<Double>? = null
+        breaks: List<Double>? = null,
+        additionalOffsets: List<DoubleVector>? = null
     ): PolarAxisUtil.PolarBreaksData {
         val dataDomain = DoubleRectangle.XYWH(-5.0, 10.0, 5.0, 8.0)
 
@@ -131,25 +169,30 @@ class PolarBreaksTest {
         val gridDomain = polarCoordProvider.gridDomain(adjustedDomain)
         val coordinateSystem = polarCoordProvider.createCoordinateSystem(adjustedDomain, clientSize)
 
-        if (axisKind == ANGLE) {
-            return breaksData(
-                scaleBreaks = ScaleBreaks.DemoAndTest.continuous(domainValues = breaks),
-                coord = coordinateSystem,
-                gridDomain = gridDomain,
-                flipAxis = false,
-                orientation = Orientation.BOTTOM,
-                labelAdjustments = AxisComponent.TickLabelAdjustments(Orientation.BOTTOM),
-            )
-        } else {
-            return breaksData(
-                scaleBreaks = ScaleBreaks.DemoAndTest.continuous(domainValues = breaks),
-                coord = coordinateSystem,
-                gridDomain = gridDomain,
-                flipAxis = false,
-                orientation = Orientation.LEFT,
-                labelAdjustments = AxisComponent.TickLabelAdjustments(Orientation.LEFT),
-            )
+        val orientation = if (axisKind == ANGLE) Orientation.BOTTOM else Orientation.LEFT
+        return breaksData(
+            scaleBreaks = ScaleBreaks.DemoAndTest.continuous(domainValues = breaks),
+            coord = coordinateSystem,
+            gridDomain = gridDomain,
+            flipAxis = false,
+            orientation = orientation,
+            axisTheme = axisTheme(orientation),
+            labelAdjustments = AxisComponent.TickLabelAdjustments(
+                orientation,
+                additionalOffsets = additionalOffsets
+            ),
+        )
+    }
+
+    private fun axisTheme(orientation: Orientation) =
+        ThemeUtil.buildTheme(ThemeOption.Name.LP_MINIMAL).let {
+            if (orientation.isHorizontal) it.horizontalAxis(flipAxis = false) else it.verticalAxis(flipAxis = false)
         }
+
+    private fun offsetsWithBase(offsets: List<DoubleVector>, vararg indices: Int): List<DoubleVector> {
+        // Both offset-alignment tests use the ANGLE axis (BOTTOM, horizontal).
+        val baseOffset = AxisUtil.tickLabelBaseOffset(axisTheme(Orientation.BOTTOM), Orientation.BOTTOM)
+        return indices.map { baseOffset.add(offsets[it]) }
     }
 
     enum class AxisKind {

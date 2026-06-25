@@ -11,6 +11,7 @@ import org.jetbrains.letsPlot.commons.intern.typedGeometry.algorithms.AdaptiveRe
 import org.jetbrains.letsPlot.core.commons.data.SeriesUtil.finiteOrNull
 import org.jetbrains.letsPlot.core.plot.base.CoordinateSystem
 import org.jetbrains.letsPlot.core.plot.base.scale.ScaleBreaks
+import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
 import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.minorDomainBreaks
 import org.jetbrains.letsPlot.core.plot.builder.coord.PolarCoordinateSystem
 import org.jetbrains.letsPlot.core.plot.builder.guide.AxisComponent
@@ -23,9 +24,10 @@ object PolarAxisUtil {
         gridDomain: DoubleRectangle,
         flipAxis: Boolean,
         orientation: Orientation,
+        axisTheme: AxisTheme,
         labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
     ): PolarBreaksData {
-        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, labelAdjustments).breaksData()
+        return Helper(scaleBreaks, coord, gridDomain, flipAxis, orientation, labelAdjustments, axisTheme).breaksData()
     }
 
     private class Helper(
@@ -34,21 +36,24 @@ object PolarAxisUtil {
         val gridDomain: DoubleRectangle,
         val flipAxis: Boolean,
         val orientation: Orientation,
-        val labelAdjustments: AxisComponent.TickLabelAdjustments = AxisComponent.TickLabelAdjustments(orientation),
+        val labelAdjustments: AxisComponent.TickLabelAdjustments,
+        axisTheme: AxisTheme,
     ) {
         val center = coord.toClient(gridDomain.origin.flipIf(flipAxis)) ?: error("Failed to get center of the polar coordinate system")
-        val IndexedValue<Triple<String, Double, DoubleVector>>.label get() = value.first
-        val IndexedValue<Triple<String, Double, DoubleVector>>.domValue get() = value.second
-        val IndexedValue<Triple<String, Double, DoubleVector>>.coord get() = value.third
-
+        val tickLabelBaseOffset = AxisUtil.tickLabelBaseOffset(axisTheme, orientation)
         fun breaksData(): PolarBreaksData {
             check(scaleBreaks.transformedValues.size == scaleBreaks.labels.size) {
                 "Breaks and labels must have the same size"
             }
 
             val majorBreaks = breaksToClient(scaleBreaks.transformedValues)
-                .mapIndexed { i, clientTick ->
-                    IndexedValue(i, Triple(scaleBreaks.labels[i], scaleBreaks.transformedValues[i], clientTick))
+                .map { (i, clientTick) ->
+                    MajorBreak(
+                        index = i,
+                        label = scaleBreaks.labels[i],
+                        domValue = scaleBreaks.transformedValues[i],
+                        coord = clientTick
+                    )
                 }
                 .let {
                     if (it.size < 2) return@let it
@@ -58,39 +63,32 @@ object PolarAxisUtil {
 
                     if (firstBr.coord.subtract(lastBr.coord).length() > 3.0) return@let it
 
-                    val newFirstBr = IndexedValue(
-                        index = firstBr.index,
-                        value = Triple(
-                            "${lastBr.label}/${firstBr.label}", // Merge first and last label
-                            firstBr.domValue,
-                            firstBr.coord
-                        )
-                    )
-                    val newLastBr = IndexedValue(
-                        index = lastBr.index,
-                        value = Triple(
-                            "", // Empty label to not duplicate the merged label
-                            lastBr.domValue,
-                            lastBr.coord
-                        )
-                    )
-
                     val cleaned = it.toMutableList()
-                    cleaned[newFirstBr.index] = newFirstBr
-                    cleaned[newLastBr.index] = newLastBr
+                    cleaned[0] = MajorBreak(
+                        index = firstBr.index,
+                        label = "${lastBr.label}/${firstBr.label}", // Merge first and last label
+                        domValue = firstBr.domValue,
+                        coord = firstBr.coord
+                    )
+                    cleaned[cleaned.lastIndex] = MajorBreak(
+                        index = lastBr.index,
+                        label = "", // Empty label to not duplicate the merged label
+                        domValue = lastBr.domValue,
+                        coord = lastBr.coord
+                    )
                     cleaned
                 }
 
-            val majorBreaksData = majorBreaks.mapNotNull { (_, br) ->
-                val (label, domainTick, clientTick) = br
-                val clientLine = buildGridLine(domainTick) ?: return@mapNotNull null
-                Triple(label, clientTick, clientLine)
+            val majorBreaksData = majorBreaks.mapNotNull { br ->
+                val clientLine = buildGridLine(br.domValue) ?: return@mapNotNull null
+                val labelOffset = labelAdjustments.labelOffset(tickLabelBaseOffset, br.index)
+                RenderedMajorBreak(br.label, br.coord, labelOffset, clientLine)
             }
 
-            val minorBreaks = minorDomainBreaks(majorBreaks.map { it.value.second })
+            val minorBreaks = minorDomainBreaks(majorBreaks.map { it.domValue })
                 .let { minorDomainBreaks ->
                     breaksToClient(minorDomainBreaks)
-                        .mapIndexed { i, clientBreak -> Pair(minorDomainBreaks[i], clientBreak) }
+                        .map { (i, clientBreak) -> Pair(minorDomainBreaks[i], clientBreak) }
                 }
 
             val minorBreaksData = minorBreaks.mapNotNull { (domainTick, clientTick) ->
@@ -104,9 +102,10 @@ object PolarAxisUtil {
             }
 
             return PolarBreaksData(
-                majorBreaks = majorBreaksData.map { (_, tick, _) -> tick },
-                majorGrid = majorBreaksData.map { (_, _, gridLine) -> gridLine },
-                majorLabels = majorBreaksData.map { (label, _, _) -> label },
+                majorBreaks = majorBreaksData.map { it.clientTick },
+                majorLabelOffsets = majorBreaksData.map { it.labelOffset },
+                majorGrid = majorBreaksData.map { it.gridLine },
+                majorLabels = majorBreaksData.map { it.label },
                 minorBreaks = minorBreaksData.map { (tick, _) -> tick },
                 minorGrid = minorBreaksData.map { (_, gridLine) -> gridLine },
                 axisLine = axisLine,
@@ -115,20 +114,35 @@ object PolarAxisUtil {
             )
         }
 
+        private class MajorBreak(
+            val index: Int,
+            val label: String,
+            val domValue: Double,
+            val coord: DoubleVector,
+        )
+
+        private class RenderedMajorBreak(
+            val label: String,
+            val clientTick: DoubleVector,
+            val labelOffset: DoubleVector,
+            val gridLine: List<DoubleVector>,
+        )
+
         private fun breaksToClient(breaks: List<Double>) =
             toClient(breaks, gridDomain, coord, flipAxis, orientation.isHorizontal)
-                .filterNotNull()
-                .map {
-                    when (orientation.isHorizontal) {
-                        true -> it.subtract(center)
-                        false -> it.rotateAround(center, coord.startAngle * coord.direction)
+                .mapIndexedNotNull { i, clientTick ->
+                    if (clientTick == null) return@mapIndexedNotNull null
+                    val adjustedClientTick = when (orientation.isHorizontal) {
+                        true -> clientTick.subtract(center)
+                        false -> clientTick.rotateAround(center, coord.startAngle * coord.direction)
                     }
+                    IndexedValue(i, adjustedClientTick)
                 }
 
 
         /**
          * FixMe: polar hack:
-         *   The generic `AxisUtil.toClient()` doesn't work bekause the `dataDomain` here might
+         *   The generic `AxisUtil.toClient()` doesn't work because the `dataDomain` here might
          *   be "flipped" for polar `theta=Y`.
          *
          *  Duplicates AxisUtil.toClient()
@@ -197,6 +211,7 @@ object PolarAxisUtil {
         val startAngle: Double,
         val majorBreaks: List<DoubleVector>,
         val majorLabels: List<String>,
+        val majorLabelOffsets: List<DoubleVector>,
         val minorBreaks: List<DoubleVector>,
         val majorGrid: List<List<DoubleVector>>,
         val minorGrid: List<List<DoubleVector>>,

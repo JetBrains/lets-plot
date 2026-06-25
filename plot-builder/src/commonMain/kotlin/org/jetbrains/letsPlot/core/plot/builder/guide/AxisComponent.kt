@@ -16,7 +16,6 @@ import org.jetbrains.letsPlot.core.plot.base.render.svg.Text
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.HorizontalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.render.svg.Text.VerticalAnchor.*
 import org.jetbrains.letsPlot.core.plot.base.theme.AxisTheme
-import org.jetbrains.letsPlot.core.plot.builder.AxisUtil.tickLabelBaseOffset
 import org.jetbrains.letsPlot.core.plot.builder.layout.PlotLabelSpecFactory
 import org.jetbrains.letsPlot.core.plot.builder.presentation.Style
 import org.jetbrains.letsPlot.datamodel.svg.dom.SvgGElement
@@ -68,7 +67,7 @@ class AxisComponent(
     private data class TickData(
         val breaks: List<DoubleVector>,
         val labels: List<String?>,
-        val indices: List<Int>,
+        val labelOffsets: List<DoubleVector?>,
         val style: TickStyle
     )
 
@@ -78,26 +77,24 @@ class AxisComponent(
         val end: Double = length
 
         // Ticks and labels
-        val tickLabelBaseOffset = tickLabelBaseOffset(axisTheme, orientation)
-
         if (axisTheme.showLabels() || axisTheme.showTickMarks()) {
             val majorTicks = TickData(
                 breaks = breaksData.majorBreaks,
                 labels = breaksData.majorLabels,
-                indices = breaksData.majorIndices,
+                labelOffsets = breaksData.majorLabelOffsets,
                 style = majorTickStyle()
             )
-            addTicks(majorTicks, tickLabelBaseOffset)
+            addTicks(majorTicks)
         }
 
         if (axisTheme.showMinorTickMarks()) {
             val minorTicks = TickData(
                 breaks = breaksData.minorBreaks,
                 labels = List(breaksData.minorBreaks.size) { null }, // no labels for minor ticks for now
-                indices = List(breaksData.minorBreaks.size) { it },
+                labelOffsets = List(breaksData.minorBreaks.size) { null },
                 style = minorTickStyle()
             )
-            addTicks(minorTicks, tickLabelBaseOffset)
+            addTicks(minorTicks)
         }
 
         // Axis line
@@ -116,7 +113,7 @@ class AxisComponent(
         }
     }
 
-    private fun addTicks(ticks: TickData, tickLabelBaseOffset: DoubleVector) {
+    private fun addTicks(ticks: TickData) {
         for (i in ticks.breaks.indices) {
             val br = ticks.breaks[i]
             val loc = if (orientation.isHorizontal) br.x else br.y
@@ -124,12 +121,9 @@ class AxisComponent(
 
             // label may be null
             val label = ticks.labels[i]
-            val idx = ticks.indices[i]
 
             // ToDo: minor ticks should have their own label offset logic
-            val labelOffset = if (label != null)
-                tickLabelBaseOffset.add(labelAdjustments.additionalOffset(idx))
-            else null
+            val labelOffset = ticks.labelOffsets[i]
 
             val g = SvgGElement()
 
@@ -196,7 +190,7 @@ class AxisComponent(
 
     class BreaksData(
         val majorBreaks: List<DoubleVector>,
-        val majorIndices: List<Int>,
+        val majorLabelOffsets: List<DoubleVector>,
         val majorLabels: List<String>,
         val minorBreaks: List<DoubleVector>,
         val majorGrid: List<List<DoubleVector>>,
@@ -224,6 +218,10 @@ class AxisComponent(
 
         fun additionalOffset(tickIndex: Int): DoubleVector {
             return additionalOffsets?.get(tickIndex) ?: DoubleVector.ZERO
+        }
+
+        fun labelOffset(baseOffset: DoubleVector, tickIndex: Int): DoubleVector {
+            return baseOffset.add(additionalOffset(tickIndex))
         }
     }
 }
