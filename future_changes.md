@@ -1,4 +1,4 @@
-## [4.10.4] - 2026-mm-dd
+## [4.11.0] - 2026-06-dd
 
 ### Added
 
@@ -15,7 +15,8 @@
 
 ### Fixed
 
-- Misaligned or mismatched axis tick labels when some breaks are dropped after layout
 - Incorrect `hjust`/`vjust`/`angle` justification of vertical-axis tick labels (`theme(axis_text_y=element_text(...))`)
 - Rotated vertical-axis tick labels could be wrongly dropped or kept by overlap-based break filtering
+- Misaligned or mismatched axis tick labels when some breaks are dropped after layout
+
 
