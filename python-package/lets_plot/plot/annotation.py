@@ -589,7 +589,7 @@ class smooth_labels(layer_labels):
             ggplot({'x': x, 'y': y}, aes('x', 'y')) + \\
                 geom_point() + \\
                 geom_smooth(deg=2, labels=smooth_labels()\\
-                                          .line(r'\(R\^2=\)@..r2..')\\
+                                          .line(r'\\(R\\^2=\\)@..r2..')\\
                                           .format('..r2..', '.3f')\\
                                           .label_x('center'))
 
@@ -641,7 +641,7 @@ class smooth_labels(layer_labels):
             LetsPlot.setup_html()
             ggplot({'x': [0, 1, 2], 'y': [0, 1, 4]}, aes('x', 'y')) + geom_point() + \\
                 geom_smooth(deg=2, labels=smooth_labels()\\
-                                          .line(r'\(R\^2=\)@..r2..')\\
+                                          .line(r'\\(R\\^2=\\)@..r2..')\\
                                           .line('~eq'))
 
         """
